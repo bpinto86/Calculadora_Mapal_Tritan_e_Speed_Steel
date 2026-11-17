@@ -17,9 +17,15 @@ html_content = """
 </head>
 <body class="p-4 md:p-6">
     <div class="max-w-7xl mx-auto space-y-6">
-        <!-- Header Simplificado -->
-        <header class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <h1 class="text-xl font-bold text-white">Parâmetros de Corte MAPAL</h1>
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-800 p-4 rounded-xl border border-slate-700 gap-4">
+            <div>
+                <div class="flex items-center gap-3">
+                    <h1 class="text-xl font-bold text-white">Parâmetros de Corte MAPAL</h1>
+                    <span class="bg-blue-600 text-xs px-2.5 py-1 rounded-full font-medium">CATÁLOGO P. 172-173</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1">Furação em cheio • Valor direto de catálogo ou interpolação por intervalo</p>
+            </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -66,7 +72,7 @@ html_content = """
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <label class="text-xs font-medium text-slate-300">4. DIÂMETRO PRETENDIDO (Ø)</label>
-                        <span id="badge-metodo" class="text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700">Interpolação Linear</span>
+                        <span id="badge-metodo" class="text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700">Interpolação no Intervalo</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <button onclick="ajustarDiametro(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-3 py-2 rounded-lg text-white font-bold">-</button>
@@ -102,30 +108,36 @@ html_content = """
                     </div>
                 </div>
 
-                <!-- Valores auxiliares compactos -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                        <span class="text-xs text-slate-400">Intercepção (a)</span>
-                        <div class="font-mono text-lg font-bold text-white mt-1" id="val-a">0.1450 mm/rot</div>
+                <!-- Detalhe da Fórmula -->
+                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase">Modelo Matemático Aplicado</h3>
+                    <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 font-mono text-sm text-cyan-400" id="formula-txt">
+                        f = 0.1600 + 0.0400 × 8.00 = 0.4800 mm/rot
                     </div>
-                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                        <span class="text-xs text-slate-400">Declive / Desvio (b)</span>
-                        <div class="font-mono text-lg font-bold text-white mt-1" id="val-b">0.0300 mm/rot·mm</div>
-                    </div>
-                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                        <span class="text-xs text-slate-400">Estado da Gama</span>
-                        <div class="text-sm font-bold text-emerald-400 mt-1.5" id="val-estado">Dentro do intervalo consecutivo</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-slate-900/50 p-2.5 rounded border border-slate-700/50">
+                            <span class="text-slate-400">Intercepção (a)</span>
+                            <div class="font-mono font-bold text-white mt-0.5" id="val-a">0.1600 mm/rot</div>
+                        </div>
+                        <div class="bg-slate-900/50 p-2.5 rounded border border-slate-700/50">
+                            <span class="text-slate-400">Declive / Desvio (b)</span>
+                            <div class="font-mono font-bold text-white mt-0.5" id="val-b">0.0400 mm/rot·mm</div>
+                        </div>
+                        <div class="bg-slate-900/50 p-2.5 rounded border border-slate-700/50">
+                            <span class="text-slate-400">Estado da Gama</span>
+                            <div class="font-bold text-emerald-400 mt-0.5" id="val-estado">Dentro do intervalo consecutivo</div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Tabela de Referência e Gráfico lado a lado -->
+                <!-- Tabela de Referência e Gráfico lado a lado ou empilhados -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Tabela de Referência -->
                     <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
                         <h3 class="text-xs font-semibold text-slate-400 uppercase">Tabela de Referência do Catálogo</h3>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
-                                <thead>
+                               <thead>
                                     <tr class="border-b border-slate-700 text-slate-400">
                                         <th class="pb-2">Ø (mm)</th>
                                         <th class="pb-2">f Cat.</th>
@@ -229,6 +241,7 @@ html_content = """
                 estadoTxt = "Valor Exato Tabelado";
                 document.getElementById('badge-metodo').className = "text-[10px] bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded border border-emerald-700";
                 document.getElementById('badge-metodo').innerText = "Catálogo Direto";
+                document.getElementById('formula-txt').innerText = `f = ${fCalc.toFixed(4)} mm/rot (Tabelado)`;
                 document.getElementById('val-a').innerText = "-";
                 document.getElementById('val-b').innerText = "-";
             } else {
@@ -244,6 +257,7 @@ html_content = """
                         segEncontrado = true;
                         document.getElementById('badge-metodo').className = "text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700";
                         document.getElementById('badge-metodo').innerText = "Interpolação Linear";
+                        document.getElementById('formula-txt').innerText = `f = ${a.toFixed(4)} + ${b.toFixed(4)} × ${diamPrat.toFixed(2)} = ${fCalc.toFixed(4)} mm/rot`;
                         document.getElementById('val-a').innerText = `${a.toFixed(4)} mm/rot`;
                         document.getElementById('val-b').innerText = `${b.toFixed(4)} mm/rot·mm`;
                         break;
@@ -256,6 +270,7 @@ html_content = """
                     b = (f2 - f1) / (d2 - d1);
                     a = f1 - b * d1;
                     fCalc = a + b * diamPrat;
+                    document.getElementById('formula-txt').innerText = `Extrapolação: f = ${fCalc.toFixed(4)} mm/rot`;
                     document.getElementById('val-a').innerText = `${a.toFixed(4)}`;
                     document.getElementById('val-b').innerText = `${b.toFixed(4)}`;
                 }
@@ -309,6 +324,7 @@ html_content = """
                 <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${h-padding}" stroke="#475569" stroke-width="1" />
             `;
 
+            // Linha da curva de catálogo
             let pathD = "";
             for(let i=0; i<diametros.length; i++) {
                 const cx = scaleX(diametros[i]);
@@ -317,12 +333,14 @@ html_content = """
             }
             svgHTML += `<path d="${pathD}" fill="none" stroke="#3b82f6" stroke-width="2" />`;
 
+            // Pontos de Catálogo
             for(let i=0; i<diametros.length; i++) {
                 const cx = scaleX(diametros[i]);
                 const cy = scaleY(avancos[i]);
                 svgHTML += `<circle cx="${cx}" cy="${cy}" r="4" fill="#3b82f6" />`;
             }
 
+            // Ponto Calculado / Interpolação
             const px = scaleX(diamPrat);
             const py = scaleY(fCalc);
             svgHTML += `
