@@ -382,7 +382,6 @@ html_content = '''
                 grupoSelect.appendChild(opt);
             });
 
-            // Tratamento especial para SCD360 (sem refrigeração interna)
             const btnInt = document.getElementById('ref-int');
             const avisoRefrig = document.getElementById('aviso-refrig');
             if (brocaKey === 'scd360') {
@@ -408,7 +407,14 @@ html_content = '''
             refrigAtual = tipo;
             ['int', 'ext', 'mql', 'ar'].forEach(t => {
                 const btn = document.getElementById(`ref-${t}`);
-                if (brocaKey === 'scd360' && t === 'int') return;
+                if (brocaKey === 'scd360' && t === 'int') {
+                    btn.disabled = true;
+                    btn.className = "py-2 rounded bg-slate-800 text-slate-600 cursor-not-allowed";
+                    return;
+                } else if (t === 'int') {
+                    btn.disabled = false;
+                }
+
                 if(t === tipo) {
                     btn.className = "py-2 rounded bg-blue-600 text-white transition";
                 } else {
@@ -472,24 +478,25 @@ html_content = '''
             }
         }
 
-        function onManualInput(tipo) {
-            atualizarCalculo();
-        }
-
-        function ajustarDiametro(val) {
+        function ajustarDiametro(delta) {
             const input = document.getElementById('diametro');
-            let atual = parseFloat(input.value) || 0;
-            atual = Math.max(1, Math.min(30, atual + val));
-            input.value = atual.toFixed(2);
+            let val = parseFloat(input.value) + delta;
+            if (val < 1) val = 1;
+            if (val > 30) val = 30;
+            input.value = val.toFixed(2);
             atualizarCalculo();
         }
 
-        function ajustarPct(tipo, valor) {
+        function ajustarPct(tipo, delta) {
             if (tipo === 'vc') {
-                vcPct = Math.max(-50, Math.min(50, vcPct + valor));
+                vcPct += delta;
+                if (vcPct < -50) vcPct = -50;
+                if (vcPct > 50) vcPct = 50;
                 document.getElementById('vc-slider').value = vcPct;
-            } else {
-                fPct = Math.max(-50, Math.min(50, fPct + valor));
+            } else if (tipo === 'f') {
+                fPct += delta;
+                if (fPct < -50) fPct = -50;
+                if (fPct > 50) fPct = 50;
                 document.getElementById('f-slider').value = fPct;
             }
             atualizarCalculo();
@@ -509,171 +516,204 @@ html_content = '''
             if (tipo === 'vc') {
                 vcPct = 0;
                 document.getElementById('vc-slider').value = 0;
-            } else {
+            } else if (tipo === 'f') {
                 fPct = 0;
                 document.getElementById('f-slider').value = 0;
             }
             atualizarCalculo();
         }
 
+        function onManualInput(tipo) {
+            if (tipo === 'vc' && vcUnlocked) {
+                const vcVal = parseFloat(document.getElementById('input-vc').value) || 0;
+                const d = parseFloat(document.getElementById('diametro').value) || 1;
+                const n = d > 0 ? Math.round((vcVal * 1000) / (Math.PI * d)) : 0;
+                document.getElementById('res-n').innerText = n;
+                const fVal = parseFloat(document.getElementById('input-f').value) || 0;
+                document.getElementById('res-vf').innerText = Math.round(fVal * n);
+            } else if (tipo === 'f' && fUnlocked) {
+                const fVal = parseFloat(document.getElementById('input-f').value) || 0;
+                const n = parseInt(document.getElementById('res-n').innerText) || 0;
+                document.getElementById('res-vf').innerText = Math.round(fVal * n);
+            }
+        }
+
         function atualizarCalculo() {
             const brocaKey = document.getElementById('broca').value;
             let grupoKey = document.getElementById('grupo').value;
-            const ligaChecked = document.getElementById('liga-check').checked;
-            const diamPrat = parseFloat(document.getElementById('diametro').value) || 8;
-
-            document.getElementById('vc-pct-val').innerText = (vcPct > 0 ? `+${vcPct}%` : `${vcPct}%`);
-            document.getElementById('f-pct-val').innerText = (fPct > 0 ? `+${fPct}%` : `${fPct}%`);
-
+            const ligaCheck = document.getElementById('liga-check').checked;
             const toolData = dados[brocaKey];
-            const diametros = toolData.diametros;
-            const gruposList = toolData.gruposList;
 
-            if (ligaChecked) {
-                let idxG = gruposList.indexOf(grupoKey);
-                if (idxG !== -1 && idxG < gruposList.length - 1) {
-                    grupoKey = gruposList[idxG + 1];
+            // Aplicação da Regra MAPAL (Elementos de liga > 8%)
+            let grupoEfetivoKey = grupoKey;
+            if (ligaCheck) {
+                const idxAtual = toolData.gruposList.indexOf(grupoKey);
+                if (idxAtual !== -1 && idxAtual + 1 < toolData.gruposList.length) {
+                    grupoEfetivoKey = toolData.gruposList[idxAtual + 1];
                 }
             }
 
-            const grupoData = toolData.grupos[grupoKey] || toolData.grupos[gruposList[0]];
-            const avancos = grupoData.f;
-            
-            // Obter Vc com base na refrigeração selecionada
-            let vcBase = grupoData.vc[refrigAtual];
-            if (vcBase === undefined || vcBase === 0) {
-                // Fallback se a refrigeração escolhida não existir para esta broca/material
-                vcBase = grupoData.vc['ext'] || 50;
-            }
+            const grupoObj = toolData.grupos[grupoEfetivoKey];
+            let diametro = parseFloat(document.getElementById('diametro').value);
+            if (isNaN(diametro) || diametro <= 0) diametro = 8.00;
 
-            let vcFinal = 0;
-            if (vcUnlocked) {
-                vcFinal = parseFloat(document.getElementById('input-vc').value) || 0;
-            } else {
-                vcFinal = vcBase * (1 + vcPct / 100);
-                document.getElementById('input-vc').value = vcFinal.toFixed(0);
-            }
+            const diametrosCat = toolData.diametros;
+            const fCatArr = grupoObj.f;
 
-            let fBase = 0;
-            let a = 0, b = 0;
-            let estadoTxt = "";
-
-            if (diametros.includes(diamPrat)) {
-                const idx = diametros.indexOf(diamPrat);
-                fBase = avancos[idx];
-                estadoTxt = "Valor Exato Tabelado";
-                document.getElementById('badge-metodo').className = "text-[10px] bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded border border-emerald-700";
-                document.getElementById('badge-metodo').innerText = "Catálogo Direto";
-                document.getElementById('val-a').innerText = "-";
-                document.getElementById('val-b').innerText = "-";
-            } else {
-                let segEncontrado = false;
-                for (let i = 0; i < diametros.length - 1; i++) {
-                    const d1 = diametros[i], d2 = diametros[i+1];
-                    if (d1 <= diamPrat && diamPrat <= d2) {
-                        const f1 = avancos[i], f2 = avancos[i+1];
-                        b = (f2 - f1) / (d2 - d1);
-                        a = f1 - b * d1;
-                        fBase = a + b * diamPrat;
-                        estadoTxt = "Dentro do intervalo consecutivo";
-                        segEncontrado = true;
-                        document.getElementById('badge-metodo').className = "text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700";
-                        document.getElementById('badge-metodo').innerText = "Interpolação Linear";
-                        document.getElementById('val-a').innerText = `${a.toFixed(4)} mm/rot`;
-                        document.getElementById('val-b').innerText = `${b.toFixed(4)} mm/rot·mm`;
-                        break;
-                    }
+            // Determinar o intervalo de diâmetros para interpolação
+            let idxInf = 0;
+            for (let i = 0; i < diametrosCat.length; i++) {
+                if (diametrosCat[i] <= diametro) {
+                    idxInf = i;
+                } else {
+                    break;
                 }
-                if (!segEncontrado) {
-                    const i = diamPrat < diametros[0] ? 0 : diametros.length - 2;
-                    const d1 = diametros[i], d2 = diametros[i+1];
-                    const f1 = avancos[i], f2 = avancos[i+1];
-                    b = (f2 - f1) / (d2 - d1);
-                    a = f1 - b * d1;
-                    fBase = a + b * diamPrat;
-                    document.getElementById('val-a').innerText = `${a.toFixed(4)}`;
-                    document.getElementById('val-b').innerText = `${b.toFixed(4)}`;
-                }
-                document.getElementById('val-estado').innerText = estadoTxt;
             }
 
-            let fFinal = 0;
-            if (fUnlocked) {
-                fFinal = parseFloat(document.getElementById('input-f').value) || 0;
+            let a = 0, b = 0, fBase = 0;
+            let estadoTexto = "Dentro do intervalo consecutivo";
+            let estadoCor = "text-emerald-400";
+            let badgeMetodo = "Interpolação Linear";
+
+            if (idxInf >= diametrosCat.length - 1) {
+                idxInf = diametrosCat.length - 2;
+                estadoTexto = "Acima da gama máxima (Extrapolação)";
+                estadoCor = "text-amber-400";
+                badgeMetodo = "Extrapolação Superior";
+            } else if (diametro < diametrosCat[0]) {
+                idxInf = 0;
+                estadoTexto = "Abaixo da gama mínima (Extrapolação)";
+                estadoCor = "text-amber-400";
+                badgeMetodo = "Extrapolação Inferior";
+            }
+
+            const x1 = diametrosCat[idxInf];
+            const x2 = diametrosCat[idxInf + 1];
+            const y1 = fCatArr[idxInf];
+            const y2 = fCatArr[idxInf + 1];
+
+            b = (y2 - y1) / (x2 - x1);
+            a = y1 - b * x1;
+
+            fBase = a + b * diametro;
+            if (fBase < 0.001) fBase = 0.001;
+
+            // Ajuste percentual de f
+            let fFinal = fBase * (1 + fPct / 100);
+
+            // Obter Vc base conforme refrigeração
+            let vcBase = 100;
+            if (grupoObj.vc) {
+                vcBase = grupoObj.vc[refrigAtual] !== undefined ? grupoObj.vc[refrigAtual] : (grupoObj.vc['ext'] || 100);
+            }
+            let vcFinal = vcBase * (1 + vcPct / 100);
+
+            // Atualizar valores nos inputs se estiverem bloqueados (Auto)
+            if (!vcUnlocked) {
+                document.getElementById('input-vc').value = Math.round(vcFinal);
             } else {
-                fFinal = fBase * (1 + fPct / 100);
+                vcFinal = parseFloat(document.getElementById('input-vc').value) || vcFinal;
+            }
+
+            if (!fUnlocked) {
                 document.getElementById('input-f').value = fFinal.toFixed(4);
+            } else {
+                fFinal = parseFloat(document.getElementById('input-f').value) || fFinal;
             }
 
-            const n = (vcFinal * 1000) / (Math.PI * diamPrat);
-            const vf = n * fFinal;
+            // Rotações (n) e Avanço de Trabalho (vf)
+            const n = diametro > 0 ? Math.round((vcFinal * 1000) / (Math.PI * diametro)) : 0;
+            const vf = Math.round(fFinal * n);
 
-            document.getElementById('res-n').innerText = n.toFixed(0);
-            document.getElementById('res-vf').innerText = vf.toFixed(0);
+            document.getElementById('res-n').innerText = n;
+            document.getElementById('res-vf').innerText = vf;
 
+            // Auxiliares
+            document.getElementById('val-a').innerText = a.toFixed(4) + " mm/rot";
+            document.getElementById('val-b').innerText = b.toFixed(4) + " mm/rot·mm";
+            const elEstado = document.getElementById('val-estado');
+            elEstado.innerText = estadoTexto;
+            elEstado.className = "text-sm font-bold " + estadoCor + " mt-1.5";
+            document.getElementById('badge-metodo').innerText = badgeMetodo;
+
+            // Labels percentagens
+            document.getElementById('vc-pct-val').innerText = (vcPct > 0 ? "+" : "") + vcPct + "%";
+            document.getElementById('f-pct-val').innerText = (fPct > 0 ? "+" : "") + fPct + "%";
+
+            // Preencher Tabela de Referência
             const tbody = document.getElementById('tabela-ref');
             tbody.innerHTML = '';
-            for(let i=0; i<diametros.length; i++) {
-                const d = diametros[i];
-                const fValCat = avancos[i];
-                const nRef = (vcFinal * 1000) / (Math.PI * d);
-                const vfRef = nRef * fValCat;
-                const isHighlight = diamPrat === d ? 'bg-blue-900/30 text-blue-300 font-semibold' : '';
-                tbody.innerHTML += `<tr class="border-b border-slate-700/50 ${isHighlight}">
-                    <td class="py-2 px-1">Ø ${d.toFixed(2)}</td>
-                    <td class="py-2 px-1">${fValCat.toFixed(3)}</td>
-                    <td class="py-2 px-1">${nRef.toFixed(0)}</td>
-                    <td class="py-2 px-1">${vfRef.toFixed(0)}</td>
-                </tr>`;
+            for (let i = 0; i < diametrosCat.length; i++) {
+                const dCat = diametrosCat[i];
+                const fCat = fCatArr[i];
+                const nCat = Math.round((vcFinal * 1000) / (Math.PI * dCat));
+                const vfCat = Math.round(fCat * nCat);
+                const tr = document.createElement('tr');
+                tr.className = i === idxInf || i === idxInf + 1 ? "bg-blue-900/30 font-medium text-white" : "text-slate-300";
+                tr.innerHTML = `
+                    <td class="py-1.5">${dCat.toFixed(2)}</td>
+                    <td class="py-1.5">${fCat.toFixed(2)}</td>
+                    <td class="py-1.5">${nCat}</td>
+                    <td class="py-1.5">${vfCat}</td>
+                `;
+                tbody.appendChild(tr);
             }
 
-            desenharGrafico(diametros, avancos, diamPrat, fFinal);
+            // Desenhar Gráfico SVG
+            desenharGrafico(diametrosCat, fCatArr, diametro, fFinal, idxInf);
         }
 
-        function desenharGrafico(diametros, avancos, diamPrat, fFinal) {
+        function desenharGrafico(diametros, fArr, dAtual, fAtual, idxInf) {
             const svg = document.getElementById('svg-grafico');
-            const w = 400, h = 180;
-            const padding = 30;
-            
-            const minX = diametros[0] - 0.5;
-            const maxX = diametros[diametros.length - 1] + 1;
+            svg.innerHTML = '';
+
+            const width = 400;
+            const height = 180;
+            const pad = 30;
+
+            const minX = diametros[0];
+            const maxX = diametros[diametros.length - 1];
             const minY = 0;
-            const maxY = Math.max(...avancos, fFinal) * 1.2;
+            const maxY = Math.max(...fArr) * 1.2;
 
-            function scaleX(d) { return padding + (d - minX) / (maxX - minX) * (w - 2 * padding); }
-            function scaleY(f) { return h - padding - (f - minY) / (maxY - minY) * (h - 2 * padding); }
-
-            let svgHTML = `
-                <line x1="${padding}" y1="${h-padding}" x2="${w-padding}" y2="${h-padding}" stroke="#475569" stroke-width="1" />
-                <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${h-padding}" stroke="#475569" stroke-width="1" />
-            `;
-
-            let pathD = "";
-            for(let i=0; i<diametros.length; i++) {
-                const cx = scaleX(diametros[i]);
-                const cy = scaleY(avancos[i]);
-                pathD += (i === 0 ? `M ${cx} ${cy}` : ` L ${cx} ${cy}`);
+            function scaleX(x) {
+                return pad + (x - minX) / (maxX - minX || 1) * (width - 2 * pad);
             }
-            svgHTML += `<path d="${pathD}" fill="none" stroke="#3b82f6" stroke-width="2" />`;
-
-            for(let i=0; i<diametros.length; i++) {
-                const cx = scaleX(diametros[i]);
-                const cy = scaleY(avancos[i]);
-                svgHTML += `<circle cx="${cx}" cy="${cy}" r="4" fill="#3b82f6" />`;
+            function scaleY(y) {
+                return height - pad - (y - minY) / (maxY - minY || 1) * (height - 2 * pad);
             }
 
-            const px = scaleX(diamPrat);
-            const py = scaleY(fFinal);
-            svgHTML += `
-                <line x1="${px}" y1="${h-padding}" x2="${px}" y2="${py}" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.5" />
-                <line x1="${padding}" y1="${py}" x2="${px}" y2="${py}" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.5" />
-                <circle cx="${px}" cy="${py}" r="5" fill="#f97316" />
-                <text x="${Math.min(px + 8, w - 70)}" y="${Math.max(py - 8, 20)}" fill="#f8fafc" font-size="10" font-weight="bold">Ø${diamPrat.toFixed(1)} : ${fFinal.toFixed(3)}</text>
+            // Eixos
+            let html = `
+                <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#475569" stroke-width="1" />
+                <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="#475569" stroke-width="1" />
             `;
 
-            svg.innerHTML = svgHTML;
+            // Linha do catálogo (pontos ligados)
+            let polylinePoints = "";
+            for (let i = 0; i < diametros.length; i++) {
+                const cx = scaleX(diametros[i]);
+                const cy = scaleY(fArr[i]);
+                polylinePoints += `${cx},${cy} `;
+            }
+            html += `<polyline fill="none" stroke="#3b82f6" stroke-width="2" points="${polylinePoints}" />`;
+
+            // Pontos do catálogo
+            for (let i = 0; i < diametros.length; i++) {
+                const cx = scaleX(diametros[i]);
+                const cy = scaleY(fArr[i]);
+                html += `<circle cx="${cx}" cy="${cy}" r="3.5" fill="#3b82f6" />`;
+            }
+
+            // Ponto calculado atual
+            const curX = scaleX(dAtual);
+            const curY = scaleY(fAtual);
+            html += `<circle cx="${curX}" cy="${curY}" r="5" fill="#f97316" stroke="#fff" stroke-width="1.5" />`;
+
+            svg.innerHTML = html;
         }
 
+        // Inicializar ao carregar
         window.onload = function() {
             mudarBroca();
         };
@@ -682,4 +722,4 @@ html_content = '''
 </html>
 '''
 
-components.html(html_content, height=1100, scrolling=True)
+components.html(html_content, height=850, scrolling=True)
