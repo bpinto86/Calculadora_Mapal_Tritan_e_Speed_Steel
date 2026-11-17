@@ -161,11 +161,26 @@ html_content = """
                         <div class="flex justify-center gap-4 text-[10px] text-slate-400">
                             <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Catálogo</span>
                             <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span> Calculado</span>
-                        </div>
+                                     </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Assinatura / Rodapé -->
+        <footer class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/80 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-400">
+            <div class="font-medium text-slate-300">
+                Created by <span class="text-white font-semibold">Bruno Pinto</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="mailto:bruno.pinto@alamo-ferramentas.com" class="hover:text-blue-400 transition flex items-center gap-1.5">
+                    <span>✉️</span> bruno.pinto@alamo-ferramentas.com
+                </a>
+                <a href="tel:+351936959415" class="hover:text-blue-400 transition flex items-center gap-1.5">
+                    <span>📱</span> +351 936 959 415
+                </a>
+            </div>
+        </footer>
     </div>
 
     <script>
