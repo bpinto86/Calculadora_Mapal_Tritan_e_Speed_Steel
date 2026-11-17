@@ -27,20 +27,35 @@ html_content = '''
             <div class="lg:col-span-4 bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-5">
                 <h2 class="text-sm font-semibold text-blue-400 uppercase tracking-wider">Configuração da Operação</h2>
                 
-                <!-- Modelo de Broca -->
+                <!-- 1ª Escolha Lógica: Linha -->
                 <div class="space-y-2">
-                    <label class="text-xs font-medium text-slate-300">1. BROCA DE METAL DURO INTEGRAL</label>
+                    <label class="text-xs font-medium text-slate-300">1. LINHA DE FERRAMENTA</label>
+                    <select id="linha" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="atualizarFiltroBrocas()">
+                        <option value="expert">Expert Line (Alta Performance)</option>
+                        <option value="basic">Basic Line (Uso Geral)</option>
+                    </select>
+                </div>
+
+                <!-- 2ª Escolha Lógica: Refrigeração pretendida -->
+                <div class="space-y-2">
+                    <label class="text-xs font-medium text-slate-300">2. REFRIGERAÇÃO DISPONÍVEL</label>
+                    <select id="filtro-refrig" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="atualizarFiltroBrocas()">
+                        <option value="com">Com Refrigeração Interna</option>
+                        <option value="sem">Sem Refrigeração Interna</option>
+                    </select>
+                </div>
+
+                <!-- 3ª Escolha: Modelo de Broca Específico -->
+                <div class="space-y-2">
+                    <label class="text-xs font-medium text-slate-300">3. MODELO DE BROCA</label>
                     <select id="broca" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="mudarBroca()">
-                        <option value="scd661">SCD661 (Tritan-Drill-Steel)</option>
-                        <option value="scd621">SCD621 (MEGA-Speed-Drill-Steel)</option>
-                        <option value="scd360">SCD360 (ECU-Drill-Steel - Sem Refrig. Interna)</option>
-                        <option value="scd361">SCD361 (ECU-Drill-Steel - Com Refrig. Interna)</option>
+                        <!-- Preenchido dinamicamente via JS -->
                     </select>
                 </div>
 
                 <!-- Grupo de Materiais -->
                 <div class="space-y-2">
-                    <label class="text-xs font-medium text-slate-300">2. GRUPO DE MATERIAIS (MMG)</label>
+                    <label class="text-xs font-medium text-slate-300">4. GRUPO DE MATERIAIS (MMG)</label>
                     <select id="grupo" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="atualizarCalculo()">
                         <!-- Preenchido dinamicamente via JS -->
                     </select>
@@ -54,22 +69,22 @@ html_content = '''
                     </label>
                 </div>
 
-                <!-- Refrigeração -->
+                <!-- Tipo de Refrigeração Ativa -->
                 <div class="space-y-2">
-                    <label class="text-xs font-medium text-slate-300">3. REFRIGERAÇÃO</label>
+                    <label class="text-xs font-medium text-slate-300">5. MÉTODO DE REFRIGERAÇÃO A USAR</label>
                     <div class="grid grid-cols-4 gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700 text-xs text-center font-medium">
                         <button type="button" onclick="setRefrig('int')" id="ref-int" class="py-2 rounded bg-blue-600 text-white transition">Interna</button>
                         <button type="button" onclick="setRefrig('ext')" id="ref-ext" class="py-2 rounded text-slate-400 hover:text-white transition">Externa</button>
                         <button type="button" onclick="setRefrig('mql')" id="ref-mql" class="py-2 rounded text-slate-400 hover:text-white transition">MQL</button>
                         <button type="button" onclick="setRefrig('ar')" id="ref-ar" class="py-2 rounded text-slate-400 hover:text-white transition">Ar</button>
                     </div>
-                    <p id="aviso-refrig" class="text-[10px] text-amber-400 hidden">Nota: A broca SCD360 não permite refrigeração interna.</p>
+                    <p id="aviso-refrig" class="text-[10px] text-amber-400 hidden">Nota: Esta ferramenta não permite refrigeração interna.</p>
                 </div>
 
                 <!-- Diâmetro Pretendido -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
-                        <label class="text-xs font-medium text-slate-300">4. DIÂMETRO PRETENDIDO (Ø)</label>
+                        <label class="text-xs font-medium text-slate-300">6. DIÂMETRO PRETENDIDO (Ø)</label>
                         <span id="badge-metodo" class="text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700">Interpolação Linear</span>
                     </div>
                     <div class="flex items-center gap-2">
@@ -241,6 +256,9 @@ html_content = '''
 
         const dados = {
             scd661: {
+                linha: 'expert',
+                temRefrigInt: true,
+                nome: 'SCD661 (Tritan-Drill-Steel)',
                 diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "M1.1", "K1.1", "K2.1"],
                 gruposNames: {
@@ -269,6 +287,9 @@ html_content = '''
                 }
             },
             scd621: {
+                linha: 'expert',
+                temRefrigInt: true,
+                nome: 'SCD621 (MEGA-Speed-Drill-Steel)',
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "M1.1", "K1.1"],
                 gruposNames: {
@@ -295,6 +316,9 @@ html_content = '''
                 }
             },
             scd360: {
+                linha: 'basic',
+                temRefrigInt: false,
+                nome: 'SCD360 (ECU-Drill-Steel - Sem Refrig. Interna)',
                 diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2"],
                 gruposNames: {
@@ -331,6 +355,9 @@ html_content = '''
                 }
             },
             scd361: {
+                linha: 'basic',
+                temRefrigInt: true,
+                nome: 'SCD361 (ECU-Drill-Steel - Com Refrig. Interna)',
                 diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2"],
                 gruposNames: {
@@ -368,9 +395,46 @@ html_content = '''
             }
         };
 
+        function atualizarFiltroBrocas() {
+            const linhaSel = document.getElementById('linha').value;
+            const refrigSel = document.getElementById('filtro-refrig').value; // 'com' ou 'sem'
+            const brocaSelect = document.getElementById('broca');
+            
+            brocaSelect.innerHTML = '';
+            
+            let primeiraChave = null;
+
+            for (const key in dados) {
+                const ferramenta = dados[key];
+                const matchLinha = ferramenta.linha === linhaSel;
+                const matchRefrig = (refrigSel === 'com' && ferramenta.temRefrigInt) || (refrigSel === 'sem' && !ferramenta.temRefrigInt);
+
+                if (matchLinha && matchRefrig) {
+                    const opt = document.createElement('option');
+                    opt.value = key;
+                    opt.text = ferramenta.nome;
+                    brocaSelect.appendChild(opt);
+                    if (!primeiraChave) primeiraChave = key;
+                }
+            }
+
+            // Se não encontrar nenhuma com o filtro exato, limpa ou mostra aviso
+            if (!primeiraChave) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.text = "Nenhuma ferramenta disponível com este filtro";
+                brocaSelect.appendChild(opt);
+            }
+
+            mudarBroca();
+        }
+
         function mudarBroca() {
             const brocaKey = document.getElementById('broca').value;
             const grupoSelect = document.getElementById('grupo');
+            
+            if (!brocaKey || !dados[brocaKey]) return;
+
             const toolData = dados[brocaKey];
             
             grupoSelect.innerHTML = '';
@@ -382,9 +446,11 @@ html_content = '''
                 grupoSelect.appendChild(opt);
             });
 
+            // Tratamento da refrigeração interna com base na ferramenta selecionada
             const btnInt = document.getElementById('ref-int');
             const avisoRefrig = document.getElementById('aviso-refrig');
-            if (brocaKey === 'scd360') {
+            
+            if (!toolData.temRefrigInt) {
                 btnInt.disabled = true;
                 btnInt.className = "py-2 rounded bg-slate-800 text-slate-600 cursor-not-allowed";
                 avisoRefrig.classList.remove('hidden');
@@ -402,12 +468,13 @@ html_content = '''
 
         function setRefrig(tipo) {
             const brocaKey = document.getElementById('broca').value;
-            if (brocaKey === 'scd360' && tipo === 'int') return;
+            const toolData = dados[brocaKey];
+            if (toolData && !toolData.temRefrigInt && tipo === 'int') return;
 
             refrigAtual = tipo;
             ['int', 'ext', 'mql', 'ar'].forEach(t => {
                 const btn = document.getElementById(`ref-${t}`);
-                if (brocaKey === 'scd360' && t === 'int') {
+                if (toolData && !toolData.temRefrigInt && t === 'int') {
                     btn.disabled = true;
                     btn.className = "py-2 rounded bg-slate-800 text-slate-600 cursor-not-allowed";
                     return;
@@ -540,11 +607,12 @@ html_content = '''
 
         function atualizarCalculo() {
             const brocaKey = document.getElementById('broca').value;
+            if (!brocaKey || !dados[brocaKey]) return;
+            
             let grupoKey = document.getElementById('grupo').value;
             const ligaCheck = document.getElementById('liga-check').checked;
             const toolData = dados[brocaKey];
 
-            // Aplicação da Regra MAPAL (Elementos de liga > 8%)
             let grupoEfetivoKey = grupoKey;
             if (ligaCheck) {
                 const idxAtual = toolData.gruposList.indexOf(grupoKey);
@@ -554,13 +622,14 @@ html_content = '''
             }
 
             const grupoObj = toolData.grupos[grupoEfetivoKey];
+            if (!grupoObj) return;
+
             let diametro = parseFloat(document.getElementById('diametro').value);
             if (isNaN(diametro) || diametro <= 0) diametro = 8.00;
 
             const diametrosCat = toolData.diametros;
             const fCatArr = grupoObj.f;
 
-            // Determinar o intervalo de diâmetros para interpolação
             let idxInf = 0;
             for (let i = 0; i < diametrosCat.length; i++) {
                 if (diametrosCat[i] <= diametro) {
@@ -598,17 +667,14 @@ html_content = '''
             fBase = a + b * diametro;
             if (fBase < 0.001) fBase = 0.001;
 
-            // Ajuste percentual de f
             let fFinal = fBase * (1 + fPct / 100);
 
-            // Obter Vc base conforme refrigeração
             let vcBase = 100;
             if (grupoObj.vc) {
                 vcBase = grupoObj.vc[refrigAtual] !== undefined ? grupoObj.vc[refrigAtual] : (grupoObj.vc['ext'] || 100);
             }
             let vcFinal = vcBase * (1 + vcPct / 100);
 
-            // Atualizar valores nos inputs se estiverem bloqueados (Auto)
             if (!vcUnlocked) {
                 document.getElementById('input-vc').value = Math.round(vcFinal);
             } else {
@@ -621,14 +687,12 @@ html_content = '''
                 fFinal = parseFloat(document.getElementById('input-f').value) || fFinal;
             }
 
-            // Rotações (n) e Avanço de Trabalho (vf)
             const n = diametro > 0 ? Math.round((vcFinal * 1000) / (Math.PI * diametro)) : 0;
             const vf = Math.round(fFinal * n);
 
             document.getElementById('res-n').innerText = n;
             document.getElementById('res-vf').innerText = vf;
 
-            // Auxiliares
             document.getElementById('val-a').innerText = a.toFixed(4) + " mm/rot";
             document.getElementById('val-b').innerText = b.toFixed(4) + " mm/rot·mm";
             const elEstado = document.getElementById('val-estado');
@@ -636,11 +700,9 @@ html_content = '''
             elEstado.className = "text-sm font-bold " + estadoCor + " mt-1.5";
             document.getElementById('badge-metodo').innerText = badgeMetodo;
 
-            // Labels percentagens
             document.getElementById('vc-pct-val').innerText = (vcPct > 0 ? "+" : "") + vcPct + "%";
             document.getElementById('f-pct-val').innerText = (fPct > 0 ? "+" : "") + fPct + "%";
 
-            // Preencher Tabela de Referência
             const tbody = document.getElementById('tabela-ref');
             tbody.innerHTML = '';
             for (let i = 0; i < diametrosCat.length; i++) {
@@ -659,11 +721,10 @@ html_content = '''
                 tbody.appendChild(tr);
             }
 
-            // Desenhar Gráfico SVG
-            desenharGrafico(diametrosCat, fCatArr, diametro, fFinal, idxInf);
+            desenharGrafico(diametrosCat, fCatArr, diametro, fFinal);
         }
 
-        function desenharGrafico(diametros, fArr, dAtual, fAtual, idxInf) {
+        function desenharGrafico(diametros, fArr, dAtual, fAtual) {
             const svg = document.getElementById('svg-grafico');
             svg.innerHTML = '';
 
@@ -683,13 +744,11 @@ html_content = '''
                 return height - pad - (y - minY) / (maxY - minY || 1) * (height - 2 * pad);
             }
 
-            // Eixos
             let html = `
                 <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#475569" stroke-width="1" />
                 <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="#475569" stroke-width="1" />
             `;
 
-            // Linha do catálogo (pontos ligados)
             let polylinePoints = "";
             for (let i = 0; i < diametros.length; i++) {
                 const cx = scaleX(diametros[i]);
@@ -698,14 +757,12 @@ html_content = '''
             }
             html += `<polyline fill="none" stroke="#3b82f6" stroke-width="2" points="${polylinePoints}" />`;
 
-            // Pontos do catálogo
             for (let i = 0; i < diametros.length; i++) {
                 const cx = scaleX(diametros[i]);
                 const cy = scaleY(fArr[i]);
                 html += `<circle cx="${cx}" cy="${cy}" r="3.5" fill="#3b82f6" />`;
             }
 
-            // Ponto calculado atual
             const curX = scaleX(dAtual);
             const curY = scaleY(fAtual);
             html += `<circle cx="${curX}" cy="${curY}" r="5" fill="#f97316" stroke="#fff" stroke-width="1.5" />`;
@@ -713,9 +770,8 @@ html_content = '''
             svg.innerHTML = html;
         }
 
-        // Inicializar ao carregar
         window.onload = function() {
-            mudarBroca();
+            atualizarFiltroBrocas();
         };
     </script>
 </body>
