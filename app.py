@@ -344,3 +344,115 @@ html_content = """
                 document.getElementById('badge-metodo').className = "text-[10px] bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded border border-emerald-700";
                 document.getElementById('badge-metodo').innerText = "Catálogo Direto";
                 document.getElementById('val-a').innerText = "-";
+                document.getElementById('val-b').innerText = "-";
+            } else {
+                let segEncontrado = false;
+                for (let i = 0; i < diametros.length - 1; i++) {
+                    const d1 = diametros[i], d2 = diametros[i+1];
+                    if (d1 <= diamPrat && diamPrat <= d2) {
+                        const f1 = avancos[i], f2 = avancos[i+1];
+                        b = (f2 - f1) / (d2 - d1);
+                        a = f1 - b * d1;
+                        fBase = a + b * diamPrat;
+                        estadoTxt = "Dentro do intervalo consecutivo";
+                        segEncontrado = true;
+                        document.getElementById('badge-metodo').className = "text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700";
+                        document.getElementById('badge-metodo').innerText = "Interpolação Linear";
+                        document.getElementById('val-a').innerText = `${a.toFixed(4)} mm/rot`;
+                        document.getElementById('val-b').innerText = `${b.toFixed(4)} mm/rot·mm`;
+                        break;
+                    }
+                }
+                if (!segEncontrado) {
+                    const i = diamPrat < diametros[0] ? 0 : diametros.length - 2;
+                    const d1 = diametros[i], d2 = diametros[i+1];
+                    const f1 = avancos[i], f2 = avancos[i+1];
+                    b = (f2 - f1) / (d2 - d1);
+                    a = f1 - b * d1;
+                    fBase = a + b * diamPrat;
+                    document.getElementById('val-a').innerText = `${a.toFixed(4)}`;
+                    document.getElementById('val-b').innerText = `${b.toFixed(4)}`;
+                }
+                document.getElementById('val-estado').innerText = estadoTxt;
+            }
+
+            let fFinal = fBase * (1 + fPct / 100);
+
+            const n = (vcFinal * 1000) / (Math.PI * diamPrat);
+            const vf = n * fFinal;
+
+            document.getElementById('res-f').innerText = fFinal.toFixed(4);
+            document.getElementById('res-vc').innerText = vcFinal.toFixed(0);
+            document.getElementById('res-n').innerText = n.toFixed(0);
+            document.getElementById('res-vf').innerText = vf.toFixed(0);
+
+            const tbody = document.getElementById('tabela-ref');
+            tbody.innerHTML = '';
+            for(let i=0; i<diametros.length; i++) {
+                const d = diametros[i];
+                const fValCat = avancos[i];
+                const nRef = (vcFinal * 1000) / (Math.PI * d);
+                const vfRef = nRef * fValCat;
+                const isHighlight = diamPrat === d ? 'bg-blue-900/30 text-blue-300 font-semibold' : '';
+                tbody.innerHTML += `<tr class="border-b border-slate-700/50 ${isHighlight}">
+                    <td class="py-2 px-1">Ø ${d.toFixed(2)}</td>
+                    <td class="py-2 px-1">${fValCat.toFixed(3)}</td>
+                    <td class="py-2 px-1">${nRef.toFixed(0)}</td>
+                    <td class="py-2 px-1">${vfRef.toFixed(0)}</td>
+                </tr>`;
+            }
+
+            desenharGrafico(diametros, avancos, diamPrat, fFinal);
+        }
+
+        function desenharGrafico(diametros, avancos, diamPrat, fFinal) {
+            const svg = document.getElementById('svg-grafico');
+            const w = 400, h = 180;
+            const padding = 30;
+            
+            const minX = diametros[0] - 1;
+            const maxX = diametros[diametros.length - 1] + 1;
+            const minY = 0;
+            const maxY = Math.max(...avancos) * 1.2;
+
+            function scaleX(d) { return padding + (d - minX) / (maxX - minX) * (w - 2 * padding); }
+            function scaleY(f) { return h - padding - (f - minY) / (maxY - minY) * (h - 2 * padding); }
+
+            let svgHTML = `
+                <line x1="${padding}" y1="${h-padding}" x2="${w-padding}" y2="${h-padding}" stroke="#475569" stroke-width="1" />
+                <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${h-padding}" stroke="#475569" stroke-width="1" />
+            `;
+
+            let pathD = "";
+            for(let i=0; i<diametros.length; i++) {
+                const cx = scaleX(diametros[i]);
+                const cy = scaleY(avancos[i]);
+                pathD += (i === 0 ? `M ${cx} ${cy}` : ` L ${cx} ${cy}`);
+            }
+            svgHTML += `<path d="${pathD}" fill="none" stroke="#3b82f6" stroke-width="2" />`;
+
+            for(let i=0; i<diametros.length; i++) {
+                const cx = scaleX(diametros[i]);
+                const cy = scaleY(avancos[i]);
+                svgHTML += `<circle cx="${cx}" cy="${cy}" r="4" fill="#3b82f6" />`;
+            }
+
+            const px = scaleX(diamPrat);
+            const py = scaleY(fFinal);
+            svgHTML += `
+                <line x1="${px}" y1="${h-padding}" x2="${px}" y2="${py}" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.5" />
+                <line x1="${padding}" y1="${py}" x2="${px}" y2="${py}" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.5" />
+                <circle cx="${px}" cy="${py}" r="5" fill="#f97316" />
+                <text x="${Math.min(px + 8, w - 70)}" y="${Math.max(py - 8, 20)}" fill="#f8fafc" font-size="10" font-weight="bold">Ø${diamPrat.toFixed(1)} : ${fFinal.toFixed(3)}</text>
+            `;
+
+            svg.innerHTML = svgHTML;
+        }
+
+        window.onload = atualizarCalculo;
+    </script>
+</body>
+</html>
+"""
+
+components.html(html_content, height=1050, scrolling=True)
