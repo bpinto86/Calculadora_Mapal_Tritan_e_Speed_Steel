@@ -130,21 +130,39 @@ html_content = """
                     </div>
                 </div>
 
-                <!-- Tabela de Referência -->
-                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
-                    <h3 class="text-xs font-semibold text-slate-400 uppercase">Tabela de Referência do Catálogo MAPAL</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead>
-                                <tr class="border-b border-slate-700 text-slate-400">
-                                    <th class="pb-2">Diâmetro (Ø)</th>
-                                    <th class="pb-2">f Catálogo</th>
-                                    <th class="pb-2">Rotações (n)</th>
-                                    <th class="pb-2">Avanço (v_f)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabela-ref" class="divide-y divide-slate-700/50"></tbody>
-                        </table>
+                <!-- Tabela de Referência e Gráfico lado a lado ou empilhados -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Tabela de Referência -->
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase">Tabela de Referência do Catálogo</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                               <thead>
+                                    <tr class="border-b border-slate-700 text-slate-400">
+                                        <th class="pb-2">Ø (mm)</th>
+                                        <th class="pb-2">f Cat.</th>
+                                        <th class="pb-2">RPM (n)</th>
+                                        <th class="pb-2">Avanço (v_f)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-ref" class="divide-y divide-slate-700/50"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico Interativo SVG -->
+                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3 flex flex-col justify-between">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-semibold text-slate-400 uppercase">Curva por Intervalos: Avanço (f) vs. Ø</h3>
+                            <span class="text-[10px] text-slate-400">SVG Interativo</span>
+                        </div>
+                        <div class="relative w-full h-48 bg-slate-900 rounded-lg border border-slate-700 p-2 flex items-center justify-center">
+                            <svg id="svg-grafico" class="w-full h-full" viewBox="0 0 400 180"></svg>
+                        </div>
+                        <div class="flex justify-center gap-4 text-[10px] text-slate-400">
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Catálogo</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span> Calculado</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -158,136 +176,4 @@ html_content = """
                 diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
                 grupos: {
                     "P1.1": { vc: {int:115, ext:105, mql:105, ar:100}, f: [0.24, 0.30, 0.37, 0.46, 0.56, 0.65] },
-                    "P1.2": { vc: {int:105, ext:85, mql:85, ar:80}, f: [0.30, 0.37, 0.46, 0.58, 0.70, 0.81] },
-                    "P2.1": { vc: {int:115, ext:100, mql:100, ar:90}, f: [0.28, 0.35, 0.44, 0.55, 0.66, 0.77] },
-                    "P2.2": { vc: {int:80, ext:70, mql:70, ar:60}, f: [0.24, 0.29, 0.36, 0.44, 0.53, 0.61] },
-                    "P3.1": { vc: {int:85, ext:75, mql:75, ar:70}, f: [0.25, 0.31, 0.39, 0.49, 0.60, 0.69] },
-                    "P3.2": { vc: {int:70, ext:65, mql:65, ar:60}, f: [0.21, 0.26, 0.33, 0.41, 0.49, 0.56] },
-                    "M1.1": { vc: {int:55, ext:35, mql:35, ar:30}, f: [0.11, 0.14, 0.18, 0.22, 0.27, 0.31] },
-                    "K1.1": { vc: {int:185, ext:115, mql:140, ar:100}, f: [0.34, 0.43, 0.55, 0.70, 0.85, 1.00] }
-                }
-            },
-            scd621: {
-                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
-                grupos: {
-                    "P1.1": { vc: {int:170, ext:155, mql:155, ar:150}, f: [0.13, 0.17, 0.22, 0.29, 0.36, 0.43] },
-                    "P1.2": { vc: {int:155, ext:130, mql:130, ar:120}, f: [0.16, 0.21, 0.36, 0.28, 0.45, 0.54] },
-                    "P2.1": { vc: {int:170, ext:145, mql:145, ar:130}, f: [0.15, 0.20, 0.34, 0.26, 0.43, 0.51] },
-                    "P2.2": { vc: {int:120, ext:100, mql:100, ar:90}, f: [0.13, 0.17, 0.21, 0.27, 0.34, 0.40] },
-                    "P3.1": { vc: {int:130, ext:110, mql:110, ar:100}, f: [0.13, 0.18, 0.30, 0.23, 0.39, 0.46] },
-                    "P3.2": { vc: {int:100, ext:95, mql:95, ar:85}, f: [0.12, 0.15, 0.20, 0.25, 0.32, 0.37] },
-                    "M1.1": { vc: {int:65, ext:40, mql:40, ar:35}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
-                    "K1.1": { vc: {int:150, ext:105, mql:105, ar:95}, f: [0.14, 0.21, 0.38, 0.28, 0.49, 0.59] }
-                }
-            }
-        };
-
-        function setRefrig(tipo) {
-            refrigAtual = tipo;
-            ['int', 'ext', 'mql', 'ar'].forEach(t => {
-                const btn = document.getElementById(`ref-${t}`);
-                if(t === tipo) {
-                    btn.className = "py-2 rounded bg-blue-600 text-white transition";
-                } else {
-                    btn.className = "py-2 rounded text-slate-400 hover:text-white transition";
-                }
-            });
-            atualizarCalculo();
-        }
-
-        function ajustarDiametro(val) {
-            const input = document.getElementById('diametro');
-            let atual = parseFloat(input.value) || 0;
-            atual = Math.max(1, Math.min(30, atual + val));
-            input.value = atual.toFixed(2);
-            atualizarCalculo();
-        }
-
-        function atualizarCalculo() {
-            const brocaKey = document.getElementById('broca').value;
-            const grupoKey = document.getElementById('grupo').value;
-            const diamPrat = parseFloat(document.getElementById('diametro').value) || 8;
-
-            const diametros = dados[brocaKey].diametros;
-            const grupoData = dados[brocaKey].grupos[grupoKey] || dados[brocaKey].grupos["P1.2"];
-            const avancos = grupoData.f;
-            const vc = grupoData.vc[refrigAtual] || grupoData.vc['int'];
-
-            let fCalc = 0;
-            let a = 0, b = 0;
-            let estadoTxt = "";
-
-            if (diametros.includes(diamPrat)) {
-                const idx = diametros.indexOf(diamPrat);
-                fCalc = avancos[idx];
-                estadoTxt = "Valor Exato Tabelado";
-                document.getElementById('badge-metodo').className = "text-[10px] bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded border border-emerald-700";
-                document.getElementById('badge-metodo').innerText = "Catálogo Direto";
-                document.getElementById('formula-txt').innerText = `f = ${fCalc.toFixed(4)} mm/rot (Tabelado)`;
-                document.getElementById('val-a').innerText = "-";
-                document.getElementById('val-b').innerText = "-";
-            } else {
-                let segEncontrado = false;
-                for (let i = 0; i < diametros.length - 1; i++) {
-                    const d1 = diametros[i], d2 = diametros[i+1];
-                    if (d1 <= diamPrat && diamPrat <= d2) {
-                        const f1 = avancos[i], f2 = avancos[i+1];
-                        b = (f2 - f1) / (d2 - d1);
-                        a = f1 - b * d1;
-                        fCalc = a + b * diamPrat;
-                        estadoTxt = "Dentro do intervalo consecutivo";
-                        segEncontrado = true;
-                        document.getElementById('badge-metodo').className = "text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700";
-                        document.getElementById('badge-metodo').innerText = "Interpolação Linear";
-                        document.getElementById('formula-txt').innerText = `f = ${a.toFixed(4)} + ${b.toFixed(4)} × ${diamPrat.toFixed(2)} = ${fCalc.toFixed(4)} mm/rot`;
-                        document.getElementById('val-a').innerText = `${a.toFixed(4)} mm/rot`;
-                        document.getElementById('val-b').innerText = `${b.toFixed(4)} mm/rot·mm`;
-                        break;
-                    }
-                }
-                if (!segEncontrado) {
-                    const i = diamPrat < diametros[0] ? 0 : diametros.length - 2;
-                    const d1 = diametros[i], d2 = diametros[i+1];
-                    const f1 = avancos[i], f2 = avancos[i+1];
-                    b = (f2 - f1) / (d2 - d1);
-                    a = f1 - b * d1;
-                    fCalc = a + b * diamPrat;
-                    document.getElementById('formula-txt').innerText = `Extrapolação: f = ${fCalc.toFixed(4)} mm/rot`;
-                    document.getElementById('val-a').innerText = `${a.toFixed(4)}`;
-                    document.getElementById('val-b').innerText = `${b.toFixed(4)}`;
-                }
-                document.getElementById('val-estado').innerText = estadoTxt;
-            }
-
-            const n = (vc * 1000) / (Math.PI * diamPrat);
-            const vf = n * fCalc;
-
-            document.getElementById('res-f').innerText = fCalc.toFixed(4);
-            document.getElementById('res-vc').innerText = vc;
-            document.getElementById('res-n').innerText = n.toFixed(0);
-            document.getElementById('res-vf').innerText = vf.toFixed(0);
-
-            const tbody = document.getElementById('tabela-ref');
-            tbody.innerHTML = '';
-            for(let i=0; i<diametros.length; i++) {
-                const d = diametros[i];
-                const fVal = avancos[i];
-                const nRef = (vc * 1000) / (Math.PI * d);
-                const vfRef = nRef * fVal;
-                const isHighlight = diamPrat === d ? 'bg-blue-900/30 text-blue-300 font-semibold' : '';
-                tbody.innerHTML += `<tr class="border-b border-slate-700/50 ${isHighlight}">
-                    <td class="py-2 px-1">Ø ${d.toFixed(2)} mm</td>
-                    <td class="py-2 px-1">${fVal.toFixed(3)}</td>
-                    <td class="py-2 px-1">${nRef.toFixed(0)} rpm</td>
-                    <td class="py-2 px-1">${vfRef.toFixed(0)} mm/min</td>
-                </tr>`;
-            }
-        }
-
-        window.onload = atualizarCalculo;
-    </script>
-</body>
-</html>
-"""
-
-components.html(html_content, height=900, scrolling=True)
+                    "P1.2": { vc: {int:105, ext:85, mql:85, ar:80}, f: [0.30, 0.37, 0.46, 0.
