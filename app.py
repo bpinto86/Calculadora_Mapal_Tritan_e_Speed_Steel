@@ -319,7 +319,7 @@ html_content = '''
             scd350: {
                 linha: 'basic',
                 temRefrigInt: false,
-                nome: 'ECU-Drill-Uni SCD350 (Sem Refrig. Interna)',
+                nome: 'SCD350 (ECU-Drill-Uni Sem Refrig. Interna)',
                 diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "M1.1", "M1.2", "M2.1", "M3.1", "K2.1", "K2.2", "K2.3"],
                 gruposNames: {
@@ -360,7 +360,7 @@ html_content = '''
             scd351: {
                 linha: 'basic',
                 temRefrigInt: true,
-                nome: 'ECU-Drill-Uni SCD351 (Com Refrig. Interna)',
+                nome: 'SCD351 (ECU-Drill-Uni Com Refrig. Interna)',
                 diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "M1.1", "M1.2", "M2.1", "M3.1", "K2.1", "K2.2", "K2.3"],
                 gruposNames: {
