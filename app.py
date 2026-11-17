@@ -48,6 +48,7 @@ html_content = """
                         <option value="P3.2">P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)</option>
                         <option value="P3.3">P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)</option>
                         <option value="M1.1">M1.1 — Aços inoxidáveis austeníticos (< 700 N/mm²)</option>
+						<option value="M1.2">M1.2 — Aços inoxidáveis, ferríticos/austeníticos (duplex) (< 1000 N/mm²)</option>
                         <option value="K1.1">K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)</option>
                         <option value="K2.1">K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)</option>
                     </select>
@@ -182,6 +183,7 @@ html_content = """
                     "P3.2": { vc: {int:70, ext:65, mql:65, ar:60}, f: [0.21, 0.26, 0.33, 0.41, 0.49, 0.56] },
                     "P3.3": { vc: {int:70, ext:50, mql:60, ar:45}, f: [0.18, 0.21, 0.26, 0.32, 0.38, 0.43] },
                     "M1.1": { vc: {int:55, ext:35, mql:35, ar:30}, f: [0.11, 0.14, 0.18, 0.22, 0.27, 0.31] },
+                    "M1.2": { vc: {int:50, ext:30, mql:30, ar:20}, f: [0.10, 0.12, 0.15, 0.19, 0.23, 0.27] },
                     "K1.1": { vc: {int:185, ext:115, mql:140, ar:100}, f: [0.34, 0.43, 0.55, 0.70, 0.85, 1.00] },
                     "K2.1": { vc: {int:115, ext:85, mql:85, ar:75}, f: [0.30, 0.38, 0.48, 0.61, 0.74, 0.86] }
                 }
@@ -198,6 +200,7 @@ html_content = """
                     "P3.2": { vc: {int:100, ext:95, mql:95, ar:85}, f: [0.12, 0.15, 0.20, 0.25, 0.32, 0.37] },
                     "P3.3": { vc: {int:100, ext:75, mql:85, ar:70}, f: [0.10, 0.12, 0.16, 0.20, 0.25, 0.29] },
                     "M1.1": { vc: {int:65, ext:40, mql:40, ar:35}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
+                    "M1.2": { vc: {int:60, ext:35, mql:35, ar:25}, f: [0.06, 0.08, 0.10, 0.13, 0.17, 0.20] },
                     "K1.1": { vc: {int:150, ext:105, mql:105, ar:95}, f: [0.14, 0.21, 0.38, 0.28, 0.49, 0.59] }
                 }
             }
