@@ -130,39 +130,21 @@ html_content = """
                     </div>
                 </div>
 
-                <!-- Tabela de Referência e Gráfico lado a lado ou empilhados -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Tabela de Referência -->
-                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
-                        <h3 class="text-xs font-semibold text-slate-400 uppercase">Tabela de Referência do Catálogo</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs">
-                               <thead>
-                                    <tr class="border-b border-slate-700 text-slate-400">
-                                        <th class="pb-2">Ø (mm)</th>
-                                        <th class="pb-2">f Cat.</th>
-                                        <th class="pb-2">RPM (n)</th>
-                                        <th class="pb-2">Avanço (v_f)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tabela-ref" class="divide-y divide-slate-700/50"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Gráfico Interativo SVG -->
-                    <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3 flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <h3 class="text-xs font-semibold text-slate-400 uppercase">Curva por Intervalos: Avanço (f) vs. Ø</h3>
-                            <span class="text-[10px] text-slate-400">SVG Interativo</span>
-                        </div>
-                        <div class="relative w-full h-48 bg-slate-900 rounded-lg border border-slate-700 p-2 flex items-center justify-center">
-                            <svg id="svg-grafico" class="w-full h-full" viewBox="0 0 400 180"></svg>
-                        </div>
-                        <div class="flex justify-center gap-4 text-[10px] text-slate-400">
-                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Catálogo</span>
-                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span> Calculado</span>
-                        </div>
+                <!-- Tabela de Referência -->
+                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase">Tabela de Referência do Catálogo MAPAL</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="border-b border-slate-700 text-slate-400">
+                                    <th class="pb-2">Diâmetro (Ø)</th>
+                                    <th class="pb-2">f Catálogo</th>
+                                    <th class="pb-2">Rotações (n)</th>
+                                    <th class="pb-2">Avanço (v_f)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-ref" class="divide-y divide-slate-700/50"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -285,7 +267,6 @@ html_content = """
             document.getElementById('res-n').innerText = n.toFixed(0);
             document.getElementById('res-vf').innerText = vf.toFixed(0);
 
-            // Tabela
             const tbody = document.getElementById('tabela-ref');
             tbody.innerHTML = '';
             for(let i=0; i<diametros.length; i++) {
@@ -295,62 +276,12 @@ html_content = """
                 const vfRef = nRef * fVal;
                 const isHighlight = diamPrat === d ? 'bg-blue-900/30 text-blue-300 font-semibold' : '';
                 tbody.innerHTML += `<tr class="border-b border-slate-700/50 ${isHighlight}">
-                    <td class="py-2 px-1">Ø ${d.toFixed(2)}</td>
+                    <td class="py-2 px-1">Ø ${d.toFixed(2)} mm</td>
                     <td class="py-2 px-1">${fVal.toFixed(3)}</td>
-                    <td class="py-2 px-1">${nRef.toFixed(0)}</td>
-                    <td class="py-2 px-1">${vfRef.toFixed(0)}</td>
+                    <td class="py-2 px-1">${nRef.toFixed(0)} rpm</td>
+                    <td class="py-2 px-1">${vfRef.toFixed(0)} mm/min</td>
                 </tr>`;
             }
-
-            // Renderizar Gráfico SVG
-            desenharGrafico(diametros, avancos, diamPrat, fCalc);
-        }
-
-        function desenharGrafico(diametros, avancos, diamPrat, fCalc) {
-            const svg = document.getElementById('svg-grafico');
-            const w = 400, h = 180;
-            const padding = 30;
-            
-            const minX = diametros[0] - 1;
-            const maxX = diametros[diametros.length - 1] + 1;
-            const minY = 0;
-            const maxY = Math.max(...avancos) * 1.2;
-
-            function scaleX(d) { return padding + (d - minX) / (maxX - minX) * (w - 2 * padding); }
-            function scaleY(f) { return h - padding - (f - minY) / (maxY - minY) * (h - 2 * padding); }
-
-            let svgHTML = `
-                <line x1="${padding}" y1="${h-padding}" x2="${w-padding}" y2="${h-padding}" stroke="#475569" stroke-width="1" />
-                <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${h-padding}" stroke="#475569" stroke-width="1" />
-            `;
-
-            // Linha da curva de catálogo
-            let pathD = "";
-            for(let i=0; i<diametros.length; i++) {
-                const cx = scaleX(diametros[i]);
-                const cy = scaleY(avancos[i]);
-                pathD += (i === 0 ? `M ${cx} ${cy}` : ` L ${cx} ${cy}`);
-            }
-            svgHTML += `<path d="${pathD}" fill="none" stroke="#3b82f6" stroke-width="2" />`;
-
-            // Pontos de Catálogo
-            for(let i=0; i<diametros.length; i++) {
-                const cx = scaleX(diametros[i]);
-                const cy = scaleY(avancos[i]);
-                svgHTML += `<circle cx="${cx}" cy="${cy}" r="4" fill="#3b82f6" />`;
-            }
-
-            // Ponto Calculado / Interpolação
-            const px = scaleX(diamPrat);
-            const py = scaleY(fCalc);
-            svgHTML += `
-                <line x1="${px}" y1="${h-padding}" x2="${px}" y2="${py}" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.5" />
-                <line x1="${padding}" y1="${py}" x2="${px}" y2="${py}" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.5" />
-                <circle cx="${px}" cy="${py}" r="5" fill="#f97316" />
-                <text x="${Math.min(px + 8, w - 70)}" y="${Math.max(py - 8, 20)}" fill="#f8fafc" font-size="10" font-weight="bold">Ø${diamPrat.toFixed(1)} : ${fCalc.toFixed(3)}</text>
-            `;
-
-            svg.innerHTML = svgHTML;
         }
 
         window.onload = atualizarCalculo;
