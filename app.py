@@ -36,19 +36,29 @@ html_content = """
                     </select>
                 </div>
 
-                <!-- Grupo de Materiais -->
+                <!-- Grupo de Materiais (Todos os grupos originais) -->
                 <div class="space-y-2">
                     <label class="text-xs font-medium text-slate-300">2. GRUPO DE MATERIAIS (MMG)</label>
                     <select id="grupo" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="atualizarCalculo()">
-                        <option value="P1.1">P1.1 — Aços estruturais, de corte livre (< 700 N/mm²)</option>
-                        <option value="P1.2" selected>P1.2 — Aços estruturais, de corte livre (< 1200 N/mm²)</option>
-                        <option value="P2.1">P2.1 — Aços de têmpera, nitretados, liga (< 900 N/mm²)</option>
-                        <option value="P2.2">P2.2 — Aços de têmpera, nitretados, liga (< 1400 N/mm²)</option>
+                        <option value="P1.1">P1.1 — Aços estruturais, corte livre (< 700 N/mm²)</option>
+                        <option value="P1.2" selected>P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)</option>
+                        <option value="P2.1">P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)</option>
+                        <option value="P2.2">P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)</option>
                         <option value="P3.1">P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)</option>
                         <option value="P3.2">P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)</option>
+                        <option value="P3.3">P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)</option>
                         <option value="M1.1">M1.1 — Aços inoxidáveis austeníticos (< 700 N/mm²)</option>
                         <option value="K1.1">K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)</option>
+                        <option value="K2.1">K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)</option>
                     </select>
+                </div>
+
+                <!-- Checkbox regra de liga MAPAL (Avança automaticamente grupo) -->
+                <div class="bg-slate-900 p-3 rounded-lg border border-slate-700/80 space-y-1">
+                    <label class="flex items-start gap-2 cursor-pointer text-xs text-slate-300">
+                        <input type="checkbox" id="liga-check" class="mt-0.5 rounded bg-slate-800 border-slate-600 text-blue-600 focus:ring-0" onchange="atualizarCalculo()">
+                        <span><strong>Soma de elementos de liga (Cr, Mo, Ni, V, W) > 8%</strong><br><span class="text-[10px] text-amber-400">Regra MAPAL: avança automaticamente para o grupo seguinte.</span></span>
+                    </label>
                 </div>
 
                 <!-- Refrigeração -->
@@ -162,6 +172,7 @@ html_content = """
         const dados = {
             scd661: {
                 diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
+                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "M1.1", "K1.1", "K2.1"],
                 grupos: {
                     "P1.1": { vc: {int:115, ext:105, mql:105, ar:100}, f: [0.24, 0.30, 0.37, 0.46, 0.56, 0.65] },
                     "P1.2": { vc: {int:105, ext:85, mql:85, ar:80}, f: [0.30, 0.37, 0.46, 0.58, 0.70, 0.81] },
@@ -169,12 +180,15 @@ html_content = """
                     "P2.2": { vc: {int:80, ext:70, mql:70, ar:60}, f: [0.24, 0.29, 0.36, 0.44, 0.53, 0.61] },
                     "P3.1": { vc: {int:85, ext:75, mql:75, ar:70}, f: [0.25, 0.31, 0.39, 0.49, 0.60, 0.69] },
                     "P3.2": { vc: {int:70, ext:65, mql:65, ar:60}, f: [0.21, 0.26, 0.33, 0.41, 0.49, 0.56] },
+                    "P3.3": { vc: {int:70, ext:50, mql:60, ar:45}, f: [0.18, 0.21, 0.26, 0.32, 0.38, 0.43] },
                     "M1.1": { vc: {int:55, ext:35, mql:35, ar:30}, f: [0.11, 0.14, 0.18, 0.22, 0.27, 0.31] },
-                    "K1.1": { vc: {int:185, ext:115, mql:140, ar:100}, f: [0.34, 0.43, 0.55, 0.70, 0.85, 1.00] }
+                    "K1.1": { vc: {int:185, ext:115, mql:140, ar:100}, f: [0.34, 0.43, 0.55, 0.70, 0.85, 1.00] },
+                    "K2.1": { vc: {int:115, ext:85, mql:85, ar:75}, f: [0.30, 0.38, 0.48, 0.61, 0.74, 0.86] }
                 }
             },
             scd621: {
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "M1.1", "K1.1"],
                 grupos: {
                     "P1.1": { vc: {int:170, ext:155, mql:155, ar:150}, f: [0.13, 0.17, 0.22, 0.29, 0.36, 0.43] },
                     "P1.2": { vc: {int:155, ext:130, mql:130, ar:120}, f: [0.16, 0.21, 0.36, 0.28, 0.45, 0.54] },
@@ -182,6 +196,7 @@ html_content = """
                     "P2.2": { vc: {int:120, ext:100, mql:100, ar:90}, f: [0.13, 0.17, 0.21, 0.27, 0.34, 0.40] },
                     "P3.1": { vc: {int:130, ext:110, mql:110, ar:100}, f: [0.13, 0.18, 0.30, 0.23, 0.39, 0.46] },
                     "P3.2": { vc: {int:100, ext:95, mql:95, ar:85}, f: [0.12, 0.15, 0.20, 0.25, 0.32, 0.37] },
+                    "P3.3": { vc: {int:100, ext:75, mql:85, ar:70}, f: [0.10, 0.12, 0.16, 0.20, 0.25, 0.29] },
                     "M1.1": { vc: {int:65, ext:40, mql:40, ar:35}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
                     "K1.1": { vc: {int:150, ext:105, mql:105, ar:95}, f: [0.14, 0.21, 0.38, 0.28, 0.49, 0.59] }
                 }
@@ -211,11 +226,23 @@ html_content = """
 
         function atualizarCalculo() {
             const brocaKey = document.getElementById('broca').value;
-            const grupoKey = document.getElementById('grupo').value;
+            let grupoKey = document.getElementById('grupo').value;
+            const ligaChecked = document.getElementById('liga-check').checked;
             const diamPrat = parseFloat(document.getElementById('diametro').value) || 8;
 
-            const diametros = dados[brocaKey].diametros;
-            const grupoData = dados[brocaKey].grupos[grupoKey] || dados[brocaKey].grupos["P1.2"];
+            const toolData = dados[brocaKey];
+            const diametros = toolData.diametros;
+            const gruposList = toolData.gruposList;
+
+            // Regra MAPAL: avança automaticamente para o grupo seguinte se liga > 8%
+            if (ligaChecked) {
+                let idxG = gruposList.indexOf(grupoKey);
+                if (idxG !== -1 && idxG < gruposList.length - 1) {
+                    grupoKey = gruposList[idxG + 1];
+                }
+            }
+
+            const grupoData = toolData.grupos[grupoKey] || toolData.grupos["P1.2"];
             const avancos = grupoData.f;
             const vc = grupoData.vc[refrigAtual] || grupoData.vc['int'];
 
