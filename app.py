@@ -87,7 +87,7 @@ html_content = """
 
                 <!-- Controlos de Ajuste Percentual (Vc e f) -->
                 <div class="space-y-3 pt-2 border-t border-slate-700">
-                    <label class="text-xs font-medium text-blue-400 uppercase tracking-wider">Ajustes Manuais / Percentuais</label>
+                    <label class="text-xs font-medium text-blue-400 uppercase tracking-wider">Ajustes Percentuais (%)</label>
                     
                     <!-- Ajuste Vc (%) -->
                     <div class="space-y-1">
@@ -123,21 +123,44 @@ html_content = """
             <div class="lg:col-span-8 space-y-6">
                 <!-- Grid de Métricas CNC -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                        <span class="text-xs text-slate-400">Avanço / Rotação (f)</span>
-                        <div class="text-2xl font-bold text-white mt-1" id="res-f">0.3850</div>
-                        <span class="text-[10px] text-blue-400">mm/rot</span>
+                    <!-- Cartão Avanço / Rotação (f) com Cadeado -->
+                    <div id="card-f" class="bg-slate-800 p-4 rounded-xl border border-slate-700 transition-colors">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-slate-400">Avanço / Rotação (f)</span>
+                            <button type="button" onclick="toggleLock('f')" id="btn-lock-f" title="Desbloquear para edição manual" class="text-sm px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700 hover:border-slate-500 transition">
+                                🔒
+                            </button>
+                        </div>
+                        <input type="number" id="input-f" value="0.3850" step="0.005" min="0.001" readonly oninput="onManualInput('f')" class="w-full bg-transparent text-2xl font-bold text-white mt-1 focus:outline-none rounded px-1 -ml-1">
+                        <div class="flex justify-between items-center mt-0.5">
+                            <span class="text-[10px] text-blue-400">mm/rot</span>
+                            <span id="status-f" class="text-[10px] text-slate-500">Auto</span>
+                        </div>
                     </div>
-                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                        <span class="text-xs text-slate-400">Velocidade de Corte (Vc)</span>
-                        <div class="text-2xl font-bold text-white mt-1" id="res-vc">105</div>
-                        <span class="text-[10px] text-slate-400">m/min</span>
+
+                    <!-- Cartão Velocidade de Corte (Vc) com Cadeado -->
+                    <div id="card-vc" class="bg-slate-800 p-4 rounded-xl border border-slate-700 transition-colors">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-slate-400">Velocidade de Corte (Vc)</span>
+                            <button type="button" onclick="toggleLock('vc')" id="btn-lock-vc" title="Desbloquear para edição manual" class="text-sm px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700 hover:border-slate-500 transition">
+                                🔒
+                            </button>
+                        </div>
+                        <input type="number" id="input-vc" value="105" step="1" min="1" readonly oninput="onManualInput('vc')" class="w-full bg-transparent text-2xl font-bold text-white mt-1 focus:outline-none rounded px-1 -ml-1">
+                        <div class="flex justify-between items-center mt-0.5">
+                            <span class="text-[10px] text-slate-400">m/min</span>
+                            <span id="status-vc" class="text-[10px] text-slate-500">Auto</span>
+                        </div>
                     </div>
+
+                    <!-- Rotações (Spindle) -->
                     <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
                         <span class="text-xs text-slate-400">Rotações (Spindle)</span>
                         <div class="text-2xl font-bold text-white mt-1" id="res-n">4178</div>
                         <span class="text-[10px] text-slate-400">rpm</span>
                     </div>
+
+                    <!-- Avanço de Trabalho -->
                     <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
                         <span class="text-xs text-slate-400">Avanço de Trabalho</span>
                         <div class="text-2xl font-bold text-white mt-1" id="res-vf">1608</div>
@@ -219,6 +242,8 @@ html_content = """
         let refrigAtual = 'int';
         let vcPct = 0;
         let fPct = 0;
+        let fUnlocked = false;
+        let vcUnlocked = false;
 
         const dados = {
             scd661: {
@@ -253,6 +278,64 @@ html_content = """
                 }
             }
         };
+
+        function toggleLock(tipo) {
+            if (tipo === 'f') {
+                fUnlocked = !fUnlocked;
+                const input = document.getElementById('input-f');
+                const btn = document.getElementById('btn-lock-f');
+                const card = document.getElementById('card-f');
+                const status = document.getElementById('status-f');
+                
+                input.readOnly = !fUnlocked;
+                if (fUnlocked) {
+                    btn.innerText = '🔓';
+                    btn.title = 'Bloquear e voltar ao cálculo automático';
+                    card.className = 'bg-slate-800 p-4 rounded-xl border border-amber-500/80 transition-colors';
+                    input.className = 'w-full bg-slate-900 text-2xl font-bold text-amber-300 mt-1 focus:outline-none rounded px-1.5 py-0.5 -ml-1 border border-amber-500/40';
+                    status.innerText = 'Manual';
+                    status.className = 'text-[10px] text-amber-400 font-semibold';
+                    input.focus();
+                } else {
+                    btn.innerText = '🔒';
+                    btn.title = 'Desbloquear para edição manual';
+                    card.className = 'bg-slate-800 p-4 rounded-xl border border-slate-700 transition-colors';
+                    input.className = 'w-full bg-transparent text-2xl font-bold text-white mt-1 focus:outline-none rounded px-1 -ml-1';
+                    status.innerText = 'Auto';
+                    status.className = 'text-[10px] text-slate-500';
+                    atualizarCalculo();
+                }
+            } else if (tipo === 'vc') {
+                vcUnlocked = !vcUnlocked;
+                const input = document.getElementById('input-vc');
+                const btn = document.getElementById('btn-lock-vc');
+                const card = document.getElementById('card-vc');
+                const status = document.getElementById('status-vc');
+                
+                input.readOnly = !vcUnlocked;
+                if (vcUnlocked) {
+                    btn.innerText = '🔓';
+                    btn.title = 'Bloquear e voltar ao cálculo automático';
+                    card.className = 'bg-slate-800 p-4 rounded-xl border border-amber-500/80 transition-colors';
+                    input.className = 'w-full bg-slate-900 text-2xl font-bold text-amber-300 mt-1 focus:outline-none rounded px-1.5 py-0.5 -ml-1 border border-amber-500/40';
+                    status.innerText = 'Manual';
+                    status.className = 'text-[10px] text-amber-400 font-semibold';
+                    input.focus();
+                } else {
+                    btn.innerText = '🔒';
+                    btn.title = 'Desbloquear para edição manual';
+                    card.className = 'bg-slate-800 p-4 rounded-xl border border-slate-700 transition-colors';
+                    input.className = 'w-full bg-transparent text-2xl font-bold text-white mt-1 focus:outline-none rounded px-1 -ml-1';
+                    status.innerText = 'Auto';
+                    status.className = 'text-[10px] text-slate-500';
+                    atualizarCalculo();
+                }
+            }
+        }
+
+        function onManualInput(tipo) {
+            atualizarCalculo();
+        }
 
         function setRefrig(tipo) {
             refrigAtual = tipo;
@@ -331,7 +414,13 @@ html_content = """
             const avancos = grupoData.f;
             let vcBase = grupoData.vc[refrigAtual] || grupoData.vc['int'];
 
-            let vcFinal = vcBase * (1 + vcPct / 100);
+            let vcFinal = 0;
+            if (vcUnlocked) {
+                vcFinal = parseFloat(document.getElementById('input-vc').value) || 0;
+            } else {
+                vcFinal = vcBase * (1 + vcPct / 100);
+                document.getElementById('input-vc').value = vcFinal.toFixed(0);
+            }
 
             let fBase = 0;
             let a = 0, b = 0;
@@ -376,13 +465,17 @@ html_content = """
                 document.getElementById('val-estado').innerText = estadoTxt;
             }
 
-            let fFinal = fBase * (1 + fPct / 100);
+            let fFinal = 0;
+            if (fUnlocked) {
+                fFinal = parseFloat(document.getElementById('input-f').value) || 0;
+            } else {
+                fFinal = fBase * (1 + fPct / 100);
+                document.getElementById('input-f').value = fFinal.toFixed(4);
+            }
 
             const n = (vcFinal * 1000) / (Math.PI * diamPrat);
             const vf = n * fFinal;
 
-            document.getElementById('res-f').innerText = fFinal.toFixed(4);
-            document.getElementById('res-vc').innerText = vcFinal.toFixed(0);
             document.getElementById('res-n').innerText = n.toFixed(0);
             document.getElementById('res-vf').innerText = vf.toFixed(0);
 
@@ -413,7 +506,7 @@ html_content = """
             const minX = diametros[0] - 1;
             const maxX = diametros[diametros.length - 1] + 1;
             const minY = 0;
-            const maxY = Math.max(...avancos) * 1.2;
+            const maxY = Math.max(...avancos, fFinal) * 1.2;
 
             function scaleX(d) { return padding + (d - minX) / (maxX - minX) * (w - 2 * padding); }
             function scaleY(f) { return h - padding - (f - minY) / (maxY - minY) * (h - 2 * padding); }
