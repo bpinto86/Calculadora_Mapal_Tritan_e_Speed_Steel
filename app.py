@@ -1,7 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="Parâmetros de Corte MAPAL catáolo Bore Machining", page_icon="⚙️", layout="wide")
+st.set_page_config(page_title="Parâmetros de Corte MAPAL", page_icon="⚙️", layout="wide")
 
 html_content = """
 <!DOCTYPE html>
