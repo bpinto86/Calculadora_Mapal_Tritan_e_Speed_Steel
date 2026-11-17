@@ -36,7 +36,7 @@ html_content = """
                     </select>
                 </div>
 
-                <!-- Grupo de Materiais (Todos os grupos originais) -->
+                <!-- Grupo de Materiais -->
                 <div class="space-y-2">
                     <label class="text-xs font-medium text-slate-300">2. GRUPO DE MATERIAIS (MMG)</label>
                     <select id="grupo" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="atualizarCalculo()">
@@ -48,13 +48,12 @@ html_content = """
                         <option value="P3.2">P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)</option>
                         <option value="P3.3">P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)</option>
                         <option value="M1.1">M1.1 — Aços inoxidáveis austeníticos (< 700 N/mm²)</option>
-						<option value="M1.2">M1.2 — Aços inoxidáveis, ferríticos/austeníticos (duplex) (< 1000 N/mm²)</option>
                         <option value="K1.1">K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)</option>
                         <option value="K2.1">K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)</option>
                     </select>
                 </div>
 
-                <!-- Checkbox regra de liga MAPAL (Avança automaticamente grupo) -->
+                <!-- Checkbox regra de liga MAPAL -->
                 <div class="bg-slate-900 p-3 rounded-lg border border-slate-700/80 space-y-1">
                     <label class="flex items-start gap-2 cursor-pointer text-xs text-slate-300">
                         <input type="checkbox" id="liga-check" class="mt-0.5 rounded bg-slate-800 border-slate-600 text-blue-600 focus:ring-0" onchange="atualizarCalculo()">
@@ -85,6 +84,39 @@ html_content = """
                         <button onclick="ajustarDiametro(0.5)" class="bg-slate-700 hover:bg-slate-600 px-3 py-2 rounded-lg text-white font-bold">+</button>
                     </div>
                 </div>
+
+                <!-- Controlos de Ajuste Percentual (Vc e f) -->
+                <div class="space-y-3 pt-2 border-t border-slate-700">
+                    <label class="text-xs font-medium text-blue-400 uppercase tracking-wider">Ajustes Manuais / Percentuais</label>
+                    
+                    <!-- Ajuste Vc (%) -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs text-slate-300">
+                            <span>Ajuste Vc (%):</span>
+                            <span id="vc-pct-val" class="font-bold text-cyan-400">0%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="ajustarPct('vc', -1)" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded text-white text-xs font-bold">-1%</button>
+                            <input type="range" id="vc-slider" min="-50" max="50" value="0" step="1" class="w-full accent-blue-500" oninput="onSliderVc()">
+                            <button onclick="ajustarPct('vc', 1)" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded text-white text-xs font-bold">+1%</button>
+                            <button onclick="resetPct('vc')" class="bg-slate-900 border border-slate-600 text-slate-400 hover:text-white px-2 py-1 rounded text-xs">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Ajuste f (%) -->
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs text-slate-300">
+                            <span>Ajuste Avanço f (%):</span>
+                            <span id="f-pct-val" class="font-bold text-cyan-400">0%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="ajustarPct('f', -1)" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded text-white text-xs font-bold">-1%</button>
+                            <input type="range" id="f-slider" min="-50" max="50" value="0" step="1" class="w-full accent-blue-500" oninput="onSliderF()">
+                            <button onclick="ajustarPct('f', 1)" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded text-white text-xs font-bold">+1%</button>
+                            <button onclick="resetPct('f')" class="bg-slate-900 border border-slate-600 text-slate-400 hover:text-white px-2 py-1 rounded text-xs">Reset</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Resultados e Indicadores (Direita) -->
@@ -92,12 +124,12 @@ html_content = """
                 <!-- Grid de Métricas CNC -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                        <span class="text-xs text-slate-400">Avanço / Rotação</span>
+                        <span class="text-xs text-slate-400">Avanço / Rotação (f)</span>
                         <div class="text-2xl font-bold text-white mt-1" id="res-f">0.3850</div>
                         <span class="text-[10px] text-blue-400">mm/rot</span>
                     </div>
                     <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                        <span class="text-xs text-slate-400">Velocidade de Corte</span>
+                        <span class="text-xs text-slate-400">Velocidade de Corte (Vc)</span>
                         <div class="text-2xl font-bold text-white mt-1" id="res-vc">105</div>
                         <span class="text-[10px] text-slate-400">m/min</span>
                     </div>
@@ -161,7 +193,7 @@ html_content = """
                         <div class="flex justify-center gap-4 text-[10px] text-slate-400">
                             <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span> Catálogo</span>
                             <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span> Calculado</span>
-                                     </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -185,6 +217,9 @@ html_content = """
 
     <script>
         let refrigAtual = 'int';
+        let vcPct = 0;
+        let fPct = 0;
+
         const dados = {
             scd661: {
                 diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
@@ -198,7 +233,6 @@ html_content = """
                     "P3.2": { vc: {int:70, ext:65, mql:65, ar:60}, f: [0.21, 0.26, 0.33, 0.41, 0.49, 0.56] },
                     "P3.3": { vc: {int:70, ext:50, mql:60, ar:45}, f: [0.18, 0.21, 0.26, 0.32, 0.38, 0.43] },
                     "M1.1": { vc: {int:55, ext:35, mql:35, ar:30}, f: [0.11, 0.14, 0.18, 0.22, 0.27, 0.31] },
-                    "M1.2": { vc: {int:50, ext:30, mql:30, ar:20}, f: [0.10, 0.12, 0.15, 0.19, 0.23, 0.27] },
                     "K1.1": { vc: {int:185, ext:115, mql:140, ar:100}, f: [0.34, 0.43, 0.55, 0.70, 0.85, 1.00] },
                     "K2.1": { vc: {int:115, ext:85, mql:85, ar:75}, f: [0.30, 0.38, 0.48, 0.61, 0.74, 0.86] }
                 }
@@ -208,15 +242,14 @@ html_content = """
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "M1.1", "K1.1"],
                 grupos: {
                     "P1.1": { vc: {int:170, ext:155, mql:155, ar:150}, f: [0.13, 0.17, 0.22, 0.29, 0.36, 0.43] },
-                    "P1.2": { vc: {int:155, ext:130, mql:130, ar:120}, f: [0.16, 0.21, 0.28, 0.36, 0.45, 0.54] },
-                    "P2.1": { vc: {int:170, ext:145, mql:145, ar:130}, f: [0.15, 0.20, 0.26, 0.34, 0.43, 0.51] },
+                    "P1.2": { vc: {int:155, ext:130, mql:130, ar:120}, f: [0.16, 0.21, 0.36, 0.28, 0.45, 0.54] },
+                    "P2.1": { vc: {int:170, ext:145, mql:145, ar:130}, f: [0.15, 0.20, 0.34, 0.26, 0.43, 0.51] },
                     "P2.2": { vc: {int:120, ext:100, mql:100, ar:90}, f: [0.13, 0.17, 0.21, 0.27, 0.34, 0.40] },
-                    "P3.1": { vc: {int:130, ext:110, mql:110, ar:100}, f: [0.13, 0.18, 0.23, 0.30, 0.39, 0.46] },
+                    "P3.1": { vc: {int:130, ext:110, mql:110, ar:100}, f: [0.13, 0.18, 0.30, 0.23, 0.39, 0.46] },
                     "P3.2": { vc: {int:100, ext:95, mql:95, ar:85}, f: [0.12, 0.15, 0.20, 0.25, 0.32, 0.37] },
                     "P3.3": { vc: {int:100, ext:75, mql:85, ar:70}, f: [0.10, 0.12, 0.16, 0.20, 0.25, 0.29] },
                     "M1.1": { vc: {int:65, ext:40, mql:40, ar:35}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
-                    "M1.2": { vc: {int:60, ext:35, mql:35, ar:25}, f: [0.06, 0.08, 0.10, 0.13, 0.17, 0.20] },
-                    "K1.1": { vc: {int:150, ext:105, mql:105, ar:95}, f: [0.14, 0.21, 0.28, 0.38, 0.49, 0.59] }
+                    "K1.1": { vc: {int:150, ext:105, mql:105, ar:95}, f: [0.14, 0.21, 0.38, 0.28, 0.49, 0.59] }
                 }
             }
         };
@@ -242,17 +275,51 @@ html_content = """
             atualizarCalculo();
         }
 
+        function ajustarPct(tipo, valor) {
+            if (tipo === 'vc') {
+                vcPct = Math.max(-50, Math.min(50, vcPct + valor));
+                document.getElementById('vc-slider').value = vcPct;
+            } else {
+                fPct = Math.max(-50, Math.min(50, fPct + valor));
+                document.getElementById('f-slider').value = fPct;
+            }
+            atualizarCalculo();
+        }
+
+        function onSliderVc() {
+            vcPct = parseInt(document.getElementById('vc-slider').value);
+            atualizarCalculo();
+        }
+
+        function onSliderF() {
+            fPct = parseInt(document.getElementById('f-slider').value);
+            atualizarCalculo();
+        }
+
+        function resetPct(tipo) {
+            if (tipo === 'vc') {
+                vcPct = 0;
+                document.getElementById('vc-slider').value = 0;
+            } else {
+                fPct = 0;
+                document.getElementById('f-slider').value = 0;
+            }
+            atualizarCalculo();
+        }
+
         function atualizarCalculo() {
             const brocaKey = document.getElementById('broca').value;
             let grupoKey = document.getElementById('grupo').value;
             const ligaChecked = document.getElementById('liga-check').checked;
             const diamPrat = parseFloat(document.getElementById('diametro').value) || 8;
 
+            document.getElementById('vc-pct-val').innerText = (vcPct > 0 ? `+${vcPct}%` : `${vcPct}%`);
+            document.getElementById('f-pct-val').innerText = (fPct > 0 ? `+${fPct}%` : `${fPct}%`);
+
             const toolData = dados[brocaKey];
             const diametros = toolData.diametros;
             const gruposList = toolData.gruposList;
 
-            // Regra MAPAL: avança automaticamente para o grupo seguinte se liga > 8%
             if (ligaChecked) {
                 let idxG = gruposList.indexOf(grupoKey);
                 if (idxG !== -1 && idxG < gruposList.length - 1) {
@@ -262,128 +329,18 @@ html_content = """
 
             const grupoData = toolData.grupos[grupoKey] || toolData.grupos["P1.2"];
             const avancos = grupoData.f;
-            const vc = grupoData.vc[refrigAtual] || grupoData.vc['int'];
+            let vcBase = grupoData.vc[refrigAtual] || grupoData.vc['int'];
 
-            let fCalc = 0;
+            let vcFinal = vcBase * (1 + vcPct / 100);
+
+            let fBase = 0;
             let a = 0, b = 0;
             let estadoTxt = "";
 
             if (diametros.includes(diamPrat)) {
                 const idx = diametros.indexOf(diamPrat);
-                fCalc = avancos[idx];
+                fBase = avancos[idx];
                 estadoTxt = "Valor Exato Tabelado";
                 document.getElementById('badge-metodo').className = "text-[10px] bg-emerald-900/60 text-emerald-300 px-2 py-0.5 rounded border border-emerald-700";
                 document.getElementById('badge-metodo').innerText = "Catálogo Direto";
                 document.getElementById('val-a').innerText = "-";
-                document.getElementById('val-b').innerText = "-";
-            } else {
-                let segEncontrado = false;
-                for (let i = 0; i < diametros.length - 1; i++) {
-                    const d1 = diametros[i], d2 = diametros[i+1];
-                    if (d1 <= diamPrat && diamPrat <= d2) {
-                        const f1 = avancos[i], f2 = avancos[i+1];
-                        b = (f2 - f1) / (d2 - d1);
-                        a = f1 - b * d1;
-                        fCalc = a + b * diamPrat;
-                        estadoTxt = "Dentro do intervalo consecutivo";
-                        segEncontrado = true;
-                        document.getElementById('badge-metodo').className = "text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700";
-                        document.getElementById('badge-metodo').innerText = "Interpolação Linear";
-                        document.getElementById('val-a').innerText = `${a.toFixed(4)} mm/rot`;
-                        document.getElementById('val-b').innerText = `${b.toFixed(4)} mm/rot·mm`;
-                        break;
-                    }
-                }
-                if (!segEncontrado) {
-                    const i = diamPrat < diametros[0] ? 0 : diametros.length - 2;
-                    const d1 = diametros[i], d2 = diametros[i+1];
-                    const f1 = avancos[i], f2 = avancos[i+1];
-                    b = (f2 - f1) / (d2 - d1);
-                    a = f1 - b * d1;
-                    fCalc = a + b * diamPrat;
-                    document.getElementById('val-a').innerText = `${a.toFixed(4)}`;
-                    document.getElementById('val-b').innerText = `${b.toFixed(4)}`;
-                }
-                document.getElementById('val-estado').innerText = estadoTxt;
-            }
-
-            const n = (vc * 1000) / (Math.PI * diamPrat);
-            const vf = n * fCalc;
-
-            document.getElementById('res-f').innerText = fCalc.toFixed(4);
-            document.getElementById('res-vc').innerText = vc;
-            document.getElementById('res-n').innerText = n.toFixed(0);
-            document.getElementById('res-vf').innerText = vf.toFixed(0);
-
-            // Tabela
-            const tbody = document.getElementById('tabela-ref');
-            tbody.innerHTML = '';
-            for(let i=0; i<diametros.length; i++) {
-                const d = diametros[i];
-                const fVal = avancos[i];
-                const nRef = (vc * 1000) / (Math.PI * d);
-                const vfRef = nRef * fVal;
-                const isHighlight = diamPrat === d ? 'bg-blue-900/30 text-blue-300 font-semibold' : '';
-                tbody.innerHTML += `<tr class="border-b border-slate-700/50 ${isHighlight}">
-                    <td class="py-2 px-1">Ø ${d.toFixed(2)}</td>
-                    <td class="py-2 px-1">${fVal.toFixed(3)}</td>
-                    <td class="py-2 px-1">${nRef.toFixed(0)}</td>
-                    <td class="py-2 px-1">${vfRef.toFixed(0)}</td>
-                </tr>`;
-            }
-
-            // Renderizar Gráfico SVG
-            desenharGrafico(diametros, avancos, diamPrat, fCalc);
-        }
-
-        function desenharGrafico(diametros, avancos, diamPrat, fCalc) {
-            const svg = document.getElementById('svg-grafico');
-            const w = 400, h = 180;
-            const padding = 30;
-            
-            const minX = diametros[0] - 1;
-            const maxX = diametros[diametros.length - 1] + 1;
-            const minY = 0;
-            const maxY = Math.max(...avancos) * 1.2;
-
-            function scaleX(d) { return padding + (d - minX) / (maxX - minX) * (w - 2 * padding); }
-            function scaleY(f) { return h - padding - (f - minY) / (maxY - minY) * (h - 2 * padding); }
-
-            let svgHTML = `
-                <line x1="${padding}" y1="${h-padding}" x2="${w-padding}" y2="${h-padding}" stroke="#475569" stroke-width="1" />
-                <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${h-padding}" stroke="#475569" stroke-width="1" />
-            `;
-
-            let pathD = "";
-            for(let i=0; i<diametros.length; i++) {
-                const cx = scaleX(diametros[i]);
-                const cy = scaleY(avancos[i]);
-                pathD += (i === 0 ? `M ${cx} ${cy}` : ` L ${cx} ${cy}`);
-            }
-            svgHTML += `<path d="${pathD}" fill="none" stroke="#3b82f6" stroke-width="2" />`;
-
-            for(let i=0; i<diametros.length; i++) {
-                const cx = scaleX(diametros[i]);
-                const cy = scaleY(avancos[i]);
-                svgHTML += `<circle cx="${cx}" cy="${cy}" r="4" fill="#3b82f6" />`;
-            }
-
-            const px = scaleX(diamPrat);
-            const py = scaleY(fCalc);
-            svgHTML += `
-                <line x1="${px}" y1="${h-padding}" x2="${px}" y2="${py}" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.5" />
-                <line x1="${padding}" y1="${py}" x2="${px}" y2="${py}" stroke="#f97316" stroke-dasharray="3,3" stroke-width="1.5" />
-                <circle cx="${px}" cy="${py}" r="5" fill="#f97316" />
-                <text x="${Math.min(px + 8, w - 70)}" y="${Math.max(py - 8, 20)}" fill="#f8fafc" font-size="10" font-weight="bold">Ø${diamPrat.toFixed(1)} : ${fCalc.toFixed(3)}</text>
-            `;
-
-            svg.innerHTML = svgHTML;
-        }
-
-        window.onload = atualizarCalculo;
-    </script>
-</body>
-</html>
-"""
-
-components.html(html_content, height=900, scrolling=True)
