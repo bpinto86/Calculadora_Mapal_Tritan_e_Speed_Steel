@@ -31,10 +31,6 @@ html_content = '''
                 <div class="space-y-2">
                     <label class="text-xs font-medium text-slate-300">1. BROCA DE METAL DURO INTEGRAL</label>
                     <select id="broca" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="mudarBroca()">
-                        <option value="scd601">SCD601 (MEGA-Drill-Steel-Plus - Com Refrig. Interna)</option>
-                        <option value="scd600">SCD600 (MEGA-Drill-Steel-Plus - Sem Refrig. Interna)</option>
-                        <option value="scd351">SCD351 (ECU-Drill-Uni - Com Refrig. Interna)</option>
-                        <option value="scd350">SCD350 (ECU-Drill-Uni - Sem Refrig. Interna)</option>
                         <option value="scd231">SCD231 (MEGA 180° Drill)</option>
                         <option value="scd661">SCD661 (Tritan-Drill-Steel)</option>
                         <option value="scd621">SCD621 (MEGA-Speed-Drill-Steel)</option>
@@ -68,7 +64,7 @@ html_content = '''
                         <button type="button" onclick="setRefrig('mql')" id="ref-mql" class="py-2 rounded text-slate-400 hover:text-white transition">MQL</button>
                         <button type="button" onclick="setRefrig('ar')" id="ref-ar" class="py-2 rounded text-slate-400 hover:text-white transition">Ar</button>
                     </div>
-                    <p id="aviso-refrig" class="text-[10px] text-amber-400 hidden">Nota: Este modelo não permite refrigeração interna.</p>
+                    <p id="aviso-refrig" class="text-[10px] text-amber-400 hidden">Nota: A broca SCD360 não permite refrigeração interna.</p>
                 </div>
 
                 <!-- Diâmetro Pretendido -->
@@ -245,170 +241,6 @@ html_content = '''
         let vcUnlocked = false;
 
         const dados = {
-            scd601: {
-                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
-                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P4.1", "P5.1", "P6.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2", "H1.1", "H1.2"],
-                gruposNames: {
-                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
-                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
-                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
-                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
-                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
-                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
-                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
-                    "P4.1": "P4.1 — Aços inoxidáveis ferríticos e martensíticos",
-                    "P5.1": "P5.1 — Aço fundido",
-                    "P6.1": "P6.1 — Aço fundido inoxidável ferrítico/martensítico",
-                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
-                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
-                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
-                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
-                    "K3.1": "K3.1 — Ferro fundido esferoidal GJV / Mableável GJM (< 500 N/mm²)",
-                    "K3.2": "K3.2 — Ferro fundido esferoidal GJV / Mableável GJM (> 500 N/mm²)",
-                    "H1.1": "H1.1 — Aço endurecido / fundido (< 44 HRC)",
-                    "H1.2": "H1.2 — Aço endurecido / fundido (< 55 HRC)"
-                },
-                grupos: {
-                    "P1.1": { vc: {int:110, ext:100, mql:100, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.28, 0.33] },
-                    "P1.2": { vc: {int:100, ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.21, 0.27, 0.34, 0.41] },
-                    "P2.1": { vc: {int:110, ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
-                    "P2.2": { vc: {int:75, ext:65, mql:65, ar:0}, f: [0.10, 0.13, 0.16, 0.21, 0.26, 0.30] },
-                    "P3.1": { vc: {int:85, ext:70, mql:70, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.29, 0.35] },
-                    "P3.2": { vc: {int:65, ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "P3.3": { vc: {int:65, ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
-                    "P4.1": { vc: {int:65, ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
-                    "P5.1": { vc: {int:110, ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
-                    "P6.1": { vc: {int:65, ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
-                    "K1.1": { vc: {int:120, ext:85, mql:85, ar:85}, f: [0.13, 0.19, 0.26, 0.35, 0.45, 0.54] },
-                    "K2.1": { vc: {int:160, ext:100, mql:120, ar:120}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
-                    "K2.2": { vc: {int:100, ext:75, mql:75, ar:0}, f: [0.12, 0.16, 0.22, 0.28, 0.36, 0.43] },
-                    "K2.3": { vc: {int:60, ext:40, mql:50, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "K3.1": { vc: {int:90, ext:80, mql:80, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
-                    "K3.2": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] },
-                    "H1.1": { vc: {int:90, ext:90, mql:90, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "H1.2": { vc: {int:25, ext:25, mql:25, ar:0}, f: [0.05, 0.06, 0.08, 0.11, 0.14, 0.16] }
-                }
-            },
-            scd600: {
-                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
-                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P4.1", "P5.1", "P6.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2", "H1.1", "H1.2"],
-                gruposNames: {
-                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
-                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
-                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
-                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
-                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
-                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
-                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
-                    "P4.1": "P4.1 — Aços inoxidáveis ferríticos e martensíticos",
-                    "P5.1": "P5.1 — Aço fundido",
-                    "P6.1": "P6.1 — Aço fundido inoxidável ferrítico/martensítico",
-                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
-                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
-                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
-                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
-                    "K3.1": "K3.1 — Ferro fundido esferoidal GJV / Mableável GJM (< 500 N/mm²)",
-                    "K3.2": "K3.2 — Ferro fundido esferoidal GJV / Mableável GJM (> 500 N/mm²)",
-                    "H1.1": "H1.1 — Aço endurecido / fundido (< 44 HRC)",
-                    "H1.2": "H1.2 — Aço endurecido / fundido (< 55 HRC)"
-                },
-                grupos: {
-                    "P1.1": { vc: {ext:100, mql:100, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.28, 0.33] },
-                    "P1.2": { vc: {ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.21, 0.27, 0.34, 0.41] },
-                    "P2.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
-                    "P2.2": { vc: {ext:65, mql:65, ar:0}, f: [0.10, 0.13, 0.16, 0.21, 0.26, 0.30] },
-                    "P3.1": { vc: {ext:70, mql:70, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.29, 0.35] },
-                    "P3.2": { vc: {ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "P3.3": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
-                    "P4.1": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
-                    "P5.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
-                    "P6.1": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
-                    "K1.1": { vc: {ext:85, mql:85, ar:85}, f: [0.13, 0.19, 0.26, 0.35, 0.45, 0.54] },
-                    "K2.1": { vc: {ext:100, mql:120, ar:120}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
-                    "K2.2": { vc: {ext:75, mql:75, ar:0}, f: [0.12, 0.16, 0.22, 0.28, 0.36, 0.43] },
-                    "K2.3": { vc: {ext:40, mql:50, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "K3.1": { vc: {ext:80, mql:80, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
-                    "K3.2": { vc: {ext:70, mql:70, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] },
-                    "H1.1": { vc: {ext:90, mql:90, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "H1.2": { vc: {ext:25, mql:25, ar:0}, f: [0.05, 0.06, 0.08, 0.11, 0.14, 0.16] }
-                }
-            },
-            scd351: {
-                diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
-                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "M1.1", "M1.2", "M2.1", "M3.1", "K2.1", "K2.2", "K2.3"],
-                gruposNames: {
-                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
-                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
-                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
-                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
-                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
-                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
-                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
-                    "P5.1": "P5.1 — Aço fundido",
-                    "M1.1": "M1.1 — Aços inoxidáveis austeníticos (< 700 N/mm²)",
-                    "M1.2": "M1.2 — Aços inoxidáveis duplex (< 1000 N/mm²)",
-                    "M2.1": "M2.1 — Aço fundido inoxidável/resistente ao calor austenítico (< 700 N/mm²)",
-                    "M3.1": "M3.1 — Aço fundido inoxidável duplex (< 1000 N/mm²)",
-                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
-                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
-                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)"
-                },
-                grupos: {
-                    "P1.1": { vc: {int:75, ext:70, mql:70, ar:0}, f: [0.03, 0.05, 0.07, 0.10, 0.16, 0.21] },
-                    "P1.2": { vc: {int:70, ext:55, mql:55, ar:0}, f: [0.04, 0.06, 0.08, 0.13, 0.20, 0.27] },
-                    "P2.1": { vc: {int:75, ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.12, 0.08, 0.18, 0.25] },
-                    "P2.2": { vc: {int:55, ext:45, mql:45, ar:0}, f: [0.04, 0.05, 0.07, 0.10, 0.15, 0.20] },
-                    "P3.1": { vc: {int:55, ext:50, mql:50, ar:0}, f: [0.03, 0.05, 0.07, 0.11, 0.17, 0.23] },
-                    "P3.2": { vc: {int:45, ext:40, mql:40, ar:0}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.18] },
-                    "P3.3": { vc: {int:45, ext:40, mql:35, ar:0}, f: [0.03, 0.04, 0.07, 0.05, 0.11, 0.14] },
-                    "P5.1": { vc: {int:75, ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.08, 0.12, 0.18, 0.25] },
-                    "M1.1": { vc: {int:45, ext:30, mql:30, ar:0}, f: [0.03, 0.04, 0.09, 0.06, 0.14, 0.19] },
-                    "M1.2": { vc: {int:45, ext:25, mql:25, ar:0}, f: [0.02, 0.03, 0.05, 0.08, 0.12, 0.16] },
-                    "M2.1": { vc: {int:45, ext:30, mql:30, ar:0}, f: [0.03, 0.04, 0.09, 0.06, 0.14, 0.19] },
-                    "M3.1": { vc: {int:45, ext:25, mql:25, ar:0}, f: [0.02, 0.03, 0.08, 0.05, 0.12, 0.16] },
-                    "K2.1": { vc: {int:120, ext:90, mql:75, ar:90}, f: [0.05, 0.07, 0.19, 0.12, 0.30, 0.41] },
-                    "K2.2": { vc: {int:75, ext:55, mql:55, ar:0}, f: [0.04, 0.07, 0.17, 0.11, 0.26, 0.35] },
-                    "K2.3": { vc: {int:50, ext:35, mql:35, ar:0}, f: [0.03, 0.05, 0.08, 0.06, 0.13, 0.18] }
-                }
-            },
-            scd350: {
-                diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
-                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "M1.1", "M1.2", "M2.1", "M3.1", "K2.1", "K2.2", "K2.3"],
-                gruposNames: {
-                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
-                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
-                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
-                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
-                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
-                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
-                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
-                    "P5.1": "P5.1 — Aço fundido",
-                    "M1.1": "M1.1 — Aços inoxidáveis austeníticos (< 700 N/mm²)",
-                    "M1.2": "M1.2 — Aços inoxidáveis duplex (< 1000 N/mm²)",
-                    "M2.1": "M2.1 — Aço fundido inoxidável/resistente ao calor austenítico (< 700 N/mm²)",
-                    "M3.1": "M3.1 — Aço fundido inoxidável duplex (< 1000 N/mm²)",
-                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
-                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
-                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)"
-                },
-                grupos: {
-                    "P1.1": { vc: {ext:70, mql:70, ar:0}, f: [0.03, 0.05, 0.07, 0.10, 0.16, 0.21] },
-                    "P1.2": { vc: {ext:55, mql:55, ar:0}, f: [0.04, 0.06, 0.08, 0.13, 0.20, 0.27] },
-                    "P2.1": { vc: {ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.12, 0.08, 0.18, 0.25] },
-                    "P2.2": { vc: {ext:45, mql:45, ar:0}, f: [0.04, 0.05, 0.07, 0.10, 0.15, 0.20] },
-                    "P3.1": { vc: {ext:50, mql:50, ar:0}, f: [0.03, 0.05, 0.07, 0.11, 0.17, 0.23] },
-                    "P3.2": { vc: {ext:40, mql:40, ar:0}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.18] },
-                    "P3.3": { vc: {ext:40, mql:35, ar:0}, f: [0.03, 0.04, 0.07, 0.05, 0.11, 0.14] },
-                    "P5.1": { vc: {ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.08, 0.12, 0.18, 0.25] },
-                    "M1.1": { vc: {ext:30, mql:30, ar:0}, f: [0.03, 0.04, 0.09, 0.06, 0.14, 0.19] },
-                    "M1.2": { vc: {ext:25, mql:25, ar:0}, f: [0.02, 0.03, 0.05, 0.08, 0.12, 0.16] },
-                    "M2.1": { vc: {ext:30, mql:30, ar:0}, f: [0.03, 0.04, 0.09, 0.06, 0.14, 0.19] },
-                    "M3.1": { vc: {ext:25, mql:25, ar:0}, f: [0.02, 0.03, 0.08, 0.05, 0.12, 0.16] },
-                    "K2.1": { vc: {ext:90, mql:75, ar:90}, f: [0.05, 0.07, 0.19, 0.12, 0.30, 0.41] },
-                    "K2.2": { vc: {ext:55, mql:55, ar:0}, f: [0.04, 0.07, 0.17, 0.11, 0.26, 0.35] },
-                    "K2.3": { vc: {ext:35, mql:35, ar:0}, f: [0.03, 0.05, 0.08, 0.06, 0.13, 0.18] }
-                }
-            },
             scd231: {
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2"],
@@ -587,10 +419,10 @@ html_content = '''
                 grupoSelect.appendChild(opt);
             });
 
-            // Tratamento especial para brocas sem refrigeração interna (SCD360, SCD350, SCD600)
+            // Tratamento especial para SCD360 (sem refrigeração interna)
             const btnInt = document.getElementById('ref-int');
             const avisoRefrig = document.getElementById('aviso-refrig');
-            if (brocaKey === 'scd360' || brocaKey === 'scd350' || brocaKey === 'scd600') {
+            if (brocaKey === 'scd360') {
                 btnInt.disabled = true;
                 btnInt.className = "py-2 rounded bg-slate-800 text-slate-600 cursor-not-allowed";
                 avisoRefrig.classList.remove('hidden');
@@ -600,7 +432,7 @@ html_content = '''
             } else {
                 btnInt.disabled = false;
                 avisoRefrig.classList.add('hidden');
-                if (refrigAtual === 'int') {
+                if (refrigAtual === 'int' || brocaKey === 'scd231') {
                     setRefrig('int');
                 }
             }
@@ -610,12 +442,12 @@ html_content = '''
 
         function setRefrig(tipo) {
             const brocaKey = document.getElementById('broca').value;
-            if ((brocaKey === 'scd360' || brocaKey === 'scd350' || brocaKey === 'scd600') && tipo === 'int') return;
+            if (brocaKey === 'scd360' && tipo === 'int') return;
 
             refrigAtual = tipo;
             ['int', 'ext', 'mql', 'ar'].forEach(t => {
                 const btn = document.getElementById(`ref-${t}`);
-                if ((brocaKey === 'scd360' || brocaKey === 'scd350' || brocaKey === 'scd600') && t === 'int') return;
+                if (brocaKey === 'scd360' && t === 'int') return;
                 if(t === tipo) {
                     btn.className = "py-2 rounded bg-blue-600 text-white transition";
                 } else {
@@ -749,6 +581,7 @@ html_content = '''
             // Obter Vc com base na refrigeração selecionada
             let vcBase = grupoData.vc[refrigAtual];
             if (vcBase === undefined || vcBase === 0) {
+                // Fallback se a refrigeração escolhida não existir para esta broca/material
                 vcBase = grupoData.vc['ext'] || 50;
             }
 
