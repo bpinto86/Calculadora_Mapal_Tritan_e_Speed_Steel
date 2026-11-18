@@ -725,4 +725,252 @@ html_content = '''
                 if (vcUnlocked) {
                     btn.innerText = '🔓';
                     card.className = 'bg-slate-800 p-3 rounded-lg border border-amber-500/80 transition-colors';
-                    input.className = 'w-full bg-slate-900 text-xl font-bold text-amber-300 mt
+                    input.className = 'w-full bg-slate-900 text-xl font-bold text-amber-300 mt-0.5 focus:outline-none rounded px-1 -ml-1 border border-amber-500/40';
+                    status.innerText = 'Manual';
+                    status.className = 'text-[9px] text-amber-400 font-semibold';
+                    input.focus();
+                } else {
+                    btn.innerText = '🔒';
+                    card.className = 'bg-slate-800 p-3 rounded-lg border border-slate-700 transition-colors';
+                    input.className = 'w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1';
+                    status.innerText = 'Auto';
+                    status.className = 'text-[9px] text-slate-500';
+                    atualizarCalculo();
+                }
+            }
+        }
+
+        function ajustarDiametro(delta) {
+            const input = document.getElementById('diametro');
+            let val = parseFloat(input.value) + delta;
+            if (val < 1) val = 1;
+            if (val > 30) val = 30;
+            input.value = val.toFixed(2);
+            atualizarCalculo();
+        }
+
+        function ajustarPct(tipo, delta) {
+            if (tipo === 'vc') {
+                vcPct += delta;
+                if (vcPct < -50) vcPct = -50;
+                if (vcPct > 50) vcPct = 50;
+                document.getElementById('vc-slider').value = vcPct;
+            } else if (tipo === 'f') {
+                fPct += delta;
+                if (fPct < -50) fPct = -50;
+                if (fPct > 50) fPct = 50;
+                document.getElementById('f-slider').value = fPct;
+            }
+            atualizarCalculo();
+        }
+
+        function onSliderVc() {
+            vcPct = parseInt(document.getElementById('vc-slider').value);
+            atualizarCalculo();
+        }
+
+        function onSliderF() {
+            fPct = parseInt(document.getElementById('f-slider').value);
+            atualizarCalculo();
+        }
+
+        function resetPct(tipo) {
+            if (tipo === 'vc') {
+                vcPct = 0;
+                document.getElementById('vc-slider').value = 0;
+            } else if (tipo === 'f') {
+                fPct = 0;
+                document.getElementById('f-slider').value = 0;
+            }
+            atualizarCalculo();
+        }
+
+        function onManualInput(tipo) {
+            if (tipo === 'vc' && vcUnlocked) {
+                const vcVal = parseFloat(document.getElementById('input-vc').value) || 0;
+                const d = parseFloat(document.getElementById('diametro').value) || 1;
+                const n = d > 0 ? Math.round((vcVal * 1000) / (Math.PI * d)) : 0;
+                document.getElementById('res-n').innerText = n;
+                const fVal = parseFloat(document.getElementById('input-f').value) || 0;
+                document.getElementById('res-vf').innerText = Math.round(fVal * n);
+            } else if (tipo === 'f' && fUnlocked) {
+                const fVal = parseFloat(document.getElementById('input-f').value) || 0;
+                const n = parseInt(document.getElementById('res-n').innerText) || 0;
+                document.getElementById('res-vf').innerText = Math.round(fVal * n);
+            }
+        }
+
+        function atualizarCalculo() {
+            const brocaKey = document.getElementById('broca').value;
+            if (!brocaKey || !dados[brocaKey]) return;
+            
+            let grupoKey = document.getElementById('grupo').value;
+            const ligaCheck = document.getElementById('liga-check').checked;
+            const toolData = dados[brocaKey];
+
+            let grupoEfetivoKey = grupoKey;
+            if (ligaCheck) {
+                const idxAtual = toolData.gruposList.indexOf(grupoKey);
+                if (idxAtual !== -1 && idxAtual + 1 < toolData.gruposList.length) {
+                    grupoEfetivoKey = toolData.gruposList[idxAtual + 1];
+                }
+            }
+
+            const grupoObj = toolData.grupos[grupoEfetivoKey];
+            if (!grupoObj) return;
+
+            let diametro = parseFloat(document.getElementById('diametro').value);
+            if (isNaN(diametro) || diametro <= 0) diametro = 8.00;
+
+            const diametrosCat = toolData.diametros;
+            const fCatArr = grupoObj.f;
+
+            let idxInf = 0;
+            for (let i = 0; i < diametrosCat.length; i++) {
+                if (diametrosCat[i] <= diametro) {
+                    idxInf = i;
+                } else {
+                    break;
+                }
+            }
+
+            let a = 0, b = 0, fBase = 0;
+            let estadoTexto = "Dentro do intervalo consecutivo";
+            let estadoCor = "text-emerald-400";
+            let badgeMetodo = "Interpolação Linear";
+
+            if (idxInf >= diametrosCat.length - 1) {
+                idxInf = diametrosCat.length - 2;
+                estadoTexto = "Acima da gama máxima (Extrapolação)";
+                estadoCor = "text-amber-400";
+                badgeMetodo = "Extrapolação Superior";
+            } else if (diametro < diametrosCat[0]) {
+                idxInf = 0;
+                estadoTexto = "Abaixo da gama mínima (Extrapolação)";
+                estadoCor = "text-amber-400";
+                badgeMetodo = "Extrapolação Inferior";
+            }
+
+            const x1 = diametrosCat[idxInf];
+            const x2 = diametrosCat[idxInf + 1];
+            const y1 = fCatArr[idxInf];
+            const y2 = fCatArr[idxInf + 1];
+
+            b = (y2 - y1) / (x2 - x1);
+            a = y1 - b * x1;
+
+            fBase = a + b * diametro;
+            if (fBase < 0.001) fBase = 0.001;
+
+            let fFinal = fBase * (1 + fPct / 100);
+
+            let vcBase = 100;
+            if (grupoObj.vc) {
+                vcBase = grupoObj.vc[refrigAtual] !== undefined ? grupoObj.vc[refrigAtual] : (grupoObj.vc['ext'] || 100);
+            }
+            let vcFinal = vcBase * (1 + vcPct / 100);
+
+            if (!vcUnlocked) {
+                document.getElementById('input-vc').value = Math.round(vcFinal);
+            } else {
+                vcFinal = parseFloat(document.getElementById('input-vc').value) || vcFinal;
+            }
+
+            if (!fUnlocked) {
+                document.getElementById('input-f').value = fFinal.toFixed(4);
+            } else {
+                fFinal = parseFloat(document.getElementById('input-f').value) || fFinal;
+            }
+
+            const n = diametro > 0 ? Math.round((vcFinal * 1000) / (Math.PI * diametro)) : 0;
+            const vf = Math.round(fFinal * n);
+
+            document.getElementById('res-n').innerText = n;
+            document.getElementById('res-vf').innerText = vf;
+
+            document.getElementById('val-a').innerText = a.toFixed(4) + " mm/rot";
+            document.getElementById('val-b').innerText = b.toFixed(4) + " mm/rot·mm";
+            const elEstado = document.getElementById('val-estado');
+            elEstado.innerText = estadoTexto;
+            elEstado.className = "text-xs font-bold " + estadoCor + " mt-1";
+            document.getElementById('badge-metodo').innerText = badgeMetodo;
+
+            document.getElementById('vc-pct-val').innerText = (vcPct > 0 ? "+" : "") + vcPct + "%";
+            document.getElementById('f-pct-val').innerText = (fPct > 0 ? "+" : "") + fPct + "%";
+
+            const tbody = document.getElementById('tabela-ref');
+            tbody.innerHTML = '';
+            for (let i = 0; i < diametrosCat.length; i++) {
+                const dCat = diametrosCat[i];
+                const fCat = fCatArr[i];
+                const nCat = Math.round((vcFinal * 1000) / (Math.PI * dCat));
+                const vfCat = Math.round(fCat * nCat);
+                const tr = document.createElement('tr');
+                tr.className = i === idxInf || i === idxInf + 1 ? "bg-blue-900/30 font-medium text-white" : "text-slate-300";
+                tr.innerHTML = `
+                    <td class="py-1">${dCat.toFixed(2)}</td>
+                    <td class="py-1">${fCat.toFixed(2)}</td>
+                    <td class="py-1">${nCat}</td>
+                    <td class="py-1">${vfCat}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            desenharGrafico(diametrosCat, fCatArr, diametro, fFinal);
+        }
+
+        function desenharGrafico(diametros, fArr, dAtual, fAtual) {
+            const svg = document.getElementById('svg-grafico');
+            svg.innerHTML = '';
+
+            const width = 400;
+            const height = 180;
+            const pad = 25;
+
+            const minX = diametros[0];
+            const maxX = diametros[diametros.length - 1];
+            const minY = 0;
+            const maxY = Math.max(...fArr) * 1.2;
+
+            function scaleX(x) {
+                return pad + (x - minX) / (maxX - minX || 1) * (width - 2 * pad);
+            }
+            function scaleY(y) {
+                return height - pad - (y - minY) / (maxY - minY || 1) * (height - 2 * pad);
+            }
+
+            let html = `
+                <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#475569" stroke-width="1" />
+                <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="#475569" stroke-width="1" />
+            `;
+
+            let polylinePoints = "";
+            for (let i = 0; i < diametros.length; i++) {
+                const cx = scaleX(diametros[i]);
+                const cy = scaleY(fArr[i]);
+                polylinePoints += `${cx},${cy} `;
+            }
+            html += `<polyline fill="none" stroke="#3b82f6" stroke-width="2" points="${polylinePoints}" />`;
+
+            for (let i = 0; i < diametros.length; i++) {
+                const cx = scaleX(diametros[i]);
+                const cy = scaleY(fArr[i]);
+                html += `<circle cx="${cx}" cy="${cy}" r="3" fill="#3b82f6" />`;
+            }
+
+            const curX = scaleX(dAtual);
+            const curY = scaleY(fAtual);
+            html += `<circle cx="${curX}" cy="${curY}" r="4.5" fill="#f97316" stroke="#fff" stroke-width="1.5" />`;
+
+            svg.innerHTML = html;
+        }
+
+        window.onload = function() {
+            atualizarFiltroBrocas();
+        };
+    </script>
+</body>
+</html>
+'''
+
+components.html(html_content, height=900, scrolling=False)
