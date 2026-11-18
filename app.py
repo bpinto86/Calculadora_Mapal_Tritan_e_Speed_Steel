@@ -182,7 +182,7 @@ html_content = '''
                             <span class="text-[11px] text-slate-400">RPM Máx. Máquina</span>
                             <button type="button" onclick="toggleLock('rpm-max')" id="btn-lock-rpm-max" title="Desbloquear para definir limite de RPM" class="text-xs px-1 py-0.5 rounded bg-slate-900/80 border border-slate-700 hover:border-slate-500 transition">🔒</button>
                         </div>
-                        <input type="number" id="input-rpm-max" value="Introduzir valor se máquina for limitada" step="100" min="100" max="60000" readonly oninput="onManualInput('rpm-max')" class="w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1">
+                        <input type="number" id="input-rpm-max" value="8000" step="100" min="100" max="60000" readonly oninput="onManualInput('rpm-max')" class="w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1">
                         <div class="flex justify-between items-center mt-0.5">
                             <span class="text-[9px] text-slate-400">rpm</span>
                             <span id="status-rpm-max" class="text-[9px] text-slate-500">Inativo</span>
