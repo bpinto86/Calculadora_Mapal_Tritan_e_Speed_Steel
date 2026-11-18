@@ -60,25 +60,38 @@ html_content = '''
                     </select>
                 </div>
 
-                <!-- 2. Refrigeração Disponível -->
+                <!-- 2. Tipo de Operação / Categoria -->
                 <div class="space-y-1 shrink-0">
-                    <label class="text-[11px] font-medium text-slate-300">2. REFRIGERAÇÃO DISPONÍVEL</label>
+                    <label class="text-[11px] font-medium text-slate-300">2. TIPO DE OPERAÇÃO / CATEGORIA</label>
+                    <select id="categoria" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="atualizarFiltroBrocas()">
+                        <option value="solid">Solid Carbide / Standard Drilling</option>
+                        <option value="insert">Insert Drilling (Pastilhas Amovíveis)</option>
+                        <option value="spot">Spot Drilling (Centragem / Ponto)</option>
+                        <option value="stepped">Stepped Drilling (Escalonada)</option>
+                        <option value="deep">Deep Drilling (Furação Profunda)</option>
+                        <option value="reaming">Drill Reaming (Alargamento)</option>
+                    </select>
+                </div>
+
+                <!-- 3. Refrigeração Disponível -->
+                <div class="space-y-1 shrink-0">
+                    <label class="text-[11px] font-medium text-slate-300">3. REFRIGERAÇÃO DISPONÍVEL</label>
                     <select id="filtro-refrig" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="atualizarFiltroBrocas()">
                         <option value="com">Com Refrigeração Interna</option>
                         <option value="sem">Sem Refrigeração Interna</option>
                     </select>
                 </div>
 
-                <!-- 3. Modelo de Broca -->
+                <!-- 4. Modelo de Ferramenta -->
                 <div class="space-y-1 shrink-0">
-                    <label class="text-[11px] font-medium text-slate-300">3. MODELO DE BROCA</label>
+                    <label class="text-[11px] font-medium text-slate-300">4. MODELO DE FERRAMENTA</label>
                     <select id="broca" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="mudarBroca()">
                     </select>
                 </div>
 
-                <!-- 4. Grupo de Materiais -->
+                <!-- 5. Grupo de Materiais -->
                 <div class="space-y-1 shrink-0">
-                    <label class="text-[11px] font-medium text-slate-300">4. GRUPO DE MATERIAIS (MMG)</label>
+                    <label class="text-[11px] font-medium text-slate-300">5. GRUPO DE MATERIAIS (MMG)</label>
                     <select id="grupo" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="atualizarCalculo()">
                     </select>
                 </div>
@@ -87,13 +100,13 @@ html_content = '''
                 <div class="bg-slate-900 p-2 rounded-md border border-slate-700/80 space-y-0.5 shrink-0">
                     <label class="flex items-start gap-1.5 cursor-pointer text-[11px] text-slate-300">
                         <input type="checkbox" id="liga-check" class="mt-0.5 rounded bg-slate-800 border-slate-600 text-blue-600 focus:ring-0" onchange="atualizarCalculo()">
-                        <span><strong>Soma liga (Cr, Mo, Ni, V, W) > 8%</strong><br><span class="text-[9px] text-amber-400">Regra MAPAL: avança para o grupo seguinte[cite: 6].</span></span>
+                        <span><strong>Soma liga (Cr, Mo, Ni, V, W) > 8%</strong><br><span class="text-[9px] text-amber-400">Regra MAPAL: avança para o grupo seguinte.</span></span>
                     </label>
                 </div>
 
-                <!-- 5. Método de Refrigeração -->
+                <!-- 6. Método de Refrigeração -->
                 <div class="space-y-1 shrink-0">
-                    <label class="text-[11px] font-medium text-slate-300">5. MÉTODO DE REFRIGERAÇÃO A USAR</label>
+                    <label class="text-[11px] font-medium text-slate-300">6. MÉTODO DE REFRIGERAÇÃO A USAR</label>
                     <div class="grid grid-cols-4 gap-1 bg-slate-900 p-1 rounded-md border border-slate-700 text-[11px] text-center font-medium">
                         <button type="button" onclick="setRefrig('int')" id="ref-int" class="py-1.5 rounded bg-blue-600 text-white transition">Interna</button>
                         <button type="button" onclick="setRefrig('ext')" id="ref-ext" class="py-1.5 rounded text-slate-400 hover:text-white transition">Externa</button>
@@ -103,10 +116,10 @@ html_content = '''
                     <p id="aviso-refrig" class="text-[9px] text-amber-400 hidden">Nota: Esta ferramenta não permite refrigeração interna.</p>
                 </div>
 
-                <!-- 6. Diâmetro Pretendido -->
+                <!-- 7. Diâmetro Pretendido -->
                 <div class="space-y-1 shrink-0">
                     <div class="flex justify-between items-center">
-                        <label class="text-[11px] font-medium text-slate-300">6. DIÂMETRO PRETENDIDO (Ø)</label>
+                        <label class="text-[11px] font-medium text-slate-300">7. DIÂMETRO PRETENDIDO (Ø)</label>
                         <span id="badge-metodo" class="text-[9px] bg-blue-900/60 text-blue-300 px-1.5 py-0.5 rounded border border-blue-700">Interpolação Linear</span>
                     </div>
                     <div class="flex items-center gap-1.5">
@@ -297,6 +310,7 @@ html_content = '''
         const dados = {
             scd631: {
                 linha: 'expert',
+                categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'Tritan-Drill-Uni-Plus SCD631',
                 diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
@@ -354,6 +368,7 @@ html_content = '''
             },
             scd221: {
                 linha: 'expert',
+                categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'MEGA-Speed-Drill-Uni SCD221',
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
@@ -397,6 +412,7 @@ html_content = '''
             },
             scd231: {
                 linha: 'expert',
+                categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'MEGA-180°-Drill SCD231',
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
@@ -436,6 +452,7 @@ html_content = '''
             },
             scd661: {
                 linha: 'expert',
+                categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'SCD661 (Tritan-Drill-Steel)',
                 diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
@@ -467,6 +484,7 @@ html_content = '''
             },
             scd621: {
                 linha: 'expert',
+                categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'SCD621 (MEGA-Speed-Drill-Steel)',
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
@@ -496,6 +514,7 @@ html_content = '''
             },
             scd350: {
                 linha: 'basic',
+                categoria: 'solid',
                 temRefrigInt: false,
                 nome: 'ECU-Drill-Uni SCD350 (Sem Refrig. Interna)',
                 diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
@@ -537,6 +556,7 @@ html_content = '''
             },
             scd351: {
                 linha: 'basic',
+                categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'ECU-Drill-Uni SCD351 (Com Refrig. Interna)',
                 diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
@@ -578,6 +598,7 @@ html_content = '''
             },
             scd360: {
                 linha: 'basic',
+                categoria: 'solid',
                 temRefrigInt: false,
                 nome: 'SCD360 (ECU-Drill-Steel - Sem Refrig. Interna)',
                 diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
@@ -617,6 +638,7 @@ html_content = '''
             },
             scd361: {
                 linha: 'basic',
+                categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'SCD361 (ECU-Drill-Steel - Com Refrig. Interna)',
                 diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
@@ -656,6 +678,7 @@ html_content = '''
             },
             scd600: {
                 linha: 'performance',
+                categoria: 'solid',
                 temRefrigInt: false,
                 nome: 'MEGA-Drill-Steel-Plus SCD600 (Sem Refrig. Interna)',
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
@@ -703,6 +726,7 @@ html_content = '''
             },
             scd601: {
                 linha: 'performance',
+                categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'MEGA-Drill-Steel-Plus SCD601 (Com Refrig. Interna)',
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
@@ -752,6 +776,7 @@ html_content = '''
 
         function atualizarFiltroBrocas() {
             const linhaSel = document.getElementById('linha').value;
+            const categoriaSel = document.getElementById('categoria').value;
             const refrigSel = document.getElementById('filtro-refrig').value;
             const brocaSelect = document.getElementById('broca');
             
@@ -761,9 +786,10 @@ html_content = '''
             for (const key in dados) {
                 const ferramenta = dados[key];
                 const matchLinha = ferramenta.linha === linhaSel;
+                const matchCat = ferramenta.categoria === categoriaSel;
                 const matchRefrig = (refrigSel === 'com' && ferramenta.temRefrigInt) || (refrigSel === 'sem' && !ferramenta.temRefrigInt);
 
-                if (matchLinha && matchRefrig) {
+                if (matchLinha && matchCat && matchRefrig) {
                     const opt = document.createElement('option');
                     opt.value = key;
                     opt.text = ferramenta.nome;
@@ -775,7 +801,7 @@ html_content = '''
             if (!primeiraChave) {
                 const opt = document.createElement('option');
                 opt.value = "";
-                opt.text = "Nenhuma ferramenta disponível com este filtro";
+                opt.text = "Nenhuma ferramenta nesta categoria";
                 brocaSelect.appendChild(opt);
             }
 
