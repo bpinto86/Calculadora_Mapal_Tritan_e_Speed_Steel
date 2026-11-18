@@ -1,4 +1,13 @@
 import streamlit as st
+
+st.set_page_config(
+    page_title="A Minha Aplicação",
+    layout="wide"
+)
+
+st.title("Aplicação em Ecrã Inteiro")
+st.write("Agora o conteúdo aproveita toda a largura disponível no ecrã.")
+
 import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Parâmetros de Corte MAPAL", page_icon="⚙️", layout="wide")
