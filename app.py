@@ -168,7 +168,7 @@ html_content = '''
             </div>
 
             <!-- Resultados e Indicadores (Direita) -->
-            <div class="lg:col-span-8 flex flex-col gap-3 min-h-0">
+            <div class="lg:col-span-8 flex flex-col gap-3 min-h-0 overflow-y-auto">
                 <!-- Grid de Métricas CNC Principal -->
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-3 shrink-0">
                     <!-- Cartão f -->
@@ -266,11 +266,11 @@ html_content = '''
                 </div>
 
                 <!-- Tabela de Referência e Gráfico lado a lado -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1 min-h-0">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1 min-h-[280px]">
                     <!-- Tabela de Referência -->
                     <div class="bg-slate-800 p-3.5 rounded-lg border border-slate-700 flex flex-col min-h-0">
                         <h3 class="text-[11px] font-semibold text-slate-400 uppercase mb-2 shrink-0">Tabela de Referência do Catálogo</h3>
-                        <div class="overflow-y-auto flex-1 min-h-0">
+                        <div class="overflow-y-auto flex-1 min-h-0 max-h-[220px]">
                             <table class="w-full text-left text-xs">
                                 <thead class="sticky top-0 bg-slate-800">
                                     <tr class="border-b border-slate-700 text-slate-400">
@@ -289,10 +289,10 @@ html_content = '''
                     <div class="bg-slate-800 p-3.5 rounded-lg border border-slate-700 flex flex-col justify-between min-h-0">
                         <div class="flex justify-between items-center shrink-0">
                             <h3 class="text-[11px] font-semibold text-slate-400 uppercase">Curva por Intervalos: Avanço (f) vs. Ø</h3>
-                            <span class="text-[9px] text-slate-400">SVG Interativo</span>
+                            <span class="text-[9px] text-slate-400" id="badge-metodo">SVG Interativo</span>
                         </div>
-                        <div class="relative w-full flex-1 bg-slate-900 rounded-md border border-slate-700 p-1 flex items-center justify-center my-2 min-h-[100px]">
-                            <svg id="svg-grafico" class="w-full h-full max-h-36" viewBox="0 0 400 180" preserveAspectRatio="xMidYMid meet"></svg>
+                        <div class="relative w-full flex-1 bg-slate-900 rounded-md border border-slate-700 p-1 flex items-center justify-center my-2 min-h-[140px]">
+                            <svg id="svg-grafico" class="w-full h-full max-h-40" viewBox="0 0 400 180" preserveAspectRatio="xMidYMid meet"></svg>
                         </div>
                         <div class="flex justify-center gap-4 text-[9px] text-slate-400 shrink-0">
                             <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span> Catálogo</span>
@@ -1616,16 +1616,13 @@ html_content = '''
             const vf = Math.round(fFinal * n);
 
             // Cálculos de Tempo e Volume
-            // Curso efetivo considerando a ponta da broca (~0.3 * diametro para folga de entrada/saída + ponta)
             const cursoEfetivo = profundidade + (0.3 * diametro);
             const tempoFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
 
-            // Volume do cilindro em mm³: V = PI * (r^2) * profundidade
             const raio = diametro / 2;
             const volumeMm3 = Math.PI * Math.pow(raio, 2) * profundidade;
             const volumeCm3 = volumeMm3 / 1000;
 
-            // Taxa de remoção Q = (V / tempo em min) em cm³/min
             const tempoMin = tempoFuroSeg / 60;
             const taxaRemocao = tempoMin > 0 ? volumeCm3 / tempoMin : 0;
 
