@@ -225,7 +225,7 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Novos Indicadores: Tempo de Furação e Volume Removido -->
+                <!-- Indicadores de Tempo de Furação e Volume Removido -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
                     <div class="bg-gradient-to-r from-blue-900/40 to-slate-800 p-3 rounded-lg border border-blue-700/50 flex justify-between items-center">
                         <div>
@@ -245,6 +245,30 @@ html_content = '''
                         <div class="text-right">
                             <span class="text-[10px] text-slate-400">Taxa de Remoção</span>
                             <div class="text-xs font-mono font-bold text-emerald-400" id="res-taxa">-- cm³/min</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Novos Indicadores: Força de Furação e Binário de Corte -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
+                    <div class="bg-gradient-to-r from-amber-900/40 to-slate-800 p-3 rounded-lg border border-amber-700/50 flex justify-between items-center">
+                        <div>
+                            <span class="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">⚡ Força de Avanço Estimada (Ff)</span>
+                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-forca">0 <span class="text-sm font-normal text-slate-300">N</span></div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-400">Esforço Axial</span>
+                            <div class="text-xs font-mono font-bold text-amber-400" id="res-forca-kgf">0 kgf</div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-900/40 to-slate-800 p-3 rounded-lg border border-purple-700/50 flex justify-between items-center">
+                        <div>
+                            <span class="text-[11px] text-purple-300 font-semibold uppercase tracking-wider">🔄 Binário de Corte Estimado (Mc)</span>
+                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-binario">0.0 <span class="text-sm font-normal text-slate-300">N·m</span></div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-400">Torque do Spindle</span>
+                            <div class="text-xs font-mono font-bold text-purple-400">Estimado por kc</div>
                         </div>
                     </div>
                 </div>
@@ -337,6 +361,22 @@ html_content = '''
                     document.exitFullscreen();
                 }
             }
+        }
+
+        // Fatores aproximados de pressão específica de corte (kc) por grupo ISO (N/mm²)
+        const kcPorGrupo = {
+            'P': 2200,
+            'M': 2800,
+            'K': 1800,
+            'N': 800,
+            'S': 3400,
+            'H': 3200,
+            'C': 1500
+        };
+
+        function getKc(grupoKey) {
+            const prefixo = grupoKey.charAt(0).toUpperCase();
+            return kcPorGrupo[prefixo] || 2200;
         }
 
         const dados = {
@@ -1243,7 +1283,7 @@ html_content = '''
                     "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
                     "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
                     "K3.1": "K3.1 — Ferro fundido esferoidal GJV / Mableável GJM (< 500 N/mm²)",
-                    "K3.2": "K3.2 — Ferro fundido esferoidal GJV / Mableável GJM (> 500 N/mm²)"
+                    "K3.2": "K3.2 — Ferro fundido GJV / Mableável GJM (> 500 N/mm²)"
                 },
                 grupos: {
                     "P1.1": { vc: {int:75, ext:70, mql:70, ar:70}, f: [0.04, 0.06, 0.08, 0.13, 0.20, 0.27] },
@@ -1626,12 +1666,24 @@ html_content = '''
             const tempoMin = tempoFuroSeg / 60;
             const taxaRemocao = tempoMin > 0 ? volumeCm3 / tempoMin : 0;
 
+            // Cálculos de Força e Binário
+            const kc = getKc(grupoEfetivoKey);
+            // Ff em Newtons
+            const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
+            const forcaKgf = forcaFf / 9.81;
+            // Mc em N·m
+            const binarioMc = (kc * Math.pow(diametro, 2) * Math.pow(fFinal, 0.8)) / 8000;
+
             document.getElementById('res-n').innerText = n;
             document.getElementById('res-vf').innerText = vf;
             document.getElementById('res-tempo').innerHTML = tempoFuroSeg.toFixed(2) + ' <span class="text-sm font-normal text-slate-300">seg</span>';
             document.getElementById('res-curso').innerText = cursoEfetivo.toFixed(2) + ' mm';
             document.getElementById('res-volume').innerHTML = volumeMm3.toFixed(1) + ' <span class="text-sm font-normal text-slate-300">mm³</span> (' + volumeCm3.toFixed(2) + ' cm³)';
             document.getElementById('res-taxa').innerText = taxaRemocao.toFixed(1) + ' cm³/min';
+            
+            document.getElementById('res-forca').innerHTML = Math.round(forcaFf).toLocaleString() + ' <span class="text-sm font-normal text-slate-300">N</span>';
+            document.getElementById('res-forca-kgf').innerText = Math.round(forcaKgf) + ' kgf';
+            document.getElementById('res-binario').innerHTML = binarioMc.toFixed(1) + ' <span class="text-sm font-normal text-slate-300">N·m</span>';
 
             document.getElementById('val-a').innerText = a.toFixed(4) + " mm/rot";
             document.getElementById('val-b').innerText = b.toFixed(4) + " mm/rot·mm";
