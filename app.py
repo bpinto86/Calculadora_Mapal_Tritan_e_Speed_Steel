@@ -92,7 +92,7 @@ html_content = '''
                 <!-- 5. Grupo de Materiais -->
                 <div class="space-y-1 shrink-0">
                     <label class="text-[11px] font-medium text-slate-300">5. GRUPO DE MATERIAIS (MMG)</label>
-                    <select id="grupo" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="atualizarCalculo()">
+                    <select id="grupo" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="mudarGrupoMaterial()">
                     </select>
                 </div>
 
@@ -116,12 +116,10 @@ html_content = '''
                     <p id="aviso-refrig" class="text-[9px] text-amber-400 hidden">Nota: Esta ferramenta não permite refrigeração interna.</p>
                 </div>
 
-                <!-- 7. Diâmetro Pretendido e Profundidade Total -->
+                <!-- 7. Diâmetro Pretendido, Profundidade, Densidade e Preço Sucata -->
                 <div class="grid grid-cols-2 gap-2 shrink-0">
                     <div class="space-y-1">
-                        <div class="flex justify-between items-center">
-                            <label class="text-[11px] font-medium text-slate-300">7. DIÂMETRO (Ø)</label>
-                        </div>
+                        <label class="text-[11px] font-medium text-slate-300">7. DIÂMETRO (Ø)</label>
                         <div class="flex items-center gap-1">
                             <button onclick="ajustarDiametro(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">-</button>
                             <input type="number" id="diametro" value="8.00" step="0.1" min="1" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
@@ -134,6 +132,17 @@ html_content = '''
                             <input type="number" id="profundidade" value="25.0" step="1" min="0.1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                             <span class="text-[10px] text-slate-400 font-medium">mm</span>
                         </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 shrink-0 pt-1">
+                    <div class="space-y-1">
+                        <label class="text-[11px] font-medium text-slate-300">9. DENSIDADE (g/cm³)</label>
+                        <input type="number" id="densidade" value="7.85" step="0.01" min="0.5" max="25" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[11px] font-medium text-slate-300">10. VALOR SUCATA (€/kg)</label>
+                        <input type="number" id="preco-sucata" value="0.35" step="0.05" min="0" max="50" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                     </div>
                 </div>
 
@@ -249,7 +258,31 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Novos Indicadores: Força de Furação e Binário de Corte -->
+                <!-- Novos Indicadores: Peso Removido e Lucro de Sucata -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
+                    <div class="bg-gradient-to-r from-cyan-900/40 to-slate-800 p-3 rounded-lg border border-cyan-700/50 flex justify-between items-center">
+                        <div>
+                            <span class="text-[11px] text-cyan-300 font-semibold uppercase tracking-wider">⚖️ Peso de Limalha Removida</span>
+                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-peso">0.000 <span class="text-sm font-normal text-slate-300">kg</span></div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-400">Massa por Furo</span>
+                            <div class="text-xs font-mono font-bold text-cyan-400" id="res-peso-g">0.00 g</div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-teal-900/40 to-slate-800 p-3 rounded-lg border border-teal-700/50 flex justify-between items-center">
+                        <div>
+                            <span class="text-[11px] text-teal-300 font-semibold uppercase tracking-wider">💶 Valor/Lucro de Sucata (por Furo)</span>
+                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-sucata-val">0.00 <span class="text-sm font-normal text-slate-300">€</span></div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-400">Retorno Comercial</span>
+                            <div class="text-xs font-mono font-bold text-teal-400" id="res-sucata-lote">0.00 € / 1000 furos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicadores: Força de Furação e Binário de Corte -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
                     <div class="bg-gradient-to-r from-amber-900/40 to-slate-800 p-3 rounded-lg border border-amber-700/50 flex justify-between items-center">
                         <div>
@@ -363,20 +396,25 @@ html_content = '''
             }
         }
 
-        // Fatores aproximados de pressão específica de corte (kc) por grupo ISO (N/mm²)
-        const kcPorGrupo = {
-            'P': 2200,
-            'M': 2800,
-            'K': 1800,
-            'N': 800,
-            'S': 3400,
-            'H': 3200,
-            'C': 1500
+        // Fatores aproximados de pressão específica de corte (kc) e densidades padrão (g/cm³) por grupo ISO
+        const propriedadesGrupo = {
+            'P': { kc: 2200, densidade: 7.85 },
+            'M': { kc: 2800, densidade: 7.90 },
+            'K': { kc: 1800, densidade: 7.20 },
+            'N': { kc: 800,  densidade: 2.70 },
+            'S': { kc: 3400, densidade: 4.50 },
+            'H': { kc: 3200, densidade: 7.85 },
+            'C': { kc: 1500, densidade: 1.60 }
         };
 
         function getKc(grupoKey) {
             const prefixo = grupoKey.charAt(0).toUpperCase();
-            return kcPorGrupo[prefixo] || 2200;
+            return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].kc : 2200;
+        }
+
+        function getDensidadePadrao(grupoKey) {
+            const prefixo = grupoKey.charAt(0).toUpperCase();
+            return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].densidade : 7.85;
         }
 
         const dados = {
@@ -1283,7 +1321,7 @@ html_content = '''
                     "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
                     "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
                     "K3.1": "K3.1 — Ferro fundido esferoidal GJV / Mableável GJM (< 500 N/mm²)",
-                    "K3.2": "K3.2 — Ferro fundido GJV / Mableável GJM (> 500 N/mm²)"
+                    "K3.2": "K3.2 — Ferro fundido esferoidal GJV / Mableável GJM (> 500 N/mm²)"
                 },
                 grupos: {
                     "P1.1": { vc: {int:75, ext:70, mql:70, ar:70}, f: [0.04, 0.06, 0.08, 0.13, 0.20, 0.27] },
@@ -1397,6 +1435,15 @@ html_content = '''
                 setRefrig('int');
             }
 
+            mudarGrupoMaterial();
+        }
+
+        function mudarGrupoMaterial() {
+            const grupoKey = document.getElementById('grupo').value;
+            if (grupoKey) {
+                const densidadeSugerida = getDensidadePadrao(grupoKey);
+                document.getElementById('densidade').value = densidadeSugerida;
+            }
             atualizarCalculo();
         }
 
@@ -1578,6 +1625,12 @@ html_content = '''
             let profundidade = parseFloat(document.getElementById('profundidade').value);
             if (isNaN(profundidade) || profundidade <= 0) profundidade = 25.00;
 
+            let densidade = parseFloat(document.getElementById('densidade').value);
+            if (isNaN(densidade) || densidade <= 0) densidade = 7.85;
+
+            let precoSucataKg = parseFloat(document.getElementById('preco-sucata').value);
+            if (isNaN(precoSucataKg) || precoSucataKg < 0) precoSucataKg = 0.35;
+
             const diametrosCat = toolData.diametros;
             const fCatArr = grupoObj.f;
 
@@ -1666,12 +1719,17 @@ html_content = '''
             const tempoMin = tempoFuroSeg / 60;
             const taxaRemocao = tempoMin > 0 ? volumeCm3 / tempoMin : 0;
 
+            // Cálculos de Peso e Sucata
+            // Densidade em g/cm³, Volume em cm³ -> Massa em gramas = Volume * Densidade
+            const massaGrams = volumeCm3 * densidade;
+            const massaKg = massaGrams / 1000;
+            const valorSucataFuro = massaKg * precoSucataKg;
+            const valorSucata1000 = valorSucataFuro * 1000;
+
             // Cálculos de Força e Binário
             const kc = getKc(grupoEfetivoKey);
-            // Ff em Newtons
             const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
             const forcaKgf = forcaFf / 9.81;
-            // Mc em N·m
             const binarioMc = (kc * Math.pow(diametro, 2) * Math.pow(fFinal, 0.8)) / 8000;
 
             document.getElementById('res-n').innerText = n;
@@ -1681,6 +1739,12 @@ html_content = '''
             document.getElementById('res-volume').innerHTML = volumeMm3.toFixed(1) + ' <span class="text-sm font-normal text-slate-300">mm³</span> (' + volumeCm3.toFixed(2) + ' cm³)';
             document.getElementById('res-taxa').innerText = taxaRemocao.toFixed(1) + ' cm³/min';
             
+            document.getElementById('res-peso').innerHTML = massaKg < 0.001 ? massaGrams.toFixed(2) + ' <span class="text-sm font-normal text-slate-300">g</span>' : massaKg.toFixed(4) + ' <span class="text-sm font-normal text-slate-300">kg</span>';
+            document.getElementById('res-peso-g').innerText = massaGrams.toFixed(2) + ' g';
+            
+            document.getElementById('res-sucata-val').innerHTML = valorSucataFuro.toFixed(4) + ' <span class="text-sm font-normal text-slate-300">€</span>';
+            document.getElementById('res-sucata-lote').innerText = valorSucata1000.toFixed(2) + ' € / 1000 furos';
+
             document.getElementById('res-forca').innerHTML = Math.round(forcaFf).toLocaleString() + ' <span class="text-sm font-normal text-slate-300">N</span>';
             document.getElementById('res-forca-kgf').innerText = Math.round(forcaKgf) + ' kgf';
             document.getElementById('res-binario').innerHTML = binarioMc.toFixed(1) + ' <span class="text-sm font-normal text-slate-300">N·m</span>';
