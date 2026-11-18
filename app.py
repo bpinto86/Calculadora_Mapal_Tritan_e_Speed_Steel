@@ -771,6 +771,152 @@ html_content = '''
                     "H1.1": { vc: {int:90, ext:90, mql:90, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
                     "H1.2": { vc: {int:25, ext:25, mql:25, ar:0}, f: [0.05, 0.06, 0.08, 0.11, 0.14, 0.16] }
                 }
+            },
+            scd610: {
+                linha: 'performance',
+                categoria: 'solid',
+                temRefrigInt: false,
+                nome: 'MEGA-Quadro-Drill-Plus SCD610 (Sem Refrig. Interna)',
+                diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
+                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2"],
+                gruposNames: {
+                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
+                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
+                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
+                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
+                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
+                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
+                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
+                    "P5.1": "P5.1 — Aço fundido",
+                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
+                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
+                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
+                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
+                    "K3.1": "K3.1 — Ferro fundido GJV / Mableável GJM (< 500 N/mm²)",
+                    "K3.2": "K3.2 — Ferro fundido GJV / Mableável GJM (> 500 N/mm²)"
+                },
+                grupos: {
+                    "P1.1": { vc: {ext:100, mql:100, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.28, 0.33] },
+                    "P1.2": { vc: {ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.27, 0.21, 0.34, 0.41] },
+                    "P2.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.26, 0.20, 0.33, 0.38] },
+                    "P2.2": { vc: {ext:65, mql:65, ar:0}, f: [0.10, 0.13, 0.21, 0.16, 0.26, 0.30] },
+                    "P3.1": { vc: {ext:70, mql:70, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.29, 0.35] },
+                    "P3.2": { vc: {ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.19, 0.15, 0.24, 0.28] },
+                    "P3.3": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
+                    "P5.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.26, 0.20, 0.33, 0.38] },
+                    "K1.1": { vc: {ext:95, mql:95, ar:95}, f: [0.13, 0.19, 0.35, 0.26, 0.45, 0.54] },
+                    "K2.1": { vc: {ext:110, mql:130, ar:130}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
+                    "K2.2": { vc: {ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.28, 0.22, 0.36, 0.43] },
+                    "K2.3": { vc: {ext:45, mql:55, ar:0}, f: [0.09, 0.12, 0.19, 0.15, 0.24, 0.28] },
+                    "K3.1": { vc: {ext:90, mql:90, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
+                    "K3.2": { vc: {ext:75, mql:75, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] }
+                }
+            },
+            scd611: {
+                linha: 'performance',
+                categoria: 'solid',
+                temRefrigInt: true,
+                nome: 'MEGA-Quadro-Drill-Plus SCD611 (Com Refrig. Interna)',
+                diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
+                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2"],
+                gruposNames: {
+                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
+                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
+                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
+                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
+                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
+                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
+                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
+                    "P5.1": "P5.1 — Aço fundido",
+                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
+                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
+                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
+                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
+                    "K3.1": "K3.1 — Ferro fundido GJV / Mableável GJM (< 500 N/mm²)",
+                    "K3.2": "K3.2 — Ferro fundido GJV / Mableável GJM (> 500 N/mm²)"
+                },
+                grupos: {
+                    "P1.1": { vc: {int:110, ext:100, mql:100, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.28, 0.33] },
+                    "P1.2": { vc: {int:100, ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.27, 0.21, 0.34, 0.41] },
+                    "P2.1": { vc: {int:110, ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.26, 0.20, 0.33, 0.38] },
+                    "P2.2": { vc: {int:75, ext:65, mql:65, ar:0}, f: [0.10, 0.13, 0.21, 0.16, 0.26, 0.30] },
+                    "P3.1": { vc: {int:85, ext:70, mql:70, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.29, 0.35] },
+                    "P3.2": { vc: {int:65, ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.19, 0.15, 0.24, 0.28] },
+                    "P3.3": { vc: {int:65, ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
+                    "P5.1": { vc: {int:110, ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.26, 0.20, 0.33, 0.38] },
+                    "K1.1": { vc: {int:130, ext:95, mql:95, ar:95}, f: [0.13, 0.19, 0.35, 0.26, 0.45, 0.54] },
+                    "K2.1": { vc: {int:175, ext:110, mql:130, ar:130}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
+                    "K2.2": { vc: {int:110, ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.28, 0.22, 0.36, 0.43] },
+                    "K2.3": { vc: {int:65, ext:45, mql:55, ar:0}, f: [0.09, 0.12, 0.19, 0.15, 0.24, 0.28] },
+                    "K3.1": { vc: {int:100, ext:90, mql:90, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
+                    "K3.2": { vc: {int:90, ext:75, mql:75, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] }
+                }
+            },
+            scd371: {
+                linha: 'performance',
+                categoria: 'solid',
+                temRefrigInt: true,
+                nome: 'MICRO-Drill-Steel SCD371 (Com Refrig. Interna)',
+                diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
+                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "M1.1", "M1.2", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2"],
+                gruposNames: {
+                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
+                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
+                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
+                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
+                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
+                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
+                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
+                    "P5.1": "P5.1 — Aço fundido",
+                    "M1.1": "M1.1 — Aços inoxidáveis austeníticos (< 700 N/mm²)",
+                    "M1.2": "M1.2 — Aços inoxidáveis Duplex (< 1000 N/mm²)",
+                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
+                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
+                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
+                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
+                    "K3.1": "K3.1 — Ferro fundido GJV / Mableável GJM (< 500 N/mm²)",
+                    "K3.2": "K3.2 — Ferro fundido GJV / Mableável GJM (> 500 N/mm²)"
+                },
+                grupos: {
+                    "P1.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "P1.2": { vc: {int:70, ext:60, mql:60, ar:0}, f: [0.04, 0.05, 0.07, 0.06, 0.08, 0.10] },
+                    "P2.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.04, 0.05, 0.06, 0.07, 0.08, 0.09] },
+                    "P2.2": { vc: {int:55, ext:50, mql:50, ar:0}, f: [0.04, 0.05, 0.05, 0.06, 0.07, 0.08] },
+                    "P3.1": { vc: {int:60, ext:50, mql:50, ar:0}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "P3.2": { vc: {int:50, ext:45, mql:45, ar:0}, f: [0.04, 0.04, 0.05, 0.04, 0.06, 0.07] },
+                    "P3.3": { vc: {int:50, ext:35, mql:40, ar:0}, f: [0.03, 0.04, 0.05, 0.04, 0.05, 0.06] },
+                    "P5.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.04, 0.05, 0.07, 0.06, 0.08, 0.09] },
+                    "M1.1": { vc: {int:40, ext:25, mql:25, ar:0}, f: [0.03, 0.03, 0.04, 0.03, 0.05, 0.06] },
+                    "M1.2": { vc: {int:95, ext:70, mql:70, ar:70}, f: [0.03, 0.04, 0.06, 0.05, 0.08, 0.11] },
+                    "K1.1": { vc: {int:130, ext:80, mql:95, ar:95}, f: [0.04, 0.05, 0.07, 0.06, 0.09, 0.11] },
+                    "K2.1": { vc: {int:80, ext:60, mql:60, ar:0}, f: [0.04, 0.05, 0.05, 0.07, 0.08, 0.10] },
+                    "K2.2": { vc: {int:70, ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.07, 0.06, 0.09, 0.11] },
+                    "K2.3": { vc: {int:65, ext:55, mql:55, ar:0}, f: [0.04, 0.05, 0.07, 0.06, 0.08, 0.09] },
+                    "K3.1": { vc: {int:55, ext:45, mql:45, ar:0}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "K3.2": { vc: {int:45, ext:40, mql:40, ar:0}, f: [0.03, 0.04, 0.05, 0.04, 0.06, 0.07] }
+                }
+            },
+            scd140: {
+                linha: 'performance',
+                categoria: 'solid',
+                temRefrigInt: false,
+                nome: 'MEGA-Drill-Hardened SCD140 (Sem Refrig. Interna)',
+                diametros: [2.50, 3.62, 5.25, 7.61, 11.04, 16.00],
+                gruposList: ["H1.1", "H1.2", "H2.1", "H2.2", "H2.3"],
+                gruposNames: {
+                    "H1.1": "H1.1 — Aço temperado / Aço fundido (< 44 HRC)",
+                    "H1.2": "H1.2 — Aço temperado / Aço fundido (< 55 HRC)",
+                    "H2.1": "H2.1 — Aço temperado / Aço fundido (< 60 HRC)",
+                    "H2.2": "H2.2 — Aço temperado / Aço fundido (< 65 HRC)",
+                    "H2.3": "H2.3 — Aço temperado / Aço fundido (< 68 HRC)"
+                },
+                grupos: {
+                    "H1.1": { vc: {ext:80, mql:80, ar:0}, f: [0.07, 0.09, 0.11, 0.02, 0.19, 0.20] },
+                    "H1.2": { vc: {ext:30, mql:30, ar:0}, f: [0.05, 0.06, 0.10, 0.08, 0.13, 0.16] },
+                    "H2.1": { vc: {ext:30, mql:30, ar:0}, f: [0.04, 0.05, 0.09, 0.07, 0.11, 0.13] },
+                    "H2.2": { vc: {ext:20, mql:20, ar:0}, f: [0.03, 0.04, 0.05, 0.06, 0.08, 0.09] },
+                    "H2.3": { vc: {ext:15, mql:15, ar:0}, f: [0.03, 0.04, 0.05, 0.06, 0.08, 0.09] }
+                }
             }
         };
 
