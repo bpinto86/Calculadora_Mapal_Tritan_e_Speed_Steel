@@ -22,7 +22,7 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-html_content = '''
+html_content = ''
 <!DOCTYPE html>
 <html lang="pt">
 <head>
