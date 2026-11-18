@@ -10,12 +10,7 @@ hide_streamlit_style = """
     header {visibility: hidden;}
     .block-container {
         padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-        max-width: 100% !important;
-    }
-    iframe {
+        padding-botto
         height: 100vh !important;
     }
     </style>
