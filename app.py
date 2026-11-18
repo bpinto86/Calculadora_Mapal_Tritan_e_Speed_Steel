@@ -87,7 +87,7 @@ html_content = '''
                 <div class="bg-slate-900 p-2 rounded-md border border-slate-700/80 space-y-0.5 shrink-0">
                     <label class="flex items-start gap-1.5 cursor-pointer text-[11px] text-slate-300">
                         <input type="checkbox" id="liga-check" class="mt-0.5 rounded bg-slate-800 border-slate-600 text-blue-600 focus:ring-0" onchange="atualizarCalculo()">
-                        <span><strong>Soma liga (Cr, Mo, Ni, V, W) > 8%</strong><br><span class="text-[9px] text-amber-400">Regra MAPAL: avança para o grupo seguinte.</span></span>
+                        <span><strong>Soma liga (Cr, Mo, Ni, V, W) > 8%</strong><br><span class="text-[9px] text-amber-400">Regra MAPAL: avança para o grupo seguinte[cite: 4, 5].</span></span>
                     </label>
                 </div>
 
@@ -295,6 +295,45 @@ html_content = '''
         }
 
         const dados = {
+            scd231: {
+                linha: 'expert',
+                temRefrigInt: true,
+                nome: 'MEGA-180°-Drill SCD231',
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2"],
+                gruposNames: {
+                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
+                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
+                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
+                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
+                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
+                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
+                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
+                    "P5.1": "P5.1 — Aço fundido",
+                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
+                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
+                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
+                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
+                    "K3.1": "K3.1 — Ferro fundido esferoidal GJV / Mableável GJM (< 500 N/mm²)",
+                    "K3.2": "K3.2 — Ferro fundido esferoidal GJV / Mableável GJM (> 500 N/mm²)"
+                },
+                grupos: {
+                    "P1.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.07, 0.09, 0.12, 0.16, 0.20, 0.24] },
+                    "P1.2": { vc: {int:70, ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.15, 0.20, 0.25, 0.30] },
+                    "P2.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.08, 0.11, 0.14, 0.19, 0.24, 0.28] },
+                    "P2.2": { vc: {int:55, ext:50, mql:50, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
+                    "P3.1": { vc: {int:60, ext:50, mql:50, ar:0}, f: [0.07, 0.10, 0.13, 0.17, 0.21, 0.25] },
+                    "P3.2": { vc: {int:50, ext:45, mql:45, ar:0}, f: [0.06, 0.08, 0.11, 0.14, 0.17, 0.21] },
+                    "P3.3": { vc: {int:50, ext:40, mql:35, ar:0}, f: [0.05, 0.07, 0.09, 0.11, 0.14, 0.16] },
+                    "P5.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.08, 0.11, 0.14, 0.19, 0.24, 0.28] },
+                    "K1.1": { vc: {int:95, ext:70, mql:70, ar:70}, f: [0.09, 0.14, 0.19, 0.25, 0.33, 0.39] },
+                    "K2.1": { vc: {int:130, ext:95, mql:80, ar:95}, f: [0.10, 0.13, 0.18, 0.24, 0.30, 0.36] },
+                    "K2.2": { vc: {int:80, ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "K2.3": { vc: {int:50, ext:40, mql:30, ar:0}, f: [0.06, 0.08, 0.11, 0.14, 0.17, 0.21] },
+                    "K3.1": { vc: {int:70, ext:65, mql:65, ar:0}, f: [0.09, 0.13, 0.17, 0.22, 0.28, 0.33] },
+                    "K3.2": { vc: {int:65, ext:55, mql:55, ar:0}, f: [0.08, 0.11, 0.14, 0.18, 0.22, 0.26] }
+                }
+            },
             scd661: {
                 linha: 'expert',
                 temRefrigInt: true,
