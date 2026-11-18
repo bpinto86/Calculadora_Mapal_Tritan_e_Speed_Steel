@@ -116,24 +116,16 @@ html_content = '''
                     <p id="aviso-refrig" class="text-[9px] text-amber-400 hidden">Nota: Esta ferramenta não permite refrigeração interna.</p>
                 </div>
 
-                <!-- 7. Diâmetro Pretendido e Profundidade Total -->
-                <div class="grid grid-cols-2 gap-2 shrink-0">
-                    <div class="space-y-1">
-                        <div class="flex justify-between items-center">
-                            <label class="text-[11px] font-medium text-slate-300">7. DIÂMETRO (Ø)</label>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <button onclick="ajustarDiametro(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">-</button>
-                            <input type="number" id="diametro" value="8.00" step="0.1" min="1" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
-                            <button onclick="ajustarDiametro(0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">+</button>
-                        </div>
+                <!-- 7. Diâmetro Pretendido -->
+                <div class="space-y-1 shrink-0">
+                    <div class="flex justify-between items-center">
+                        <label class="text-[11px] font-medium text-slate-300">7. DIÂMETRO PRETENDIDO (Ø)</label>
+                        <span id="badge-metodo" class="text-[9px] bg-blue-900/60 text-blue-300 px-1.5 py-0.5 rounded border border-blue-700">Interpolação Linear</span>
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-[11px] font-medium text-slate-300">8. PROFUNDIDADE (L)</label>
-                        <div class="flex items-center gap-1">
-                            <input type="number" id="profundidade" value="25.0" step="1" min="0.1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
-                            <span class="text-[10px] text-slate-400 font-medium">mm</span>
-                        </div>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="ajustarDiametro(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1.5 rounded-md text-white font-bold text-xs">-</button>
+                        <input type="number" id="diametro" value="8.00" step="0.1" min="1" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                        <button onclick="ajustarDiametro(0.5)" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1.5 rounded-md text-white font-bold text-xs">+</button>
                     </div>
                 </div>
 
@@ -169,7 +161,7 @@ html_content = '''
 
             <!-- Resultados e Indicadores (Direita) -->
             <div class="lg:col-span-8 flex flex-col gap-3 min-h-0">
-                <!-- Grid de Métricas CNC Principal -->
+                <!-- Grid de Métricas CNC -->
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-3 shrink-0">
                     <!-- Cartão f -->
                     <div id="card-f" class="bg-slate-800 p-3 rounded-lg border border-slate-700 transition-colors">
@@ -222,30 +214,6 @@ html_content = '''
                         <span class="text-[11px] text-slate-400">Avanço Trabalho</span>
                         <div class="text-xl font-bold text-white mt-0.5" id="res-vf">1608</div>
                         <span class="text-[9px] text-slate-400">mm/min</span>
-                    </div>
-                </div>
-
-                <!-- Novos Indicadores: Tempo de Furação e Volume Removido -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
-                    <div class="bg-gradient-to-r from-blue-900/40 to-slate-800 p-3 rounded-lg border border-blue-700/50 flex justify-between items-center">
-                        <div>
-                            <span class="text-[11px] text-blue-300 font-semibold uppercase tracking-wider">⏱️ Tempo de Furação (Ciclo)</span>
-                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-tempo">0.00 <span class="text-sm font-normal text-slate-300">seg</span></div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-[10px] text-slate-400">Curso Efetivo (Le)</span>
-                            <div class="text-xs font-mono font-bold text-cyan-400" id="res-curso">27.40 mm</div>
-                        </div>
-                    </div>
-                    <div class="bg-gradient-to-r from-emerald-900/40 to-slate-800 p-3 rounded-lg border border-emerald-700/50 flex justify-between items-center">
-                        <div>
-                            <span class="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider">📦 Volume de Material Removido</span>
-                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-volume">1256.6 <span class="text-sm font-normal text-slate-300">mm³</span></div>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-[10px] text-slate-400">Taxa de Remoção</span>
-                            <div class="text-xs font-mono font-bold text-emerald-400" id="res-taxa">-- cm³/min</div>
-                        </div>
                     </div>
                 </div>
 
@@ -1535,9 +1503,6 @@ html_content = '''
             let diametro = parseFloat(document.getElementById('diametro').value);
             if (isNaN(diametro) || diametro <= 0) diametro = 8.00;
 
-            let profundidade = parseFloat(document.getElementById('profundidade').value);
-            if (isNaN(profundidade) || profundidade <= 0) profundidade = 25.00;
-
             const diametrosCat = toolData.diametros;
             const fCatArr = grupoObj.f;
 
@@ -1615,26 +1580,8 @@ html_content = '''
 
             const vf = Math.round(fFinal * n);
 
-            // Cálculos de Tempo e Volume
-            // Curso efetivo considerando a ponta da broca (~0.3 * diametro para folga de entrada/saída + ponta)
-            const cursoEfetivo = profundidade + (0.3 * diametro);
-            const tempoFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
-
-            // Volume do cilindro em mm³: V = PI * (r^2) * profundidade
-            const raio = diametro / 2;
-            const volumeMm3 = Math.PI * Math.pow(raio, 2) * profundidade;
-            const volumeCm3 = volumeMm3 / 1000;
-
-            // Taxa de remoção Q = (V / tempo em min) em cm³/min
-            const tempoMin = tempoFuroSeg / 60;
-            const taxaRemocao = tempoMin > 0 ? volumeCm3 / tempoMin : 0;
-
             document.getElementById('res-n').innerText = n;
             document.getElementById('res-vf').innerText = vf;
-            document.getElementById('res-tempo').innerHTML = tempoFuroSeg.toFixed(2) + ' <span class="text-sm font-normal text-slate-300">seg</span>';
-            document.getElementById('res-curso').innerText = cursoEfetivo.toFixed(2) + ' mm';
-            document.getElementById('res-volume').innerHTML = volumeMm3.toFixed(1) + ' <span class="text-sm font-normal text-slate-300">mm³</span> (' + volumeCm3.toFixed(2) + ' cm³)';
-            document.getElementById('res-taxa').innerText = taxaRemocao.toFixed(1) + ' cm³/min';
 
             document.getElementById('val-a').innerText = a.toFixed(4) + " mm/rot";
             document.getElementById('val-b').innerText = b.toFixed(4) + " mm/rot·mm";
