@@ -27,8 +27,10 @@ html_content = '''
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Parâmetros de Corte MAPAL & Análise Comercial</title>
+    <title>Parâmetros de Corte MAPAL & Proposta Comercial PDF</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluir jsPDF para geração direta de PDF no browser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; height: 100vh; overflow: hidden; }
@@ -39,11 +41,11 @@ html_content = '''
         <!-- Header Compacto -->
         <header class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 flex justify-between items-center shrink-0">
             <h1 class="text-base font-bold text-white flex items-center gap-2">
-                <span>⚙️</span> Parâmetros de Corte MAPAL & Proposta Comercial
+                <span>⚙️</span> Parâmetros de Corte MAPAL & Proposta Comercial PDF
             </h1>
             <div class="flex items-center gap-2">
-                <button onclick="gerarRelatorioTXT()" class="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
-                    <span>📄</span> Exportar Proposta
+                <button onclick="abrirModalExportacao()" class="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
+                    <span>📄</span> Exportar Proposta PDF
                 </button>
                 <button onclick="toggleFullScreen()" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
                     <span>⛶</span> Ecrã Inteiro
@@ -300,7 +302,7 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Custo de Produção (Foco Comercial Principal) -->
+                <!-- Custo de Produção -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
                     <div class="bg-gradient-to-r from-indigo-900/40 to-slate-800 p-3 rounded-lg border border-indigo-700/50 flex justify-between items-center">
                         <div>
@@ -398,6 +400,37 @@ html_content = '''
                             <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-500 inline-block"></span> Calculado</span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Seleção de Exportação PDF -->
+        <div id="modal-export" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-5 w-96 shadow-2xl flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2"><span>📄</span> Escolher Tipo de Proposta PDF</h3>
+                    <button onclick="fecharModalExportacao()" class="text-slate-400 hover:text-white font-bold text-sm">✕</button>
+                </div>
+                <p class="text-xs text-slate-300">Selecione o nível de detalhe que pretende incluir na proposta técnico-comercial para o cliente:</p>
+                <div class="flex flex-col gap-2">
+                    <label class="flex items-start gap-2 bg-slate-900 p-2.5 rounded-md border border-slate-700 cursor-pointer hover:border-blue-500 transition">
+                        <input type="radio" name="tipo-relatorio" value="resumido" class="mt-0.5 accent-blue-500" checked>
+                        <div>
+                            <strong class="text-xs text-white block">Proposta Comercial Resumida</strong>
+                            <span class="text-[10px] text-slate-400">Ferramenta, Parâmetros de Corte (Vc, RPM, Avanço) e Custos por Furo/Lote.</span>
+                        </div>
+                    </label>
+                    <label class="flex items-start gap-2 bg-slate-900 p-2.5 rounded-md border border-slate-700 cursor-pointer hover:border-blue-500 transition">
+                        <input type="radio" name="tipo-relatorio" value="completo" class="mt-0.5 accent-blue-500">
+                        <div>
+                            <strong class="text-xs text-white block">Proposta Técnica Completa</strong>
+                            <span class="text-[10px] text-slate-400">Inclui parâmetros, tempo total, volume, peso de limalha, sucata e esforço/binário de máquina.</span>
+                        </div>
+                    </label>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button onclick="fecharModalExportacao()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-md text-xs font-medium text-white transition">Cancelar</button>
+                    <button onclick="gerarPDF()" class="bg-blue-600 hover:bg-blue-500 px-3 py-1.5 rounded-md text-xs font-medium text-white transition flex items-center gap-1"><span>📥</span> Gerar PDF</button>
                 </div>
             </div>
         </div>
@@ -997,7 +1030,6 @@ html_content = '''
 
             const vf = Math.round(fFinal * n);
 
-            // Cálculos Unitários
             const cursoEfetivo = profundidade + (0.3 * diametro);
             const tempoFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
 
@@ -1012,7 +1044,6 @@ html_content = '''
             const custoHoraSeg = custoHora / 3600;
             const custoFuro = tempoFuroSeg * custoHoraSeg;
 
-            // Cálculos Totais do Lote
             const tempoTotalSeg = tempoFuroSeg * qtdFuros;
             const tempoTotalMin = tempoTotalSeg / 60;
             const volumeTotalCm3 = volumeCm3Furo * qtdFuros;
@@ -1029,16 +1060,15 @@ html_content = '''
             const forcaKgf = forcaFf / 9.81;
             const binarioMc = (kc * Math.pow(diametro, 2) * Math.pow(fFinal, 0.8)) / 8000;
 
-            // Guardar em cache para exportação
             cacheResultados = {
                 ferramenta: toolData.nome,
-                linha: toolData.linha,
+                linha: toolData.linha.toUpperCase(),
                 grupo: grupoEfetivoKey,
-                diametro,
-                profundidade,
+                diametro: diametro.toFixed(2),
+                profundidade: profundidade.toFixed(1),
                 qtdFuros,
                 metragemLinearM: metragemLinearM.toFixed(2),
-                refrig: refrigAtual,
+                refrig: refrigAtual.toUpperCase(),
                 vc: Math.round(vcFinal),
                 f: fFinal.toFixed(4),
                 n,
@@ -1050,27 +1080,24 @@ html_content = '''
                 valorTotalSucata: valorTotalSucata.toFixed(2),
                 custoTotalLote: custoTotalLote.toFixed(2),
                 custoFuro: custoFuro.toFixed(2),
-                custoHora
+                custoHora: custoHora.toFixed(2),
+                forcaN: Math.round(forcaFf).toLocaleString(),
+                forcaKgf: Math.round(forcaKgf),
+                binarioNm: binarioMc.toFixed(1)
             };
 
             document.getElementById('res-n').innerText = n;
             document.getElementById('res-vf').innerText = vf;
-            
             document.getElementById('res-tempo-total').innerHTML = tempoTotalMin.toFixed(1) + ' min <span class="text-xs font-normal text-slate-300">(' + tempoFuroSeg.toFixed(1) + ' seg/furo)</span>';
             document.getElementById('res-metragem').innerText = metragemLinearM.toFixed(2) + ' metros';
-            
             document.getElementById('res-volume-total').innerHTML = volumeTotalCm3.toFixed(1) + ' cm³ <span class="text-xs font-normal text-slate-300">(' + volumeCm3Furo.toFixed(1) + ' cm³/furo)</span>';
             document.getElementById('res-taxa').innerText = taxaRemocao.toFixed(1) + ' cm³/min';
-            
             document.getElementById('res-peso').innerHTML = massaTotalKg < 1 ? (massaTotalKg * 1000).toFixed(1) + ' <span class="text-sm font-normal text-slate-300">g</span>' : massaTotalKg.toFixed(3) + ' <span class="text-sm font-normal text-slate-300">kg</span>';
             document.getElementById('res-peso-g').innerText = massaGramsFuro.toFixed(1) + ' g/furo';
-            
             document.getElementById('res-sucata-val').innerHTML = valorTotalSucata.toFixed(2) + ' <span class="text-sm font-normal text-slate-300">€</span>';
             document.getElementById('res-sucata-furo').innerText = valorSucataFuro.toFixed(3) + ' € / furo';
-
             document.getElementById('res-custo-total').innerHTML = custoTotalLote.toFixed(2) + ' € <span class="text-xs font-normal text-slate-300">(' + custoFuro.toFixed(2) + ' €/furo)</span>';
-            document.getElementById('res-custo-hora-ref').innerText = custoHora.toFixed(2) + ' €/h';
-
+            document.getElementById('res-custo-hora-ref').innerText = custoHora + ' €/h';
             document.getElementById('res-forca').innerHTML = Math.round(forcaFf).toLocaleString() + ' <span class="text-sm font-normal text-slate-300">N</span>';
             document.getElementById('res-forca-kgf').innerText = Math.round(forcaKgf) + ' kgf';
             document.getElementById('res-binario').innerHTML = binarioMc.toFixed(1) + ' <span class="text-sm font-normal text-slate-300">N·m</span>';
@@ -1110,56 +1137,100 @@ html_content = '''
             desenharGrafico(diametrosCat, fCatArr, diametro, fFinal);
         }
 
-        function gerarRelatorioTXT() {
+        function abrirModalExportacao() {
+            document.getElementById('modal-export').classList.remove('hidden');
+        }
+
+        function fecharModalExportacao() {
+            document.getElementById('modal-export').classList.add('hidden');
+        }
+
+        function gerarPDF() {
+            fecharModalExportacao();
+            const tipo = document.querySelector('input[name="tipo-relatorio"]:checked').value;
             const r = cacheResultados;
-            const conteudo = `==================================================
-       PROPOSTA TÉCNICO-COMERCIAL MAPAL
-       Distribuidor: Álamo Ferramentas
-       Técnico Comercial: Bruno Pinto (Telem: +351 936 959 415)
-==================================================
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
-1. DADOS DA FERRAMENTA E DO LOTE
-- Ferramenta: ${r.ferramenta}
-- Linha: ${r.linha.toUpperCase()}
-- Grupo de Material (MMG): ${r.grupo}
-- Diâmetro (Ø): ${r.diametro} mm
-- Profundidade por Furo: ${r.profundidade} mm
-- Quantidade de Furos no Lote: ${r.qtdFuros} furos
-- Metragem Linear Total: ${r.metragemLinearM} metros
-- Refrigeração: ${r.refrig.toUpperCase()}
+            // Cabeçalho Profissional
+            doc.setFillColor(15, 23, 42); // Fundo escuro slate-900
+            doc.rect(0, 0, 210, 30, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(16);
+            doc.text("ÁLAMO FERRAMENTAS — PROPOSTA TÉCNICA MAPAL", 15, 18);
+            
+            doc.setFontSize(9);
+            doc.setFont("helvetica", "normal");
+            doc.text("Técnico Comercial: Bruno Pinto | Telem: +351 936 959 415 | Email: bruno.pinto@alamo-ferramentas.com", 15, 25);
 
-2. PARÂMETROS DE CORTE OTIMIZADOS
-- Velocidade de Corte (Vc): ${r.vc} m/min
-- Rotações (Spindle - n): ${r.n} rpm
-- Avanço por Rotação (f): ${r.f} mm/rot
-- Avanço de Trabalho (vf): ${r.vf} mm/min
-- Tempo Unitário por Furo: ${r.tempoFuroSeg} seg
-- Tempo Total de Maquinação (Lote): ${r.tempoTotalMin} minutos
+            let y = 40;
+            doc.setTextColor(15, 23, 42);
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("1. DADOS DA FERRAMENTA E OPERAÇÃO", 15, y);
+            
+            y += 7;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`• Ferramenta Selecionada: ${r.ferramenta}`, 18, y); y += 6;
+            doc.text(`• Linha: ${r.linha} | Refrigeração: ${r.refrig}`, 18, y); y += 6;
+            doc.text(`• Grupo de Material (MMG): ${r.grupo}`, 18, y); y += 6;
+            doc.text(`• Diâmetro (Ø): ${r.diametro} mm | Profundidade por Furo: ${r.profundidade} mm`, 18, y); y += 6;
+            doc.text(`• Quantidade de Furos (Lote): ${r.qtdFuros} furos | Metragem Linear: ${r.metragemLinearM} metros`, 18, y);
 
-3. ANÁLISE DE MATERIAL E SUCATA
-- Volume Total Removido: ${r.volumeTotalCm3} cm³
-- Peso Total de Limalha (Lote): ${r.massaTotalKg} kg
-- Valor Comercial da Sucata (Total Lote): ${r.valorTotalSucata} €
+            y += 12;
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("2. PARÂMETROS DE CORTE OTIMIZADOS", 15, y);
 
-4. CUSTOS DE PRODUÇÃO E EFICIÊNCIA
-- Custo Hora Máquina: ${r.custoHora} €/h
-- Custo de Maquinação Unitário: ${r.custoFuro} € / furo
-- Custo de Maquinação Total (Lote): ${r.custoTotalLote} €
+            y += 7;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`• Velocidade de Corte (Vc): ${r.vc} m/min`, 18, y); y += 6;
+            doc.text(`• Rotações do Spindle (n): ${r.n} rpm`, 18, y); y += 6;
+            doc.text(`• Avanço por Rotação (f): ${r.f} mm/rot`, 18, y); y += 6;
+            doc.text(`• Avanço de Trabalho (vf): ${r.vf} mm/min`, 18, y); y += 6;
+            doc.text(`• Tempo de Ciclo: ${r.tempoFuroSeg} seg/furo (Total Lote: ${r.tempoTotalMin} min)`, 18, y);
 
-==================================================
-Álamo Ferramentas - Soluções em Ferramentaria Industrial
-Email: bruno.pinto@alamo-ferramentas.com
-==================================================`;
+            y += 12;
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("3. CUSTOS DE PRODUÇÃO E ANÁLISE COMERCIAL", 15, y);
 
-            const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Proposta_MAPAL_D${r.diametro}_Lote_${r.qtdFuros}furos.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            y += 7;
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`• Custo Hora Máquina Base: ${r.custoHora} €/h`, 18, y); y += 6;
+            doc.text(`• Custo de Maquinação Unitário: ${r.custoFuro} € / furo`, 18, y); y += 6;
+            doc.text(`• Custo Total de Maquinação (Lote de ${r.qtdFuros} furos): ${r.custoTotalLote} €`, 18, y);
+
+            if (tipo === 'completo') {
+                y += 12;
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(12);
+                doc.text("4. ANÁLISE DE MATERIAL, SUCATA E ESFORÇOS", 15, y);
+
+                y += 7;
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(10);
+                doc.text(`• Volume Total Removido: ${r.volumeTotalCm3} cm³`, 18, y); y += 6;
+                doc.text(`• Peso Total de Limalha (Lote): ${r.massaTotalKg} kg`, 18, y); y += 6;
+                doc.text(`• Valor Comercial da Sucata (Lote): ${r.valorTotalSucata} €`, 18, y); y += 6;
+                doc.text(`• Força de Avanço Estimada (Ff): ${r.forcaN} N (${r.forcaKgf} kgf)`, 18, y); y += 6;
+                doc.text(`• Binário de Corte Estimado (Mc): ${r.binarioNm} N·m`, 18, y);
+            }
+
+            // Rodapé do PDF
+            doc.setLineWidth(0.5);
+            doc.setLineDash([2, 2], 0);
+            doc.line(15, 280, 195, 280);
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text("Álamo Ferramentas — Líder em Soluções Tecnológicas para Ferramentaria Industrial", 15, 285);
+
+            doc.save(`Proposta_MAPAL_D${r.diametro}_${r.qtdFuros}furos.pdf`);
         }
 
         function desenharGrafico(diametros, fArr, dAtual, fAtual) {
