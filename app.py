@@ -450,6 +450,32 @@ html_content = '''
                     "K3.2": { vc: {int:65, ext:55, mql:55, ar:0}, f: [0.08, 0.11, 0.14, 0.18, 0.22, 0.26] }
                 }
             },
+            scd241: {
+                linha: 'expert',
+                categoria: 'solid',
+                temRefrigInt: true,
+                nome: 'MEGA-180°-Drill-Alu SCD241 (Com Refrig. Interna)',
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                gruposList: ["N1.1", "N1.2", "N1.3", "N1.4", "N2.1", "N2.2", "N2.3"],
+                gruposNames: {
+                    "N1.1": "N1.1 — Alumínio não ligado e ligado < 3% Si",
+                    "N1.2": "N1.2 — Alumínio ligado ≤ 7% Si",
+                    "N1.3": "N1.3 — Alumínio ligado > 7-12% Si",
+                    "N1.4": "N1.4 — Alumínio ligado > 12% Si",
+                    "N2.1": "N2.1 — Cobre não ligado e de baixa liga (< 300 N/mm²)",
+                    "N2.2": "N2.2 — Cobre ligado (> 300 N/mm²)",
+                    "N2.3": "N2.3 — Latão, bronze (< 1200 N/mm²)"
+                },
+                grupos: {
+                    "N1.1": { vc: {int:240, ext:160, mql:200, ar:0}, f: [0.07, 0.09, 0.12, 0.16, 0.20, 0.24] },
+                    "N1.2": { vc: {int:200, ext:145, mql:160, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "N1.3": { vc: {int:175, ext:145, mql:120, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "N1.4": { vc: {int:145, ext:95, mql:120, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "N2.1": { vc: {int:110, ext:80, mql:0, ar:0}, f: [0.07, 0.09, 0.12, 0.16, 0.20, 0.24] },
+                    "N2.2": { vc: {int:95, ext:70, mql:0, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "N2.3": { vc: {int:160, ext:130, mql:130, ar:95}, f: [0.09, 0.14, 0.19, 0.25, 0.33, 0.39] }
+                }
+            },
             scd661: {
                 linha: 'expert',
                 categoria: 'solid',
@@ -1202,6 +1228,32 @@ html_content = '''
                     "K2.3": { vc: {int:70, ext:50, mql:50, ar:50}, f: [0.04, 0.07, 0.11, 0.17, 0.26, 0.35] },
                     "K3.1": { vc: {int:40, ext:35, mql:25, ar:25}, f: [0.04, 0.05, 0.08, 0.12, 0.17, 0.23] },
                     "K3.2": { vc: {int:60, ext:55, mql:55, ar:55}, f: [0.05, 0.07, 0.11, 0.18, 0.27, 0.38] }
+                }
+            },
+            scd211: {
+                linha: 'basic',
+                categoria: 'solid',
+                temRefrigInt: true,
+                nome: 'ECU-G-Drill SCD211 (Com Refrig. Interna)',
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                gruposList: ["K1.1", "K2.1", "K2.2", "N1.2", "N1.3", "N1.4", "N2.3"],
+                gruposNames: {
+                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
+                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
+                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
+                    "N1.2": "N1.2 — Alumínio ligado ≤ 7% Si",
+                    "N1.3": "N1.3 — Alumínio ligado > 7-12% Si",
+                    "N1.4": "N1.4 — Alumínio ligado > 12% Si",
+                    "N2.3": "N2.3 — Latão, bronze (< 1200 N/mm²)"
+                },
+                grupos: {
+                    "K1.1": { vc: {int:90, ext:65, mql:65, ar:65}, f: [0.08, 0.12, 0.16, 0.22, 0.29, 0.34] },
+                    "K2.1": { vc: {int:120, ext:90, mql:75, ar:90}, f: [0.08, 0.12, 0.16, 0.21, 0.27, 0.32] },
+                    "K2.2": { vc: {int:75, ext:55, mql:55, ar:0}, f: [0.08, 0.10, 0.14, 0.18, 0.23, 0.27] },
+                    "N1.2": { vc: {int:215, ext:155, mql:170, ar:0}, f: [0.08, 0.10, 0.14, 0.18, 0.23, 0.27] },
+                    "N1.3": { vc: {int:185, ext:155, mql:130, ar:0}, f: [0.08, 0.10, 0.14, 0.18, 0.23, 0.27] },
+                    "N1.4": { vc: {int:155, ext:100, mql:130, ar:0}, f: [0.08, 0.10, 0.14, 0.18, 0.23, 0.27] },
+                    "N2.3": { vc: {int:160, ext:130, mql:130, ar:95}, f: [0.08, 0.12, 0.16, 0.22, 0.29, 0.34] }
                 }
             }
         };
