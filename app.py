@@ -3,6 +3,23 @@ import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Parâmetros de Corte MAPAL", page_icon="⚙️", layout="wide")
 
+# Ocultar o header, menu e rodapé nativos do Streamlit para maximizar o aproveitamento de ecrã
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        max-width: 100% !important;
+    }
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 html_content = '''
 <!DOCTYPE html>
 <html lang="pt">
@@ -12,23 +29,26 @@ html_content = '''
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; }
     </style>
 </head>
-<body class="p-4 md:p-6">
-    <div class="max-w-7xl mx-auto space-y-6">
+<body class="p-2 md:p-4">
+    <div class="w-full space-y-4">
         <!-- Header Simplificado -->
-        <header class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+        <header class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
             <h1 class="text-xl font-bold text-white">Parâmetros de Corte MAPAL</h1>
+            <button onclick="toggleFullScreen()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition flex items-center gap-1.5">
+                <span>⛶</span> Ecrã Inteiro / Janela
+            </button>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
             <!-- Painel de Controlo (Esquerda) -->
-            <div class="lg:col-span-4 bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-5">
+            <div class="lg:col-span-4 bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
                 <h2 class="text-sm font-semibold text-blue-400 uppercase tracking-wider">Configuração da Operação</h2>
                 
                 <!-- 1ª Escolha Lógica: Linha -->
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                     <label class="text-xs font-medium text-slate-300">1. LINHA DE FERRAMENTA</label>
                     <select id="linha" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="atualizarFiltroBrocas()">
                         <option value="expert">Expert Line (Alta Performance)</option>
@@ -38,7 +58,7 @@ html_content = '''
                 </div>
 
                 <!-- 2ª Escolha Lógica: Refrigeração pretendida -->
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                     <label class="text-xs font-medium text-slate-300">2. REFRIGERAÇÃO DISPONÍVEL</label>
                     <select id="filtro-refrig" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="atualizarFiltroBrocas()">
                         <option value="com">Com Refrigeração Interna</option>
@@ -47,7 +67,7 @@ html_content = '''
                 </div>
 
                 <!-- 3ª Escolha: Modelo de Broca Específico -->
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                     <label class="text-xs font-medium text-slate-300">3. MODELO DE BROCA</label>
                     <select id="broca" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="mudarBroca()">
                         <!-- Preenchido dinamicamente via JS -->
@@ -55,7 +75,7 @@ html_content = '''
                 </div>
 
                 <!-- Grupo de Materiais -->
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                     <label class="text-xs font-medium text-slate-300">4. GRUPO DE MATERIAIS (MMG)</label>
                     <select id="grupo" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-blue-500" onchange="atualizarCalculo()">
                         <!-- Preenchido dinamicamente via JS -->
@@ -71,7 +91,7 @@ html_content = '''
                 </div>
 
                 <!-- Tipo de Refrigeração Ativa -->
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                     <label class="text-xs font-medium text-slate-300">5. MÉTODO DE REFRIGERAÇÃO A USAR</label>
                     <div class="grid grid-cols-4 gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700 text-xs text-center font-medium">
                         <button type="button" onclick="setRefrig('int')" id="ref-int" class="py-2 rounded bg-blue-600 text-white transition">Interna</button>
@@ -83,7 +103,7 @@ html_content = '''
                 </div>
 
                 <!-- Diâmetro Pretendido -->
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                     <div class="flex justify-between items-center">
                         <label class="text-xs font-medium text-slate-300">6. DIÂMETRO PRETENDIDO (Ø)</label>
                         <span id="badge-metodo" class="text-[10px] bg-blue-900/60 text-blue-300 px-2 py-0.5 rounded border border-blue-700">Interpolação Linear</span>
@@ -96,7 +116,7 @@ html_content = '''
                 </div>
 
                 <!-- Controlos de Ajuste Percentual (Vc e f) -->
-                <div class="space-y-3 pt-2 border-t border-slate-700">
+                <div class="space-y-2.5 pt-2 border-t border-slate-700">
                     <label class="text-xs font-medium text-blue-400 uppercase tracking-wider">Ajustes Percentuais (%)</label>
                     
                     <!-- Ajuste Vc (%) -->
@@ -130,7 +150,7 @@ html_content = '''
             </div>
 
             <!-- Resultados e Indicadores (Direita) -->
-            <div class="lg:col-span-8 space-y-6">
+            <div class="lg:col-span-8 space-y-4">
                 <!-- Grid de Métricas CNC -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <!-- Cartão Avanço / Rotação (f) com Cadeado -->
@@ -195,7 +215,7 @@ html_content = '''
                 </div>
 
                 <!-- Tabela de Referência e Gráfico lado a lado -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Tabela de Referência -->
                     <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
                         <h3 class="text-xs font-semibold text-slate-400 uppercase">Tabela de Referência do Catálogo</h3>
@@ -220,7 +240,7 @@ html_content = '''
                             <h3 class="text-xs font-semibold text-slate-400 uppercase">Curva por Intervalos: Avanço (f) vs. Ø</h3>
                             <span class="text-[10px] text-slate-400">SVG Interativo</span>
                         </div>
-                        <div class="relative w-full h-48 bg-slate-900 rounded-lg border border-slate-700 p-2 flex items-center justify-center">
+                        <div class="relative w-full h-44 bg-slate-900 rounded-lg border border-slate-700 p-2 flex items-center justify-center">
                             <svg id="svg-grafico" class="w-full h-full" viewBox="0 0 400 180"></svg>
                         </div>
                         <div class="flex justify-center gap-4 text-[10px] text-slate-400">
@@ -233,7 +253,7 @@ html_content = '''
         </div>
 
         <!-- Assinatura / Rodapé -->
-        <footer class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/80 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-400">
+        <footer class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-slate-400">
             <div class="font-medium text-slate-300">
                 Created by <span class="text-white font-semibold">Bruno Pinto</span>
             </div>
@@ -254,6 +274,18 @@ html_content = '''
         let fPct = 0;
         let fUnlocked = false;
         let vcUnlocked = false;
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Erro ao tentar modo ecrã inteiro: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
 
         const dados = {
             scd661: {
@@ -574,11 +606,10 @@ html_content = '''
 
         function atualizarFiltroBrocas() {
             const linhaSel = document.getElementById('linha').value;
-            const refrigSel = document.getElementById('filtro-refrig').value; // 'com' ou 'sem'
+            const refrigSel = document.getElementById('filtro-refrig').value;
             const brocaSelect = document.getElementById('broca');
             
             brocaSelect.innerHTML = '';
-            
             let primeiraChave = null;
 
             for (const key in dados) {
@@ -677,7 +708,6 @@ html_content = '''
                 input.readOnly = !fUnlocked;
                 if (fUnlocked) {
                     btn.innerText = '🔓';
-                    btn.title = 'Bloquear e voltar ao cálculo automático';
                     card.className = 'bg-slate-800 p-4 rounded-xl border border-amber-500/80 transition-colors';
                     input.className = 'w-full bg-slate-900 text-2xl font-bold text-amber-300 mt-1 focus:outline-none rounded px-1.5 py-0.5 -ml-1 border border-amber-500/40';
                     status.innerText = 'Manual';
@@ -685,7 +715,6 @@ html_content = '''
                     input.focus();
                 } else {
                     btn.innerText = '🔒';
-                    btn.title = 'Desbloquear para edição manual';
                     card.className = 'bg-slate-800 p-4 rounded-xl border border-slate-700 transition-colors';
                     input.className = 'w-full bg-transparent text-2xl font-bold text-white mt-1 focus:outline-none rounded px-1 -ml-1';
                     status.innerText = 'Auto';
@@ -702,7 +731,6 @@ html_content = '''
                 input.readOnly = !vcUnlocked;
                 if (vcUnlocked) {
                     btn.innerText = '🔓';
-                    btn.title = 'Bloquear e voltar ao cálculo automático';
                     card.className = 'bg-slate-800 p-4 rounded-xl border border-amber-500/80 transition-colors';
                     input.className = 'w-full bg-slate-900 text-2xl font-bold text-amber-300 mt-1 focus:outline-none rounded px-1.5 py-0.5 -ml-1 border border-amber-500/40';
                     status.innerText = 'Manual';
@@ -710,7 +738,6 @@ html_content = '''
                     input.focus();
                 } else {
                     btn.innerText = '🔒';
-                    btn.title = 'Desbloquear para edição manual';
                     card.className = 'bg-slate-800 p-4 rounded-xl border border-slate-700 transition-colors';
                     input.className = 'w-full bg-transparent text-2xl font-bold text-white mt-1 focus:outline-none rounded px-1 -ml-1';
                     status.innerText = 'Auto';
@@ -953,4 +980,4 @@ html_content = '''
 </html>
 '''
 
-components.html(html_content, height=850, scrolling=True)
+components.html(html_content, height=820, scrolling=True)
