@@ -40,7 +40,7 @@ html_content = ''
         <header class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 flex justify-between items-center shrink-0">
             <h1 class="text-base font-bold text-white">Parâmetros de Corte MAPAL</h1>
             <button onclick="toggleFullScreen()" class="bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
-                <span>⛶</span> Ecrã Inteiro / Janela
+                <span></span> Ecrã Inteiro / Janela
             </button>
         </header>
 
