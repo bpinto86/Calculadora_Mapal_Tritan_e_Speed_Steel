@@ -1,12 +1,6 @@
 import streamlit as st
 
-st.set_page_config(
-    page_title="A Minha Aplicação",
-    layout="wide"
-)
-
-st.title("Aplicação em Ecrã Inteiro")
-st.write("Agora o conteúdo aproveita toda a largura disponível no ecrã.")
+st.set_page_config(layout="wide")
 
 import streamlit.components.v1 as components
 
