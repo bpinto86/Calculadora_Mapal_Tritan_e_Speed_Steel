@@ -167,7 +167,7 @@ html_content = ''
                     <div id="card-f" class="bg-slate-800 p-3 rounded-lg border border-slate-700 transition-colors">
                         <div class="flex justify-between items-center">
                             <span class="text-[11px] text-slate-400">Avanço (f)</span>
-                            <button type="button" onclick="toggleLock('f')" id="btn-lock-f" title="Desbloquear para edição manual" class="text-xs px-1 py-0.5 rounded bg-slate-900/80 border border-slate-700 hover:border-slate-500 transition">🔒</button>
+                            <button type="button" onclick="toggleLock('f')" id="btn-lock-f" title="Desbloquear para edição manual" class="text-xs px-1 py-0.5 rounded bg-slate-900/80 border border-slate-700 hover:border-slate-500 transition"></button>
                         </div>
                         <input type="number" id="input-f" value="0.3850" step="0.005" min="0.001" readonly oninput="onManualInput('f')" class="w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1">
                         <div class="flex justify-between items-center mt-0.5">
