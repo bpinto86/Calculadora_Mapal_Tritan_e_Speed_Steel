@@ -27,7 +27,7 @@ html_content = '''
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Parâmetros de Corte MAPAL & ROI</title>
+    <title>Parâmetros de Corte MAPAL & ROI de Lote</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -39,7 +39,7 @@ html_content = '''
         <!-- Header Compacto -->
         <header class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 flex justify-between items-center shrink-0">
             <h1 class="text-base font-bold text-white flex items-center gap-2">
-                <span>⚙️</span> Parâmetros de Corte MAPAL & Análise Comercial
+                <span>⚙️</span> Parâmetros de Corte MAPAL & Análise de Lote
             </h1>
             <div class="flex items-center gap-2">
                 <button onclick="gerarRelatorioTXT()" class="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
@@ -123,20 +123,20 @@ html_content = '''
                     <p id="aviso-refrig" class="text-[9px] text-amber-400 hidden">Nota: Esta ferramenta não permite refrigeração interna.</p>
                 </div>
 
-                <!-- 7. Dimensões, Densidade e Sucata -->
+                <!-- 7. Dimensões e Lote -->
                 <div class="grid grid-cols-2 gap-2 shrink-0">
                     <div class="space-y-1">
                         <label class="text-[11px] font-medium text-slate-300">7. DIÂMETRO (Ø)</label>
                         <div class="flex items-center gap-1">
                             <button onclick="ajustarDiametro(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">-</button>
-                            <input type="number" id="diametro" value="8.00" step="0.1" min="1" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="diametro" value="12.00" step="0.1" min="1" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                             <button onclick="ajustarDiametro(0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">+</button>
                         </div>
                     </div>
                     <div class="space-y-1">
-                        <label class="text-[11px] font-medium text-slate-300">8. PROFUNDIDADE (L)</label>
+                        <label class="text-[11px] font-medium text-slate-300">8. PROFUNDIDADE/FURO (L)</label>
                         <div class="flex items-center gap-1">
-                            <input type="number" id="profundidade" value="25.0" step="1" min="0.1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="profundidade" value="140.0" step="1" min="0.1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                             <span class="text-[10px] text-slate-400 font-medium">mm</span>
                         </div>
                     </div>
@@ -144,28 +144,30 @@ html_content = '''
 
                 <div class="grid grid-cols-2 gap-2 shrink-0 pt-1">
                     <div class="space-y-1">
-                        <label class="text-[11px] font-medium text-slate-300">9. DENSIDADE (g/cm³)</label>
-                        <input type="number" id="densidade" value="7.85" step="0.01" min="0.5" max="25" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                        <label class="text-[11px] font-medium text-slate-300">9. QTD. FUROS (LOTE)</label>
+                        <input type="number" id="qtd-furos" value="50" step="1" min="1" max="100000" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-[11px] font-medium text-slate-300">10. VALOR SUCATA (€/kg)</label>
-                        <input type="number" id="preco-sucata" value="0.35" step="0.05" min="0" max="50" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                        <label class="text-[11px] font-medium text-slate-300">10. DENSIDADE (g/cm³)</label>
+                        <input type="number" id="densidade" value="7.85" step="0.01" min="0.5" max="25" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                     </div>
                 </div>
 
-                <!-- Novos Parâmetros Comerciais / Custos -->
-                <div class="space-y-2 pt-1 border-t border-slate-700 shrink-0">
-                    <label class="text-[11px] font-medium text-blue-400 uppercase tracking-wider">Análise de Custos & ROI</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="space-y-1">
-                            <label class="text-[10px] text-slate-300">Custo Hora Máquina (€/h)</label>
-                            <input type="number" id="custo-hora" value="50.00" step="5" min="1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] text-slate-300">Preço Ferramenta MAPAL (€)</label>
-                            <input type="number" id="preco-ferramenta" value="120.00" step="5" min="1" max="2000" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
-                        </div>
+                <div class="grid grid-cols-2 gap-2 shrink-0 pt-1">
+                    <div class="space-y-1">
+                        <label class="text-[11px] font-medium text-slate-300">11. VALOR SUCATA (€/kg)</label>
+                        <input type="number" id="preco-sucata" value="0.35" step="0.05" min="0" max="50" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                     </div>
+                    <div class="space-y-1">
+                        <label class="text-[11px] font-medium text-slate-300">12. PREÇO FERRAMENTA (€)</label>
+                        <input type="number" id="preco-ferramenta" value="260.00" step="5" min="1" max="5000" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                    </div>
+                </div>
+
+                <!-- Custo Hora Máquina -->
+                <div class="space-y-1 pt-1 shrink-0">
+                    <label class="text-[11px] font-medium text-slate-300">13. CUSTO HORA MÁQUINA (€/h)</label>
+                    <input type="number" id="custo-hora" value="50.00" step="5" min="1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                 </div>
 
                 <!-- Ajustes Percentuais (%) -->
@@ -256,22 +258,22 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Indicadores de Tempo de Furação e Volume Removido -->
+                <!-- Indicadores de Tempo de Furação (Unitário vs Total Lote) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
                     <div class="bg-gradient-to-r from-blue-900/40 to-slate-800 p-3 rounded-lg border border-blue-700/50 flex justify-between items-center">
                         <div>
-                            <span class="text-[11px] text-blue-300 font-semibold uppercase tracking-wider">⏱️ Tempo de Furação (Ciclo)</span>
-                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-tempo">0.00 <span class="text-sm font-normal text-slate-300">seg</span></div>
+                            <span class="text-[11px] text-blue-300 font-semibold uppercase tracking-wider">⏱️ Tempo de Ciclo (Unitário / Total)</span>
+                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-tempo-total">0.0 min <span class="text-xs font-normal text-slate-300" id="res-tempo-unit">(0.0 seg/furo)</span></div>
                         </div>
                         <div class="text-right">
                             <span class="text-[10px] text-slate-400">Curso Efetivo (Le)</span>
-                            <div class="text-xs font-mono font-bold text-cyan-400" id="res-curso">27.40 mm</div>
+                            <div class="text-xs font-mono font-bold text-cyan-400" id="res-curso">144.20 mm</div>
                         </div>
                     </div>
                     <div class="bg-gradient-to-r from-emerald-900/40 to-slate-800 p-3 rounded-lg border border-emerald-700/50 flex justify-between items-center">
                         <div>
-                            <span class="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider">📦 Volume de Material Removido</span>
-                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-volume">1256.6 <span class="text-sm font-normal text-slate-300">mm³</span></div>
+                            <span class="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider">📦 Volume de Material (Unitário / Total)</span>
+                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-volume-total">0.0 cm³</div>
                         </div>
                         <div class="text-right">
                             <span class="text-[10px] text-slate-400">Taxa de Remoção</span>
@@ -280,11 +282,11 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Peso Removido e Lucro de Sucata -->
+                <!-- Peso Removido e Lucro de Sucata (Total Lote) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
                     <div class="bg-gradient-to-r from-cyan-900/40 to-slate-800 p-3 rounded-lg border border-cyan-700/50 flex justify-between items-center">
                         <div>
-                            <span class="text-[11px] text-cyan-300 font-semibold uppercase tracking-wider">⚖️ Peso de Limalha Removida</span>
+                            <span class="text-[11px] text-cyan-300 font-semibold uppercase tracking-wider">⚖️ Peso Total de Limalha (Lote)</span>
                             <div class="text-2xl font-extrabold text-white mt-0.5" id="res-peso">0.000 <span class="text-sm font-normal text-slate-300">kg</span></div>
                         </div>
                         <div class="text-right">
@@ -294,25 +296,25 @@ html_content = '''
                     </div>
                     <div class="bg-gradient-to-r from-teal-900/40 to-slate-800 p-3 rounded-lg border border-teal-700/50 flex justify-between items-center">
                         <div>
-                            <span class="text-[11px] text-teal-300 font-semibold uppercase tracking-wider">💶 Valor/Lucro de Sucata (por Furo)</span>
+                            <span class="text-[11px] text-teal-300 font-semibold uppercase tracking-wider">💶 Valor Total de Sucata (Lote)</span>
                             <div class="text-2xl font-extrabold text-white mt-0.5" id="res-sucata-val">0.00 <span class="text-sm font-normal text-slate-300">€</span></div>
                         </div>
                         <div class="text-right">
                             <span class="text-[10px] text-slate-400">Retorno Comercial</span>
-                            <div class="text-xs font-mono font-bold text-teal-400" id="res-sucata-lote">0.00 € / 1000 furos</div>
+                            <div class="text-xs font-mono font-bold text-teal-400" id="res-sucata-furo">0.00 € / furo</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Novos Cartões de Custo por Peça e Retorno do Investimento (ROI) -->
+                <!-- Custo de Produção e Payback Real -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
                     <div class="bg-gradient-to-r from-indigo-900/40 to-slate-800 p-3 rounded-lg border border-indigo-700/50 flex justify-between items-center">
                         <div>
-                            <span class="text-[11px] text-indigo-300 font-semibold uppercase tracking-wider">💰 Custo de Furação (por Furo)</span>
-                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-custo-furo">0.0000 <span class="text-sm font-normal text-slate-300">€</span></div>
+                            <span class="text-[11px] text-indigo-300 font-semibold uppercase tracking-wider">💰 Custo de Furação (Total Lote / Unitário)</span>
+                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-custo-total">0.00 € <span class="text-xs font-normal text-slate-300" id="res-custo-furo">(0.00 €/furo)</span></div>
                         </div>
                         <div class="text-right">
-                            <span class="text-[10px] text-slate-400">Custo por Hora Máquina</span>
+                            <span class="text-[10px] text-slate-400">Custo Hora Maquinação</span>
                             <div class="text-xs font-mono font-bold text-indigo-400" id="res-custo-hora-ref">50.00 €/h</div>
                         </div>
                     </div>
@@ -907,10 +909,13 @@ html_content = '''
             if (!grupoObj) return;
 
             let diametro = parseFloat(document.getElementById('diametro').value);
-            if (isNaN(diametro) || diametro <= 0) diametro = 8.00;
+            if (isNaN(diametro) || diametro <= 0) diametro = 12.00;
 
             let profundidade = parseFloat(document.getElementById('profundidade').value);
-            if (isNaN(profundidade) || profundidade <= 0) profundidade = 25.00;
+            if (isNaN(profundidade) || profundidade <= 0) profundidade = 140.00;
+
+            let qtdFuros = parseInt(document.getElementById('qtd-furos').value);
+            if (isNaN(qtdFuros) || qtdFuros <= 0) qtdFuros = 50;
 
             let densidade = parseFloat(document.getElementById('densidade').value);
             if (isNaN(densidade) || densidade <= 0) densidade = 7.85;
@@ -922,7 +927,7 @@ html_content = '''
             if (isNaN(custoHora) || custoHora <= 0) custoHora = 50.00;
 
             let precoFerramenta = parseFloat(document.getElementById('preco-ferramenta').value);
-            if (isNaN(precoFerramenta) || precoFerramenta <= 0) precoFerramenta = 120.00;
+            if (isNaN(precoFerramenta) || precoFerramenta <= 0) precoFerramenta = 260.00;
 
             const diametrosCat = toolData.diametros;
             const fCatArr = grupoObj.f;
@@ -1001,24 +1006,33 @@ html_content = '''
 
             const vf = Math.round(fFinal * n);
 
+            // Cálculos Unitários
             const cursoEfetivo = profundidade + (0.3 * diametro);
             const tempoFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
 
             const raio = diametro / 2;
-            const volumeMm3 = Math.PI * Math.pow(raio, 2) * profundidade;
-            const volumeCm3 = volumeMm3 / 1000;
+            const volumeMm3Furo = Math.PI * Math.pow(raio, 2) * profundidade;
+            const volumeCm3Furo = volumeMm3Furo / 1000;
 
-            const tempoMin = tempoFuroSeg / 60;
-            const taxaRemocao = tempoMin > 0 ? volumeCm3 / tempoMin : 0;
+            const massaGramsFuro = volumeCm3Furo * densidade;
+            const massaKgFuro = massaGramsFuro / 1000;
+            const valorSucataFuro = massaKgFuro * precoSucataKg;
 
-            const massaGrams = volumeCm3 * densidade;
-            const massaKg = massaGrams / 1000;
-            const valorSucataFuro = massaKg * precoSucataKg;
-            const valorSucata1000 = valorSucataFuro * 1000;
-
-            // Custo por furo e Payback (ROI)
             const custoHoraSeg = custoHora / 3600;
             const custoFuro = tempoFuroSeg * custoHoraSeg;
+
+            // Cálculos Totais do Lote
+            const tempoTotalSeg = tempoFuroSeg * qtdFuros;
+            const tempoTotalMin = tempoTotalSeg / 60;
+            const volumeTotalCm3 = volumeCm3Furo * qtdFuros;
+            const massaTotalKg = massaKgFuro * qtdFuros;
+            const valorTotalSucata = valorSucataFuro * qtdFuros;
+            const custoTotalLote = custoFuro * qtdFuros;
+
+            const tempoMinUnit = tempoFuroSeg / 60;
+            const taxaRemocao = tempoMinUnit > 0 ? volumeCm3Furo / tempoMinUnit : 0;
+
+            // Payback da Ferramenta
             const furosPayback = custoFuro > 0 ? Math.ceil(precoFerramenta / custoFuro) : 0;
             const paybackSeg = furosPayback * tempoFuroSeg;
             const paybackMin = paybackSeg / 60;
@@ -1035,16 +1049,19 @@ html_content = '''
                 grupo: grupoEfetivoKey,
                 diametro,
                 profundidade,
+                qtdFuros,
                 refrig: refrigAtual,
                 vc: Math.round(vcFinal),
                 f: fFinal.toFixed(4),
                 n,
                 vf,
-                tempoFuroSeg: tempoFuroSeg.toFixed(2),
-                volumeMm3: volumeMm3.toFixed(1),
-                massaKg: massaKg.toFixed(4),
-                valorSucataFuro: valorSucataFuro.toFixed(4),
-                custoFuro: custoFuro.toFixed(4),
+                tempoFuroSeg: tempoFuroSeg.toFixed(1),
+                tempoTotalMin: tempoTotalMin.toFixed(1),
+                volumeTotalCm3: volumeTotalCm3.toFixed(1),
+                massaTotalKg: massaTotalKg.toFixed(3),
+                valorTotalSucata: valorTotalSucata.toFixed(2),
+                custoTotalLote: custoTotalLote.toFixed(2),
+                custoFuro: custoFuro.toFixed(2),
                 furosPayback,
                 custoHora,
                 precoFerramenta
@@ -1052,18 +1069,20 @@ html_content = '''
 
             document.getElementById('res-n').innerText = n;
             document.getElementById('res-vf').innerText = vf;
-            document.getElementById('res-tempo').innerHTML = tempoFuroSeg.toFixed(2) + ' <span class="text-sm font-normal text-slate-300">seg</span>';
+            
+            document.getElementById('res-tempo-total').innerHTML = tempoTotalMin.toFixed(1) + ' min <span class="text-xs font-normal text-slate-300">(' + tempoFuroSeg.toFixed(1) + ' seg/furo)</span>';
             document.getElementById('res-curso').innerText = cursoEfetivo.toFixed(2) + ' mm';
-            document.getElementById('res-volume').innerHTML = volumeMm3.toFixed(1) + ' <span class="text-sm font-normal text-slate-300">mm³</span> (' + volumeCm3.toFixed(2) + ' cm³)';
+            
+            document.getElementById('res-volume-total').innerHTML = volumeTotalCm3.toFixed(1) + ' cm³ <span class="text-xs font-normal text-slate-300">(' + volumeCm3Furo.toFixed(1) + ' cm³/furo)</span>';
             document.getElementById('res-taxa').innerText = taxaRemocao.toFixed(1) + ' cm³/min';
             
-            document.getElementById('res-peso').innerHTML = massaKg < 0.001 ? massaGrams.toFixed(2) + ' <span class="text-sm font-normal text-slate-300">g</span>' : massaKg.toFixed(4) + ' <span class="text-sm font-normal text-slate-300">kg</span>';
-            document.getElementById('res-peso-g').innerText = massaGrams.toFixed(2) + ' g';
+            document.getElementById('res-peso').innerHTML = massaTotalKg < 1 ? (massaTotalKg * 1000).toFixed(1) + ' <span class="text-sm font-normal text-slate-300">g</span>' : massaTotalKg.toFixed(3) + ' <span class="text-sm font-normal text-slate-300">kg</span>';
+            document.getElementById('res-peso-g').innerText = massaGramsFuro.toFixed(1) + ' g/furo';
             
-            document.getElementById('res-sucata-val').innerHTML = valorSucataFuro.toFixed(4) + ' <span class="text-sm font-normal text-slate-300">€</span>';
-            document.getElementById('res-sucata-lote').innerText = valorSucata1000.toFixed(2) + ' € / 1000 furos';
+            document.getElementById('res-sucata-val').innerHTML = valorTotalSucata.toFixed(2) + ' <span class="text-sm font-normal text-slate-300">€</span>';
+            document.getElementById('res-sucata-furo').innerText = valorSucataFuro.toFixed(3) + ' € / furo';
 
-            document.getElementById('res-custo-furo').innerHTML = custoFuro.toFixed(4) + ' <span class="text-sm font-normal text-slate-300">€</span>';
+            document.getElementById('res-custo-total').innerHTML = custoTotalLote.toFixed(2) + ' € <span class="text-xs font-normal text-slate-300">(' + custoFuro.toFixed(2) + ' €/furo)</span>';
             document.getElementById('res-custo-hora-ref').innerText = custoHora.toFixed(2) + ' €/h';
 
             document.getElementById('res-payback').innerHTML = furosPayback.toLocaleString() + ' <span class="text-sm font-normal text-slate-300">furos</span>';
@@ -1116,12 +1135,14 @@ html_content = '''
        Técnico Comercial: Bruno Pinto (Telem: +351 936 959 415)
 ==================================================
 
-1. DADOS DA FERRAMENTA E OPERAÇÃO
+1. DADOS DA FERRAMENTA E DO LOTE
 - Ferramenta: ${r.ferramenta}
 - Linha: ${r.linha.toUpperCase()}
 - Grupo de Material (MMG): ${r.grupo}
 - Diâmetro (Ø): ${r.diametro} mm
-- Profundidade de Furação: ${r.profundidade} mm
+- Profundidade por Furo: ${r.profundidade} mm
+- Quantidade de Furos no Lote: ${r.qtdFuros} furos
+- Metragem Linear Total: ${(r.profundidade * r.qtdFuros / 1000).toFixed(2)} metros
 - Refrigeração: ${r.refrig.toUpperCase()}
 
 2. PARÂMETROS DE CORTE OTIMIZADOS
@@ -1129,19 +1150,19 @@ html_content = '''
 - Rotações (Spindle - n): ${r.n} rpm
 - Avanço por Rotação (f): ${r.f} mm/rot
 - Avanço de Trabalho (vf): ${r.vf} mm/min
-- Tempo de Ciclo por Furo: ${r.tempoFuroSeg} seg
+- Tempo Unitário por Furo: ${r.tempoFuroSeg} seg
+- Tempo Total de Maquinação (Lote): ${r.tempoTotalMin} minutos
 
 3. ANÁLISE DE MATERIAL E SUCATA
-- Volume Removido por Furo: ${r.volumeMm3} mm³
-- Peso de Limalha Removida: ${r.massaKg} kg
-- Valor Comercial da Sucata (por Furo): ${r.valorSucataFuro} €
-- Valor Sucata (Lote 1000 furos): ${(r.valorSucataFuro * 1000).toFixed(2)} €
+- Volume Total Removido: ${r.volumeTotalCm3} cm³
+- Peso Total de Limalha (Lote): ${r.massaTotalKg} kg
+- Valor Comercial da Sucata (Total Lote): ${r.valorTotalSucata} €
 
 4. CUSTOS DE PRODUÇÃO E RETORNO (ROI)
-- Custo Hora Máquina Base: ${r.custoHora} €/h
-- Custo de Furação (por furo): ${r.custoFuro} €
+- Custo Hora Máquina: ${r.custoHora} €/h
+- Custo Total de Furação (Lote): ${r.custoTotalLote} € (${r.custoFuro} €/furo)
 - Investimento Ferramenta MAPAL: ${r.precoFerramenta} €
-- Amortização (Payback): ${r.furosPayback} furos para pagar a ferramenta.
+- Amortização (Payback): Apenas ${r.furosPayback} furos necessários para pagar a ferramenta.
 
 ==================================================
 Álamo Ferramentas - Soluções em Ferramentaria Industrial
@@ -1152,7 +1173,7 @@ Email: bruno.pinto@alamo-ferramentas.com
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `Proposta_MAPAL_D${r.diametro}_${r.ferramenta.replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+            a.download = `Proposta_MAPAL_D${r.diametro}_Lote_${r.qtdFuros}furos.txt`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
