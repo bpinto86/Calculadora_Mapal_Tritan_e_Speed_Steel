@@ -2047,4 +2047,4 @@ html_content = '''
 </html>
 '''
 
-components.html(html_content, height=900, scrolling=False)
+components.html(html_content, height=900, scrolling=true)
