@@ -162,15 +162,20 @@ html_content = '''
                     </label>
                     <div id="pecking-options" class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800 hidden">
                         <div class="space-y-1">
-                            <label class="text-[10px] font-medium text-slate-400 block">PASSO (Q) / PROF. PASSO</label>
-                            <div class="flex items-center gap-1">
-                                <input type="number" id="pecking-passo" value="3.0" step="0.5" min="0.5" max="100" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
-                                <span class="text-[9px] text-slate-400">×D ou mm</span>
+                            <div class="flex justify-between items-center">
+                                <label class="text-[10px] font-medium text-slate-400">PASSO (Q)</label>
+                                <select id="pecking-unidade" class="bg-slate-800 border border-slate-700 rounded px-1 text-[9px] text-cyan-400 focus:outline-none" onchange="onChangePeckingUnidade()">
+                                    <option value="xd" selected>×D</option>
+                                    <option value="mm">mm</option>
+                                </select>
                             </div>
+                            <input type="number" id="pecking-passo" value="3.0" step="0.5" min="0.1" max="500" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <span id="pecking-equiv" class="text-[9px] text-cyan-400 block text-center">Equiv: 36.0 mm (4 passos)</span>
                         </div>
                         <div class="space-y-1">
                             <label class="text-[10px] font-medium text-slate-400 block">AVANÇO RETRAÇÃO (mm/min)</label>
                             <input type="number" id="pecking-retensao" value="5000" step="500" min="500" max="20000" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <span class="text-[9px] text-slate-500 block text-center">Retorno alívio</span>
                         </div>
                     </div>
                 </div>
@@ -548,6 +553,27 @@ html_content = '''
                 container.classList.remove('hidden');
             } else {
                 container.classList.add('hidden');
+            }
+            atualizarCalculo();
+        }
+
+        function onChangePeckingUnidade() {
+            const unid = document.getElementById('pecking-unidade').value;
+            const inputPasso = document.getElementById('pecking-passo');
+            let diametro = parseFloat(document.getElementById('diametro').value);
+            if (isNaN(diametro) || diametro <= 0) diametro = 12.00;
+
+            let valAtual = parseFloat(inputPasso.value);
+            if (isNaN(valAtual) || valAtual <= 0) valAtual = unid === 'xd' ? 3.0 : 36.0;
+
+            if (unid === 'mm') {
+                // Converte de ×D para mm
+                inputPasso.step = '1';
+                inputPasso.value = (valAtual * diametro).toFixed(1);
+            } else {
+                // Converte de mm para ×D
+                inputPasso.step = '0.5';
+                inputPasso.value = (valAtual / diametro).toFixed(2);
             }
             atualizarCalculo();
         }
@@ -1146,21 +1172,33 @@ html_content = '''
             const cursoEfetivo = profundidade + (0.3 * diametro);
             let tempoFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
 
-            let peckingPassoVal = 0;
-            let peckingRetensaoVal = 0;
             let peckingStrDescricao = "Não (Direto)";
+            const peckingUnid = document.getElementById('pecking-unidade').value;
+            let peckingInputVal = parseFloat(document.getElementById('pecking-passo').value);
+            if (isNaN(peckingInputVal) || peckingInputVal <= 0) {
+                peckingInputVal = peckingUnid === 'xd' ? 3.0 : (3.0 * diametro);
+            }
+            const passoMm = peckingUnid === 'xd' ? (peckingInputVal * diametro) : peckingInputVal;
+            const numPassos = Math.max(1, Math.ceil(profundidade / passoMm));
+
+            const equivEl = document.getElementById('pecking-equiv');
+            if (peckingUnid === 'xd') {
+                equivEl.innerText = `Equiv: ${passoMm.toFixed(1)} mm (${numPassos} passos)`;
+            } else {
+                const equivXd = passoMm / diametro;
+                equivEl.innerText = `Equiv: ${equivXd.toFixed(2)}×D (${numPassos} passos)`;
+            }
 
             if (peckingCheck) {
-                peckingPassoVal = parseFloat(document.getElementById('pecking-passo').value) || (3.0 * diametro);
-                peckingRetensaoVal = parseFloat(document.getElementById('pecking-retensao').value) || 5000;
-                peckingStrDescricao = `Sim (Passo: ${peckingPassoVal} mm | Retração G0: ${peckingRetensaoVal} mm/min)`;
+                const peckingRetensaoVal = parseFloat(document.getElementById('pecking-retensao').value) || 5000;
+                const passoFormatado = peckingUnid === 'xd'
+                    ? `${peckingInputVal.toFixed(2)}×D (${passoMm.toFixed(1)} mm)`
+                    : `${passoMm.toFixed(1)} mm (${(passoMm / diametro).toFixed(2)}×D)`;
+                peckingStrDescricao = `Sim (Passo: ${passoFormatado} | ${numPassos} passos | Retração: ${peckingRetensaoVal} mm/min)`;
 
-                // Cálculo rigoroso do tempo de pecking (múltiplos passos + retornos rápidos G0)
-                const numPassos = Math.ceil(profundidade / peckingPassoVal);
                 const tempoCortePassos = (profundidade / vf) * 60;
-                // Tempo de retração rápida (G0) de volta à superfície a cada passo
                 const tempoRetracaoSeg = (numPassos * (profundidade / peckingRetensaoVal)) * 60;
-                tempoFuroSeg = tempoCortePassos + tempoRetracaoSeg + (0.3 * diametro / vf * 60);
+                tempoFuroSeg = tempoCortePassos + tempoRetracaoSeg + ((0.3 * diametro / vf) * 60);
             }
 
             const raio = diametro / 2;
@@ -1185,7 +1223,6 @@ html_content = '''
             const tempoMinUnit = tempoFuroSeg / 60;
             const taxaRemocao = tempoMinUnit > 0 ? volumeCm3Furo / tempoMinUnit : 0;
 
-            // Esforços e Potência do Spindle
             const kc = getKc(grupoEfetivoKey);
             const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
             const forcaKgf = forcaFf / 9.81;
