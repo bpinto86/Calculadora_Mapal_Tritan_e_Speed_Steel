@@ -689,12 +689,8 @@ html_content = '''
                     '3xD': { ratio: 3 },
                     '5xD': { ratio: 5 },
                     '8xD': { ratio: 8 },
-                    '12xD': {
-                        ratio: 12,
-                        excecoesDiametro: [
-                            {  },
-                            {  }
-                        ]
+                    '12xD': { ratio: 12 },
+                    
                     }
                 },
                 diametros: [4.00, 6.00, 8.00, 10.00, 12.00, 16.00],
