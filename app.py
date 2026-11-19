@@ -43,6 +43,9 @@ html_content = '''
                 <span>⚙️</span> Parâmetros de Corte MAPAL & Proposta Comercial PDF
             </h1>
             <div class="flex items-center gap-2">
+                <button onclick="resetRapidoTudo()" title="Repor Vc, f, RPM máx., ajustes % e pecking" class="bg-amber-600 hover:bg-amber-500 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
+                    <span>↺</span> Reset Rápido
+                </button>
                 <button onclick="abrirModalComparacao()" class="bg-emerald-600 hover:bg-emerald-500 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
                     <span>⚖️</span> Comparar Família
                 </button>
@@ -496,25 +499,41 @@ html_content = '''
             </div>
         </div>
 
-        <!-- Modal de Comparação Rápida de Família -->
+        <!-- Modal de Comparação Rápida de Família / Ferramenta do Cliente -->
         <div id="modal-comparacao" class="fixed inset-0 bg-black/75 flex items-center justify-center z-50 hidden p-3">
             <div class="bg-slate-800 border border-slate-700 rounded-lg p-5 w-full max-w-3xl shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
                 <div class="flex justify-between items-center border-b border-slate-700 pb-2.5">
                     <div>
                         <h3 class="text-sm font-bold text-white flex items-center gap-2"><span>⚖️</span> Comparação Rápida Lado a Lado</h3>
-                        <p class="text-[11px] text-slate-400">Compara a ferramenta atual com outra família MAPAL nas mesmas condições de operação.</p>
+                        <p class="text-[11px] text-slate-400">Compara a ferramenta MAPAL atual com outra família MAPAL ou com uma ferramenta do cliente (Vc e f).</p>
                     </div>
                     <button onclick="fecharModalComparacao()" class="text-slate-400 hover:text-white font-bold text-sm px-2 py-1">✕</button>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-900/90 p-3 rounded-lg border border-slate-700">
                     <div class="space-y-1">
-                        <label class="text-[10px] font-semibold text-emerald-400 uppercase block">Selecionar Família de Ferramenta a Comparar</label>
-                        <select id="comp-ferramenta" class="w-full bg-slate-800 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="popularVariantesComparacao()"></select>
+                        <label class="text-[10px] font-semibold text-emerald-400 uppercase block">Selecionar Família ou Ferramenta do Cliente</label>
+                        <select id="comp-ferramenta" class="w-full bg-slate-800 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="onChangeFonteComparacao()"></select>
                     </div>
-                    <div class="space-y-1">
+                    <div id="comp-bloco-variante" class="space-y-1">
                         <label class="text-[10px] font-semibold text-cyan-400 uppercase block">Variante ×D da Comparação</label>
                         <select id="comp-variante" class="w-full bg-slate-800 border border-slate-700 rounded-md p-1.5 text-xs font-bold text-cyan-300 focus:outline-none focus:border-cyan-500" onchange="atualizarComparacao()"></select>
+                    </div>
+                </div>
+
+                <!-- Inputs manuais apenas quando "Ferramenta do Cliente (Manual)" está selecionada -->
+                <div id="comp-bloco-cliente" class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/90 p-3 rounded-lg border border-amber-700/50 hidden">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-semibold text-amber-300 uppercase block">Designação (Opcional)</label>
+                        <input type="text" id="comp-cliente-nome" value="Ferramenta do Cliente" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-semibold text-amber-300 uppercase block">Vc Cliente (m/min)</label>
+                        <input type="number" id="comp-cliente-vc" value="70" step="1" min="1" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-semibold text-amber-300 uppercase block">Avanço f Cliente (mm/rot)</label>
+                        <input type="number" id="comp-cliente-f" value="0.1800" step="0.005" min="0.001" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
                     </div>
                 </div>
 
@@ -540,7 +559,7 @@ html_content = '''
                         <span>Incluir este comparativo na exportação PDF</span>
                     </label>
                     <div class="flex gap-2">
-                        <button onclick="aplicarFerramentaComparada()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition">Usar esta Ferramenta</button>
+                        <button id="btn-usar-comparada" onclick="aplicarFerramentaComparada()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition">Usar esta Ferramenta</button>
                         <button onclick="fecharModalComparacao()" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-md text-xs font-medium text-white transition">Fechar</button>
                     </div>
                 </div>
@@ -1240,6 +1259,28 @@ html_content = '''
             }
         }
 
+        function resetRapidoTudo() {
+            if (fUnlocked) toggleLock('f');
+            if (vcUnlocked) toggleLock('vc');
+            if (rpmMaxUnlocked) toggleLock('rpm-max');
+
+            document.getElementById('input-rpm-max').value = 8000;
+
+            vcPct = 0;
+            fPct = 0;
+            document.getElementById('vc-slider').value = 0;
+            document.getElementById('f-slider').value = 0;
+
+            document.getElementById('pecking-check').checked = false;
+            document.getElementById('pecking-options').classList.add('hidden');
+            document.getElementById('pecking-unidade').value = 'xd';
+            document.getElementById('pecking-passo').step = '0.5';
+            document.getElementById('pecking-passo').value = '3.0';
+            document.getElementById('pecking-retensao').value = '5000';
+
+            atualizarCalculo();
+        }
+
         function togglePeckingInputs() {
             const isChecked = document.getElementById('pecking-check').checked;
             const container = document.getElementById('pecking-options');
@@ -1385,6 +1426,62 @@ html_content = '''
                 estadoTexto,
                 estadoCor,
                 badgeMetodo,
+                vcFinal,
+                fFinal,
+                n,
+                vf,
+                tempoFuroSeg,
+                tempoTotalMin,
+                custoFuro,
+                custoTotalLote,
+                forcaFf,
+                binarioMc,
+                potenciaReqKw
+            };
+        }
+
+        function calcularMetricasManualCliente(nomeCliente, vcManual, fManual, grupoEfetivoKey, contexto) {
+            const {
+                diametro, profundidade, qtdFuros, custoHora,
+                rpmMaxUnlocked, rpmMaxVal,
+                peckingCheck, peckingUnid, peckingInputVal, peckingRetensaoVal
+            } = contexto;
+
+            let vcFinal = vcManual > 0 ? vcManual : 1;
+            const fFinal = fManual > 0 ? fManual : 0.001;
+
+            let n = diametro > 0 ? Math.round((vcFinal * 1000) / (Math.PI * diametro)) : 0;
+            if (rpmMaxUnlocked && rpmMaxVal > 0 && n > rpmMaxVal) {
+                n = rpmMaxVal;
+                vcFinal = (n * Math.PI * diametro) / 1000;
+            }
+
+            const vf = Math.round(fFinal * n);
+            const cursoEfetivo = profundidade + (0.3 * diametro);
+            let tempoFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
+
+            const passoMm = peckingUnid === 'xd' ? (peckingInputVal * diametro) : peckingInputVal;
+            const numPassos = Math.max(1, Math.ceil(profundidade / passoMm));
+
+            if (peckingCheck) {
+                const tempoCortePassos = vf > 0 ? (profundidade / vf) * 60 : 0;
+                const tempoRetracaoSeg = (numPassos * (profundidade / peckingRetensaoVal)) * 60;
+                const tempoEntradaSeg = vf > 0 ? ((0.3 * diametro / vf) * 60) : 0;
+                tempoFuroSeg = tempoCortePassos + tempoRetracaoSeg + tempoEntradaSeg;
+            }
+
+            const custoHoraSeg = custoHora / 3600;
+            const custoFuro = tempoFuroSeg * custoHoraSeg;
+            const tempoTotalMin = (tempoFuroSeg * qtdFuros) / 60;
+            const custoTotalLote = custoFuro * qtdFuros;
+
+            const kc = getKc(grupoEfetivoKey);
+            const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
+            const binarioMc = (kc * Math.pow(diametro, 2) * Math.pow(fFinal, 0.8)) / 8000;
+            const potenciaReqKw = (binarioMc * n) / (9550 * 0.85);
+
+            return {
+                nome: nomeCliente || "Ferramenta do Cliente",
                 vcFinal,
                 fFinal,
                 n,
@@ -1990,6 +2087,11 @@ html_content = '''
             const anterior = selFerramenta.value;
             selFerramenta.innerHTML = '';
 
+            const optCliente = document.createElement('option');
+            optCliente.value = "__CLIENTE__";
+            optCliente.text = "🛠️ Ferramenta do Cliente (Inserir Vc e f)";
+            selFerramenta.appendChild(optCliente);
+
             const keys = Object.keys(dados);
             keys.forEach(k => {
                 const opt = document.createElement('option');
@@ -1999,19 +2101,38 @@ html_content = '''
                 selFerramenta.appendChild(opt);
             });
 
-            if (anterior && dados[anterior] && anterior !== ctx.brocaKey) {
+            if (anterior && (anterior === "__CLIENTE__" || (dados[anterior] && anterior !== ctx.brocaKey))) {
                 selFerramenta.value = anterior;
             } else {
                 const outra = keys.find(k => k !== ctx.brocaKey);
                 if (outra) selFerramenta.value = outra;
             }
 
-            popularVariantesComparacao();
+            onChangeFonteComparacao();
             document.getElementById('modal-comparacao').classList.remove('hidden');
         }
 
         function fecharModalComparacao() {
             document.getElementById('modal-comparacao').classList.add('hidden');
+        }
+
+        function onChangeFonteComparacao() {
+            const compKey = document.getElementById('comp-ferramenta').value;
+            const blocoVar = document.getElementById('comp-bloco-variante');
+            const blocoCli = document.getElementById('comp-bloco-cliente');
+            const btnUsar = document.getElementById('btn-usar-comparada');
+
+            if (compKey === "__CLIENTE__") {
+                blocoVar.classList.add('hidden');
+                blocoCli.classList.remove('hidden');
+                btnUsar.classList.add('hidden');
+                atualizarComparacao();
+            } else {
+                blocoVar.classList.remove('hidden');
+                blocoCli.classList.add('hidden');
+                btnUsar.classList.remove('hidden');
+                popularVariantesComparacao();
+            }
         }
 
         function popularVariantesComparacao() {
@@ -2020,7 +2141,7 @@ html_content = '''
             const varAtual = document.getElementById('variante-xd').value;
             selVar.innerHTML = '';
 
-            if (!compKey || !dados[compKey]) return;
+            if (!compKey || compKey === "__CLIENTE__" || !dados[compKey]) return;
             const vars = Object.keys(dados[compKey].variantes || { '5xD': { ratio: 5 } });
             vars.forEach((v, idx) => {
                 const opt = document.createElement('option');
@@ -2039,37 +2160,8 @@ html_content = '''
             if (!ctx.brocaKey || !ctx.toolData) return;
 
             const compKey = document.getElementById('comp-ferramenta').value;
-            const compVar = document.getElementById('comp-variante').value || '5xD';
-            const compTool = dados[compKey];
             const avisoEl = document.getElementById('comp-aviso-grupo');
             const tbody = document.getElementById('comp-tabela-corpo');
-
-            document.getElementById('comp-th-atual').innerText = `${ctx.toolData.nome} (${ctx.varianteKey})`;
-            document.getElementById('comp-th-alvo').innerText = compTool ? `${compTool.nome} (${compVar})` : 'Ferramenta Comparada';
-
-            if (!compTool) return;
-
-            let grupoComparacao = ctx.grupoEfetivoKey;
-            let mensagemAviso = '';
-
-            if (!compTool.grupos[grupoComparacao]) {
-                const prefixo = ctx.grupoEfetivoKey.charAt(0);
-                const mesmoPrefixo = compTool.gruposList.find(g => g.startsWith(prefixo));
-                if (mesmoPrefixo) {
-                    grupoComparacao = mesmoPrefixo;
-                    mensagemAviso = `Nota: O grupo ${ctx.grupoEfetivoKey} não consta nesta família; comparação feita com ${grupoComparacao}.`;
-                } else if (compTool.gruposList.length > 0) {
-                    grupoComparacao = compTool.gruposList[0];
-                    mensagemAviso = `Nota: O grupo ${ctx.grupoEfetivoKey} não é coberto por esta ferramenta; comparação feita com o 1.º grupo disponível (${grupoComparacao}).`;
-                }
-            }
-
-            if (mensagemAviso) {
-                avisoEl.innerText = mensagemAviso;
-                avisoEl.classList.remove('hidden');
-            } else {
-                avisoEl.classList.add('hidden');
-            }
 
             const mAtual = calcularMetricasFerramenta(ctx.brocaKey, ctx.varianteKey, ctx.grupoEfetivoKey, {
                 diametro: ctx.diametro, profundidade: ctx.profundidade, qtdFuros: ctx.qtdFuros,
@@ -2078,16 +2170,66 @@ html_content = '''
                 peckingUnid: ctx.peckingUnid, peckingInputVal: ctx.peckingInputVal,
                 peckingRetensaoVal: ctx.peckingRetensaoVal
             });
+            if (!mAtual) return;
 
-            const mComp = calcularMetricasFerramenta(compKey, compVar, grupoComparacao, {
-                diametro: ctx.diametro, profundidade: ctx.profundidade, qtdFuros: ctx.qtdFuros,
-                custoHora: ctx.custoHora, refrigAtual, vcPct, fPct, rpmMaxUnlocked,
-                rpmMaxVal: ctx.rpmMaxVal, peckingCheck: ctx.peckingCheck,
-                peckingUnid: ctx.peckingUnid, peckingInputVal: ctx.peckingInputVal,
-                peckingRetensaoVal: ctx.peckingRetensaoVal
-            });
+            document.getElementById('comp-th-atual').innerText = `${ctx.toolData.nome} (${ctx.varianteKey})`;
 
-            if (!mAtual || !mComp) return;
+            let mComp = null;
+            let tituloComp = '';
+            let grupoComparacao = ctx.grupoEfetivoKey;
+
+            if (compKey === "__CLIENTE__") {
+                const nomeCli = document.getElementById('comp-cliente-nome').value.trim() || "Ferramenta do Cliente";
+                const vcCli = parseFloat(document.getElementById('comp-cliente-vc').value);
+                const fCli = parseFloat(document.getElementById('comp-cliente-f').value);
+
+                tituloComp = `${nomeCli} (Manual)`;
+                document.getElementById('comp-th-alvo').innerText = tituloComp;
+                avisoEl.classList.add('hidden');
+
+                mComp = calcularMetricasManualCliente(nomeCli, vcCli, fCli, ctx.grupoEfetivoKey, {
+                    diametro: ctx.diametro, profundidade: ctx.profundidade, qtdFuros: ctx.qtdFuros,
+                    custoHora: ctx.custoHora, rpmMaxUnlocked, rpmMaxVal: ctx.rpmMaxVal,
+                    peckingCheck: ctx.peckingCheck, peckingUnid: ctx.peckingUnid,
+                    peckingInputVal: ctx.peckingInputVal, peckingRetensaoVal: ctx.peckingRetensaoVal
+                });
+            } else {
+                const compVar = document.getElementById('comp-variante').value || '5xD';
+                const compTool = dados[compKey];
+                tituloComp = compTool ? `${compTool.nome} (${compVar})` : 'Ferramenta Comparada';
+                document.getElementById('comp-th-alvo').innerText = tituloComp;
+                if (!compTool) return;
+
+                let mensagemAviso = '';
+                if (!compTool.grupos[grupoComparacao]) {
+                    const prefixo = ctx.grupoEfetivoKey.charAt(0);
+                    const mesmoPrefixo = compTool.gruposList.find(g => g.startsWith(prefixo));
+                    if (mesmoPrefixo) {
+                        grupoComparacao = mesmoPrefixo;
+                        mensagemAviso = `Nota: O grupo ${ctx.grupoEfetivoKey} não consta nesta família; comparação feita com ${grupoComparacao}.`;
+                    } else if (compTool.gruposList.length > 0) {
+                        grupoComparacao = compTool.gruposList[0];
+                        mensagemAviso = `Nota: O grupo ${ctx.grupoEfetivoKey} não é coberto por esta ferramenta; comparação feita com o 1.º grupo disponível (${grupoComparacao}).`;
+                    }
+                }
+
+                if (mensagemAviso) {
+                    avisoEl.innerText = mensagemAviso;
+                    avisoEl.classList.remove('hidden');
+                } else {
+                    avisoEl.classList.add('hidden');
+                }
+
+                mComp = calcularMetricasFerramenta(compKey, compVar, grupoComparacao, {
+                    diametro: ctx.diametro, profundidade: ctx.profundidade, qtdFuros: ctx.qtdFuros,
+                    custoHora: ctx.custoHora, refrigAtual, vcPct, fPct, rpmMaxUnlocked,
+                    rpmMaxVal: ctx.rpmMaxVal, peckingCheck: ctx.peckingCheck,
+                    peckingUnid: ctx.peckingUnid, peckingInputVal: ctx.peckingInputVal,
+                    peckingRetensaoVal: ctx.peckingRetensaoVal
+                });
+            }
+
+            if (!mComp) return;
 
             const diffTempoMin = mComp.tempoTotalMin - mAtual.tempoTotalMin;
             const diffCustoLote = mComp.custoTotalLote - mAtual.custoTotalLote;
@@ -2170,7 +2312,7 @@ html_content = '''
 
             cacheComparacao = {
                 nomeAtual: `${ctx.toolData.nome} (${ctx.varianteKey})`,
-                nomeComp: `${compTool.nome} (${compVar})`,
+                nomeComp: tituloComp,
                 grupoComp: grupoComparacao,
                 vfAtual: mAtual.vf,
                 vfComp: mComp.vf,
@@ -2186,7 +2328,7 @@ html_content = '''
         function aplicarFerramentaComparada() {
             const compKey = document.getElementById('comp-ferramenta').value;
             const compVar = document.getElementById('comp-variante').value;
-            if (!compKey || !dados[compKey]) return;
+            if (!compKey || compKey === "__CLIENTE__" || !dados[compKey]) return;
 
             const toolData = dados[compKey];
             document.getElementById('linha').value = toolData.linha;
@@ -2288,7 +2430,7 @@ html_content = '''
                 y += 12;
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(12);
-                doc.text("COMPARATIVO RÁPIDO ENTRE FAMÍLIAS", 15, y);
+                doc.text("COMPARATIVO RÁPIDO ENTRE FERRAMENTAS", 15, y);
 
                 y += 7;
                 doc.setFont("helvetica", "normal");
