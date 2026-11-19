@@ -154,12 +154,25 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Checkbox Ciclo com Pecking -->
-                <div class="bg-slate-900 p-2 rounded-md border border-slate-700/80 space-y-0.5 shrink-0">
+                <!-- Configuração de Ciclo com Pecking (Quebra de Cavaco) -->
+                <div class="bg-slate-900 p-2.5 rounded-md border border-slate-700/80 space-y-2 shrink-0">
                     <label class="flex items-center gap-2 cursor-pointer text-[11px] text-slate-300">
-                        <input type="checkbox" id="pecking-check" class="rounded bg-slate-800 border-slate-600 text-blue-600 focus:ring-0" onchange="atualizarCalculo()">
-                        <span><strong>Ciclo com Quebra de Cavaco (Pecking)</strong> <span class="text-[9px] text-cyan-400 block">Adiciona tempo de retração e alívio</span></span>
+                        <input type="checkbox" id="pecking-check" class="rounded bg-slate-800 border-slate-600 text-blue-600 focus:ring-0" onchange="togglePeckingInputs()">
+                        <span><strong>Ciclo com Quebra de Cavaco (Pecking)</strong></span>
                     </label>
+                    <div id="pecking-options" class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800 hidden">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-medium text-slate-400 block">PASSO (Q) / PROF. PASSO</label>
+                            <div class="flex items-center gap-1">
+                                <input type="number" id="pecking-passo" value="3.0" step="0.5" min="0.5" max="100" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                                <span class="text-[9px] text-slate-400">×D ou mm</span>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-medium text-slate-400 block">AVANÇO RETRAÇÃO (mm/min)</label>
+                            <input type="number" id="pecking-retensao" value="5000" step="500" min="500" max="20000" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 shrink-0 pt-1">
@@ -299,15 +312,10 @@ html_content = '''
                             <span class="text-[10px] font-semibold text-slate-300 uppercase mb-1">Potência de Corte Requerida</span>
                             <div class="relative w-48 h-24 overflow-hidden flex justify-center items-end">
                                 <svg class="w-48 h-24 overflow-visible" viewBox="0 0 200 100">
-                                    <!-- Fundo do arco -->
                                     <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#334155" stroke-width="16" stroke-linecap="round" />
-                                    <!-- Zona Verde 0-70% -->
                                     <path d="M 20 100 A 80 80 0 0 1 132.5 28.5" fill="none" stroke="#10b981" stroke-width="16" stroke-linecap="round" />
-                                    <!-- Zona Amarela 70-90% -->
                                     <path d="M 132.5 28.5 A 80 80 0 0 1 165.4 53.2" fill="none" stroke="#f59e0b" stroke-width="16" />
-                                    <!-- Zona Vermelha 90-100% -->
                                     <path d="M 165.4 53.2 A 80 80 0 0 1 180 100" fill="none" stroke="#ef4444" stroke-width="16" stroke-linecap="round" />
-                                    <!-- Ponteiro / Agulha -->
                                     <g id="needle-potencia" transform="rotate(0, 100, 100)" style="transform-origin: 100px 100px; transition: transform 0.4s ease-in-out;">
                                         <line x1="100" y1="100" x2="100" y2="30" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
                                         <circle cx="100" cy="100" r="5" fill="#f8fafc" />
@@ -486,7 +494,7 @@ html_content = '''
                         <input type="radio" name="tipo-relatorio" value="completo" class="mt-0.5 accent-blue-500">
                         <div>
                             <strong class="text-xs text-white block">Proposta Técnica Completa</strong>
-                            <span class="text-[10px] text-slate-400">Inclui parâmetros, tempo total, volume, limalha, sucata e esforço/carga de spindle.</span>
+                            <span class="text-[10px] text-slate-400">Inclui parâmetros, tempo total, volume, limalha, sucata, pecking e esforço/carga de spindle.</span>
                         </div>
                     </label>
                 </div>
@@ -531,6 +539,17 @@ html_content = '''
                     document.exitFullscreen();
                 }
             }
+        }
+
+        function togglePeckingInputs() {
+            const isChecked = document.getElementById('pecking-check').checked;
+            const container = document.getElementById('pecking-options');
+            if (isChecked) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+            atualizarCalculo();
         }
 
         const propriedadesGrupo = {
@@ -992,8 +1011,6 @@ html_content = '''
 
             const pct = (val / maxVal) * 100;
             const clampedPct = Math.min(Math.max(pct, 0), 100);
-            
-            // Mapeia 0-100% para -90deg a +90deg no SVG do gauge
             const angle = -90 + (clampedPct / 100) * 180;
             needle.style.transform = `rotate(${angle}deg)`;
 
@@ -1129,9 +1146,21 @@ html_content = '''
             const cursoEfetivo = profundidade + (0.3 * diametro);
             let tempoFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
 
-            // Se ciclo com pecking ativado, acrescenta penalização de tempo por quebras de cavaco (ex: 15% a 25% mais tempo)
+            let peckingPassoVal = 0;
+            let peckingRetensaoVal = 0;
+            let peckingStrDescricao = "Não (Direto)";
+
             if (peckingCheck) {
-                tempoFuroSeg *= 1.20;
+                peckingPassoVal = parseFloat(document.getElementById('pecking-passo').value) || (3.0 * diametro);
+                peckingRetensaoVal = parseFloat(document.getElementById('pecking-retensao').value) || 5000;
+                peckingStrDescricao = `Sim (Passo: ${peckingPassoVal} mm | Retração G0: ${peckingRetensaoVal} mm/min)`;
+
+                // Cálculo rigoroso do tempo de pecking (múltiplos passos + retornos rápidos G0)
+                const numPassos = Math.ceil(profundidade / peckingPassoVal);
+                const tempoCortePassos = (profundidade / vf) * 60;
+                // Tempo de retração rápida (G0) de volta à superfície a cada passo
+                const tempoRetracaoSeg = (numPassos * (profundidade / peckingRetensaoVal)) * 60;
+                tempoFuroSeg = tempoCortePassos + tempoRetracaoSeg + (0.3 * diametro / vf * 60);
             }
 
             const raio = diametro / 2;
@@ -1164,7 +1193,6 @@ html_content = '''
             const rendimentoSpindle = 0.85;
             const potenciaReqKw = (binarioMc * n) / (9550 * rendimentoSpindle);
 
-            // Validação Limites do Spindle para os Gauges
             const potMaxInput = parseFloat(document.getElementById('spindle-potencia').value);
             const unidPot = document.getElementById('unidade-potencia').value;
             let potMaxKw = (!isNaN(potMaxInput) && potMaxInput > 0) ? (unidPot === 'cv' ? potMaxInput * 0.7355 : potMaxInput) : null;
@@ -1172,10 +1200,7 @@ html_content = '''
             const binMaxInput = parseFloat(document.getElementById('spindle-binario').value);
             let binMaxNm = (!isNaN(binMaxInput) && binMaxInput > 0) ? binMaxInput : null;
 
-            // Atualiza Gauge Potência
             atualizarGauge(potenciaReqKw, potMaxKw, 'needle-potencia', 'val-gauge-pot', 'badge-gauge-pot', 'kW');
-
-            // Atualiza Gauge Binário
             atualizarGauge(binarioMc, binMaxNm, 'needle-binario', 'val-gauge-bin', 'badge-gauge-bin', 'N·m');
 
             cacheResultados = {
@@ -1187,7 +1212,7 @@ html_content = '''
                 qtdFuros,
                 metragemLinearM: metragemLinearM.toFixed(2),
                 refrig: refrigAtual.toUpperCase(),
-                pecking: peckingCheck ? 'Sim (Ciclo Intermitente)' : 'Não (Direto)',
+                pecking: peckingStrDescricao,
                 vc: Math.round(vcFinal),
                 f: fFinal.toFixed(4),
                 n,
