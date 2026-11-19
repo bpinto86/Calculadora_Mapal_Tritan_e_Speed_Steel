@@ -29,6 +29,7 @@ html_content = '''
     <meta charset="UTF-8">
     <title>Parâmetros de Corte MAPAL & Proposta Comercial PDF</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluir jsPDF para geração direta de PDF no browser -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -165,30 +166,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Capacidade do Spindle da Máquina (Opcional) -->
-                <div class="space-y-2 pt-2 border-t border-slate-700 shrink-0">
-                    <div class="flex justify-between items-center">
-                        <label class="text-[11px] font-medium text-amber-400 uppercase tracking-wider">13. Capacidade do Spindle (Opcional)</label>
-                        <span class="text-[9px] text-slate-400">Deixar vazio se n/a</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="space-y-1">
-                            <div class="flex justify-between items-center">
-                                <label class="text-[10px] font-medium text-slate-300">POTÊNCIA MÁX.</label>
-                                <select id="unidade-potencia" class="bg-slate-900 border border-slate-700 rounded px-1 text-[9px] text-cyan-400 focus:outline-none" onchange="atualizarCalculo()">
-                                    <option value="kw">kW</option>
-                                    <option value="cv">CV</option>
-                                </select>
-                            </div>
-                            <input type="number" id="spindle-potencia" placeholder="Ex: 11.0" step="0.5" min="0" max="200" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white placeholder-slate-600 focus:outline-none focus:border-amber-500" oninput="atualizarCalculo()">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-medium text-slate-300 block">BINÁRIO MÁX. (N·m)</label>
-                            <input type="number" id="spindle-binario" placeholder="Ex: 70" step="1" min="0" max="2000" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white placeholder-slate-600 focus:outline-none focus:border-amber-500" oninput="atualizarCalculo()">
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Ajustes Percentuais (%) -->
                 <div class="space-y-2 pt-1 border-t border-slate-700 shrink-0">
                     <label class="text-[11px] font-medium text-blue-400 uppercase tracking-wider">Ajustes Percentuais (%)</label>
@@ -220,11 +197,11 @@ html_content = '''
             </div>
 
             <!-- Resultados e Indicadores (Direita) -->
-            <div class="lg:col-span-8 flex flex-col gap-2.5 min-h-0 overflow-y-auto">
+            <div class="lg:col-span-8 flex flex-col gap-3 min-h-0 overflow-y-auto">
                 <!-- Grid de Métricas CNC Principal -->
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-2.5 shrink-0">
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 shrink-0">
                     <!-- Cartão f -->
-                    <div id="card-f" class="bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors">
+                    <div id="card-f" class="bg-slate-800 p-3 rounded-lg border border-slate-700 transition-colors">
                         <div class="flex justify-between items-center">
                             <span class="text-[11px] text-slate-400">Avanço (f)</span>
                             <button type="button" onclick="toggleLock('f')" id="btn-lock-f" title="Desbloquear para edição manual" class="text-xs px-1 py-0.5 rounded bg-slate-900/80 border border-slate-700 hover:border-slate-500 transition">🔒</button>
@@ -237,7 +214,7 @@ html_content = '''
                     </div>
 
                     <!-- Cartão Vc -->
-                    <div id="card-vc" class="bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors">
+                    <div id="card-vc" class="bg-slate-800 p-3 rounded-lg border border-slate-700 transition-colors">
                         <div class="flex justify-between items-center">
                             <span class="text-[11px] text-slate-400">Vc</span>
                             <button type="button" onclick="toggleLock('vc')" id="btn-lock-vc" title="Desbloquear para edição manual" class="text-xs px-1 py-0.5 rounded bg-slate-900/80 border border-slate-700 hover:border-slate-500 transition">🔒</button>
@@ -250,7 +227,7 @@ html_content = '''
                     </div>
 
                     <!-- Rotações Limite da Máquina -->
-                    <div id="card-rpm-max" class="bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors">
+                    <div id="card-rpm-max" class="bg-slate-800 p-3 rounded-lg border border-slate-700 transition-colors">
                         <div class="flex justify-between items-center">
                             <span class="text-[11px] text-slate-400">RPM Máx. Máquina</span>
                             <button type="button" onclick="toggleLock('rpm-max')" id="btn-lock-rpm-max" title="Desbloquear para definir limite de RPM" class="text-xs px-1 py-0.5 rounded bg-slate-900/80 border border-slate-700 hover:border-slate-500 transition">🔒</button>
@@ -263,95 +240,36 @@ html_content = '''
                     </div>
 
                     <!-- Rotações (Spindle) -->
-                    <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700">
+                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
                         <span class="text-[11px] text-slate-400">Rotações (Spindle)</span>
                         <div class="text-xl font-bold text-white mt-0.5" id="res-n">4178</div>
                         <span class="text-[9px] text-slate-400">rpm</span>
                     </div>
 
                     <!-- Avanço de Trabalho -->
-                    <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700">
+                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
                         <span class="text-[11px] text-slate-400">Avanço Trabalho</span>
                         <div class="text-xl font-bold text-white mt-0.5" id="res-vf">1608</div>
                         <span class="text-[9px] text-slate-400">mm/min</span>
                     </div>
                 </div>
 
-                <!-- Monitor de Carga do Spindle (VU Meter / Conta-Rotações Horizontal) -->
-                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 shrink-0">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                            <span>🎛️</span> Monitor de Carga & Viabilidade do Spindle
-                        </span>
-                        <span class="text-[10px] text-slate-400">Rendimento mecânico estimado: 85%</span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Barra de Potência -->
-                        <div class="bg-slate-900/90 p-2.5 rounded-md border border-slate-700/80">
-                            <div class="flex justify-between items-end mb-1">
-                                <div>
-                                    <span class="text-[10px] text-slate-400 uppercase block">Potência de Corte Requerida</span>
-                                    <span class="text-sm font-bold text-white" id="res-potencia-req">0.00 kW</span>
-                                    <span class="text-[10px] text-slate-400" id="res-potencia-max-lbl">/ Sem limite definido</span>
-                                </div>
-                                <span id="badge-potencia" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">Standby</span>
-                            </div>
-                            <div class="relative w-full h-3.5 bg-slate-950 rounded-full overflow-hidden border border-slate-700 mt-1.5">
-                                <div id="bar-potencia" class="h-full bg-slate-600 transition-all duration-300" style="width: 0%;"></div>
-                                <div class="absolute top-0 bottom-0 w-0.5 bg-amber-400/80 z-10" style="left: 70%;" title="70% - Limite Confortável"></div>
-                                <div class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10" style="left: 90%;" title="90% - Risco Sério de Stall"></div>
-                            </div>
-                            <div class="flex justify-between text-[8px] text-slate-500 mt-0.5 font-mono">
-                                <span>0%</span>
-                                <span class="text-emerald-500/80">Seguro (&lt;70%)</span>
-                                <span class="text-amber-400/90">70%</span>
-                                <span class="text-red-400/90">90% Stall</span>
-                                <span>100%</span>
-                            </div>
-                        </div>
-
-                        <!-- Barra de Binário -->
-                        <div class="bg-slate-900/90 p-2.5 rounded-md border border-slate-700/80">
-                            <div class="flex justify-between items-end mb-1">
-                                <div>
-                                    <span class="text-[10px] text-slate-400 uppercase block">Binário de Corte Requerido (Mc)</span>
-                                    <span class="text-sm font-bold text-white" id="res-binario-req">0.0 N·m</span>
-                                    <span class="text-[10px] text-slate-400" id="res-binario-max-lbl">/ Sem limite definido</span>
-                                </div>
-                                <span id="badge-binario" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400">Standby</span>
-                            </div>
-                            <div class="relative w-full h-3.5 bg-slate-950 rounded-full overflow-hidden border border-slate-700 mt-1.5">
-                                <div id="bar-binario" class="h-full bg-slate-600 transition-all duration-300" style="width: 0%;"></div>
-                                <div class="absolute top-0 bottom-0 w-0.5 bg-amber-400/80 z-10" style="left: 70%;" title="70% - Limite Confortável"></div>
-                                <div class="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10" style="left: 90%;" title="90% - Risco Sério de Stall"></div>
-                            </div>
-                            <div class="flex justify-between text-[8px] text-slate-500 mt-0.5 font-mono">
-                                <span>0%</span>
-                                <span class="text-emerald-500/80">Seguro (&lt;70%)</span>
-                                <span class="text-amber-400/90">70%</span>
-                                <span class="text-red-400/90">90% Stall</span>
-                                <span>100%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Indicadores de Tempo de Furação (Unitário vs Total Lote) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
-                    <div class="bg-gradient-to-r from-blue-900/40 to-slate-800 p-2.5 rounded-lg border border-blue-700/50 flex justify-between items-center">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
+                    <div class="bg-gradient-to-r from-blue-900/40 to-slate-800 p-3 rounded-lg border border-blue-700/50 flex justify-between items-center">
                         <div>
                             <span class="text-[11px] text-blue-300 font-semibold uppercase tracking-wider">⏱️ Tempo de Ciclo (Total Lote / Unitário)</span>
-                            <div class="text-lg font-extrabold text-white mt-0.5" id="res-tempo-total">0.0 min <span class="text-xs font-normal text-slate-300" id="res-tempo-unit">(0.0 seg/furo)</span></div>
+                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-tempo-total">0.0 min <span class="text-xs font-normal text-slate-300" id="res-tempo-unit">(0.0 seg/furo)</span></div>
                         </div>
                         <div class="text-right">
                             <span class="text-[10px] text-slate-400">Metragem Linear (Lote)</span>
                             <div class="text-xs font-mono font-bold text-cyan-400" id="res-metragem">0.0 metros</div>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-r from-emerald-900/40 to-slate-800 p-2.5 rounded-lg border border-emerald-700/50 flex justify-between items-center">
+                    <div class="bg-gradient-to-r from-emerald-900/40 to-slate-800 p-3 rounded-lg border border-emerald-700/50 flex justify-between items-center">
                         <div>
                             <span class="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider">📦 Volume de Material (Total Lote)</span>
-                            <div class="text-lg font-extrabold text-white mt-0.5" id="res-volume-total">0.0 cm³</div>
+                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-volume-total">0.0 cm³</div>
                         </div>
                         <div class="text-right">
                             <span class="text-[10px] text-slate-400">Taxa de Remoção</span>
@@ -361,21 +279,21 @@ html_content = '''
                 </div>
 
                 <!-- Peso Removido e Lucro de Sucata (Total Lote) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
-                    <div class="bg-gradient-to-r from-cyan-900/40 to-slate-800 p-2.5 rounded-lg border border-cyan-700/50 flex justify-between items-center">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
+                    <div class="bg-gradient-to-r from-cyan-900/40 to-slate-800 p-3 rounded-lg border border-cyan-700/50 flex justify-between items-center">
                         <div>
                             <span class="text-[11px] text-cyan-300 font-semibold uppercase tracking-wider">⚖️ Peso Total de Limalha (Lote)</span>
-                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-peso">0.000 <span class="text-sm font-normal text-slate-300">kg</span></div>
+                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-peso">0.000 <span class="text-sm font-normal text-slate-300">kg</span></div>
                         </div>
                         <div class="text-right">
                             <span class="text-[10px] text-slate-400">Massa por Furo</span>
                             <div class="text-xs font-mono font-bold text-cyan-400" id="res-peso-g">0.00 g</div>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-r from-teal-900/40 to-slate-800 p-2.5 rounded-lg border border-teal-700/50 flex justify-between items-center">
+                    <div class="bg-gradient-to-r from-teal-900/40 to-slate-800 p-3 rounded-lg border border-teal-700/50 flex justify-between items-center">
                         <div>
                             <span class="text-[11px] text-teal-300 font-semibold uppercase tracking-wider">💶 Valor Total de Sucata (Lote)</span>
-                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-sucata-val">0.00 <span class="text-sm font-normal text-slate-300">€</span></div>
+                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-sucata-val">0.00 <span class="text-sm font-normal text-slate-300">€</span></div>
                         </div>
                         <div class="text-right">
                             <span class="text-[10px] text-slate-400">Retorno Comercial</span>
@@ -384,56 +302,83 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Custo de Produção, Força Axial e Binário de Corte (Reposto!) -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 shrink-0">
-                    <div class="bg-gradient-to-r from-indigo-900/40 to-slate-800 p-2.5 rounded-lg border border-indigo-700/50 flex justify-between items-center">
+                <!-- Custo de Produção -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
+                    <div class="bg-gradient-to-r from-indigo-900/40 to-slate-800 p-3 rounded-lg border border-indigo-700/50 flex justify-between items-center">
                         <div>
-                            <span class="text-[11px] text-indigo-300 font-semibold uppercase tracking-wider">💰 Custo Maquinação</span>
-                            <div class="text-base font-extrabold text-white mt-0.5" id="res-custo-total">0.00 € <span class="text-[10px] font-normal text-slate-300" id="res-custo-furo">(0.00 €/furo)</span></div>
+                            <span class="text-[11px] text-indigo-300 font-semibold uppercase tracking-wider">💰 Custo de Maquinação (Total Lote / Unitário)</span>
+                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-custo-total">0.00 € <span class="text-xs font-normal text-slate-300" id="res-custo-furo">(0.00 €/furo)</span></div>
                         </div>
                         <div class="text-right">
-                            <span class="text-[10px] text-slate-400">Custo Hora</span>
+                            <span class="text-[10px] text-slate-400">Custo Hora Maquinação</span>
                             <div class="text-xs font-mono font-bold text-indigo-400" id="res-custo-hora-ref">50.00 €/h</div>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-r from-amber-900/40 to-slate-800 p-2.5 rounded-lg border border-amber-700/50 flex justify-between items-center">
+                    <div class="bg-gradient-to-r from-slate-800 to-slate-800 p-3 rounded-lg border border-slate-700 flex justify-between items-center">
                         <div>
-                            <span class="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">⚡ Força Axial (Ff)</span>
-                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-forca">0 <span class="text-sm font-normal text-slate-300">N</span></div>
+                            <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">🎯 Produtividade e Eficiência</span>
+                            <div class="text-xl font-extrabold text-white mt-0.5">Alta Performance <span class="text-xs font-normal text-emerald-400">MAPAL</span></div>
                         </div>
                         <div class="text-right">
-                            <span class="text-[10px] text-slate-400">Esforço em Z</span>
+                            <span class="text-[10px] text-slate-400">Segurança de Processo</span>
+                            <div class="text-xs font-mono font-bold text-blue-400">Excelente</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Indicadores: Força de Furação e Binário de Corte -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 shrink-0">
+                    <div class="bg-gradient-to-r from-amber-900/40 to-slate-800 p-3 rounded-lg border border-amber-700/50 flex justify-between items-center">
+                        <div>
+                            <span class="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">⚡ Força de Avanço Estimada (Ff)</span>
+                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-forca">0 <span class="text-sm font-normal text-slate-300">N</span></div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-slate-400">Esforço Axial</span>
                             <div class="text-xs font-mono font-bold text-amber-400" id="res-forca-kgf">0 kgf</div>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-r from-purple-900/40 to-slate-800 p-2.5 rounded-lg border border-purple-700/50 flex justify-between items-center">
+                    <div class="bg-gradient-to-r from-purple-900/40 to-slate-800 p-3 rounded-lg border border-purple-700/50 flex justify-between items-center">
                         <div>
-                            <span class="text-[11px] text-purple-300 font-semibold uppercase tracking-wider">🔄 Binário de Corte (Mc)</span>
-                            <div class="text-xl font-extrabold text-white mt-0.5" id="res-binario-card">0.0 <span class="text-sm font-normal text-slate-300">N·m</span></div>
+                            <span class="text-[11px] text-purple-300 font-semibold uppercase tracking-wider">🔄 Binário de Corte Estimado (Mc)</span>
+                            <div class="text-2xl font-extrabold text-white mt-0.5" id="res-binario">0.0 <span class="text-sm font-normal text-slate-300">N·m</span></div>
                         </div>
                         <div class="text-right">
-                            <span class="text-[10px] text-slate-400">Torque Ferramenta</span>
+                            <span class="text-[10px] text-slate-400">Torque do Spindle</span>
                             <div class="text-xs font-mono font-bold text-purple-400">Estimado por kc</div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Valores auxiliares compactos -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 shrink-0">
+                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                        <span class="text-[11px] text-slate-400">Intercepção (a)</span>
+                        <div class="font-mono text-sm font-bold text-white mt-0.5" id="val-a">0.1450 mm/rot</div>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                        <span class="text-[11px] text-slate-400">Declive / Desvio (b)</span>
+                        <div class="font-mono text-sm font-bold text-white mt-0.5" id="val-b">0.0300 mm/rot·mm</div>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                        <span class="text-[11px] text-slate-400">Estado da Gama</span>
+                        <div class="text-xs font-bold text-emerald-400 mt-1" id="val-estado">Dentro do intervalo consecutivo</div>
+                    </div>
+                </div>
+
                 <!-- Tabela de Referência e Gráfico lado a lado -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 flex-1 min-h-[220px]">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1 min-h-[280px]">
                     <!-- Tabela de Referência -->
-                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col min-h-0">
-                        <div class="flex justify-between items-center mb-1.5 shrink-0">
-                            <h3 class="text-[11px] font-semibold text-slate-400 uppercase">Tabela de Referência do Catálogo</h3>
-                            <span class="text-[9px] font-bold text-emerald-400" id="val-estado">Dentro da gama</span>
-                        </div>
-                        <div class="overflow-y-auto flex-1 min-h-0 max-h-[180px]">
+                    <div class="bg-slate-800 p-3.5 rounded-lg border border-slate-700 flex flex-col min-h-0">
+                        <h3 class="text-[11px] font-semibold text-slate-400 uppercase mb-2 shrink-0">Tabela de Referência do Catálogo</h3>
+                        <div class="overflow-y-auto flex-1 min-h-0 max-h-[220px]">
                             <table class="w-full text-left text-xs">
                                 <thead class="sticky top-0 bg-slate-800">
                                     <tr class="border-b border-slate-700 text-slate-400">
-                                        <th class="pb-1">Ø (mm)</th>
-                                        <th class="pb-1">f Cat.</th>
-                                        <th class="pb-1">RPM (n)</th>
-                                        <th class="pb-1">Avanço (v_f)</th>
+                                        <th class="pb-1.5">Ø (mm)</th>
+                                        <th class="pb-1.5">f Cat.</th>
+                                        <th class="pb-1.5">RPM (n)</th>
+                                        <th class="pb-1.5">Avanço (v_f)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabela-ref" class="divide-y divide-slate-700/50"></tbody>
@@ -442,13 +387,13 @@ html_content = '''
                     </div>
 
                     <!-- Gráfico Interativo SVG -->
-                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col justify-between min-h-0">
+                    <div class="bg-slate-800 p-3.5 rounded-lg border border-slate-700 flex flex-col justify-between min-h-0">
                         <div class="flex justify-between items-center shrink-0">
                             <h3 class="text-[11px] font-semibold text-slate-400 uppercase">Curva por Intervalos: Avanço (f) vs. Ø</h3>
-                            <span class="text-[9px] text-slate-400" id="badge-metodo">Interpolação Linear</span>
+                            <span class="text-[9px] text-slate-400" id="badge-metodo">SVG Interativo</span>
                         </div>
-                        <div class="relative w-full flex-1 bg-slate-900 rounded-md border border-slate-700 p-1 flex items-center justify-center my-1.5 min-h-[120px]">
-                            <svg id="svg-grafico" class="w-full h-full max-h-36" viewBox="0 0 400 180" preserveAspectRatio="xMidYMid meet"></svg>
+                        <div class="relative w-full flex-1 bg-slate-900 rounded-md border border-slate-700 p-1 flex items-center justify-center my-2 min-h-[140px]">
+                            <svg id="svg-grafico" class="w-full h-full max-h-40" viewBox="0 0 400 180" preserveAspectRatio="xMidYMid meet"></svg>
                         </div>
                         <div class="flex justify-center gap-4 text-[9px] text-slate-400 shrink-0">
                             <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span> Catálogo</span>
@@ -479,7 +424,7 @@ html_content = '''
                         <input type="radio" name="tipo-relatorio" value="completo" class="mt-0.5 accent-blue-500">
                         <div>
                             <strong class="text-xs text-white block">Proposta Técnica Completa</strong>
-                            <span class="text-[10px] text-slate-400">Inclui parâmetros, tempo total, volume, limalha, sucata e esforço/carga de spindle.</span>
+                            <span class="text-[10px] text-slate-400">Inclui parâmetros, tempo total, volume, peso de limalha, sucata e esforço/binário de máquina.</span>
                         </div>
                     </label>
                 </div>
@@ -852,14 +797,14 @@ html_content = '''
                 input.readOnly = !fUnlocked;
                 if (fUnlocked) {
                     btn.innerText = '🔓';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-amber-500/80 transition-colors';
+                    card.className = 'bg-slate-800 p-3 rounded-lg border border-amber-500/80 transition-colors';
                     input.className = 'w-full bg-slate-900 text-xl font-bold text-amber-300 mt-0.5 focus:outline-none rounded px-1 -ml-1 border border-amber-500/40';
                     status.innerText = 'Manual';
                     status.className = 'text-[9px] text-amber-400 font-semibold';
                     input.focus();
                 } else {
                     btn.innerText = '🔒';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors';
+                    card.className = 'bg-slate-800 p-3 rounded-lg border border-slate-700 transition-colors';
                     input.className = 'w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1';
                     status.innerText = 'Auto';
                     status.className = 'text-[9px] text-slate-500';
@@ -875,14 +820,14 @@ html_content = '''
                 input.readOnly = !vcUnlocked;
                 if (vcUnlocked) {
                     btn.innerText = '🔓';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-amber-500/80 transition-colors';
+                    card.className = 'bg-slate-800 p-3 rounded-lg border border-amber-500/80 transition-colors';
                     input.className = 'w-full bg-slate-900 text-xl font-bold text-amber-300 mt-0.5 focus:outline-none rounded px-1 -ml-1 border border-amber-500/40';
                     status.innerText = 'Manual';
                     status.className = 'text-[9px] text-amber-400 font-semibold';
                     input.focus();
                 } else {
                     btn.innerText = '🔒';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors';
+                    card.className = 'bg-slate-800 p-3 rounded-lg border border-slate-700 transition-colors';
                     input.className = 'w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1';
                     status.innerText = 'Auto';
                     status.className = 'text-[9px] text-slate-500';
@@ -898,14 +843,14 @@ html_content = '''
                 input.readOnly = !rpmMaxUnlocked;
                 if (rpmMaxUnlocked) {
                     btn.innerText = '🔓';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-amber-500/80 transition-colors';
+                    card.className = 'bg-slate-800 p-3 rounded-lg border border-amber-500/80 transition-colors';
                     input.className = 'w-full bg-slate-900 text-xl font-bold text-amber-300 mt-0.5 focus:outline-none rounded px-1 -ml-1 border border-amber-500/40';
                     status.innerText = 'Ativo';
                     status.className = 'text-[9px] text-amber-400 font-semibold';
                     input.focus();
                 } else {
                     btn.innerText = '🔒';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors';
+                    card.className = 'bg-slate-800 p-3 rounded-lg border border-slate-700 transition-colors';
                     input.className = 'w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1';
                     status.innerText = 'Inativo';
                     status.className = 'text-[9px] text-slate-500';
@@ -969,36 +914,6 @@ html_content = '''
             }
         }
 
-        function atualizarBarraCarga(pct, barElId, badgeElId) {
-            const barEl = document.getElementById(barElId);
-            const badgeEl = document.getElementById(badgeElId);
-
-            if (pct === null || isNaN(pct) || pct <= 0) {
-                barEl.style.width = '0%';
-                barEl.className = 'h-full bg-slate-600 transition-all duration-300';
-                badgeEl.innerText = 'Standby';
-                badgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400';
-                return;
-            }
-
-            const widthPct = Math.min(pct, 100);
-            barEl.style.width = widthPct + '%';
-
-            if (pct < 70) {
-                barEl.className = 'h-full bg-emerald-500 transition-all duration-300';
-                badgeEl.innerText = pct.toFixed(0) + '% — Confortável';
-                badgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-700/50';
-            } else if (pct <= 90) {
-                barEl.className = 'h-full bg-amber-500 transition-all duration-300';
-                badgeEl.innerText = pct.toFixed(0) + '% — No Limite';
-                badgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-700/50';
-            } else {
-                barEl.className = 'h-full bg-red-600 animate-pulse transition-all duration-300';
-                badgeEl.innerText = pct.toFixed(0) + '% — Risco de Stall!';
-                badgeEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-600/80';
-            }
-        }
-
         let cacheResultados = {};
 
         function atualizarCalculo() {
@@ -1051,18 +966,18 @@ html_content = '''
             }
 
             let a = 0, b = 0, fBase = 0;
-            let estadoTexto = "Dentro da gama";
+            let estadoTexto = "Dentro do intervalo consecutivo";
             let estadoCor = "text-emerald-400";
             let badgeMetodo = "Interpolação Linear";
 
             if (idxInf >= diametrosCat.length - 1) {
                 idxInf = diametrosCat.length - 2;
-                estadoTexto = "Extrapolação Superior";
+                estadoTexto = "Acima da gama máxima (Extrapolação)";
                 estadoCor = "text-amber-400";
                 badgeMetodo = "Extrapolação Superior";
             } else if (diametro < diametrosCat[0]) {
                 idxInf = 0;
-                estadoTexto = "Extrapolação Inferior";
+                estadoTexto = "Abaixo da gama mínima (Extrapolação)";
                 estadoCor = "text-amber-400";
                 badgeMetodo = "Extrapolação Inferior";
             }
@@ -1108,7 +1023,7 @@ html_content = '''
                     if (!vcUnlocked) {
                         document.getElementById('input-vc').value = Math.round(vcFinal);
                     }
-                    estadoTexto = "Limitado por RPM Máx.";
+                    estadoTexto = "Limitado por RPM Máx. da Máquina";
                     estadoCor = "text-amber-400";
                 }
             }
@@ -1140,41 +1055,10 @@ html_content = '''
             const tempoMinUnit = tempoFuroSeg / 60;
             const taxaRemocao = tempoMinUnit > 0 ? volumeCm3Furo / tempoMinUnit : 0;
 
-            // Esforços e Potência do Spindle
             const kc = getKc(grupoEfetivoKey);
             const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
             const forcaKgf = forcaFf / 9.81;
             const binarioMc = (kc * Math.pow(diametro, 2) * Math.pow(fFinal, 0.8)) / 8000;
-            const rendimentoSpindle = 0.85;
-            const potenciaReqKw = (binarioMc * n) / (9550 * rendimentoSpindle);
-
-            // Validação Limites do Spindle
-            const potMaxInput = parseFloat(document.getElementById('spindle-potencia').value);
-            const unidPot = document.getElementById('unidade-potencia').value;
-            let potMaxKw = (!isNaN(potMaxInput) && potMaxInput > 0) ? (unidPot === 'cv' ? potMaxInput * 0.7355 : potMaxInput) : null;
-
-            const binMaxInput = parseFloat(document.getElementById('spindle-binario').value);
-            let binMaxNm = (!isNaN(binMaxInput) && binMaxInput > 0) ? binMaxInput : null;
-
-            document.getElementById('res-potencia-req').innerText = potenciaReqKw.toFixed(2) + ' kW';
-            if (potMaxKw) {
-                document.getElementById('res-potencia-max-lbl').innerText = `/ ${potMaxKw.toFixed(1)} kW máx.`;
-                const pctPot = (potenciaReqKw / potMaxKw) * 100;
-                atualizarBarraCarga(pctPot, 'bar-potencia', 'badge-potencia');
-            } else {
-                document.getElementById('res-potencia-max-lbl').innerText = `/ Sem limite definido`;
-                atualizarBarraCarga(null, 'bar-potencia', 'badge-potencia');
-            }
-
-            document.getElementById('res-binario-req').innerText = binarioMc.toFixed(1) + ' N·m';
-            if (binMaxNm) {
-                document.getElementById('res-binario-max-lbl').innerText = `/ ${binMaxNm.toFixed(0)} N·m máx.`;
-                const pctBin = (binarioMc / binMaxNm) * 100;
-                atualizarBarraCarga(pctBin, 'bar-binario', 'badge-binario');
-            } else {
-                document.getElementById('res-binario-max-lbl').innerText = `/ Sem limite definido`;
-                atualizarBarraCarga(null, 'bar-binario', 'badge-binario');
-            }
 
             cacheResultados = {
                 ferramenta: toolData.nome,
@@ -1199,8 +1083,7 @@ html_content = '''
                 custoHora: custoHora.toFixed(2),
                 forcaN: Math.round(forcaFf).toLocaleString(),
                 forcaKgf: Math.round(forcaKgf),
-                binarioNm: binarioMc.toFixed(1),
-                potenciaKw: potenciaReqKw.toFixed(2)
+                binarioNm: binarioMc.toFixed(1)
             };
 
             document.getElementById('res-n').innerText = n;
@@ -1213,15 +1096,17 @@ html_content = '''
             document.getElementById('res-peso-g').innerText = massaGramsFuro.toFixed(1) + ' g/furo';
             document.getElementById('res-sucata-val').innerHTML = valorTotalSucata.toFixed(2) + ' <span class="text-sm font-normal text-slate-300">€</span>';
             document.getElementById('res-sucata-furo').innerText = valorSucataFuro.toFixed(3) + ' € / furo';
-            document.getElementById('res-custo-total').innerHTML = custoTotalLote.toFixed(2) + ' € <span class="text-[10px] font-normal text-slate-300">(' + custoFuro.toFixed(2) + ' €/furo)</span>';
-            document.getElementById('res-custo-hora-ref').innerText = custoHora.toFixed(2) + ' €/h';
+            document.getElementById('res-custo-total').innerHTML = custoTotalLote.toFixed(2) + ' € <span class="text-xs font-normal text-slate-300">(' + custoFuro.toFixed(2) + ' €/furo)</span>';
+            document.getElementById('res-custo-hora-ref').innerText = custoHora + ' €/h';
             document.getElementById('res-forca').innerHTML = Math.round(forcaFf).toLocaleString() + ' <span class="text-sm font-normal text-slate-300">N</span>';
             document.getElementById('res-forca-kgf').innerText = Math.round(forcaKgf) + ' kgf';
-            document.getElementById('res-binario-card').innerHTML = binarioMc.toFixed(1) + ' <span class="text-sm font-normal text-slate-300">N·m</span>';
+            document.getElementById('res-binario').innerHTML = binarioMc.toFixed(1) + ' <span class="text-sm font-normal text-slate-300">N·m</span>';
 
+            document.getElementById('val-a').innerText = a.toFixed(4) + " mm/rot";
+            document.getElementById('val-b').innerText = b.toFixed(4) + " mm/rot·mm";
             const elEstado = document.getElementById('val-estado');
             elEstado.innerText = estadoTexto;
-            elEstado.className = "text-[9px] font-bold " + estadoCor;
+            elEstado.className = "text-xs font-bold " + estadoCor + " mt-1";
             document.getElementById('badge-metodo').innerText = badgeMetodo;
 
             document.getElementById('vc-pct-val').innerText = (vcPct > 0 ? "+" : "") + vcPct + "%";
@@ -1267,7 +1152,8 @@ html_content = '''
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            doc.setFillColor(15, 23, 42);
+            // Cabeçalho Profissional
+            doc.setFillColor(15, 23, 42); // Fundo escuro slate-900
             doc.rect(0, 0, 210, 30, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFont("helvetica", "bold");
@@ -1323,7 +1209,7 @@ html_content = '''
                 y += 12;
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(12);
-                doc.text("4. ANÁLISE DE MATERIAL, SUCATA E ESFORÇOS DE MÁQUINA", 15, y);
+                doc.text("4. ANÁLISE DE MATERIAL, SUCATA E ESFORÇOS", 15, y);
 
                 y += 7;
                 doc.setFont("helvetica", "normal");
@@ -1332,10 +1218,10 @@ html_content = '''
                 doc.text(`• Peso Total de Limalha (Lote): ${r.massaTotalKg} kg`, 18, y); y += 6;
                 doc.text(`• Valor Comercial da Sucata (Lote): ${r.valorTotalSucata} €`, 18, y); y += 6;
                 doc.text(`• Força de Avanço Estimada (Ff): ${r.forcaN} N (${r.forcaKgf} kgf)`, 18, y); y += 6;
-                doc.text(`• Binário de Corte Estimado (Mc): ${r.binarioNm} N·m`, 18, y); y += 6;
-                doc.text(`• Potência Requerida no Spindle (Pc): ${r.potenciaKw} kW`, 18, y);
+                doc.text(`• Binário de Corte Estimado (Mc): ${r.binarioNm} N·m`, 18, y);
             }
 
+            // Rodapé do PDF
             doc.setLineWidth(0.5);
             doc.setLineDash([2, 2], 0);
             doc.line(15, 280, 195, 280);
