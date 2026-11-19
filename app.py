@@ -691,10 +691,10 @@ html_content = '''
                     '8xD': { ratio: 8 },
                     '12xD': {
                         ratio: 12,
-                        *excecoesDiametro: [
-                       *     {  },
-                       *     {  }
-                        *]
+                        excecoesDiametro: [
+                            { maxDiametro: 10.5, maxMm: 110 },
+                            { minDiametro: 12, maxMm: 144 }
+                        ]
                     }
                 },
                 diametros: [4.00, 6.00, 8.00, 10.00, 12.00, 16.00],
@@ -867,22 +867,22 @@ html_content = '''
             }
         };
 
-        *function obterLimiteProfundidadeReal(toolData, varianteKey, diametro) {
-        *    const varObj = toolData.variantes ? toolData.variantes[varianteKey] : null;
-        *    const ratio = varObj ? varObj.ratio : 5;
-        *    let maxMm = varObj && varObj.maxMmDefault ? varObj.maxMmDefault : (ratio * diametro);
-*
- *           if (varObj && Array.isArray(varObj.excecoesDiametro)) {
-  *              for (const exc of varObj.excecoesDiametro) {
-   *                 const matchMax = exc.maxDiametro === undefined || diametro <= exc.maxDiametro;
-               *     const matchMin = exc.minDiametro === undefined || diametro >= exc.minDiametro;
-              *      if (matchMax && matchMin && exc.maxMm) {
-             *           maxMm = exc.maxMm;
-            *        }
-           *     }
-          *  }
-         *   return { ratio, maxMm };
-        *}
+        function obterLimiteProfundidadeReal(toolData, varianteKey, diametro) {
+            const varObj = toolData.variantes ? toolData.variantes[varianteKey] : null;
+            const ratio = varObj ? varObj.ratio : 5;
+            let maxMm = varObj && varObj.maxMmDefault ? varObj.maxMmDefault : (ratio * diametro);
+
+            if (varObj && Array.isArray(varObj.excecoesDiametro)) {
+                for (const exc of varObj.excecoesDiametro) {
+                    const matchMax = exc.maxDiametro === undefined || diametro <= exc.maxDiametro;
+                    const matchMin = exc.minDiametro === undefined || diametro >= exc.minDiametro;
+                    if (matchMax && matchMin && exc.maxMm) {
+                        maxMm = exc.maxMm;
+                    }
+                }
+            }
+            return { ratio, maxMm };
+        }
 
         function atualizarFiltroBrocas(manterSelecao = false) {
             const linhaSel = document.getElementById('linha').value;
