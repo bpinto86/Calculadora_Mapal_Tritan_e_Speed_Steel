@@ -62,7 +62,7 @@ html_content = '''
                 <div class="space-y-1 shrink-0 bg-slate-900/90 p-2 rounded-md border border-cyan-800/60">
                     <label class="text-[11px] font-medium text-cyan-300 block">PESQUISA RÁPIDA POR REFERÊNCIA / xD</label>
                     <div class="flex gap-1.5">
-                        <input type="text" id="ref-pesquisa" placeholder="Ex: SCD661 12XD, SCD631 8xD..." class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500" onkeydown="if(event.key==='Enter') aplicarPesquisaReferencia()">
+                        <input type="text" id="ref-pesquisa" placeholder="Ex: SCD661 12XD, SCD631 8xD, SCD231..." class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500" onkeydown="if(event.key==='Enter') aplicarPesquisaReferencia()">
                         <button type="button" onclick="aplicarPesquisaReferencia()" class="bg-cyan-600 hover:bg-cyan-500 px-2.5 py-1 rounded-md text-xs font-semibold text-white transition shrink-0">Aplicar</button>
                     </div>
                     <span id="ref-feedback" class="text-[10px] text-slate-400 block">Deteta família e variante ×D automaticamente.</span>
@@ -147,7 +147,7 @@ html_content = '''
                         <label class="text-[11px] font-medium text-slate-300">7. DIÂMETRO (Ø)</label>
                         <div class="flex items-center gap-1">
                             <button onclick="ajustarDiametro(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">-</button>
-                            <input type="number" id="diametro" value="12.00" step="0.1" min="1" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="diametro" value="12.00" step="0.1" min="0.5" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                             <button onclick="ajustarDiametro(0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">+</button>
                         </div>
                     </div>
@@ -548,6 +548,632 @@ html_content = '''
         let vcUnlocked = false;
         let rpmMaxUnlocked = false;
 
+        const GRUPOS_MAPAL_PADRAO = {
+            gruposList: [
+                "P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P4.1", "P5.1", "P6.1",
+                "M1.1", "M1.2", "M2.1", "M3.1",
+                "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2",
+                "N1.1", "N1.2", "N1.3", "N1.4", "N2.1", "N2.2", "N2.3", "N3.1", "N3.2",
+                "S1.1", "S2.1", "S2.2", "S3.1", "S3.2", "S4.1", "S5.1",
+                "H1.1", "H1.2", "H2.1", "H2.2", "H2.3",
+                "C1.1", "C1.2", "C1.3", "C2.1", "C3.1"
+            ],
+            gruposNames: {
+                "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
+                "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
+                "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
+                "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
+                "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
+                "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
+                "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
+                "P4.1": "P4.1 — Aços inoxidáveis ferríticos e martensíticos",
+                "P5.1": "P5.1 — Aço fundido",
+                "P6.1": "P6.1 — Aços fundidos inoxidáveis ferríticos/martensíticos",
+                "M1.1": "M1.1 — Aços inoxidáveis austeníticos (< 700 N/mm²)",
+                "M1.2": "M1.2 — Aços inoxidáveis Duplex (< 1000 N/mm²)",
+                "M2.1": "M2.1 — Aços fundidos austeníticos (< 700 N/mm²)",
+                "M3.1": "M3.1 — Aços fundidos Duplex (< 1000 N/mm²)",
+                "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
+                "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
+                "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
+                "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
+                "K3.1": "K3.1 — Ferro fundido GJV / Maleável GJM (< 500 N/mm²)",
+                "K3.2": "K3.2 — Ferro fundido GJV / Maleável GJM (> 500 N/mm²)",
+                "N1.1": "N1.1 — Alumínio não ligado e ligado < 3% Si",
+                "N1.2": "N1.2 — Alumínio ligado ≤ 7% Si",
+                "N1.3": "N1.3 — Alumínio ligado > 7-12% Si",
+                "N1.4": "N1.4 — Alumínio ligado > 12% Si",
+                "N2.1": "N2.1 — Cobre não ligado (< 300 N/mm²)",
+                "N2.2": "N2.2 — Cobre ligado (> 300 N/mm²)",
+                "N2.3": "N2.3 — Latão, bronze (< 1200 N/mm²)",
+                "N3.1": "N3.1 — Grafite, > 8 µm",
+                "N3.2": "N3.2 — Grafite, ≤ 8 µm",
+                "S1.1": "S1.1 — Titânio e ligas de titânio (< 400 N/mm²)",
+                "S2.1": "S2.1 — Titânio e ligas de titânio (< 1200 N/mm²)",
+                "S2.2": "S2.2 — Titânio e ligas de titânio (> 1200 N/mm²)",
+                "S3.1": "S3.1 — Níquel não ligado e ligado (< 900 N/mm²)",
+                "S3.2": "S3.2 — Níquel não ligado e ligado (> 900 N/mm²)",
+                "S4.1": "S4.1 — Superligas de alta temperatura (Ni, Co, Fe)",
+                "S5.1": "S5.1 — Ligas de tungsténio e molibdénio",
+                "H1.1": "H1.1 — Aços temperados / Aço fundido (< 44 HRC)",
+                "H1.2": "H1.2 — Aços temperados / Aço fundido (< 55 HRC)",
+                "H2.1": "H2.1 — Aços temperados / Aço fundido (< 60 HRC)",
+                "H2.2": "H2.2 — Aços temperados / Aço fundido (< 65 HRC)",
+                "H2.3": "H2.3 — Aços temperados / Aço fundido (< 68 HRC)",
+                "C1.1": "C1.1 — Matriz plástica, reforçada com fibra de aramida (AFRP)",
+                "C1.2": "C1.2 — Matriz plástica (termofixa), CFRP / GFRP",
+                "C1.3": "C1.3 — Matriz plástica (termoplástica), CFRP / GFRP",
+                "C2.1": "C2.1 — Matriz de carbono, reforçada com fibra de carbono (CFC)",
+                "C3.1": "C3.1 — Matriz metálica (MMC)"
+            }
+        };
+
+        function construirFerramenta(cfg) {
+            const gruposList = Object.keys(cfg.grupos);
+            const gruposNames = {};
+            gruposList.forEach(g => {
+                gruposNames[g] = GRUPOS_MAPAL_PADRAO.gruposNames[g] || g;
+            });
+            return {
+                linha: cfg.linha,
+                categoria: cfg.categoria,
+                temRefrigInt: cfg.temRefrigInt,
+                nome: cfg.nome,
+                variantes: cfg.variantes,
+                diametros: cfg.diametros,
+                gruposList,
+                gruposNames,
+                grupos: cfg.grupos
+            };
+        }
+
+        const dados = {
+            scd631: construirFerramenta({
+                linha: 'expert', categoria: 'solid', temRefrigInt: true,
+                nome: 'Tritan-Drill-Uni-Plus SCD631',
+                variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:115, ext:105, mql:105, ar:0}, f: [0.22, 0.27, 0.34, 0.42, 0.51, 0.59] },
+                    "P1.2": { vc: {int:105, ext:85, mql:85, ar:0}, f: [0.27, 0.34, 0.42, 0.53, 0.64, 0.74] },
+                    "P2.1": { vc: {int:115, ext:100, mql:100, ar:0}, f: [0.25, 0.32, 0.40, 0.50, 0.60, 0.70] },
+                    "P2.2": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.21, 0.26, 0.32, 0.40, 0.48, 0.55] },
+                    "P3.1": { vc: {int:85, ext:75, mql:75, ar:0}, f: [0.23, 0.29, 0.36, 0.45, 0.54, 0.63] },
+                    "P3.2": { vc: {int:70, ext:65, mql:65, ar:0}, f: [0.19, 0.24, 0.30, 0.37, 0.44, 0.51] },
+                    "P3.3": { vc: {int:70, ext:50, mql:60, ar:0}, f: [0.16, 0.19, 0.29, 0.24, 0.34, 0.40] },
+                    "P5.1": { vc: {int:115, ext:100, mql:100, ar:0}, f: [0.25, 0.32, 0.40, 0.50, 0.60, 0.70] },
+                    "M1.1": { vc: {int:55, ext:35, mql:35, ar:0}, f: [0.11, 0.14, 0.18, 0.22, 0.27, 0.31] },
+                    "M1.2": { vc: {int:140, ext:100, mql:100, ar:100}, f: [0.31, 0.41, 0.53, 0.68, 0.84, 0.98] },
+                    "K1.1": { vc: {int:185, ext:140, mql:115, ar:140}, f: [0.30, 0.39, 0.50, 0.64, 0.78, 0.91] },
+                    "K2.1": { vc: {int:115, ext:85, mql:85, ar:0}, f: [0.27, 0.35, 0.44, 0.55, 0.67, 0.78] },
+                    "K2.2": { vc: {int:70, ext:45, mql:60, ar:0}, f: [0.14, 0.18, 0.28, 0.22, 0.33, 0.38] },
+                    "K2.3": { vc: {int:105, ext:90, mql:90, ar:0}, f: [0.29, 0.37, 0.47, 0.59, 0.72, 0.84] },
+                    "K3.1": { vc: {int:90, ext:80, mql:80, ar:0}, f: [0.25, 0.31, 0.48, 0.38, 0.57, 0.66] },
+                    "K3.2": { vc: {int:345, ext:230, mql:290, ar:0}, f: [0.22, 0.27, 0.34, 0.42, 0.51, 0.59] },
+                    "N1.1": { vc: {int:290, ext:205, mql:230, ar:0}, f: [0.27, 0.35, 0.55, 0.44, 0.67, 0.78] },
+                    "N1.2": { vc: {int:255, ext:205, mql:175, ar:0}, f: [0.27, 0.35, 0.55, 0.44, 0.67, 0.78] },
+                    "N1.3": { vc: {int:205, ext:175, mql:140, ar:0}, f: [0.27, 0.35, 0.55, 0.44, 0.67, 0.78] },
+                    "N1.4": { vc: {int:140, ext:105, mql:0, ar:0}, f: [0.20, 0.26, 0.41, 0.33, 0.50, 0.58] },
+                    "N2.1": { vc: {int:230, ext:185, mql:185, ar:140}, f: [0.31, 0.41, 0.68, 0.53, 0.84, 0.98] },
+                    "N2.2": { vc: {int:230, ext:185, mql:185, ar:140}, f: [0.31, 0.41, 0.68, 0.53, 0.84, 0.98] },
+                    "N2.3": { vc: {int:230, ext:185, mql:185, ar:140}, f: [0.31, 0.41, 0.68, 0.53, 0.84, 0.98] }
+                }
+            }),
+            scd221: construirFerramenta({
+                linha: 'expert', categoria: 'solid', temRefrigInt: true,
+                nome: 'MEGA-Speed-Drill-Uni SCD221',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:170, ext:155, mql:155, ar:0}, f: [0.11, 0.14, 0.23, 0.18, 0.30, 0.36] },
+                    "P1.2": { vc: {int:155, ext:130, mql:130, ar:0}, f: [0.14, 0.18, 0.22, 0.29, 0.37, 0.45] },
+                    "P2.1": { vc: {int:170, ext:145, mql:145, ar:0}, f: [0.13, 0.17, 0.21, 0.27, 0.35, 0.43] },
+                    "P2.2": { vc: {int:120, ext:100, mql:100, ar:0}, f: [0.11, 0.14, 0.17, 0.22, 0.28, 0.34] },
+                    "P3.1": { vc: {int:130, ext:110, mql:110, ar:0}, f: [0.11, 0.15, 0.25, 0.19, 0.32, 0.38] },
+                    "P3.2": { vc: {int:115, ext:100, mql:95, ar:0}, f: [0.10, 0.14, 0.22, 0.17, 0.28, 0.35] },
+                    "P3.3": { vc: {int:100, ext:75, mql:85, ar:0}, f: [0.10, 0.13, 0.16, 0.20, 0.26, 0.31] },
+                    "P4.1": { vc: {int:100, ext:75, mql:85, ar:0}, f: [0.08, 0.10, 0.16, 0.13, 0.21, 0.25] },
+                    "P5.1": { vc: {int:170, ext:145, mql:145, ar:0}, f: [0.13, 0.17, 0.27, 0.21, 0.35, 0.43] },
+                    "P6.1": { vc: {int:100, ext:85, mql:75, ar:0}, f: [0.08, 0.10, 0.13, 0.16, 0.21, 0.25] },
+                    "K1.1": { vc: {int:150, ext:105, mql:105, ar:105}, f: [0.13, 0.19, 0.26, 0.35, 0.45, 0.54] },
+                    "K2.1": { vc: {int:200, ext:150, mql:125, ar:150}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
+                    "K2.2": { vc: {int:125, ext:95, mql:95, ar:0}, f: [0.12, 0.16, 0.22, 0.28, 0.36, 0.43] },
+                    "K2.3": { vc: {int:75, ext:50, mql:65, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
+                    "K3.1": { vc: {int:115, ext:100, mql:100, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
+                    "K3.2": { vc: {int:100, ext:90, mql:90, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] }
+                }
+            }),
+            scd231: construirFerramenta({
+                linha: 'expert', categoria: 'spot', temRefrigInt: true,
+                nome: 'MEGA-180°-Drill SCD231',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.07, 0.09, 0.12, 0.16, 0.20, 0.24] },
+                    "P1.2": { vc: {int:70, ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.15, 0.20, 0.25, 0.30] },
+                    "P2.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.08, 0.11, 0.14, 0.19, 0.24, 0.28] },
+                    "P2.2": { vc: {int:55, ext:50, mql:50, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
+                    "P3.1": { vc: {int:60, ext:50, mql:50, ar:0}, f: [0.07, 0.10, 0.13, 0.17, 0.21, 0.25] },
+                    "P3.2": { vc: {int:50, ext:45, mql:45, ar:0}, f: [0.06, 0.08, 0.11, 0.14, 0.17, 0.21] },
+                    "P3.3": { vc: {int:50, ext:40, mql:35, ar:0}, f: [0.05, 0.07, 0.09, 0.11, 0.14, 0.16] },
+                    "P5.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.08, 0.11, 0.14, 0.19, 0.24, 0.28] },
+                    "K1.1": { vc: {int:95, ext:70, mql:70, ar:70}, f: [0.09, 0.14, 0.19, 0.25, 0.33, 0.39] },
+                    "K2.1": { vc: {int:130, ext:95, mql:80, ar:95}, f: [0.10, 0.13, 0.18, 0.24, 0.30, 0.36] },
+                    "K2.2": { vc: {int:80, ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "K2.3": { vc: {int:50, ext:40, mql:30, ar:0}, f: [0.06, 0.08, 0.11, 0.14, 0.17, 0.21] },
+                    "K3.1": { vc: {int:70, ext:65, mql:65, ar:0}, f: [0.09, 0.13, 0.17, 0.22, 0.28, 0.33] },
+                    "K3.2": { vc: {int:65, ext:55, mql:55, ar:0}, f: [0.08, 0.11, 0.14, 0.18, 0.22, 0.26] }
+                }
+            }),
+            scd241: construirFerramenta({
+                linha: 'expert', categoria: 'spot', temRefrigInt: true,
+                nome: 'MEGA-180°-Drill-Alu SCD241',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "N1.1": { vc: {int:240, ext:160, mql:200, ar:0}, f: [0.07, 0.09, 0.12, 0.16, 0.20, 0.24] },
+                    "N1.2": { vc: {int:200, ext:145, mql:160, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "N1.3": { vc: {int:175, ext:145, mql:120, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "N1.4": { vc: {int:145, ext:95, mql:120, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "N2.1": { vc: {int:110, ext:80, mql:0, ar:0}, f: [0.07, 0.09, 0.12, 0.16, 0.20, 0.24] },
+                    "N2.2": { vc: {int:95, ext:70, mql:0, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.26, 0.31] },
+                    "N2.3": { vc: {int:160, ext:130, mql:130, ar:95}, f: [0.09, 0.14, 0.19, 0.25, 0.33, 0.39] }
+                }
+            }),
+            scd661: construirFerramenta({
+                linha: 'expert', categoria: 'solid', temRefrigInt: true,
+                nome: 'Tritan-Drill-Steel SCD661',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:115, ext:105, mql:105, ar:100}, f: [0.24, 0.30, 0.37, 0.46, 0.56, 0.65] },
+                    "P1.2": { vc: {int:105, ext:85, mql:85, ar:80}, f: [0.30, 0.37, 0.46, 0.58, 0.70, 0.81] },
+                    "P2.1": { vc: {int:115, ext:100, mql:100, ar:90}, f: [0.28, 0.35, 0.44, 0.55, 0.66, 0.77] },
+                    "P2.2": { vc: {int:80, ext:70, mql:70, ar:60}, f: [0.24, 0.29, 0.36, 0.44, 0.53, 0.61] },
+                    "P3.1": { vc: {int:85, ext:75, mql:75, ar:70}, f: [0.25, 0.31, 0.39, 0.49, 0.60, 0.69] },
+                    "P3.2": { vc: {int:70, ext:65, mql:65, ar:60}, f: [0.21, 0.26, 0.33, 0.41, 0.49, 0.56] },
+                    "P3.3": { vc: {int:70, ext:50, mql:60, ar:45}, f: [0.18, 0.21, 0.26, 0.32, 0.38, 0.43] },
+                    "M1.1": { vc: {int:55, ext:35, mql:35, ar:30}, f: [0.11, 0.14, 0.18, 0.22, 0.27, 0.31] },
+                    "K1.1": { vc: {int:185, ext:115, mql:140, ar:100}, f: [0.34, 0.43, 0.55, 0.70, 0.85, 1.00] },
+                    "K2.1": { vc: {int:115, ext:85, mql:85, ar:75}, f: [0.30, 0.38, 0.48, 0.61, 0.74, 0.86] }
+                }
+            }),
+            scd621: construirFerramenta({
+                linha: 'expert', categoria: 'solid', temRefrigInt: true,
+                nome: 'MEGA-Speed-Drill-Steel SCD621',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:170, ext:155, mql:155, ar:150}, f: [0.13, 0.17, 0.22, 0.29, 0.36, 0.43] },
+                    "P1.2": { vc: {int:155, ext:130, mql:130, ar:120}, f: [0.16, 0.21, 0.28, 0.36, 0.45, 0.54] },
+                    "P2.1": { vc: {int:170, ext:145, mql:145, ar:130}, f: [0.15, 0.20, 0.26, 0.34, 0.43, 0.51] },
+                    "P2.2": { vc: {int:120, ext:100, mql:100, ar:90}, f: [0.13, 0.17, 0.21, 0.27, 0.34, 0.40] },
+                    "P3.1": { vc: {int:130, ext:110, mql:110, ar:100}, f: [0.13, 0.18, 0.23, 0.30, 0.39, 0.46] },
+                    "P3.2": { vc: {int:100, ext:95, mql:95, ar:85}, f: [0.12, 0.15, 0.20, 0.25, 0.32, 0.37] },
+                    "P3.3": { vc: {int:100, ext:75, mql:85, ar:70}, f: [0.10, 0.12, 0.16, 0.20, 0.25, 0.29] },
+                    "M1.1": { vc: {int:65, ext:40, mql:40, ar:35}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
+                    "K1.1": { vc: {int:150, ext:105, mql:105, ar:95}, f: [0.14, 0.21, 0.28, 0.38, 0.49, 0.59] }
+                }
+            }),
+            scd411: construirFerramenta({
+                linha: 'expert', categoria: 'deep', temRefrigInt: true,
+                nome: 'MEGA-Speed-Drill-Inox SCD411',
+                variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:150, ext:135, mql:135, ar:0}, f: [0.09, 0.12, 0.15, 0.20, 0.25, 0.30] },
+                    "P1.2": { vc: {int:135, ext:115, mql:115, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.37] },
+                    "P2.1": { vc: {int:150, ext:130, mql:130, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.30, 0.35] },
+                    "P2.2": { vc: {int:105, ext:90, mql:90, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
+                    "P3.1": { vc: {int:115, ext:100, mql:100, ar:0}, f: [0.09, 0.12, 0.16, 0.21, 0.27, 0.32] },
+                    "P3.2": { vc: {int:90, ext:85, mql:85, ar:0}, f: [0.08, 0.10, 0.13, 0.17, 0.22, 0.26] },
+                    "P3.3": { vc: {int:90, ext:70, mql:75, ar:0}, f: [0.07, 0.09, 0.11, 0.14, 0.17, 0.20] },
+                    "P4.1": { vc: {int:70, ext:55, mql:60, ar:0}, f: [0.06, 0.08, 0.11, 0.14, 0.18, 0.21] },
+                    "P5.1": { vc: {int:150, ext:130, mql:130, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.30, 0.35] },
+                    "P6.1": { vc: {int:70, ext:60, mql:55, ar:0}, f: [0.06, 0.08, 0.11, 0.14, 0.18, 0.21] },
+                    "M1.1": { vc: {int:80, ext:50, mql:50, ar:0}, f: [0.08, 0.10, 0.13, 0.17, 0.22, 0.26] },
+                    "M1.2": { vc: {int:75, ext:45, mql:45, ar:0}, f: [0.07, 0.09, 0.11, 0.15, 0.19, 0.22] },
+                    "M2.1": { vc: {int:80, ext:50, mql:50, ar:0}, f: [0.08, 0.10, 0.13, 0.17, 0.22, 0.26] },
+                    "M3.1": { vc: {int:75, ext:45, mql:45, ar:0}, f: [0.07, 0.09, 0.11, 0.15, 0.19, 0.22] },
+                    "S1.1": { vc: {int:35, ext:25, mql:25, ar:0}, f: [0.06, 0.08, 0.11, 0.14, 0.18, 0.21] },
+                    "S2.1": { vc: {int:30, ext:20, mql:20, ar:0}, f: [0.05, 0.07, 0.09, 0.12, 0.15, 0.18] },
+                    "S2.2": { vc: {int:25, ext:20, mql:20, ar:0}, f: [0.04, 0.06, 0.07, 0.10, 0.12, 0.14] },
+                    "S3.1": { vc: {int:20, ext:10, mql:10, ar:0}, f: [0.05, 0.07, 0.09, 0.12, 0.15, 0.18] },
+                    "S3.2": { vc: {int:20, ext:10, mql:10, ar:0}, f: [0.04, 0.06, 0.07, 0.10, 0.12, 0.14] },
+                    "S4.1": { vc: {int:20, ext:10, mql:10, ar:0}, f: [0.04, 0.06, 0.07, 0.10, 0.12, 0.14] },
+                    "S5.1": { vc: {int:0, ext:0, mql:0, ar:0}, f: [0.07, 0.10, 0.13, 0.17, 0.21, 0.25] }
+                }
+            }),
+            scd421: construirFerramenta({
+                linha: 'expert', categoria: 'solid', temRefrigInt: true,
+                nome: 'MEGA-Speed-Drill-Iron SCD421',
+                variantes: { '5xD': { ratio: 5 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "K1.1": { vc: {int:170, ext:120, mql:120, ar:120}, f: [0.15, 0.21, 0.29, 0.40, 0.51, 0.61] },
+                    "K2.1": { vc: {int:225, ext:170, mql:170, ar:140}, f: [0.15, 0.21, 0.28, 0.37, 0.48, 0.57] },
+                    "K2.2": { vc: {int:140, ext:105, mql:105, ar:105}, f: [0.14, 0.19, 0.32, 0.25, 0.41, 0.49] },
+                    "K2.3": { vc: {int:85, ext:55, mql:70, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.27, 0.32] },
+                    "K3.1": { vc: {int:125, ext:110, mql:110, ar:0}, f: [0.15, 0.20, 0.35, 0.26, 0.44, 0.52] },
+                    "K3.2": { vc: {int:110, ext:100, mql:100, ar:0}, f: [0.13, 0.17, 0.22, 0.28, 0.35, 0.41] }
+                }
+            }),
+            scd271: construirFerramenta({
+                linha: 'expert', categoria: 'solid', temRefrigInt: true,
+                nome: 'MEGA-Drill-Composite-UDX SCD271',
+                variantes: { '5xD': { ratio: 5 } },
+                diametros: [3.00, 4.00, 5.50, 7.50, 10.00, 12.00],
+                grupos: {
+                    "C1.1": { vc: {int:90, ext:75, mql:75, ar:75}, f: [0.04, 0.04, 0.06, 0.05, 0.07, 0.08] },
+                    "C1.2": { vc: {int:75, ext:75, mql:75, ar:75}, f: [0.04, 0.04, 0.06, 0.05, 0.07, 0.08] },
+                    "C1.3": { vc: {int:75, ext:75, mql:75, ar:75}, f: [0.04, 0.04, 0.06, 0.05, 0.07, 0.08] },
+                    "C2.1": { vc: {int:90, ext:75, mql:75, ar:75}, f: [0.04, 0.04, 0.06, 0.05, 0.07, 0.08] }
+                }
+            }),
+            scd270: construirFerramenta({
+                linha: 'expert', categoria: 'solid', temRefrigInt: false,
+                nome: 'MEGA-Drill-Composite-UDX SCD270',
+                variantes: { '5xD': { ratio: 5 } },
+                diametros: [3.00, 4.00, 5.50, 7.50, 10.00, 12.00],
+                grupos: {
+                    "C1.1": { vc: {ext:90, mql:90, ar:90}, f: [0.04, 0.04, 0.06, 0.05, 0.07, 0.08] },
+                    "C1.2": { vc: {ext:75, mql:75, ar:75}, f: [0.04, 0.04, 0.06, 0.05, 0.07, 0.08] },
+                    "C1.3": { vc: {ext:75, mql:75, ar:75}, f: [0.04, 0.04, 0.06, 0.05, 0.07, 0.08] },
+                    "C2.1": { vc: {ext:75, mql:75, ar:75}, f: [0.04, 0.04, 0.06, 0.05, 0.07, 0.08] }
+                }
+            }),
+            scd600: construirFerramenta({
+                linha: 'performance', categoria: 'solid', temRefrigInt: false,
+                nome: 'MEGA-Drill-Steel-Plus SCD600 (Sem Refrig. Interna)',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "P1.1": { vc: {ext:100, mql:100, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.28, 0.33] },
+                    "P1.2": { vc: {ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.21, 0.27, 0.34, 0.41] },
+                    "P2.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
+                    "P2.2": { vc: {ext:65, mql:65, ar:0}, f: [0.10, 0.13, 0.16, 0.21, 0.26, 0.30] },
+                    "P3.1": { vc: {ext:70, mql:70, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.29, 0.35] },
+                    "P3.2": { vc: {ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
+                    "P3.3": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
+                    "P4.1": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
+                    "P5.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
+                    "P6.1": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
+                    "K1.1": { vc: {ext:85, mql:85, ar:85}, f: [0.13, 0.19, 0.26, 0.35, 0.45, 0.54] },
+                    "K2.1": { vc: {ext:100, mql:120, ar:120}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
+                    "K2.2": { vc: {ext:75, mql:75, ar:0}, f: [0.12, 0.16, 0.22, 0.28, 0.36, 0.43] },
+                    "K2.3": { vc: {ext:40, mql:50, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
+                    "K3.1": { vc: {ext:80, mql:80, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
+                    "K3.2": { vc: {ext:70, mql:70, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] },
+                    "H1.1": { vc: {ext:90, mql:90, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
+                    "H1.2": { vc: {ext:25, mql:25, ar:0}, f: [0.05, 0.06, 0.08, 0.11, 0.14, 0.16] }
+                }
+            }),
+            scd601: construirFerramenta({
+                linha: 'performance', categoria: 'solid', temRefrigInt: true,
+                nome: 'MEGA-Drill-Steel-Plus SCD601',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:110, ext:100, mql:100, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.28, 0.33] },
+                    "P1.2": { vc: {int:100, ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.21, 0.27, 0.34, 0.41] },
+                    "P2.1": { vc: {int:110, ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
+                    "P2.2": { vc: {int:75, ext:65, mql:65, ar:0}, f: [0.10, 0.13, 0.16, 0.21, 0.26, 0.30] },
+                    "P3.1": { vc: {int:85, ext:70, mql:70, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.29, 0.35] },
+                    "P3.2": { vc: {int:65, ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
+                    "P3.3": { vc: {int:65, ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
+                    "P4.1": { vc: {int:65, ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
+                    "P5.1": { vc: {int:110, ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
+                    "P6.1": { vc: {int:65, ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
+                    "K1.1": { vc: {int:120, ext:85, mql:85, ar:85}, f: [0.13, 0.19, 0.26, 0.35, 0.45, 0.54] },
+                    "K2.1": { vc: {int:160, ext:100, mql:120, ar:120}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
+                    "K2.2": { vc: {int:100, ext:75, mql:75, ar:0}, f: [0.12, 0.16, 0.22, 0.28, 0.36, 0.43] },
+                    "K2.3": { vc: {int:60, ext:40, mql:50, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
+                    "K3.1": { vc: {int:90, ext:80, mql:80, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
+                    "K3.2": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] },
+                    "H1.1": { vc: {int:90, ext:90, mql:90, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
+                    "H1.2": { vc: {int:25, ext:25, mql:25, ar:0}, f: [0.05, 0.06, 0.08, 0.11, 0.14, 0.16] }
+                }
+            }),
+            scd610: construirFerramenta({
+                linha: 'performance', categoria: 'stepped', temRefrigInt: false,
+                nome: 'MEGA-Quadro-Drill-Plus SCD610',
+                variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
+                grupos: {
+                    "P1.1": { vc: {ext:100, mql:100, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.28, 0.33] },
+                    "P1.2": { vc: {ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.27, 0.21, 0.34, 0.41] },
+                    "P2.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.26, 0.20, 0.33, 0.38] },
+                    "P2.2": { vc: {ext:65, mql:65, ar:0}, f: [0.10, 0.13, 0.21, 0.16, 0.26, 0.30] },
+                    "P3.1": { vc: {ext:70, mql:70, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.29, 0.35] },
+                    "P3.2": { vc: {ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.19, 0.15, 0.24, 0.28] },
+                    "P3.3": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
+                    "P5.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.26, 0.20, 0.33, 0.38] },
+                    "K1.1": { vc: {ext:95, mql:95, ar:95}, f: [0.13, 0.19, 0.35, 0.26, 0.45, 0.54] },
+                    "K2.1": { vc: {ext:110, mql:130, ar:130}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
+                    "K2.2": { vc: {ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.28, 0.22, 0.36, 0.43] },
+                    "K2.3": { vc: {ext:45, mql:55, ar:0}, f: [0.09, 0.12, 0.19, 0.15, 0.24, 0.28] },
+                    "K3.1": { vc: {ext:90, mql:90, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
+                    "K3.2": { vc: {ext:75, mql:75, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] }
+                }
+            }),
+            scd611: construirFerramenta({
+                linha: 'performance', categoria: 'stepped', temRefrigInt: true,
+                nome: 'MEGA-Quadro-Drill-Plus SCD611',
+                variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:110, ext:100, mql:100, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.28, 0.33] },
+                    "P1.2": { vc: {int:100, ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.27, 0.21, 0.34, 0.41] },
+                    "P2.1": { vc: {int:110, ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.26, 0.20, 0.33, 0.38] },
+                    "P2.2": { vc: {int:75, ext:65, mql:65, ar:0}, f: [0.10, 0.13, 0.21, 0.16, 0.26, 0.30] },
+                    "P3.1": { vc: {int:85, ext:70, mql:70, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.29, 0.35] },
+                    "P3.2": { vc: {int:65, ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.19, 0.15, 0.24, 0.28] },
+                    "P3.3": { vc: {int:65, ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
+                    "P5.1": { vc: {int:110, ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.26, 0.20, 0.33, 0.38] },
+                    "K1.1": { vc: {int:130, ext:95, mql:95, ar:95}, f: [0.13, 0.19, 0.35, 0.26, 0.45, 0.54] },
+                    "K2.1": { vc: {int:175, ext:110, mql:130, ar:130}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
+                    "K2.2": { vc: {int:110, ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.28, 0.22, 0.36, 0.43] },
+                    "K2.3": { vc: {int:65, ext:45, mql:55, ar:0}, f: [0.09, 0.12, 0.19, 0.15, 0.24, 0.28] },
+                    "K3.1": { vc: {int:100, ext:90, mql:90, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
+                    "K3.2": { vc: {int:90, ext:75, mql:75, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] }
+                }
+            }),
+            scd371: construirFerramenta({
+                linha: 'performance', categoria: 'solid', temRefrigInt: true,
+                nome: 'MICRO-Drill-Steel SCD371',
+                variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "P1.2": { vc: {int:70, ext:60, mql:60, ar:0}, f: [0.04, 0.05, 0.07, 0.06, 0.08, 0.10] },
+                    "P2.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.04, 0.05, 0.06, 0.07, 0.08, 0.09] },
+                    "P2.2": { vc: {int:55, ext:50, mql:50, ar:0}, f: [0.04, 0.05, 0.05, 0.06, 0.07, 0.08] },
+                    "P3.1": { vc: {int:60, ext:50, mql:50, ar:0}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "P3.2": { vc: {int:50, ext:45, mql:45, ar:0}, f: [0.04, 0.04, 0.05, 0.04, 0.06, 0.07] },
+                    "P3.3": { vc: {int:50, ext:35, mql:40, ar:0}, f: [0.03, 0.04, 0.05, 0.04, 0.05, 0.06] },
+                    "P5.1": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.04, 0.05, 0.07, 0.06, 0.08, 0.09] },
+                    "M1.1": { vc: {int:40, ext:25, mql:25, ar:0}, f: [0.03, 0.03, 0.04, 0.03, 0.05, 0.06] },
+                    "M1.2": { vc: {int:95, ext:70, mql:70, ar:70}, f: [0.03, 0.04, 0.06, 0.05, 0.08, 0.11] },
+                    "K1.1": { vc: {int:130, ext:80, mql:95, ar:95}, f: [0.04, 0.05, 0.07, 0.06, 0.09, 0.11] },
+                    "K2.1": { vc: {int:80, ext:60, mql:60, ar:0}, f: [0.04, 0.05, 0.05, 0.07, 0.08, 0.10] },
+                    "K2.2": { vc: {int:70, ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.07, 0.06, 0.09, 0.11] },
+                    "K2.3": { vc: {int:65, ext:55, mql:55, ar:0}, f: [0.04, 0.05, 0.07, 0.06, 0.08, 0.09] },
+                    "K3.1": { vc: {int:55, ext:45, mql:45, ar:0}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "K3.2": { vc: {int:45, ext:40, mql:40, ar:0}, f: [0.03, 0.04, 0.05, 0.04, 0.06, 0.07] }
+                }
+            }),
+            scd140: construirFerramenta({
+                linha: 'performance', categoria: 'solid', temRefrigInt: false,
+                nome: 'MEGA-Drill-Hardened SCD140',
+                variantes: { '4xD': { ratio: 4 } },
+                diametros: [2.50, 3.62, 5.25, 7.61, 11.04, 16.00],
+                grupos: {
+                    "H1.1": { vc: {ext:80, mql:80, ar:0}, f: [0.07, 0.09, 0.11, 0.02, 0.19, 0.20] },
+                    "H1.2": { vc: {ext:30, mql:30, ar:0}, f: [0.05, 0.06, 0.10, 0.08, 0.13, 0.16] },
+                    "H2.1": { vc: {ext:30, mql:30, ar:0}, f: [0.04, 0.05, 0.09, 0.07, 0.11, 0.13] },
+                    "H2.2": { vc: {ext:20, mql:20, ar:0}, f: [0.03, 0.04, 0.05, 0.06, 0.08, 0.09] },
+                    "H2.3": { vc: {ext:15, mql:15, ar:0}, f: [0.03, 0.04, 0.05, 0.06, 0.08, 0.09] }
+                }
+            }),
+            scd131: construirFerramenta({
+                linha: 'performance', categoria: 'solid', temRefrigInt: true,
+                nome: 'MEGA-Drill-Alu SCD131',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "N1.1": { vc: {int:300, ext:200, mql:250, ar:200}, f: [0.09, 0.12, 0.15, 0.20, 0.25, 0.30] },
+                    "N1.2": { vc: {int:250, ext:180, mql:200, ar:160}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.39] },
+                    "N1.3": { vc: {int:220, ext:150, mql:180, ar:160}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.39] },
+                    "N1.4": { vc: {int:180, ext:120, mql:150, ar:120}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.39] },
+                    "N2.1": { vc: {int:140, ext:100, mql:120, ar:0}, f: [0.09, 0.12, 0.15, 0.20, 0.25, 0.30] },
+                    "N2.2": { vc: {int:120, ext:90, mql:100, ar:0}, f: [0.11, 0.15, 0.26, 0.20, 0.33, 0.39] },
+                    "N2.3": { vc: {int:200, ext:160, mql:160, ar:0}, f: [0.09, 0.14, 0.19, 0.25, 0.33, 0.39] }
+                }
+            }),
+            scd250: construirFerramenta({
+                linha: 'performance', categoria: 'solid', temRefrigInt: false,
+                nome: 'MEGA-Drill-Composite-MD SCD250',
+                variantes: { '5xD': { ratio: 5 } },
+                diametros: [3.00, 4.00, 5.50, 7.50, 10.00, 12.00],
+                grupos: {
+                    "N3.1": { vc: {ext:200, mql:200, ar:200}, f: [0.07, 0.09, 0.11, 0.14, 0.16, 0.18] },
+                    "N3.2": { vc: {ext:200, mql:200, ar:200}, f: [0.07, 0.09, 0.11, 0.14, 0.16, 0.18] },
+                    "C1.1": { vc: {ext:90, mql:90, ar:90}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "C1.2": { vc: {ext:75, mql:75, ar:75}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "C1.3": { vc: {ext:75, mql:75, ar:75}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "C2.1": { vc: {ext:400, mql:400, ar:400}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] },
+                    "C3.1": { vc: {ext:400, mql:400, ar:400}, f: [0.04, 0.04, 0.05, 0.06, 0.07, 0.08] }
+                }
+            }),
+            scd120: construirFerramenta({
+                linha: 'performance', categoria: 'solid', temRefrigInt: false,
+                nome: 'MEGA-Drill-Inox SCD120',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "P1.1": { vc: {ext:90, mql:90, ar:0}, f: [0.07, 0.09, 0.12, 0.16, 0.20, 0.24] },
+                    "P1.2": { vc: {ext:75, mql:75, ar:0}, f: [0.09, 0.12, 0.15, 0.20, 0.25, 0.30] },
+                    "P2.1": { vc: {ext:85, mql:85, ar:0}, f: [0.08, 0.11, 0.19, 0.14, 0.24, 0.28] },
+                    "P2.2": { vc: {ext:60, mql:60, ar:0}, f: [0.07, 0.09, 0.15, 0.12, 0.19, 0.22] },
+                    "P3.1": { vc: {ext:65, mql:65, ar:0}, f: [0.07, 0.10, 0.13, 0.17, 0.21, 0.25] },
+                    "P3.2": { vc: {ext:55, mql:55, ar:0}, f: [0.06, 0.08, 0.14, 0.11, 0.17, 0.21] },
+                    "P3.3": { vc: {ext:50, mql:45, ar:0}, f: [0.05, 0.07, 0.09, 0.11, 0.14, 0.16] },
+                    "P4.1": { vc: {ext:45, mql:50, ar:0}, f: [0.05, 0.07, 0.09, 0.11, 0.14, 0.17] },
+                    "P5.1": { vc: {ext:85, mql:85, ar:0}, f: [0.08, 0.11, 0.19, 0.14, 0.24, 0.28] },
+                    "P6.1": { vc: {ext:50, mql:45, ar:0}, f: [0.05, 0.07, 0.09, 0.11, 0.14, 0.17] },
+                    "M1.1": { vc: {ext:35, mql:35, ar:0}, f: [0.06, 0.08, 0.14, 0.11, 0.18, 0.21] },
+                    "M1.2": { vc: {ext:30, mql:30, ar:0}, f: [0.05, 0.07, 0.12, 0.09, 0.15, 0.18] },
+                    "M2.1": { vc: {ext:35, mql:35, ar:0}, f: [0.06, 0.08, 0.14, 0.11, 0.18, 0.21] },
+                    "M3.1": { vc: {ext:30, mql:30, ar:0}, f: [0.05, 0.07, 0.12, 0.09, 0.15, 0.18] },
+                    "K1.1": { vc: {ext:85, mql:85, ar:85}, f: [0.12, 0.17, 0.24, 0.32, 0.41, 0.49] },
+                    "K2.1": { vc: {ext:120, mql:100, ar:120}, f: [0.12, 0.17, 0.22, 0.30, 0.38, 0.45] },
+                    "K2.2": { vc: {ext:75, mql:75, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.39] },
+                    "K2.3": { vc: {ext:50, mql:40, ar:0}, f: [0.08, 0.10, 0.17, 0.13, 0.22, 0.26] },
+                    "K3.1": { vc: {ext:80, mql:80, ar:0}, f: [0.12, 0.16, 0.28, 0.21, 0.35, 0.42] },
+                    "K3.2": { vc: {ext:70, mql:70, ar:0}, f: [0.10, 0.13, 0.22, 0.17, 0.28, 0.33] },
+                    "N2.1": { vc: {ext:100, mql:0, ar:0}, f: [0.09, 0.12, 0.15, 0.20, 0.25, 0.30] },
+                    "N2.2": { vc: {ext:90, mql:0, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.39] },
+                    "N2.3": { vc: {ext:160, mql:160, ar:120}, f: [0.12, 0.17, 0.24, 0.32, 0.41, 0.49] }
+                }
+            }),
+            scd121: construirFerramenta({
+                linha: 'performance', categoria: 'solid', temRefrigInt: true,
+                nome: 'MEGA-Drill-Inox SCD121',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:100, ext:90, mql:90, ar:0}, f: [0.07, 0.09, 0.12, 0.16, 0.20, 0.24] },
+                    "P1.2": { vc: {int:90, ext:75, mql:75, ar:0}, f: [0.09, 0.12, 0.15, 0.20, 0.25, 0.30] },
+                    "P2.1": { vc: {int:100, ext:85, mql:85, ar:0}, f: [0.08, 0.11, 0.19, 0.14, 0.24, 0.28] },
+                    "P2.2": { vc: {int:70, ext:60, mql:60, ar:0}, f: [0.07, 0.09, 0.15, 0.12, 0.19, 0.22] },
+                    "P3.1": { vc: {int:75, ext:65, mql:65, ar:0}, f: [0.07, 0.10, 0.13, 0.17, 0.21, 0.25] },
+                    "P3.2": { vc: {int:60, ext:55, mql:55, ar:0}, f: [0.06, 0.08, 0.14, 0.11, 0.17, 0.21] },
+                    "P3.3": { vc: {int:60, ext:50, mql:45, ar:0}, f: [0.05, 0.07, 0.09, 0.11, 0.14, 0.16] },
+                    "P4.1": { vc: {int:60, ext:45, mql:50, ar:0}, f: [0.05, 0.07, 0.09, 0.11, 0.14, 0.17] },
+                    "P5.1": { vc: {int:100, ext:85, mql:85, ar:0}, f: [0.08, 0.11, 0.19, 0.14, 0.24, 0.28] },
+                    "P6.1": { vc: {int:60, ext:50, mql:45, ar:0}, f: [0.05, 0.07, 0.09, 0.11, 0.14, 0.17] },
+                    "M1.1": { vc: {int:55, ext:35, mql:35, ar:0}, f: [0.06, 0.08, 0.14, 0.11, 0.18, 0.21] },
+                    "M1.2": { vc: {int:50, ext:30, mql:30, ar:0}, f: [0.05, 0.07, 0.12, 0.09, 0.15, 0.18] },
+                    "M2.1": { vc: {int:55, ext:35, mql:35, ar:0}, f: [0.06, 0.08, 0.14, 0.11, 0.18, 0.21] },
+                    "M3.1": { vc: {int:50, ext:30, mql:30, ar:0}, f: [0.05, 0.07, 0.12, 0.09, 0.15, 0.18] },
+                    "K1.1": { vc: {int:120, ext:85, mql:85, ar:85}, f: [0.12, 0.17, 0.24, 0.32, 0.41, 0.49] },
+                    "K2.1": { vc: {int:160, ext:120, mql:100, ar:120}, f: [0.12, 0.17, 0.22, 0.30, 0.38, 0.45] },
+                    "K2.2": { vc: {int:100, ext:75, mql:75, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.39] },
+                    "K2.3": { vc: {int:60, ext:50, mql:40, ar:0}, f: [0.08, 0.10, 0.17, 0.13, 0.22, 0.26] },
+                    "K3.1": { vc: {int:90, ext:80, mql:80, ar:0}, f: [0.12, 0.16, 0.28, 0.21, 0.35, 0.42] },
+                    "K3.2": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.10, 0.13, 0.22, 0.17, 0.28, 0.33] },
+                    "N2.1": { vc: {int:140, ext:100, mql:0, ar:0}, f: [0.09, 0.12, 0.15, 0.20, 0.25, 0.30] },
+                    "N2.2": { vc: {int:120, ext:90, mql:0, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.39] },
+                    "N2.3": { vc: {int:200, ext:160, mql:160, ar:120}, f: [0.12, 0.17, 0.24, 0.32, 0.41, 0.49] }
+                }
+            }),
+            scd350: construirFerramenta({
+                linha: 'basic', categoria: 'solid', temRefrigInt: false,
+                nome: 'ECU-Drill-Uni SCD350 (Sem Refrig. Interna)',
+                variantes: { '4xD': { ratio: 4 }, '6xD': { ratio: 6 } },
+                diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
+                grupos: {
+                    "P1.1": { vc: {ext:70, mql:70, ar:0}, f: [0.03, 0.05, 0.07, 0.10, 0.16, 0.21] },
+                    "P1.2": { vc: {ext:55, mql:55, ar:0}, f: [0.04, 0.06, 0.08, 0.13, 0.20, 0.27] },
+                    "P2.1": { vc: {ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.08, 0.12, 0.18, 0.25] },
+                    "P2.2": { vc: {ext:45, mql:45, ar:0}, f: [0.04, 0.05, 0.07, 0.10, 0.15, 0.20] },
+                    "P3.1": { vc: {ext:50, mql:50, ar:0}, f: [0.03, 0.05, 0.07, 0.11, 0.17, 0.23] },
+                    "P3.2": { vc: {ext:40, mql:40, ar:0}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.18] },
+                    "P3.3": { vc: {ext:40, mql:35, ar:0}, f: [0.03, 0.04, 0.05, 0.11, 0.11, 0.14] },
+                    "P5.1": { vc: {ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.08, 0.12, 0.18, 0.25] },
+                    "M1.1": { vc: {ext:30, mql:30, ar:0}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.19] },
+                    "M1.2": { vc: {ext:25, mql:25, ar:0}, f: [0.02, 0.03, 0.05, 0.08, 0.12, 0.16] },
+                    "M2.1": { vc: {ext:30, mql:30, ar:0}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.19] },
+                    "M3.1": { vc: {ext:25, mql:25, ar:0}, f: [0.02, 0.03, 0.05, 0.08, 0.12, 0.16] },
+                    "K2.1": { vc: {ext:90, mql:75, ar:90}, f: [0.05, 0.07, 0.12, 0.19, 0.30, 0.41] },
+                    "K2.2": { vc: {ext:55, mql:55, ar:0}, f: [0.04, 0.07, 0.11, 0.17, 0.26, 0.35] },
+                    "K2.3": { vc: {ext:55, mql:55, ar:0}, f: [0.04, 0.07, 0.11, 0.17, 0.26, 0.35] }
+                }
+            }),
+            scd351: construirFerramenta({
+                linha: 'basic', categoria: 'solid', temRefrigInt: true,
+                nome: 'ECU-Drill-Uni SCD351',
+                variantes: { '4xD': { ratio: 4 }, '6xD': { ratio: 6 } },
+                diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:75, ext:70, mql:70, ar:70}, f: [0.03, 0.05, 0.07, 0.10, 0.16, 0.21] },
+                    "P1.2": { vc: {int:70, ext:55, mql:55, ar:55}, f: [0.04, 0.06, 0.08, 0.13, 0.20, 0.27] },
+                    "P2.1": { vc: {int:75, ext:65, mql:65, ar:65}, f: [0.04, 0.05, 0.08, 0.12, 0.18, 0.25] },
+                    "P2.2": { vc: {int:55, ext:45, mql:45, ar:45}, f: [0.04, 0.05, 0.07, 0.10, 0.15, 0.20] },
+                    "P3.1": { vc: {int:55, ext:50, mql:50, ar:50}, f: [0.03, 0.05, 0.07, 0.11, 0.17, 0.23] },
+                    "P3.2": { vc: {int:45, ext:40, mql:40, ar:40}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.18] },
+                    "P3.3": { vc: {int:45, ext:40, mql:35, ar:35}, f: [0.03, 0.04, 0.05, 0.11, 0.11, 0.14] },
+                    "P5.1": { vc: {int:75, ext:65, mql:65, ar:65}, f: [0.04, 0.05, 0.08, 0.12, 0.18, 0.25] },
+                    "M1.1": { vc: {int:45, ext:30, mql:30, ar:30}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.19] },
+                    "M1.2": { vc: {int:45, ext:25, mql:25, ar:25}, f: [0.02, 0.03, 0.05, 0.08, 0.12, 0.16] },
+                    "M2.1": { vc: {int:45, ext:30, mql:30, ar:30}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.19] },
+                    "M3.1": { vc: {int:45, ext:25, mql:25, ar:25}, f: [0.02, 0.03, 0.05, 0.08, 0.12, 0.16] },
+                    "K2.1": { vc: {int:120, ext:90, mql:75, ar:90}, f: [0.05, 0.07, 0.12, 0.19, 0.30, 0.41] },
+                    "K2.2": { vc: {int:75, ext:55, mql:55, ar:55}, f: [0.04, 0.07, 0.11, 0.17, 0.26, 0.35] },
+                    "K2.3": { vc: {int:75, ext:55, mql:55, ar:55}, f: [0.04, 0.07, 0.11, 0.17, 0.26, 0.35] }
+                }
+            }),
+            scd360: construirFerramenta({
+                linha: 'basic', categoria: 'solid', temRefrigInt: false,
+                nome: 'ECU-Drill-Steel SCD360',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
+                grupos: {
+                    "P1.1": { vc: {ext:70, mql:70, ar:0}, f: [0.04, 0.06, 0.08, 0.13, 0.20, 0.27] },
+                    "P1.2": { vc: {ext:55, mql:55, ar:0}, f: [0.05, 0.07, 0.11, 0.16, 0.24, 0.33] },
+                    "P2.1": { vc: {ext:65, mql:65, ar:0}, f: [0.05, 0.07, 0.10, 0.15, 0.23, 0.31] },
+                    "P2.2": { vc: {ext:45, mql:45, ar:0}, f: [0.05, 0.06, 0.13, 0.09, 0.18, 0.25] },
+                    "P3.1": { vc: {ext:50, mql:50, ar:0}, f: [0.04, 0.06, 0.14, 0.09, 0.21, 0.28] },
+                    "P3.2": { vc: {ext:40, mql:40, ar:0}, f: [0.04, 0.05, 0.12, 0.08, 0.17, 0.23] },
+                    "P3.3": { vc: {ext:35, mql:40, ar:0}, f: [0.04, 0.05, 0.06, 0.09, 0.13, 0.18] },
+                    "P5.1": { vc: {ext:65, mql:65, ar:0}, f: [0.05, 0.07, 0.15, 0.10, 0.23, 0.31] },
+                    "K1.1": { vc: {ext:40, mql:35, ar:0}, f: [0.03, 0.04, 0.09, 0.06, 0.14, 0.19] },
+                    "K2.1": { vc: {ext:60, mql:60, ar:60}, f: [0.04, 0.07, 0.12, 0.20, 0.32, 0.44] },
+                    "K2.2": { vc: {ext:80, mql:70, ar:80}, f: [0.05, 0.07, 0.12, 0.19, 0.30, 0.41] },
+                    "K2.3": { vc: {ext:50, mql:50, ar:0}, f: [0.04, 0.07, 0.11, 0.17, 0.26, 0.35] },
+                    "K3.1": { vc: {ext:35, mql:25, ar:0}, f: [0.04, 0.05, 0.08, 0.12, 0.17, 0.23] },
+                    "K3.2": { vc: {ext:55, mql:55, ar:0}, f: [0.05, 0.07, 0.11, 0.18, 0.27, 0.38] }
+                }
+            }),
+            scd361: construirFerramenta({
+                linha: 'basic', categoria: 'solid', temRefrigInt: true,
+                nome: 'ECU-Drill-Steel SCD361',
+                variantes: { '3xD': { ratio: 3 }, '5xD': { ratio: 5 }, '8xD': { ratio: 8 }, '12xD': { ratio: 12 } },
+                diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
+                grupos: {
+                    "P1.1": { vc: {int:75, ext:70, mql:70, ar:70}, f: [0.04, 0.06, 0.08, 0.13, 0.20, 0.27] },
+                    "P1.2": { vc: {int:70, ext:55, mql:55, ar:55}, f: [0.05, 0.07, 0.11, 0.16, 0.24, 0.33] },
+                    "P2.1": { vc: {int:75, ext:65, mql:65, ar:65}, f: [0.05, 0.07, 0.10, 0.15, 0.23, 0.31] },
+                    "P2.2": { vc: {int:55, ext:45, mql:45, ar:45}, f: [0.05, 0.06, 0.13, 0.09, 0.18, 0.25] },
+                    "P3.1": { vc: {int:55, ext:50, mql:50, ar:50}, f: [0.04, 0.06, 0.14, 0.09, 0.21, 0.28] },
+                    "P3.2": { vc: {int:45, ext:40, mql:40, ar:40}, f: [0.04, 0.05, 0.12, 0.08, 0.17, 0.23] },
+                    "P3.3": { vc: {int:45, ext:35, mql:40, ar:40}, f: [0.04, 0.05, 0.06, 0.09, 0.13, 0.18] },
+                    "P5.1": { vc: {int:75, ext:65, mql:65, ar:65}, f: [0.05, 0.07, 0.15, 0.10, 0.23, 0.31] },
+                    "K1.1": { vc: {int:45, ext:40, mql:35, ar:35}, f: [0.03, 0.04, 0.09, 0.06, 0.14, 0.19] },
+                    "K2.1": { vc: {int:80, ext:60, mql:60, ar:60}, f: [0.04, 0.07, 0.12, 0.20, 0.32, 0.44] },
+                    "K2.2": { vc: {int:110, ext:80, mql:70, ar:80}, f: [0.05, 0.07, 0.12, 0.19, 0.30, 0.41] },
+                    "K2.3": { vc: {int:70, ext:50, mql:50, ar:50}, f: [0.04, 0.07, 0.11, 0.17, 0.26, 0.35] },
+                    "K3.1": { vc: {int:40, ext:35, mql:25, ar:25}, f: [0.04, 0.05, 0.08, 0.12, 0.17, 0.23] },
+                    "K3.2": { vc: {int:60, ext:55, mql:55, ar:55}, f: [0.05, 0.07, 0.11, 0.18, 0.27, 0.38] }
+                }
+            }),
+            scd211: construirFerramenta({
+                linha: 'basic', categoria: 'solid', temRefrigInt: true,
+                nome: 'ECU-G-Drill SCD211',
+                variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
+                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
+                grupos: {
+                    "K1.1": { vc: {int:90, ext:65, mql:65, ar:65}, f: [0.08, 0.12, 0.16, 0.22, 0.29, 0.34] },
+                    "K2.1": { vc: {int:120, ext:90, mql:75, ar:90}, f: [0.08, 0.12, 0.16, 0.21, 0.27, 0.32] },
+                    "K2.2": { vc: {int:75, ext:55, mql:55, ar:0}, f: [0.08, 0.10, 0.14, 0.18, 0.23, 0.27] },
+                    "N1.2": { vc: {int:215, ext:155, mql:170, ar:0}, f: [0.08, 0.10, 0.14, 0.18, 0.23, 0.27] },
+                    "N1.3": { vc: {int:185, ext:155, mql:130, ar:0}, f: [0.08, 0.10, 0.14, 0.18, 0.23, 0.27] },
+                    "N1.4": { vc: {int:155, ext:100, mql:130, ar:0}, f: [0.08, 0.10, 0.14, 0.18, 0.23, 0.27] },
+                    "N2.3": { vc: {int:160, ext:130, mql:130, ar:95}, f: [0.08, 0.12, 0.16, 0.22, 0.29, 0.34] }
+                }
+            })
+        };
+
+        const propriedadesGrupo = {
+            'P': { kc: 2200, densidade: 7.85 },
+            'M': { kc: 2800, densidade: 7.90 },
+            'K': { kc: 1800, densidade: 7.20 },
+            'N': { kc: 800,  densidade: 2.70 },
+            'S': { kc: 3400, densidade: 4.50 },
+            'H': { kc: 3200, densidade: 7.85 },
+            'C': { kc: 1500, densidade: 1.60 }
+        };
+
+        function getKc(grupoKey) {
+            const prefixo = grupoKey.charAt(0).toUpperCase();
+            return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].kc : 2200;
+        }
+
+        function getDensidadePadrao(grupoKey) {
+            const prefixo = grupoKey.charAt(0).toUpperCase();
+            return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].densidade : 7.85;
+        }
+
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
@@ -589,271 +1215,6 @@ html_content = '''
             }
             atualizarCalculo();
         }
-
-        const propriedadesGrupo = {
-            'P': { kc: 2200, densidade: 7.85 },
-            'M': { kc: 2800, densidade: 7.90 },
-            'K': { kc: 1800, densidade: 7.20 },
-            'N': { kc: 800,  densidade: 2.70 },
-            'S': { kc: 3400, densidade: 4.50 },
-            'H': { kc: 3200, densidade: 7.85 },
-            'C': { kc: 1500, densidade: 1.60 }
-        };
-
-        function getKc(grupoKey) {
-            const prefixo = grupoKey.charAt(0).toUpperCase();
-            return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].kc : 2200;
-        }
-
-        function getDensidadePadrao(grupoKey) {
-            const prefixo = grupoKey.charAt(0).toUpperCase();
-            return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].densidade : 7.85;
-        }
-
-        const dados = {
-            scd631: {
-                linha: 'expert',
-                categoria: 'solid',
-                temRefrigInt: true,
-                nome: 'Tritan-Drill-Uni-Plus SCD631',
-                variantes: {
-                    '3xD': { ratio: 3 },
-                    '5xD': { ratio: 5 },
-                    '8xD': { ratio: 8 }
-                },
-                diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
-                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "M1.1", "M1.2", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2", "N1.1", "N1.2", "N1.3", "N1.4", "N2.1", "N2.2", "N2.3"],
-                gruposNames: {
-                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
-                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
-                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
-                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
-                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
-                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
-                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
-                    "P5.1": "P5.1 — Aço fundido",
-                    "M1.1": "M1.1 — Aços inoxidáveis austeníticos (< 700 N/mm²)",
-                    "M1.2": "M1.2 — Aços inoxidáveis Duplex (< 1000 N/mm²)",
-                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
-                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
-                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
-                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
-                    "K3.1": "K3.1 — Ferro fundido GJV / Mableável GJM (< 500 N/mm²)",
-                    "K3.2": "K3.2 — Ferro fundido GJV / Mableável GJM (> 500 N/mm²)",
-                    "N1.1": "N1.1 — Alumínio não ligado e ligado < 3% Si",
-                    "N1.2": "N1.2 — Alumínio ligado ≤ 7% Si",
-                    "N1.3": "N1.3 — Alumínio ligado > 7-12% Si",
-                    "N1.4": "N1.4 — Alumínio ligado > 12% Si",
-                    "N2.1": "N2.1 — Cobre não ligado (< 300 N/mm²)",
-                    "N2.2": "N2.2 — Cobre ligado (> 300 N/mm²)",
-                    "N2.3": "N2.3 — Latão, bronze (< 1200 N/mm²)"
-                },
-                grupos: {
-                    "P1.1": { vc: {int:115, ext:105, mql:105, ar:0}, f: [0.22, 0.27, 0.34, 0.42, 0.51, 0.59] },
-                    "P1.2": { vc: {int:105, ext:85, mql:85, ar:0}, f: [0.27, 0.34, 0.42, 0.53, 0.64, 0.74] },
-                    "P2.1": { vc: {int:115, ext:100, mql:100, ar:0}, f: [0.25, 0.32, 0.40, 0.50, 0.60, 0.70] },
-                    "P2.2": { vc: {int:80, ext:70, mql:70, ar:0}, f: [0.21, 0.26, 0.32, 0.40, 0.48, 0.55] },
-                    "P3.1": { vc: {int:85, ext:75, mql:75, ar:0}, f: [0.23, 0.29, 0.36, 0.45, 0.54, 0.63] },
-                    "P3.2": { vc: {int:70, ext:65, mql:65, ar:0}, f: [0.19, 0.24, 0.30, 0.37, 0.44, 0.51] },
-                    "P3.3": { vc: {int:70, ext:50, mql:60, ar:0}, f: [0.16, 0.19, 0.29, 0.24, 0.34, 0.40] },
-                    "P5.1": { vc: {int:115, ext:100, mql:100, ar:0}, f: [0.25, 0.32, 0.40, 0.50, 0.60, 0.70] },
-                    "M1.1": { vc: {int:55, ext:35, mql:35, ar:0}, f: [0.11, 0.14, 0.18, 0.22, 0.27, 0.31] },
-                    "M1.2": { vc: {int:140, ext:100, mql:100, ar:100}, f: [0.31, 0.41, 0.53, 0.68, 0.84, 0.98] },
-                    "K1.1": { vc: {int:185, ext:140, mql:115, ar:140}, f: [0.30, 0.39, 0.50, 0.64, 0.78, 0.91] },
-                    "K2.1": { vc: {int:115, ext:85, mql:85, ar:0}, f: [0.27, 0.35, 0.44, 0.55, 0.67, 0.78] },
-                    "K2.2": { vc: {int:70, ext:45, mql:60, ar:0}, f: [0.14, 0.18, 0.28, 0.22, 0.33, 0.38] },
-                    "K2.3": { vc: {int:105, ext:90, mql:90, ar:0}, f: [0.29, 0.37, 0.47, 0.59, 0.72, 0.84] },
-                    "K3.1": { vc: {int:90, ext:80, mql:80, ar:0}, f: [0.25, 0.31, 0.48, 0.38, 0.57, 0.66] },
-                    "K3.2": { vc: {int:345, ext:230, mql:290, ar:0}, f: [0.22, 0.27, 0.34, 0.42, 0.51, 0.59] },
-                    "N1.1": { vc: {int:290, ext:205, mql:230, ar:0}, f: [0.27, 0.35, 0.55, 0.44, 0.67, 0.78] },
-                    "N1.2": { vc: {int:255, ext:205, mql:175, ar:0}, f: [0.27, 0.35, 0.55, 0.44, 0.67, 0.78] },
-                    "N1.3": { vc: {int:205, ext:175, mql:140, ar:0}, f: [0.27, 0.35, 0.55, 0.44, 0.67, 0.78] },
-                    "N1.4": { vc: {int:140, ext:105, mql:0, ar:0}, f: [0.20, 0.26, 0.41, 0.33, 0.50, 0.58] },
-                    "N2.1": { vc: {int:230, ext:185, mql:185, ar:140}, f: [0.31, 0.41, 0.68, 0.53, 0.84, 0.98] },
-                    "N2.2": { vc: {int:230, ext:185, mql:185, ar:140}, f: [0.31, 0.41, 0.68, 0.53, 0.84, 0.98] },
-                    "N2.3": { vc: {int:230, ext:185, mql:185, ar:140}, f: [0.31, 0.41, 0.68, 0.53, 0.84, 0.98] }
-                }
-            },
-            scd661: {
-                linha: 'expert',
-                categoria: 'solid',
-                temRefrigInt: true,
-                nome: 'Tritan-Drill-Steel SCD661',
-                variantes: {
-                    '3xD': { ratio: 3 },
-                    '5xD': { ratio: 5 },
-                    '8xD': { ratio: 8 },
-                    '12xD': { ratio: 12 }
-                },
-                diametros: [4.00, 6.00, 8.00, 10.00, 12.00, 16.00],
-                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "K1.1", "K2.1", "K2.2"],
-                gruposNames: {
-                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
-                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
-                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
-                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
-                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
-                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
-                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
-                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
-                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)"
-                },
-                grupos: {
-                    "P1.1": { vc: {int:120, ext:105, mql:105, ar:0}, f: [0.22, 0.28, 0.35, 0.41, 0.47, 0.56] },
-                    "P1.2": { vc: {int:110, ext:90, mql:90, ar:0}, f: [0.25, 0.32, 0.39, 0.46, 0.52, 0.62] },
-                    "P2.1": { vc: {int:115, ext:95, mql:95, ar:0}, f: [0.24, 0.30, 0.37, 0.44, 0.50, 0.59] },
-                    "P2.2": { vc: {int:85, ext:70, mql:70, ar:0}, f: [0.20, 0.25, 0.31, 0.36, 0.41, 0.49] },
-                    "P3.1": { vc: {int:90, ext:75, mql:75, ar:0}, f: [0.22, 0.27, 0.33, 0.39, 0.44, 0.52] },
-                    "P3.2": { vc: {int:75, ext:65, mql:65, ar:0}, f: [0.18, 0.23, 0.28, 0.33, 0.37, 0.44] },
-                    "K1.1": { vc: {int:140, ext:110, mql:110, ar:100}, f: [0.28, 0.36, 0.45, 0.53, 0.60, 0.72] },
-                    "K2.1": { vc: {int:150, ext:115, mql:115, ar:105}, f: [0.27, 0.35, 0.43, 0.51, 0.58, 0.69] },
-                    "K2.2": { vc: {int:115, ext:90, mql:90, ar:0}, f: [0.24, 0.31, 0.38, 0.45, 0.51, 0.61] }
-                }
-            },
-            scd221: {
-                linha: 'expert',
-                categoria: 'solid',
-                temRefrigInt: true,
-                nome: 'MEGA-Speed-Drill-Uni SCD221',
-                variantes: {
-                    '3xD': { ratio: 3 },
-                    '5xD': { ratio: 5 },
-                    '8xD': { ratio: 8 }
-                },
-                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
-                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P4.1", "P5.1", "P6.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2"],
-                gruposNames: {
-                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
-                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
-                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
-                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
-                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
-                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
-                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
-                    "P4.1": "P4.1 — Aços inoxidáveis ferríticos e martensíticos",
-                    "P5.1": "P5.1 — Aço fundido",
-                    "P6.1": "P6.1 — Aços fundidos inoxidáveis",
-                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
-                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
-                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
-                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
-                    "K3.1": "K3.1 — Ferro fundido GJV / Mableável GJM (< 500 N/mm²)",
-                    "K3.2": "K3.2 — Ferro fundido GJV / Mableável GJM (> 500 N/mm²)"
-                },
-                grupos: {
-                    "P1.1": { vc: {int:170, ext:155, mql:155, ar:0}, f: [0.11, 0.14, 0.23, 0.18, 0.30, 0.36] },
-                    "P1.2": { vc: {int:155, ext:130, mql:130, ar:0}, f: [0.14, 0.18, 0.22, 0.29, 0.37, 0.45] },
-                    "P2.1": { vc: {int:170, ext:145, mql:145, ar:0}, f: [0.13, 0.17, 0.21, 0.27, 0.35, 0.43] },
-                    "P2.2": { vc: {int:120, ext:100, mql:100, ar:0}, f: [0.11, 0.14, 0.17, 0.22, 0.28, 0.34] },
-                    "P3.1": { vc: {int:130, ext:110, mql:110, ar:0}, f: [0.11, 0.15, 0.25, 0.19, 0.32, 0.38] },
-                    "P3.2": { vc: {int:115, ext:100, mql:95, ar:0}, f: [0.10, 0.14, 0.22, 0.17, 0.28, 0.35] },
-                    "P3.3": { vc: {int:100, ext:75, mql:85, ar:0}, f: [0.10, 0.13, 0.16, 0.20, 0.26, 0.31] },
-                    "P4.1": { vc: {int:100, ext:75, mql:85, ar:0}, f: [0.08, 0.10, 0.16, 0.13, 0.21, 0.25] },
-                    "P5.1": { vc: {int:170, ext:145, mql:145, ar:0}, f: [0.13, 0.17, 0.27, 0.21, 0.35, 0.43] },
-                    "P6.1": { vc: {int:100, ext:85, mql:75, ar:0}, f: [0.08, 0.10, 0.13, 0.16, 0.21, 0.25] },
-                    "K1.1": { vc: {int:150, ext:105, mql:105, ar:105}, f: [0.13, 0.19, 0.26, 0.35, 0.45, 0.54] },
-                    "K2.1": { vc: {int:200, ext:150, mql:125, ar:150}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
-                    "K2.2": { vc: {int:125, ext:95, mql:95, ar:0}, f: [0.12, 0.16, 0.22, 0.28, 0.36, 0.43] },
-                    "K2.3": { vc: {int:75, ext:50, mql:65, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "K3.1": { vc: {int:115, ext:100, mql:100, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
-                    "K3.2": { vc: {int:100, ext:90, mql:90, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] }
-                }
-            },
-            scd600: {
-                linha: 'performance',
-                categoria: 'solid',
-                temRefrigInt: false,
-                nome: 'MEGA-Drill-Steel-Plus SCD600 (Sem Refrig. Interna)',
-                variantes: {
-                    '3xD': { ratio: 3 },
-                    '5xD': { ratio: 5 }
-                },
-                diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
-                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P4.1", "P5.1", "P6.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2", "H1.1", "H1.2"],
-                gruposNames: {
-                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
-                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
-                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
-                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
-                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
-                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
-                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
-                    "P4.1": "P4.1 — Aços inoxidáveis ferríticos e martensíticos",
-                    "P5.1": "P5.1 — Aço fundido",
-                    "P6.1": "P6.1 — Aços fundidos inoxidáveis",
-                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
-                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
-                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
-                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)",
-                    "K3.1": "K3.1 — Ferro fundido GJV / Mableável GJM (< 500 N/mm²)",
-                    "K3.2": "K3.2 — Ferro fundido GJV / Mableável GJM (> 500 N/mm²)",
-                    "H1.1": "H1.1 — Aços temperados / Aço fundido (< 44 HRC)",
-                    "H1.2": "H1.2 — Aços temperados / Aço fundido (< 55 HRC)"
-                },
-                grupos: {
-                    "P1.1": { vc: {ext:100, mql:100, ar:0}, f: [0.10, 0.13, 0.17, 0.22, 0.28, 0.33] },
-                    "P1.2": { vc: {ext:85, mql:85, ar:0}, f: [0.12, 0.16, 0.21, 0.27, 0.34, 0.41] },
-                    "P2.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
-                    "P2.2": { vc: {ext:65, mql:65, ar:0}, f: [0.10, 0.13, 0.16, 0.21, 0.26, 0.30] },
-                    "P3.1": { vc: {ext:70, mql:70, ar:0}, f: [0.10, 0.14, 0.18, 0.23, 0.29, 0.35] },
-                    "P3.2": { vc: {ext:60, mql:60, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "P3.3": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.22] },
-                    "P4.1": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
-                    "P5.1": { vc: {ext:95, mql:95, ar:0}, f: [0.11, 0.15, 0.20, 0.26, 0.33, 0.38] },
-                    "P6.1": { vc: {ext:50, mql:55, ar:0}, f: [0.07, 0.09, 0.12, 0.15, 0.19, 0.23] },
-                    "K1.1": { vc: {ext:85, mql:85, ar:85}, f: [0.13, 0.19, 0.26, 0.35, 0.45, 0.54] },
-                    "K2.1": { vc: {ext:100, mql:120, ar:120}, f: [0.13, 0.18, 0.25, 0.33, 0.42, 0.50] },
-                    "K2.2": { vc: {ext:75, mql:75, ar:0}, f: [0.12, 0.16, 0.22, 0.28, 0.36, 0.43] },
-                    "K2.3": { vc: {ext:40, mql:50, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "K3.1": { vc: {ext:80, mql:80, ar:0}, f: [0.13, 0.18, 0.23, 0.31, 0.39, 0.46] },
-                    "K3.2": { vc: {ext:70, mql:70, ar:0}, f: [0.11, 0.15, 0.19, 0.25, 0.31, 0.36] },
-                    "H1.1": { vc: {ext:90, mql:90, ar:0}, f: [0.09, 0.12, 0.15, 0.19, 0.24, 0.28] },
-                    "H1.2": { vc: {ext:25, mql:25, ar:0}, f: [0.05, 0.06, 0.08, 0.11, 0.14, 0.16] }
-                }
-            },
-            scd350: {
-                linha: 'basic',
-                categoria: 'solid',
-                temRefrigInt: false,
-                nome: 'ECU-Drill-Uni SCD350 (Sem Refrig. Interna)',
-                variantes: {
-                    '3xD': { ratio: 3 },
-                    '5xD': { ratio: 5 }
-                },
-                diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
-                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "M1.1", "M1.2", "K2.1", "K2.2", "K2.3"],
-                gruposNames: {
-                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
-                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
-                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
-                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
-                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
-                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
-                    "P3.3": "P3.3 — Aços para ferramentas, rolamento (< 1500 N/mm²)",
-                    "P5.1": "P5.1 — Aço fundido",
-                    "M1.1": "M1.1 — Aços inoxidáveis austeníticos (< 700 N/mm²)",
-                    "M1.2": "M1.2 — Aços inoxidáveis Duplex (< 1000 N/mm²)",
-                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
-                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)",
-                    "K2.3": "K2.3 — Ferro fundido esferoidal GJS (> 800 N/mm²)"
-                },
-                grupos: {
-                    "P1.1": { vc: {ext:70, mql:70, ar:0}, f: [0.03, 0.05, 0.07, 0.10, 0.16, 0.21] },
-                    "P1.2": { vc: {ext:55, mql:55, ar:0}, f: [0.04, 0.06, 0.08, 0.13, 0.20, 0.27] },
-                    "P2.1": { vc: {ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.08, 0.12, 0.18, 0.25] },
-                    "P2.2": { vc: {ext:45, mql:45, ar:0}, f: [0.04, 0.05, 0.07, 0.10, 0.15, 0.20] },
-                    "P3.1": { vc: {ext:50, mql:50, ar:0}, f: [0.03, 0.05, 0.07, 0.11, 0.17, 0.23] },
-                    "P3.2": { vc: {ext:40, mql:40, ar:0}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.18] },
-                    "P3.3": { vc: {ext:40, mql:35, ar:0}, f: [0.03, 0.04, 0.05, 0.11, 0.11, 0.14] },
-                    "P5.1": { vc: {ext:65, mql:65, ar:0}, f: [0.04, 0.05, 0.08, 0.12, 0.18, 0.25] },
-                    "M1.1": { vc: {ext:30, mql:30, ar:0}, f: [0.03, 0.04, 0.06, 0.09, 0.14, 0.19] },
-                    "M1.2": { vc: {ext:25, mql:25, ar:0}, f: [0.02, 0.03, 0.05, 0.08, 0.12, 0.16] },
-                    "K2.1": { vc: {ext:90, mql:75, ar:90}, f: [0.05, 0.07, 0.12, 0.19, 0.30, 0.41] },
-                    "K2.2": { vc: {ext:55, mql:55, ar:0}, f: [0.04, 0.07, 0.11, 0.17, 0.26, 0.35] },
-                    "K2.3": { vc: {ext:55, mql:55, ar:0}, f: [0.04, 0.07, 0.11, 0.17, 0.26, 0.35] }
-                }
-            }
-        };
 
         function obterLimiteNominal(toolData, varianteKey, diametro) {
             const varObj = toolData.variantes ? toolData.variantes[varianteKey] : null;
@@ -1104,7 +1465,7 @@ html_content = '''
         function ajustarDiametro(delta) {
             const input = document.getElementById('diametro');
             let val = parseFloat(input.value) + delta;
-            if (val < 1) val = 1;
+            if (val < 0.5) val = 0.5;
             if (val > 30) val = 30;
             input.value = val.toFixed(2);
             atualizarCalculo();
@@ -1220,7 +1581,6 @@ html_content = '''
             let custoHora = parseFloat(document.getElementById('custo-hora').value);
             if (isNaN(custoHora) || custoHora <= 0) custoHora = 50.00;
 
-            // Profundidade nominal e validação com catálogo
             const limiteInfo = obterLimiteNominal(toolData, varianteKey, diametro);
             const excedeNominal = profundidade > limiteInfo.maxNominalMm;
             const alertaBox = document.getElementById('alerta-profundidade');
@@ -1254,24 +1614,26 @@ html_content = '''
             let estadoCor = "text-emerald-400";
             let badgeMetodo = "Interpolação Linear";
 
-            if (idxInf >= diametrosCat.length - 1) {
-                idxInf = diametrosCat.length - 2;
-                estadoTexto = "Extrapolação Superior";
-                estadoCor = "text-amber-400";
-                badgeMetodo = "Extrapolação Superior";
-            } else if (diametro < diametrosCat[0]) {
-                idxInf = 0;
-                estadoTexto = "Extrapolação Inferior";
-                estadoCor = "text-amber-400";
-                badgeMetodo = "Extrapolação Inferior";
+            if (diametrosCat.length > 1) {
+                if (idxInf >= diametrosCat.length - 1) {
+                    idxInf = diametrosCat.length - 2;
+                    estadoTexto = "Extrapolação Superior";
+                    estadoCor = "text-amber-400";
+                    badgeMetodo = "Extrapolação Superior";
+                } else if (diametro < diametrosCat[0]) {
+                    idxInf = 0;
+                    estadoTexto = "Extrapolação Inferior";
+                    estadoCor = "text-amber-400";
+                    badgeMetodo = "Extrapolação Inferior";
+                }
             }
 
             const x1 = diametrosCat[idxInf];
-            const x2 = diametrosCat[idxInf + 1];
+            const x2 = diametrosCat[idxInf + 1] !== undefined ? diametrosCat[idxInf + 1] : x1 + 1;
             const y1 = fCatArr[idxInf];
-            const y2 = fCatArr[idxInf + 1];
+            const y2 = fCatArr[idxInf + 1] !== undefined ? fCatArr[idxInf + 1] : y1;
 
-            const b = (y2 - y1) / (x2 - x1);
+            const b = (x2 - x1) !== 0 ? (y2 - y1) / (x2 - x1) : 0;
             const a = y1 - b * x1;
 
             let fBase = a + b * diametro;
@@ -1281,7 +1643,7 @@ html_content = '''
 
             let vcBase = 100;
             if (grupoObj.vc) {
-                vcBase = grupoObj.vc[refrigAtual] !== undefined ? grupoObj.vc[refrigAtual] : (grupoObj.vc['ext'] || 100);
+                vcBase = grupoObj.vc[refrigAtual] !== undefined ? grupoObj.vc[refrigAtual] : (grupoObj.vc['ext'] !== undefined ? grupoObj.vc['ext'] : 0);
             }
             let vcFinal = vcBase * (1 + vcPct / 100);
 
@@ -1341,9 +1703,10 @@ html_content = '''
                     : `${passoMm.toFixed(1)} mm (${(passoMm / diametro).toFixed(2)}×D)`;
                 peckingStrDescricao = `Sim (Passo: ${passoFormatado} | ${numPassos} passos | Retração: ${peckingRetensaoVal} mm/min)`;
 
-                const tempoCortePassos = (profundidade / vf) * 60;
+                const tempoCortePassos = vf > 0 ? (profundidade / vf) * 60 : 0;
                 const tempoRetracaoSeg = (numPassos * (profundidade / peckingRetensaoVal)) * 60;
-                tempoFuroSeg = tempoCortePassos + tempoRetracaoSeg + ((0.3 * diametro / vf) * 60);
+                const tempoEntradaSeg = vf > 0 ? ((0.3 * diametro / vf) * 60) : 0;
+                tempoFuroSeg = tempoCortePassos + tempoRetracaoSeg + tempoEntradaSeg;
             }
 
             const raio = diametro / 2;
@@ -1570,7 +1933,7 @@ html_content = '''
             const minX = diametros[0];
             const maxX = diametros[diametros.length - 1];
             const minY = 0;
-            const maxY = Math.max(...fArr) * 1.2;
+            const maxY = Math.max(...fArr) * 1.2 || 1;
 
             function scaleX(x) {
                 return pad + (x - minX) / (maxX - minX || 1) * (width - 2 * pad);
