@@ -689,8 +689,13 @@ html_content = '''
                     '3xD': { ratio: 3 },
                     '5xD': { ratio: 5 },
                     '8xD': { ratio: 8 },
-                    '12xD': {ratio: 12},
-					}
+                    '12xD': {
+                        ratio: 12,
+                        excecoesDiametro: [
+                            {  },
+                            {  }
+                        ]
+                    }
                 },
                 diametros: [4.00, 6.00, 8.00, 10.00, 12.00, 16.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "K1.1", "K2.1", "K2.2"],
