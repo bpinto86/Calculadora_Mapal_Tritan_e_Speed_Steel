@@ -57,6 +57,16 @@ html_content = '''
             <!-- Painel de Controlo (Esquerda) -->
             <div class="lg:col-span-4 bg-slate-800 p-3.5 rounded-lg border border-slate-700 flex flex-col gap-2.5 overflow-y-auto min-h-0">
                 <h2 class="text-xs font-semibold text-blue-400 uppercase tracking-wider shrink-0">Configuração da Operação</h2>
+
+                <!-- Pesquisa Rápida por Referência -->
+                <div class="space-y-1 shrink-0 bg-slate-900/90 p-2 rounded-md border border-cyan-800/60">
+                    <label class="text-[11px] font-medium text-cyan-300 block">PESQUISA RÁPIDA POR REFERÊNCIA / xD</label>
+                    <div class="flex gap-1.5">
+                        <input type="text" id="ref-pesquisa" placeholder="Ex: SCD661 12XD, SCD631 8xD..." class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500" onkeydown="if(event.key==='Enter') aplicarPesquisaReferencia()">
+                        <button type="button" onclick="aplicarPesquisaReferencia()" class="bg-cyan-600 hover:bg-cyan-500 px-2.5 py-1 rounded-md text-xs font-semibold text-white transition shrink-0">Aplicar</button>
+                    </div>
+                    <span id="ref-feedback" class="text-[10px] text-slate-400 block">Deteta família e variante ×D automaticamente.</span>
+                </div>
                 
                 <!-- 1. Linha de Ferramenta -->
                 <div class="space-y-1 shrink-0">
@@ -90,11 +100,18 @@ html_content = '''
                     </select>
                 </div>
 
-                <!-- 4. Modelo de Ferramenta -->
-                <div class="space-y-1 shrink-0">
-                    <label class="text-[11px] font-medium text-slate-300">4. MODELO DE FERRAMENTA</label>
-                    <select id="broca" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="mudarBroca()">
-                    </select>
+                <!-- 4. Modelo de Ferramenta & Variante xD -->
+                <div class="grid grid-cols-3 gap-2 shrink-0">
+                    <div class="col-span-2 space-y-1">
+                        <label class="text-[11px] font-medium text-slate-300">4. MODELO DE FERRAMENTA</label>
+                        <select id="broca" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="mudarBroca()">
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[11px] font-medium text-slate-300">VARIANTE</label>
+                        <select id="variante-xd" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs font-bold text-cyan-300 focus:outline-none focus:border-blue-500" onchange="atualizarCalculo()">
+                        </select>
+                    </div>
                 </div>
 
                 <!-- 5. Grupo de Materiais -->
@@ -141,6 +158,12 @@ html_content = '''
                             <span class="text-[10px] text-slate-400 font-medium">mm</span>
                         </div>
                     </div>
+                </div>
+
+                <!-- Alerta de Limite Real de Profundidade -->
+                <div id="alerta-profundidade" class="bg-slate-900 px-2.5 py-1.5 rounded-md border border-slate-700 text-[10px] text-slate-300 flex justify-between items-center shrink-0">
+                    <span id="texto-limite-prof">L máx. real: -- mm</span>
+                    <span id="badge-limite-prof" class="font-bold text-emerald-400">OK</span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 shrink-0 pt-1">
@@ -249,7 +272,6 @@ html_content = '''
             <div class="lg:col-span-8 flex flex-col gap-2.5 min-h-0 overflow-y-auto">
                 <!-- Grid de Métricas CNC Principal -->
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-2.5 shrink-0">
-                    <!-- Cartão f -->
                     <div id="card-f" class="bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors">
                         <div class="flex justify-between items-center">
                             <span class="text-[11px] text-slate-400">Avanço (f)</span>
@@ -262,7 +284,6 @@ html_content = '''
                         </div>
                     </div>
 
-                    <!-- Cartão Vc -->
                     <div id="card-vc" class="bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors">
                         <div class="flex justify-between items-center">
                             <span class="text-[11px] text-slate-400">Vc</span>
@@ -275,7 +296,6 @@ html_content = '''
                         </div>
                     </div>
 
-                    <!-- Rotações Limite da Máquina -->
                     <div id="card-rpm-max" class="bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors">
                         <div class="flex justify-between items-center">
                             <span class="text-[11px] text-slate-400">RPM Máx. Máquina</span>
@@ -288,14 +308,12 @@ html_content = '''
                         </div>
                     </div>
 
-                    <!-- Rotações (Spindle) -->
                     <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700">
                         <span class="text-[11px] text-slate-400">Rotações (Spindle)</span>
                         <div class="text-xl font-bold text-white mt-0.5" id="res-n">4178</div>
                         <span class="text-[9px] text-slate-400">rpm</span>
                     </div>
 
-                    <!-- Avanço de Trabalho -->
                     <div class="bg-slate-800 p-2.5 rounded-lg border border-slate-700">
                         <span class="text-[11px] text-slate-400">Avanço Trabalho</span>
                         <div class="text-xl font-bold text-white mt-0.5" id="res-vf">1608</div>
@@ -303,7 +321,7 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Gráficos Visuais em Meia-Lua (Conta-Rotações / Tachometer Gauges) -->
+                <!-- Gráficos Visuais em Meia-Lua -->
                 <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 shrink-0">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -312,7 +330,6 @@ html_content = '''
                         <span class="text-[10px] text-slate-400">Zona Verde (&lt;70%) | Amarela (70-90%) | Vermelha (&gt;90% Stall)</span>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                        <!-- Gauge Potência -->
                         <div class="bg-slate-900/90 p-2.5 rounded-md border border-slate-700/80 flex flex-col items-center relative">
                             <span class="text-[10px] font-semibold text-slate-300 uppercase mb-1">Potência de Corte Requerida</span>
                             <div class="relative w-48 h-24 overflow-hidden flex justify-center items-end">
@@ -333,7 +350,6 @@ html_content = '''
                             </div>
                         </div>
 
-                        <!-- Gauge Binário -->
                         <div class="bg-slate-900/90 p-2.5 rounded-md border border-slate-700/80 flex flex-col items-center relative">
                             <span class="text-[10px] font-semibold text-slate-300 uppercase mb-1">Binário de Corte Requerido (Mc)</span>
                             <div class="relative w-48 h-24 overflow-hidden flex justify-center items-end">
@@ -356,7 +372,7 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Indicadores de Tempo de Furação (Unitário vs Total Lote) -->
+                <!-- Indicadores de Tempo e Volume -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
                     <div class="bg-gradient-to-r from-blue-900/40 to-slate-800 p-2.5 rounded-lg border border-blue-700/50 flex justify-between items-center">
                         <div>
@@ -380,7 +396,7 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Peso Removido e Lucro de Sucata (Total Lote) -->
+                <!-- Peso e Sucata -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
                     <div class="bg-gradient-to-r from-cyan-900/40 to-slate-800 p-2.5 rounded-lg border border-cyan-700/50 flex justify-between items-center">
                         <div>
@@ -404,7 +420,7 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Custo de Produção, Força Axial e Binário de Corte -->
+                <!-- Custos, Força e Binário -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 shrink-0">
                     <div class="bg-gradient-to-r from-indigo-900/40 to-slate-800 p-2.5 rounded-lg border border-indigo-700/50 flex justify-between items-center">
                         <div>
@@ -438,9 +454,8 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Tabela de Referência e Gráfico lado a lado -->
+                <!-- Tabela e Gráfico -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 flex-1 min-h-[220px]">
-                    <!-- Tabela de Referência -->
                     <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col min-h-0">
                         <div class="flex justify-between items-center mb-1.5 shrink-0">
                             <h3 class="text-[11px] font-semibold text-slate-400 uppercase">Tabela de Referência do Catálogo</h3>
@@ -461,7 +476,6 @@ html_content = '''
                         </div>
                     </div>
 
-                    <!-- Gráfico Interativo SVG -->
                     <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col justify-between min-h-0">
                         <div class="flex justify-between items-center shrink-0">
                             <h3 class="text-[11px] font-semibold text-slate-400 uppercase">Curva por Intervalos: Avanço (f) vs. Ø</h3>
@@ -510,7 +524,7 @@ html_content = '''
             </div>
         </div>
 
-        <!-- Assinatura / Rodapé Ultra-Compacto -->
+        <!-- Rodapé -->
         <footer class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/80 flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px] text-slate-400 shrink-0">
             <div class="font-medium text-slate-300">
                 Created by <span class="text-white font-semibold">Bruno Pinto</span>
@@ -567,11 +581,9 @@ html_content = '''
             if (isNaN(valAtual) || valAtual <= 0) valAtual = unid === 'xd' ? 3.0 : 36.0;
 
             if (unid === 'mm') {
-                // Converte de ×D para mm
                 inputPasso.step = '1';
                 inputPasso.value = (valAtual * diametro).toFixed(1);
             } else {
-                // Converte de mm para ×D
                 inputPasso.step = '0.5';
                 inputPasso.value = (valAtual / diametro).toFixed(2);
             }
@@ -598,12 +610,23 @@ html_content = '''
             return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].densidade : 7.85;
         }
 
+        /*
+         * Estrutura de variantes xD e limites reais de profundidade:
+         * - ratio: multiplicador nominal (ex: 12 para 12xD)
+         * - maxMmDefault: limite máximo nominal em mm (se omitido, usa ratio * diametro)
+         * - excecoesDiametro: [{ maxDiametro: 10, maxMm: 110 }, { minDiametro: 12, maxMm: 144 }]
+         */
         const dados = {
             scd631: {
                 linha: 'expert',
                 categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'Tritan-Drill-Uni-Plus SCD631',
+                variantes: {
+                    '3xD': { ratio: 3 },
+                    '5xD': { ratio: 5 },
+                    '8xD': { ratio: 8 }
+                },
                 diametros: [4.00, 5.50, 7.50, 10.50, 14.50, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "M1.1", "M1.2", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2", "N1.1", "N1.2", "N1.3", "N1.4", "N2.1", "N2.2", "N2.3"],
                 gruposNames: {
@@ -657,11 +680,58 @@ html_content = '''
                     "N2.3": { vc: {int:230, ext:185, mql:185, ar:140}, f: [0.31, 0.41, 0.68, 0.53, 0.84, 0.98] }
                 }
             },
+            scd661: {
+                linha: 'expert',
+                categoria: 'solid',
+                temRefrigInt: true,
+                nome: 'Tritan-Drill-Steel SCD661',
+                variantes: {
+                    '3xD': { ratio: 3 },
+                    '5xD': { ratio: 5 },
+                    '8xD': { ratio: 8 },
+                    '12xD': {
+                        ratio: 12,
+                        excecoesDiametro: [
+                            { maxDiametro: 10.5, maxMm: 110 },
+                            { minDiametro: 12, maxMm: 144 }
+                        ]
+                    }
+                },
+                diametros: [4.00, 6.00, 8.00, 10.00, 12.00, 16.00],
+                gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "K1.1", "K2.1", "K2.2"],
+                gruposNames: {
+                    "P1.1": "P1.1 — Aços estruturais, corte livre (< 700 N/mm²)",
+                    "P1.2": "P1.2 — Aços estruturais, corte livre (< 1200 N/mm²)",
+                    "P2.1": "P2.1 — Aços de têmpera, nitretados (< 900 N/mm²)",
+                    "P2.2": "P2.2 — Aços de têmpera, nitretados (< 1400 N/mm²)",
+                    "P3.1": "P3.1 — Aços para ferramentas, rolamento (< 800 N/mm²)",
+                    "P3.2": "P3.2 — Aços para ferramentas, rolamento (< 1000 N/mm²)",
+                    "K1.1": "K1.1 — Ferro fundido lamelar GJL (< 300 N/mm²)",
+                    "K2.1": "K2.1 — Ferro fundido esferoidal GJS (< 500 N/mm²)",
+                    "K2.2": "K2.2 — Ferro fundido esferoidal GJS (≤ 800 N/mm²)"
+                },
+                grupos: {
+                    "P1.1": { vc: {int:120, ext:105, mql:105, ar:0}, f: [0.22, 0.28, 0.35, 0.41, 0.47, 0.56] },
+                    "P1.2": { vc: {int:110, ext:90, mql:90, ar:0}, f: [0.25, 0.32, 0.39, 0.46, 0.52, 0.62] },
+                    "P2.1": { vc: {int:115, ext:95, mql:95, ar:0}, f: [0.24, 0.30, 0.37, 0.44, 0.50, 0.59] },
+                    "P2.2": { vc: {int:85, ext:70, mql:70, ar:0}, f: [0.20, 0.25, 0.31, 0.36, 0.41, 0.49] },
+                    "P3.1": { vc: {int:90, ext:75, mql:75, ar:0}, f: [0.22, 0.27, 0.33, 0.39, 0.44, 0.52] },
+                    "P3.2": { vc: {int:75, ext:65, mql:65, ar:0}, f: [0.18, 0.23, 0.28, 0.33, 0.37, 0.44] },
+                    "K1.1": { vc: {int:140, ext:110, mql:110, ar:100}, f: [0.28, 0.36, 0.45, 0.53, 0.60, 0.72] },
+                    "K2.1": { vc: {int:150, ext:115, mql:115, ar:105}, f: [0.27, 0.35, 0.43, 0.51, 0.58, 0.69] },
+                    "K2.2": { vc: {int:115, ext:90, mql:90, ar:0}, f: [0.24, 0.31, 0.38, 0.45, 0.51, 0.61] }
+                }
+            },
             scd221: {
                 linha: 'expert',
                 categoria: 'solid',
                 temRefrigInt: true,
                 nome: 'MEGA-Speed-Drill-Uni SCD221',
+                variantes: {
+                    '3xD': { ratio: 3 },
+                    '5xD': { ratio: 5 },
+                    '8xD': { ratio: 8 }
+                },
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P4.1", "P5.1", "P6.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2"],
                 gruposNames: {
@@ -706,6 +776,10 @@ html_content = '''
                 categoria: 'solid',
                 temRefrigInt: false,
                 nome: 'MEGA-Drill-Steel-Plus SCD600 (Sem Refrig. Interna)',
+                variantes: {
+                    '3xD': { ratio: 3 },
+                    '5xD': { ratio: 5 }
+                },
                 diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P4.1", "P5.1", "P6.1", "K1.1", "K2.1", "K2.2", "K2.3", "K3.1", "K3.2", "H1.1", "H1.2"],
                 gruposNames: {
@@ -754,6 +828,10 @@ html_content = '''
                 categoria: 'solid',
                 temRefrigInt: false,
                 nome: 'ECU-Drill-Uni SCD350 (Sem Refrig. Interna)',
+                variantes: {
+                    '3xD': { ratio: 3 },
+                    '5xD': { ratio: 5 }
+                },
                 diametros: [1.00, 1.82, 3.31, 6.03, 10.99, 20.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "P3.3", "P5.1", "M1.1", "M1.2", "K2.1", "K2.2", "K2.3"],
                 gruposNames: {
@@ -789,11 +867,29 @@ html_content = '''
             }
         };
 
-        function atualizarFiltroBrocas() {
+        function obterLimiteProfundidadeReal(toolData, varianteKey, diametro) {
+            const varObj = toolData.variantes ? toolData.variantes[varianteKey] : null;
+            const ratio = varObj ? varObj.ratio : 5;
+            let maxMm = varObj && varObj.maxMmDefault ? varObj.maxMmDefault : (ratio * diametro);
+
+            if (varObj && Array.isArray(varObj.excecoesDiametro)) {
+                for (const exc of varObj.excecoesDiametro) {
+                    const matchMax = exc.maxDiametro === undefined || diametro <= exc.maxDiametro;
+                    const matchMin = exc.minDiametro === undefined || diametro >= exc.minDiametro;
+                    if (matchMax && matchMin && exc.maxMm) {
+                        maxMm = exc.maxMm;
+                    }
+                }
+            }
+            return { ratio, maxMm };
+        }
+
+        function atualizarFiltroBrocas(manterSelecao = false) {
             const linhaSel = document.getElementById('linha').value;
             const categoriaSel = document.getElementById('categoria').value;
             const refrigSel = document.getElementById('filtro-refrig').value;
             const brocaSelect = document.getElementById('broca');
+            const atualBroca = manterSelecao ? brocaSelect.value : null;
             
             brocaSelect.innerHTML = '';
             let primeiraChave = null;
@@ -818,26 +914,44 @@ html_content = '''
                 opt.value = "";
                 opt.text = "Nenhuma ferramenta nesta categoria";
                 brocaSelect.appendChild(opt);
+            } else if (atualBroca && dados[atualBroca]) {
+                brocaSelect.value = atualBroca;
             }
 
             mudarBroca();
         }
 
-        function mudarBroca() {
+        function mudarBroca(variantePreferida = null) {
             const brocaKey = document.getElementById('broca').value;
             const grupoSelect = document.getElementById('grupo');
+            const varSelect = document.getElementById('variante-xd');
             
             if (!brocaKey || !dados[brocaKey]) return;
 
             const toolData = dados[brocaKey];
-            
+            const grupoAnterior = grupoSelect.value;
+
             grupoSelect.innerHTML = '';
             toolData.gruposList.forEach((gKey, idx) => {
                 const opt = document.createElement('option');
                 opt.value = gKey;
                 opt.text = toolData.gruposNames[gKey];
-                if(idx === 0) opt.selected = true;
+                if ((grupoAnterior && toolData.gruposList.includes(grupoAnterior) && gKey === grupoAnterior) || ((!grupoAnterior || !toolData.gruposList.includes(grupoAnterior)) && idx === 0)) {
+                    opt.selected = true;
+                }
                 grupoSelect.appendChild(opt);
+            });
+
+            varSelect.innerHTML = '';
+            const varKeys = Object.keys(toolData.variantes || { '5xD': { ratio: 5 } });
+            varKeys.forEach((vk, idx) => {
+                const opt = document.createElement('option');
+                opt.value = vk;
+                opt.text = vk;
+                if ((variantePreferida && vk === variantePreferida) || (!variantePreferida && idx === 0)) {
+                    opt.selected = true;
+                }
+                varSelect.appendChild(opt);
             });
 
             const btnInt = document.getElementById('ref-int');
@@ -857,6 +971,52 @@ html_content = '''
             }
 
             mudarGrupoMaterial();
+        }
+
+        function aplicarPesquisaReferencia() {
+            const raw = document.getElementById('ref-pesquisa').value.trim().toUpperCase();
+            const feedback = document.getElementById('ref-feedback');
+            if (!raw) {
+                feedback.innerText = "Escreva uma referência (ex: SCD661 12XD).";
+                feedback.className = "text-[10px] text-slate-400 block";
+                return;
+            }
+
+            let encontradaKey = null;
+            for (const key in dados) {
+                if (raw.includes(key.toUpperCase())) {
+                    encontradaKey = key;
+                    break;
+                }
+            }
+
+            if (!encontradaKey) {
+                feedback.innerText = `Referência "${raw}" não reconhecida nas famílias carregadas.`;
+                feedback.className = "text-[10px] text-amber-400 block";
+                return;
+            }
+
+            const toolData = dados[encontradaKey];
+            document.getElementById('linha').value = toolData.linha;
+            document.getElementById('categoria').value = toolData.categoria;
+            document.getElementById('filtro-refrig').value = toolData.temRefrigInt ? 'com' : 'sem';
+            atualizarFiltroBrocas(true);
+            document.getElementById('broca').value = encontradaKey;
+
+            const matchXd = raw.match(/(\d+)\s*X\s*D/);
+            let varianteDetetada = null;
+            if (matchXd && toolData.variantes) {
+                const candidata = `${matchXd[1]}xD`;
+                if (toolData.variantes[candidata]) {
+                    varianteDetetada = candidata;
+                }
+            }
+
+            mudarBroca(varianteDetetada);
+
+            const varFinal = document.getElementById('variante-xd').value;
+            feedback.innerText = `Selecionado: ${toolData.nome} (${varFinal})`;
+            feedback.className = "text-[10px] text-emerald-400 block";
         }
 
         function mudarGrupoMaterial() {
@@ -900,7 +1060,6 @@ html_content = '''
                 const btn = document.getElementById('btn-lock-f');
                 const card = document.getElementById('card-f');
                 const status = document.getElementById('status-f');
-                
                 input.readOnly = !fUnlocked;
                 if (fUnlocked) {
                     btn.innerText = '🔓';
@@ -923,7 +1082,6 @@ html_content = '''
                 const btn = document.getElementById('btn-lock-vc');
                 const card = document.getElementById('card-vc');
                 const status = document.getElementById('status-vc');
-                
                 input.readOnly = !vcUnlocked;
                 if (vcUnlocked) {
                     btn.innerText = '🔓';
@@ -946,7 +1104,6 @@ html_content = '''
                 const btn = document.getElementById('btn-lock-rpm-max');
                 const card = document.getElementById('card-rpm-max');
                 const status = document.getElementById('status-rpm-max');
-                
                 input.readOnly = !rpmMaxUnlocked;
                 if (rpmMaxUnlocked) {
                     btn.innerText = '🔓';
@@ -977,14 +1134,10 @@ html_content = '''
 
         function ajustarPct(tipo, delta) {
             if (tipo === 'vc') {
-                vcPct += delta;
-                if (vcPct < -50) vcPct = -50;
-                if (vcPct > 50) vcPct = 50;
+                vcPct = Math.max(-50, Math.min(50, vcPct + delta));
                 document.getElementById('vc-slider').value = vcPct;
             } else if (tipo === 'f') {
-                fPct += delta;
-                if (fPct < -50) fPct = -50;
-                if (fPct > 50) fPct = 50;
+                fPct = Math.max(-50, Math.min(50, fPct + delta));
                 document.getElementById('f-slider').value = fPct;
             }
             atualizarCalculo();
@@ -1012,11 +1165,7 @@ html_content = '''
         }
 
         function onManualInput(tipo) {
-            if (tipo === 'vc' && vcUnlocked) {
-                atualizarCalculo();
-            } else if (tipo === 'f' && fUnlocked) {
-                atualizarCalculo();
-            } else if (tipo === 'rpm-max' && rpmMaxUnlocked) {
+            if ((tipo === 'vc' && vcUnlocked) || (tipo === 'f' && fUnlocked) || (tipo === 'rpm-max' && rpmMaxUnlocked)) {
                 atualizarCalculo();
             }
         }
@@ -1059,6 +1208,7 @@ html_content = '''
             if (!brocaKey || !dados[brocaKey]) return;
             
             let grupoKey = document.getElementById('grupo').value;
+            const varianteKey = document.getElementById('variante-xd').value || '5xD';
             const ligaCheck = document.getElementById('liga-check').checked;
             const peckingCheck = document.getElementById('pecking-check').checked;
             const toolData = dados[brocaKey];
@@ -1092,6 +1242,24 @@ html_content = '''
             let custoHora = parseFloat(document.getElementById('custo-hora').value);
             if (isNaN(custoHora) || custoHora <= 0) custoHora = 50.00;
 
+            // Limite real de profundidade para o diâmetro e variante selecionados
+            const limiteInfo = obterLimiteProfundidadeReal(toolData, varianteKey, diametro);
+            const excedeProf = profundidade > limiteInfo.maxMm;
+            const alertaBox = document.getElementById('alerta-profundidade');
+            const textoLimite = document.getElementById('texto-limite-prof');
+            const badgeLimite = document.getElementById('badge-limite-prof');
+
+            textoLimite.innerText = `L máx. real (${varianteKey} @ Ø${diametro.toFixed(1)}): ${limiteInfo.maxMm.toFixed(0)} mm`;
+            if (excedeProf) {
+                alertaBox.className = "bg-red-950/60 px-2.5 py-1.5 rounded-md border border-red-700/80 text-[10px] text-red-200 flex justify-between items-center shrink-0";
+                badgeLimite.innerText = `EXCEDE (+${(profundidade - limiteInfo.maxMm).toFixed(0)} mm)`;
+                badgeLimite.className = "font-bold text-red-400";
+            } else {
+                alertaBox.className = "bg-slate-900 px-2.5 py-1.5 rounded-md border border-slate-700 text-[10px] text-slate-300 flex justify-between items-center shrink-0";
+                badgeLimite.innerText = "DENTRO DO LIMITE";
+                badgeLimite.className = "font-bold text-emerald-400";
+            }
+
             const diametrosCat = toolData.diametros;
             const fCatArr = grupoObj.f;
 
@@ -1104,7 +1272,6 @@ html_content = '''
                 }
             }
 
-            let a = 0, b = 0, fBase = 0;
             let estadoTexto = "Dentro da gama";
             let estadoCor = "text-emerald-400";
             let badgeMetodo = "Interpolação Linear";
@@ -1126,10 +1293,10 @@ html_content = '''
             const y1 = fCatArr[idxInf];
             const y2 = fCatArr[idxInf + 1];
 
-            b = (y2 - y1) / (x2 - x1);
-            a = y1 - b * x1;
+            const b = (y2 - y1) / (x2 - x1);
+            const a = y1 - b * x1;
 
-            fBase = a + b * diametro;
+            let fBase = a + b * diametro;
             if (fBase < 0.001) fBase = 0.001;
 
             let fFinal = fBase * (1 + fPct / 100);
@@ -1241,11 +1408,12 @@ html_content = '''
             atualizarGauge(binarioMc, binMaxNm, 'needle-binario', 'val-gauge-bin', 'badge-gauge-bin', 'N·m');
 
             cacheResultados = {
-                ferramenta: toolData.nome,
+                ferramenta: `${toolData.nome} (${varianteKey})`,
                 linha: toolData.linha.toUpperCase(),
                 grupo: grupoEfetivoKey,
                 diametro: diametro.toFixed(2),
                 profundidade: profundidade.toFixed(1),
+                limiteRealMm: limiteInfo.maxMm.toFixed(0),
                 qtdFuros,
                 metragemLinearM: metragemLinearM.toFixed(2),
                 refrig: refrigAtual.toUpperCase(),
@@ -1355,7 +1523,7 @@ html_content = '''
             doc.text(`• Ferramenta Selecionada: ${r.ferramenta}`, 18, y); y += 6;
             doc.text(`• Linha: ${r.linha} | Refrigeração: ${r.refrig} | Ciclo Pecking: ${r.pecking}`, 18, y); y += 6;
             doc.text(`• Grupo de Material (MMG): ${r.grupo}`, 18, y); y += 6;
-            doc.text(`• Diâmetro (Ø): ${r.diametro} mm | Profundidade por Furo: ${r.profundidade} mm`, 18, y); y += 6;
+            doc.text(`• Diâmetro (Ø): ${r.diametro} mm | Profundidade: ${r.profundidade} mm (L máx. real: ${r.limiteRealMm} mm)`, 18, y); y += 6;
             doc.text(`• Quantidade de Furos (Lote): ${r.qtdFuros} furos | Metragem Linear: ${r.metragemLinearM} metros`, 18, y);
 
             y += 12;
