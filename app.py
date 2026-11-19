@@ -160,10 +160,10 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Alerta de Limite Real de Profundidade -->
-                <div id="alerta-profundidade" class="bg-slate-900 px-2.5 py-1.5 rounded-md border border-slate-700 text-[10px] text-slate-300 flex justify-between items-center shrink-0">
-                    <span id="texto-limite-prof">L máx. real: -- mm</span>
-                    <span id="badge-limite-prof" class="font-bold text-emerald-400">OK</span>
+                <!-- Validação de Profundidade com Catálogo e Limite Nominal -->
+                <div id="alerta-profundidade" class="bg-slate-900 px-2.5 py-1.5 rounded-md border border-slate-700 text-[10px] text-slate-200 flex justify-between items-center gap-2 shrink-0">
+                    <span id="texto-limite-prof">Profundidade a validar com catálogo (5xD @ Ø12.0 | Lim. nom.: 60 mm)</span>
+                    <span id="badge-limite-prof" class="font-bold text-amber-400 shrink-0">VALIDAR CATÁLOGO</span>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 shrink-0 pt-1">
@@ -610,12 +610,6 @@ html_content = '''
             return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].densidade : 7.85;
         }
 
-        /*
-         * Estrutura de variantes xD e limites reais de profundidade:
-         * - ratio: multiplicador nominal (ex: 12 para 12xD)
-         * - maxMmDefault: limite máximo nominal em mm (se omitido, usa ratio * diametro)
-         * - excecoesDiametro: [{ maxDiametro: 10, maxMm: 110 }, { minDiametro: 12, maxMm: 144 }]
-         */
         const dados = {
             scd631: {
                 linha: 'expert',
@@ -688,8 +682,8 @@ html_content = '''
                 variantes: {
                     '3xD': { ratio: 3 },
                     '5xD': { ratio: 5 },
-                    '8xD': { ratio: 8 }
-                    }
+                    '8xD': { ratio: 8 },
+                    '12xD': { ratio: 12 }
                 },
                 diametros: [4.00, 6.00, 8.00, 10.00, 12.00, 16.00],
                 gruposList: ["P1.1", "P1.2", "P2.1", "P2.2", "P3.1", "P3.2", "K1.1", "K2.1", "K2.2"],
@@ -861,21 +855,11 @@ html_content = '''
             }
         };
 
-        function obterLimiteProfundidadeReal(toolData, varianteKey, diametro) {
+        function obterLimiteNominal(toolData, varianteKey, diametro) {
             const varObj = toolData.variantes ? toolData.variantes[varianteKey] : null;
             const ratio = varObj ? varObj.ratio : 5;
-            let maxMm = varObj && varObj.maxMmDefault ? varObj.maxMmDefault : (ratio * diametro);
-
-            if (varObj && Array.isArray(varObj.excecoesDiametro)) {
-                for (const exc of varObj.excecoesDiametro) {
-                    const matchMax = exc.maxDiametro === undefined || diametro <= exc.maxDiametro;
-                    const matchMin = exc.minDiametro === undefined || diametro >= exc.minDiametro;
-                    if (matchMax && matchMin && exc.maxMm) {
-                        maxMm = exc.maxMm;
-                    }
-                }
-            }
-            return { ratio, maxMm };
+            const maxNominalMm = ratio * diametro;
+            return { ratio, maxNominalMm };
         }
 
         function atualizarFiltroBrocas(manterSelecao = false) {
@@ -1236,22 +1220,22 @@ html_content = '''
             let custoHora = parseFloat(document.getElementById('custo-hora').value);
             if (isNaN(custoHora) || custoHora <= 0) custoHora = 50.00;
 
-            // Limite real de profundidade para o diâmetro e variante selecionados
-            const limiteInfo = obterLimiteProfundidadeReal(toolData, varianteKey, diametro);
-            const excedeProf = profundidade > limiteInfo.maxMm;
+            // Profundidade nominal e validação com catálogo
+            const limiteInfo = obterLimiteNominal(toolData, varianteKey, diametro);
+            const excedeNominal = profundidade > limiteInfo.maxNominalMm;
             const alertaBox = document.getElementById('alerta-profundidade');
             const textoLimite = document.getElementById('texto-limite-prof');
             const badgeLimite = document.getElementById('badge-limite-prof');
 
-            textoLimite.innerText = `L máx. real (${varianteKey} @ Ø${diametro.toFixed(1)}): ${limiteInfo.maxMm.toFixed(0)} mm`;
-            if (excedeProf) {
-                alertaBox.className = "bg-red-950/60 px-2.5 py-1.5 rounded-md border border-red-700/80 text-[10px] text-red-200 flex justify-between items-center shrink-0";
-                badgeLimite.innerText = `EXCEDE (+${(profundidade - limiteInfo.maxMm).toFixed(0)} mm)`;
-                badgeLimite.className = "font-bold text-red-400";
+            textoLimite.innerText = `Profundidade a validar com catálogo (${varianteKey} @ Ø${diametro.toFixed(1)} | Lim. nom.: ${limiteInfo.maxNominalMm.toFixed(0)} mm)`;
+            if (excedeNominal) {
+                alertaBox.className = "bg-red-950/60 px-2.5 py-1.5 rounded-md border border-red-700/80 text-[10px] text-red-200 flex justify-between items-center gap-2 shrink-0";
+                badgeLimite.innerText = `FORA DO LIMITE (+${(profundidade - limiteInfo.maxNominalMm).toFixed(0)} mm)`;
+                badgeLimite.className = "font-bold text-red-400 shrink-0";
             } else {
-                alertaBox.className = "bg-slate-900 px-2.5 py-1.5 rounded-md border border-slate-700 text-[10px] text-slate-300 flex justify-between items-center shrink-0";
-                badgeLimite.innerText = "DENTRO DO LIMITE";
-                badgeLimite.className = "font-bold text-emerald-400";
+                alertaBox.className = "bg-slate-900 px-2.5 py-1.5 rounded-md border border-amber-700/50 text-[10px] text-slate-200 flex justify-between items-center gap-2 shrink-0";
+                badgeLimite.innerText = "VALIDAR CATÁLOGO";
+                badgeLimite.className = "font-bold text-amber-400 shrink-0";
             }
 
             const diametrosCat = toolData.diametros;
@@ -1407,7 +1391,8 @@ html_content = '''
                 grupo: grupoEfetivoKey,
                 diametro: diametro.toFixed(2),
                 profundidade: profundidade.toFixed(1),
-                limiteRealMm: limiteInfo.maxMm.toFixed(0),
+                limiteNominalMm: limiteInfo.maxNominalMm.toFixed(0),
+                estadoProfundidade: excedeNominal ? `Fora do limite nominal (+${(profundidade - limiteInfo.maxNominalMm).toFixed(0)} mm) — Validar com catálogo` : "A validar com catálogo",
                 qtdFuros,
                 metragemLinearM: metragemLinearM.toFixed(2),
                 refrig: refrigAtual.toUpperCase(),
@@ -1517,7 +1502,7 @@ html_content = '''
             doc.text(`• Ferramenta Selecionada: ${r.ferramenta}`, 18, y); y += 6;
             doc.text(`• Linha: ${r.linha} | Refrigeração: ${r.refrig} | Ciclo Pecking: ${r.pecking}`, 18, y); y += 6;
             doc.text(`• Grupo de Material (MMG): ${r.grupo}`, 18, y); y += 6;
-            doc.text(`• Diâmetro (Ø): ${r.diametro} mm | Profundidade: ${r.profundidade} mm (L máx. real: ${r.limiteRealMm} mm)`, 18, y); y += 6;
+            doc.text(`• Diâmetro (Ø): ${r.diametro} mm | Profundidade: ${r.profundidade} mm (Lim. nom.: ${r.limiteNominalMm} mm — ${r.estadoProfundidade})`, 18, y); y += 6;
             doc.text(`• Quantidade de Furos (Lote): ${r.qtdFuros} furos | Metragem Linear: ${r.metragemLinearM} metros`, 18, y);
 
             y += 12;
