@@ -530,48 +530,40 @@ html_content = '''
                 </div>
 
                 <!-- Inputs manuais apenas quando "Ferramenta do Cliente (Manual)" está selecionada -->
-                <div id="comp-bloco-cliente" class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-900/90 p-3 rounded-lg border border-amber-700/50 hidden">
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-semibold text-amber-300 uppercase block">Designação (Opcional)</label>
-                        <input type="text" id="comp-cliente-nome" value="Ferramenta do Cliente" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                <div id="comp-bloco-cliente" class="bg-slate-900/90 p-3 rounded-lg border border-amber-700/50 space-y-3 hidden">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-semibold text-amber-300 uppercase block">Designação (Opcional)</label>
+                            <input type="text" id="comp-cliente-nome" value="Ferramenta do Cliente" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-semibold text-amber-300 uppercase block">Vc Cliente (m/min)</label>
+                            <input type="number" id="comp-cliente-vc" value="70" step="1" min="1" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-semibold text-amber-300 uppercase block">Avanço f Cliente (mm/rot)</label>
+                            <input type="number" id="comp-cliente-f" value="0.0200" step="0.005" min="0.001" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                        </div>
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-semibold text-amber-300 uppercase block">Vc Cliente (m/min)</label>
-                        <input type="number" id="comp-cliente-vc" value="70" step="1" min="1" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
-                        requer_piloto = st.checkbox(
-    "Ferramenta do cliente requer furo-piloto prévio (ex.: broca canhão / longa)",
-    value=False,
-    key="comp_requer_piloto"
-)
 
-if requer_piloto:
-    col_p1, col_p2 = st.columns(2)
-    with col_p1:
-        tempo_piloto_seg = st.number_input(
-            "Tempo furo-piloto + troca (seg/furo)",
-            min_value=0.0,
-            value=20.0,
-            step=1.0,
-            key="comp_tempo_piloto_seg",
-            help="Inclui troca de ferramenta no magazine, aproximação, furação guia (2xD-3xD) e recuo."
-        )
-    with col_p2:
-        custo_piloto_furo = st.number_input(
-            "Custo broca piloto / furo (€)",
-            min_value=0.0,
-            value=0.05,
-            step=0.01,
-            format="%.2f",
-            key="comp_custo_piloto_furo",
-            help="Desgaste diluído da broca curta usada para fazer o furo-guia."
-        )
-else:
-    tempo_piloto_seg = 0.0
-    custo_piloto_furo = 0.0
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-[10px] font-semibold text-amber-300 uppercase block">Avanço f Cliente (mm/rot)</label>
-                        <input type="number" id="comp-cliente-f" value="0.1800" step="0.005" min="0.001" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                    <!-- Furo-Piloto Prévio (ex.: Broca Canhão / Broca Longa) -->
+                    <div class="pt-2.5 border-t border-slate-800 space-y-2">
+                        <label class="flex items-center gap-2 cursor-pointer text-xs text-amber-200 font-medium">
+                            <input type="checkbox" id="comp-requer-piloto" class="rounded bg-slate-800 border-slate-600 text-amber-500 focus:ring-0" onchange="togglePilotoInputs()">
+                            <span>Requer furo-piloto prévio (ex.: broca canhão / broca longa)</span>
+                        </label>
+                        <div id="comp-piloto-opcoes" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 hidden">
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-semibold text-slate-300 uppercase block">Tempo furo-piloto + troca (seg/furo)</label>
+                                <input type="number" id="comp-tempo-piloto-seg" value="20" step="1" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                                <span class="text-[9px] text-slate-400 block text-center">Inclui troca de ferramenta, entrada guia e recuo.</span>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-semibold text-slate-300 uppercase block">Custo adicional broca piloto / furo (€)</label>
+                                <input type="number" id="comp-custo-piloto-furo" value="0.05" step="0.01" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                                <span class="text-[9px] text-slate-400 block text-center">Desgaste diluído da broca curta de guia.</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1374,6 +1366,17 @@ else:
             return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].densidade : 7.85;
         }
 
+        function togglePilotoInputs() {
+            const checked = document.getElementById('comp-requer-piloto').checked;
+            const opcoes = document.getElementById('comp-piloto-opcoes');
+            if (checked) {
+                opcoes.classList.remove('hidden');
+            } else {
+                opcoes.classList.add('hidden');
+            }
+            atualizarComparacao();
+        }
+
         function toggleCorteInterrompido() {
             corteInterrompidoAtivo = !corteInterrompidoAtivo;
             atualizarEstadoBotaoInterrompido();
@@ -1595,7 +1598,8 @@ else:
             const {
                 diametro, profundidade, qtdFuros, custoHora,
                 rpmMaxUnlocked, rpmMaxVal,
-                peckingCheck, peckingUnid, peckingInputVal, peckingRetensaoVal
+                peckingCheck, peckingUnid, peckingInputVal, peckingRetensaoVal,
+                requerPiloto = false, tempoPilotoSeg = 0, custoPilotoFuro = 0
             } = contexto;
 
             let vcFinal = vcManual > 0 ? vcManual : 1;
@@ -1609,7 +1613,7 @@ else:
 
             const vf = Math.round(fFinal * n);
             const cursoEfetivo = profundidade + (0.3 * diametro);
-            let tempoFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
+            let tempoCorteFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
 
             const passoMm = peckingUnid === 'xd' ? (peckingInputVal * diametro) : peckingInputVal;
             const numPassos = Math.max(1, Math.ceil(profundidade / passoMm));
@@ -1618,13 +1622,20 @@ else:
                 const tempoCortePassos = vf > 0 ? (profundidade / vf) * 60 : 0;
                 const tempoRetracaoSeg = (numPassos * (profundidade / peckingRetensaoVal)) * 60;
                 const tempoEntradaSeg = vf > 0 ? ((0.3 * diametro / vf) * 60) : 0;
-                tempoFuroSeg = tempoCortePassos + tempoRetracaoSeg + tempoEntradaSeg;
+                tempoCorteFuroSeg = tempoCortePassos + tempoRetracaoSeg + tempoEntradaSeg;
             }
+
+            const pilotoSegEfetivo = requerPiloto ? Math.max(0, tempoPilotoSeg) : 0;
+            const custoPilotoEfetivo = requerPiloto ? Math.max(0, custoPilotoFuro) : 0;
+
+            const tempoFuroSeg = tempoCorteFuroSeg + pilotoSegEfetivo;
+            const tempoPilotoLoteMin = (pilotoSegEfetivo * qtdFuros) / 60;
 
             const custoHoraSeg = custoHora / 3600;
             const custoMaqFuro = tempoFuroSeg * custoHoraSeg;
             const tempoTotalMin = (tempoFuroSeg * qtdFuros) / 60;
             const custoMaqLote = custoMaqFuro * qtdFuros;
+            const custoPilotoLote = custoPilotoEfetivo * qtdFuros;
 
             const kc = getKc(grupoEfetivoKey);
             const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
@@ -1637,7 +1648,12 @@ else:
                 fFinal,
                 n,
                 vf,
+                tempoCorteFuroSeg,
                 tempoFuroSeg,
+                tempoPilotoLoteMin,
+                pilotoSegEfetivo,
+                custoPilotoEfetivo,
+                custoPilotoLote,
                 tempoTotalMin,
                 custoMaqFuro,
                 custoMaqLote,
@@ -2319,11 +2335,12 @@ else:
             atualizarComparacao();
         }
 
-        function calcularEconomiaFerramenta(precoBroca, vidaPorCicloVal, vidaUnid, qtdReaf, custoReaf, profundidadeMm, qtdFuros) {
+        function calcularEconomiaFerramenta(precoBroca, vidaPorCicloVal, vidaUnid, qtdReaf, custoReaf, profundidadeMm, qtdFuros, custoAdicionalFuro = 0) {
             const preco = isNaN(precoBroca) || precoBroca < 0 ? 0 : precoBroca;
             const vidaCiclo = isNaN(vidaPorCicloVal) || vidaPorCicloVal <= 0 ? 1 : vidaPorCicloVal;
             const numReaf = Math.max(0, Math.floor(isNaN(qtdReaf) ? 0 : qtdReaf));
             const custoAf = isNaN(custoReaf) || custoReaf < 0 ? 0 : custoReaf;
+            const custoExtraFuro = isNaN(custoAdicionalFuro) || custoAdicionalFuro < 0 ? 0 : custoAdicionalFuro;
 
             const furosPorCiclo = vidaUnid === 'metros'
                 ? Math.max(0.01, (vidaCiclo * 1000) / Math.max(0.1, profundidadeMm))
@@ -2333,9 +2350,9 @@ else:
             const furosTotaisPorFerramenta = furosPorCiclo * ciclosPorFerramenta;
             const custoTotalPorFerramenta = preco + (numReaf * custoAf);
 
-            const custoFerramentaPorFuro = custoTotalPorFerramenta / furosTotaisPorFerramenta;
+            const custoFerramentaPorFuro = (custoTotalPorFerramenta / furosTotaisPorFerramenta) + custoExtraFuro;
             const fracaoFerramentaLote = qtdFuros / furosTotaisPorFerramenta;
-            const custoFerramentaLote = fracaoFerramentaLote * custoTotalPorFerramenta;
+            const custoFerramentaLote = (fracaoFerramentaLote * custoTotalPorFerramenta) + (custoExtraFuro * qtdFuros);
 
             return {
                 furosPorCiclo,
@@ -2379,13 +2396,19 @@ else:
             let mComp = null;
             let tituloComp = '';
             let grupoComparacao = ctx.grupoEfetivoKey;
+            let requerPilotoAtivo = false;
+            let tempoPilotoSegVal = 0;
+            let custoPilotoFuroVal = 0;
 
             if (compKey === "__CLIENTE__") {
                 const nomeCli = document.getElementById('comp-cliente-nome').value.trim() || "Ferramenta do Cliente";
                 const vcCli = parseFloat(document.getElementById('comp-cliente-vc').value);
                 const fCli = parseFloat(document.getElementById('comp-cliente-f').value);
+                requerPilotoAtivo = document.getElementById('comp-requer-piloto').checked;
+                tempoPilotoSegVal = requerPilotoAtivo ? (parseFloat(document.getElementById('comp-tempo-piloto-seg').value) || 0) : 0;
+                custoPilotoFuroVal = requerPilotoAtivo ? (parseFloat(document.getElementById('comp-custo-piloto-furo').value) || 0) : 0;
 
-                tituloComp = `${nomeCli} (Manual)`;
+                tituloComp = `${nomeCli} (Manual${requerPilotoAtivo ? ' + Piloto' : ''})`;
                 document.getElementById('comp-th-alvo').innerText = tituloComp;
                 avisoEl.classList.add('hidden');
 
@@ -2393,7 +2416,8 @@ else:
                     diametro: ctx.diametro, profundidade: ctx.profundidade, qtdFuros: ctx.qtdFuros,
                     custoHora: custoHoraEfetivo, rpmMaxUnlocked, rpmMaxVal: ctx.rpmMaxVal,
                     peckingCheck: ctx.peckingCheck, peckingUnid: ctx.peckingUnid,
-                    peckingInputVal: ctx.peckingInputVal, peckingRetensaoVal: ctx.peckingRetensaoVal
+                    peckingInputVal: ctx.peckingInputVal, peckingRetensaoVal: ctx.peckingRetensaoVal,
+                    requerPiloto: requerPilotoAtivo, tempoPilotoSeg: tempoPilotoSegVal, custoPilotoFuro: custoPilotoFuroVal
                 });
             } else {
                 const compVar = document.getElementById('comp-variante').value || '5xD';
@@ -2445,8 +2469,8 @@ else:
             const afiQtdAlvo = parseInt(document.getElementById('comp-afi-qtd-alvo').value) || 0;
             const afiCustoAlvo = parseFloat(document.getElementById('comp-afi-custo-alvo').value) || 0;
 
-            const eAtual = calcularEconomiaFerramenta(precoAtual, vidaAtual, vidaUnidAtual, afiQtdAtual, afiCustoAtual, ctx.profundidade, ctx.qtdFuros);
-            const eComp = calcularEconomiaFerramenta(precoAlvo, vidaAlvo, vidaUnidAlvo, afiQtdAlvo, afiCustoAlvo, ctx.profundidade, ctx.qtdFuros);
+            const eAtual = calcularEconomiaFerramenta(precoAtual, vidaAtual, vidaUnidAtual, afiQtdAtual, afiCustoAtual, ctx.profundidade, ctx.qtdFuros, 0);
+            const eComp = calcularEconomiaFerramenta(precoAlvo, vidaAlvo, vidaUnidAlvo, afiQtdAlvo, afiCustoAlvo, ctx.profundidade, ctx.qtdFuros, custoPilotoFuroVal);
 
             const custoTotalFuroAtual = mAtual.custoMaqFuro + eAtual.custoFerramentaPorFuro;
             const custoTotalFuroComp = mComp.custoMaqFuro + eComp.custoFerramentaPorFuro;
@@ -2508,7 +2532,22 @@ else:
                     diff: `${diffVf >= 0 ? '+' : ''}${diffVf} mm/min`,
                     destaque: true,
                     rawDiff: -diffVf
-                },
+                }
+            ];
+
+            if (requerPilotoAtivo) {
+                const pilotoMin = mComp.tempoPilotoLoteMin || 0;
+                linhas.push({
+                    label: "Furo-Piloto Prévio (Guia + Troca)",
+                    vAtual: "Não necessário",
+                    vComp: `+${pilotoMin.toFixed(1)} min (${tempoPilotoSegVal.toFixed(0)}s/f | +${(custoPilotoFuroVal * ctx.qtdFuros).toFixed(2)}€)`,
+                    diff: `-${pilotoMin.toFixed(1)} min`,
+                    destaque: false,
+                    rawDiff: pilotoMin
+                });
+            }
+
+            linhas.push(
                 {
                     label: `Tempo Total Lote (${ctx.qtdFuros} furos)`,
                     vAtual: `${mAtual.tempoTotalMin.toFixed(1)} min (${mAtual.tempoFuroSeg.toFixed(1)}s/f)`,
@@ -2565,7 +2604,7 @@ else:
                     destaque: true,
                     rawDiff: diffTotalLote
                 }
-            ];
+            );
 
             tbody.innerHTML = linhas.map(l => {
                 let corDiff = 'text-slate-400';
@@ -2588,6 +2627,9 @@ else:
                 grupoComp: grupoComparacao,
                 corteInterrompido: corteInterrompidoAtivo,
                 resumoContinuo: resumoContinuoStr,
+                requerPiloto: requerPilotoAtivo,
+                tempoPilotoSeg: tempoPilotoSegVal,
+                custoPilotoFuro: custoPilotoFuroVal.toFixed(2),
                 custoHoraEfetivo: custoHoraEfetivo.toFixed(2),
                 precoAtual: precoAtual.toFixed(2),
                 precoAlvo: precoAlvo.toFixed(2),
@@ -2662,204 +2704,263 @@ else:
             doc.setFontSize(12);
             doc.text("1. DADOS DA FERRAMENTA E OPERAÇÃO", 15, y);
             
-            y += 7;
+            y += 8;
             doc.setFont("helvetica", "normal");
             doc.setFontSize(10);
-            doc.text(`• Ferramenta Selecionada: ${r.ferramenta}`, 18, y); y += 6;
-            doc.text(`• Linha: ${r.linha} | Refrigeração: ${r.refrig} | Ciclo Pecking: ${r.pecking}`, 18, y); y += 6;
-            doc.text(`• Grupo de Material (MMG): ${r.grupo}`, 18, y); y += 6;
-            doc.text(`• Diâmetro (Ø): ${r.diametro} mm | Profundidade: ${r.profundidade} mm (Lim. nom.: ${r.limiteNominalMm} mm — ${r.estadoProfundidade})`, 18, y); y += 6;
-            doc.text(`• Quantidade de Furos (Lote): ${r.qtdFuros} furos | Metragem Linear: ${r.metragemLinearM} metros`, 18, y);
+            doc.text(`Ferramenta: ${r.ferramenta} (${r.linha} Line)`, 15, y);
+            doc.text(`Material (MMG): ${r.grupo}`, 110, y);
+            y += 6;
+            doc.text(`Diâmetro (Ø): ${r.diametro} mm`, 15, y);
+            doc.text(`Profundidade (L): ${r.profundidade} mm (Lim. nom.: ${r.limiteNominalMm} mm)`, 65, y);
+            doc.text(`Lote: ${r.qtdFuros} furos (${r.metragemLinearM} m)`, 145, y);
+            y += 6;
+            doc.text(`Profundidade vs. Catálogo: ${r.estadoProfundidade}`, 15, y);
+            y += 6;
+            doc.text(`Refrigeração: ${r.refrig}`, 15, y);
+            doc.text(`Quebra de Cavaco (Pecking): ${r.pecking}`, 70, y);
 
             y += 12;
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
-            doc.text("2. PARÂMETROS DE CORTE OTIMIZADOS", 15, y);
+            doc.text("2. PARÂMETROS DE CORTE RECOMENDADOS", 15, y);
+
+            y += 8;
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.setTextColor(37, 99, 235);
+            doc.text(`Velocidade de Corte (Vc): ${r.vc} m/min`, 15, y);
+            doc.text(`Rotações (n): ${r.n} rpm`, 80, y);
+            doc.text(`Avanço (f): ${r.f} mm/rot`, 140, y);
 
             y += 7;
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10);
-            doc.text(`• Velocidade de Corte (Vc): ${r.vc} m/min`, 18, y); y += 6;
-            doc.text(`• Rotações do Spindle (n): ${r.n} rpm`, 18, y); y += 6;
-            doc.text(`• Avanço por Rotação (f): ${r.f} mm/rot`, 18, y); y += 6;
-            doc.text(`• Avanço de Trabalho (vf): ${r.vf} mm/min`, 18, y); y += 6;
-            doc.text(`• Tempo de Ciclo: ${r.tempoFuroSeg} seg/furo (Total Lote: ${r.tempoTotalMin} min)`, 18, y);
+            doc.setTextColor(15, 23, 42);
+            doc.text(`Avanço de Trabalho (vf): ${r.vf} mm/min`, 15, y);
 
             y += 12;
             doc.setFont("helvetica", "bold");
             doc.setFontSize(12);
-            doc.text("3. CUSTOS DE PRODUÇÃO E ANÁLISE COMERCIAL", 15, y);
+            doc.text("3. ESTIMATIVA DE CUSTOS E TEMPO", 15, y);
 
-            y += 7;
+            y += 8;
             doc.setFont("helvetica", "normal");
             doc.setFontSize(10);
-            doc.text(`• Custo Hora Máquina Base: ${r.custoHora} €/h`, 18, y); y += 6;
-            doc.text(`• Custo de Maquinação Unitário: ${r.custoFuro} € / furo`, 18, y); y += 6;
-            doc.text(`• Custo Total de Maquinação (Lote de ${r.qtdFuros} furos): ${r.custoTotalLote} €`, 18, y);
+            doc.text(`Custo Hora Máquina: ${r.custoHora} €/h`, 15, y);
+            doc.text(`Tempo por Furo: ${r.tempoFuroSeg} seg`, 80, y);
+            doc.text(`Tempo Total Lote: ${r.tempoTotalMin} min`, 140, y);
+            y += 6;
+            doc.setFont("helvetica", "bold");
+            doc.text(`Custo Maquinação Total: ${r.custoTotalLote} € (${r.custoFuro} € / furo)`, 15, y);
 
             if (tipo === 'completo') {
                 y += 12;
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(12);
-                doc.text("4. ANÁLISE DE MATERIAL, SUCATA E ESFORÇOS DE MÁQUINA", 15, y);
+                doc.text("4. DADOS TÉCNICOS ADICIONAIS (VOLUME, LIMALHA, SUCATA E ESFORÇO)", 15, y);
 
-                y += 7;
+                y += 8;
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(10);
-                doc.text(`• Volume Total Removido: ${r.volumeTotalCm3} cm³`, 18, y); y += 6;
-                doc.text(`• Peso Total de Limalha (Lote): ${r.massaTotalKg} kg`, 18, y); y += 6;
-                doc.text(`• Valor Comercial da Sucata (Lote): ${r.valorTotalSucata} €`, 18, y); y += 6;
-                doc.text(`• Força de Avanço Estimada (Ff): ${r.forcaN} N (${r.forcaKgf} kgf)`, 18, y); y += 6;
-                doc.text(`• Binário de Corte Estimado (Mc): ${r.binarioNm} N·m`, 18, y); y += 6;
-                doc.text(`• Potência Requerida no Spindle (Pc): ${r.potenciaKw} kW`, 18, y);
+                doc.text(`Volume Removido Total: ${r.volumeTotalCm3} cm³`, 15, y);
+                doc.text(`Peso Total Limalha: ${r.massaTotalKg} kg`, 110, y);
+                y += 6;
+                doc.text(`Valor Total Sucata: ${r.valorTotalSucata} €`, 15, y);
+                doc.text(`Força Axial (Ff): ${r.forcaN} N (${r.forcaKgf} kgf)`, 110, y);
+                y += 6;
+                doc.text(`Binário Corte (Mc): ${r.binarioNm} N·m`, 15, y);
+                doc.text(`Potência Spindle Req.: ${r.potenciaKw} kW`, 110, y);
             }
 
             if (incluirComp && cacheComparacao) {
                 const c = cacheComparacao;
                 y += 12;
-                if (y > 225) {
+                if (y > 235) {
                     doc.addPage();
                     y = 20;
                 }
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(12);
-                doc.text("COMPARATIVO TÉCNICO-COMERCIAL ENTRE FERRAMENTAS", 15, y);
+                doc.text(tipo === 'completo' ? "5. COMPARAÇÃO TÉCNICO-COMERCIAL" : "4. COMPARAÇÃO TÉCNICO-COMERCIAL", 15, y);
 
                 y += 7;
                 doc.setFont("helvetica", "normal");
-                doc.setFontSize(10);
-                doc.text(`• Atual: ${c.nomeAtual} (${c.precoAtual} € | Vida c/ ${c.afiQtdAtual} reaf. @ ${c.afiCustoAtual}€: ${c.vidaTotalAtual} furos)`, 18, y); y += 6;
-                doc.text(`• Comparada: ${c.nomeComp} (${c.precoAlvo} € | Vida c/ ${c.afiQtdAlvo} reaf. @ ${c.afiCustoAlvo}€: ${c.vidaTotalAlvo} furos)`, 18, y); y += 6;
-                doc.text(`• Grupo: ${c.grupoComp} | Custo Hora: ${c.custoHoraEfetivo} €/h | Avanço (vf): ${c.vfAtual} vs ${c.vfComp} mm/min`, 18, y); y += 6;
-                doc.text(`• Tempo Lote: ${c.tempoLoteAtual} vs ${c.tempoLoteComp} min (${c.diffTempoMin})`, 18, y); y += 6;
-                doc.text(`• Custo Total Combinado Lote (Máq.+Ferr.): ${c.custoTotalLoteAtual} € vs ${c.custoTotalLoteComp} € (${c.diffTotalLote})`, 18, y); y += 6;
+                doc.setFontSize(9.5);
+                doc.text(`Atual: ${c.nomeAtual} | Comparada: ${c.nomeComp} (Grupo ${c.grupoComp})`, 15, y);
+                y += 5;
                 if (c.corteInterrompido) {
-                    doc.text(`• Condição: Corte Interrompido (Interceções / Cascatas) — Ref. corte contínuo: ${c.resumoContinuo}`, 18, y); y += 6;
+                    doc.text(`Condição: Corte Interrompido (Interceções/Cascatas) | Ref. contínuo: ${c.resumoContinuo}`, 15, y);
+                    y += 5;
                 }
-                const linhasCap = doc.splitTextToSize(`• ${c.capacidadeResumo}`, 175);
-                doc.text(linhasCap, 18, y);
-                y += linhasCap.length * 5.5;
-                const linhasBe = doc.splitTextToSize(`• ${c.breakEvenResumo}`, 175);
-                doc.text(linhasBe, 18, y);
+                if (c.requerPiloto) {
+                    doc.text(`Nota Ferramenta Comparada: Requer furo-piloto prévio (+${c.tempoPilotoSeg}s/furo | +${c.custoPilotoFuro} €/furo)`, 15, y);
+                    y += 5;
+                }
+                doc.text(`Preço Broca: Atual ${c.precoAtual} € vs. Comparada ${c.precoAlvo} € | Custo Hora: ${c.custoHoraEfetivo} €/h`, 15, y);
+                y += 5;
+                doc.text(`Vida Total c/ Reafiações: Atual ${c.vidaTotalAtual} furos (${c.afiQtdAtual}x ${c.afiCustoAtual}€) vs. Comparada ${c.vidaTotalAlvo} furos (${c.afiQtdAlvo}x ${c.afiCustoAlvo}€)`, 15, y);
+                y += 5;
+                doc.text(`Avanço (vf): Atual ${c.vfAtual} mm/min vs. Comparada ${c.vfComp} mm/min | Tempo Lote: Atual ${c.tempoLoteAtual} min vs. Comparada ${c.tempoLoteComp} min (${c.diffTempoMin})`, 15, y);
+                y += 5;
+                doc.setFont("helvetica", "bold");
+                doc.text(`Custo Total Combinado Lote: Atual ${c.custoTotalLoteAtual} € vs. Comparada ${c.custoTotalLoteComp} € (${c.diffTotalLote})`, 15, y);
+                y += 5;
+                doc.setFont("helvetica", "normal");
+                doc.text(`Capacidade: ${c.capacidadeResumo}`, 15, y);
+                y += 5;
+                doc.text(`Ponto de Equilíbrio: ${c.breakEvenResumo}`, 15, y);
             }
 
+            doc.setFont("helvetica", "italic");
             doc.setFontSize(8);
-            doc.setTextColor(120, 120, 120);
-            doc.text("Documento gerado automaticamente por Álamo Ferramentas — Parâmetros baseados no catálogo MAPAL.", 15, 285);
+            doc.setTextColor(100, 116, 139);
+            doc.text("Valores calculados com base nos dados técnicos de catálogo MAPAL e parâmetros introduzidos.", 15, 285);
 
-            const nomeArquivo = `Proposta_MAPAL_${r.ferramenta.replace(/[^a-zA-Z0-9]/g, '_')}_${tipo}.pdf`;
-            doc.save(nomeArquivo);
+            const nomeFicheiro = `Proposta_MAPAL_${r.ferramenta.replace(/\s+/g, '_')}_${tipo}.pdf`;
+            doc.save(nomeFicheiro);
         }
 
-        function desenharGrafico(diametrosCat, fCatArr, dCalc, fCalc) {
+        function desenharGrafico(diamCat, fCat, dAtual, fAtual) {
             const svg = document.getElementById('svg-grafico');
             svg.innerHTML = '';
 
             const width = 400;
             const height = 180;
-            const padLeft = 40;
+            const padLeft = 42;
             const padRight = 20;
-            const padTop = 20;
-            const padBottom = 30;
-            const gWidth = width - padLeft - padRight;
-            const gHeight = height - padTop - padBottom;
+            const padTop = 18;
+            const padBottom = 32;
 
-            let minX = Math.min(...diametrosCat, dCalc);
-            let maxX = Math.max(...diametrosCat, dCalc);
-            if (minX === maxX) { minX -= 1; maxX += 1; }
+            const plotW = width - padLeft - padRight;
+            const plotH = height - padTop - padBottom;
 
-            let minY = Math.min(...fCatArr, fCalc) * 0.8;
-            let maxY = Math.max(...fCatArr, fCalc) * 1.1;
-            if (minY === maxY) { minY = 0; maxY = 1; }
+            const allX = [...diamCat, dAtual];
+            const allY = [...fCat, fAtual];
 
-            const xScale = (val) => padLeft + ((val - minX) / (maxX - minX)) * gWidth;
-            const yScale = (val) => padTop + gHeight - ((val - minY) / (maxY - minY)) * gHeight;
+            const xMin = Math.min(...allX);
+            const xMax = Math.max(...allX);
+            const yMin = 0;
+            const yMax = Math.max(...allY) * 1.15 || 1;
 
-            for (let i = 0; i <= 4; i++) {
-                const yVal = minY + (i / 4) * (maxY - minY);
-                const yPos = yScale(yVal);
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', padLeft);
-                line.setAttribute('y1', yPos);
-                line.setAttribute('x2', width - padRight);
-                line.setAttribute('y2', yPos);
-                line.setAttribute('stroke', '#334155');
-                line.setAttribute('stroke-width', '1');
+            const scaleX = (x) => {
+                if (xMax === xMin) return padLeft + plotW / 2;
+                return padLeft + ((x - xMin) / (xMax - xMin)) * plotW;
+            };
+
+            const scaleY = (y) => {
+                return padTop + plotH - ((y - yMin) / (yMax - yMin)) * plotH;
+            };
+
+            const gridLines = 4;
+            for (let i = 0; i <= gridLines; i++) {
+                const yVal = yMin + (i / gridLines) * (yMax - yMin);
+                const py = scaleY(yVal);
+
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", padLeft);
+                line.setAttribute("y1", py);
+                line.setAttribute("x2", width - padRight);
+                line.setAttribute("y2", py);
+                line.setAttribute("stroke", "#1e293b");
+                line.setAttribute("stroke-width", "1");
                 svg.appendChild(line);
 
-                const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                txt.setAttribute('x', padLeft - 5);
-                txt.setAttribute('y', yPos + 3);
-                txt.setAttribute('fill', '#94a3b8');
-                txt.setAttribute('font-size', '9');
-                txt.setAttribute('text-anchor', 'end');
-                txt.textContent = yVal.toFixed(2);
-                svg.appendChild(txt);
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", padLeft - 6);
+                text.setAttribute("y", py + 3);
+                text.setAttribute("fill", "#94a3b8");
+                text.setAttribute("font-size", "9");
+                text.setAttribute("text-anchor", "end");
+                text.textContent = yVal.toFixed(2);
+                svg.appendChild(text);
             }
 
-            let pathD = '';
-            diametrosCat.forEach((d, idx) => {
-                const px = xScale(d);
-                const py = yScale(fCatArr[idx]);
-                pathD += (idx === 0 ? 'M ' : 'L ') + `${px} ${py} `;
+            for (let i = 0; i < diamCat.length; i++) {
+                const px = scaleX(diamCat[i]);
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", px);
+                text.setAttribute("y", height - 10);
+                text.setAttribute("fill", "#94a3b8");
+                text.setAttribute("font-size", "9");
+                text.setAttribute("text-anchor", "middle");
+                text.textContent = diamCat[i].toFixed(1);
+                svg.appendChild(text);
+            }
 
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', px);
-                circle.setAttribute('cy', py);
-                circle.setAttribute('r', '3.5');
-                circle.setAttribute('fill', '#3b82f6');
+            const axisX = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            axisX.setAttribute("x1", padLeft);
+            axisX.setAttribute("y1", padTop + plotH);
+            axisX.setAttribute("x2", width - padRight);
+            axisX.setAttribute("y2", padTop + plotH);
+            axisX.setAttribute("stroke", "#475569");
+            axisX.setAttribute("stroke-width", "1.2");
+            svg.appendChild(axisX);
+
+            const axisY = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            axisY.setAttribute("x1", padLeft);
+            axisY.setAttribute("y1", padTop);
+            axisY.setAttribute("x2", padLeft);
+            axisY.setAttribute("y2", padTop + plotH);
+            axisY.setAttribute("stroke", "#475569");
+            axisY.setAttribute("stroke-width", "1.2");
+            svg.appendChild(axisY);
+
+            if (diamCat.length > 1) {
+                let dStr = "";
+                for (let i = 0; i < diamCat.length; i++) {
+                    const px = scaleX(diamCat[i]);
+                    const py = scaleY(fCat[i]);
+                    dStr += (i === 0 ? "M " : "L ") + `${px} ${py} `;
+                }
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", dStr.trim());
+                path.setAttribute("fill", "none");
+                path.setAttribute("stroke", "#3b82f6");
+                path.setAttribute("stroke-width", "2.2");
+                svg.appendChild(path);
+            }
+
+            for (let i = 0; i < diamCat.length; i++) {
+                const px = scaleX(diamCat[i]);
+                const py = scaleY(fCat[i]);
+
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", px);
+                circle.setAttribute("cy", py);
+                circle.setAttribute("r", "3.5");
+                circle.setAttribute("fill", "#3b82f6");
                 svg.appendChild(circle);
-
-                const txtX = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                txtX.setAttribute('x', px);
-                txtX.setAttribute('y', height - 8);
-                txtX.setAttribute('fill', '#94a3b8');
-                txtX.setAttribute('font-size', '9');
-                txtX.setAttribute('text-anchor', 'middle');
-                txtX.textContent = d.toFixed(1);
-                svg.appendChild(txtX);
-            });
-
-            if (diametrosCat.length > 1) {
-                const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                polyline.setAttribute('d', pathD);
-                polyline.setAttribute('fill', 'none');
-                polyline.setAttribute('stroke', '#3b82f6');
-                polyline.setAttribute('stroke-width', '2');
-                svg.appendChild(polyline);
             }
 
-            const cx = xScale(dCalc);
-            const cy = yScale(fCalc);
+            const pAtualX = scaleX(dAtual);
+            const pAtualY = scaleY(fAtual);
 
-            const lineX = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            lineX.setAttribute('x1', cx);
-            lineX.setAttribute('y1', cy);
-            lineX.setAttribute('x2', cx);
-            lineX.setAttribute('y2', padTop + gHeight);
-            lineX.setAttribute('stroke', '#f97316');
-            lineX.setAttribute('stroke-width', '1');
-            lineX.setAttribute('stroke-dasharray', '3,3');
+            const lineX = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            lineX.setAttribute("x1", pAtualX);
+            lineX.setAttribute("y1", pAtualY);
+            lineX.setAttribute("x2", pAtualX);
+            lineX.setAttribute("y2", padTop + plotH);
+            lineX.setAttribute("stroke", "#f97316");
+            lineX.setAttribute("stroke-width", "1");
+            lineX.setAttribute("stroke-dasharray", "3,3");
             svg.appendChild(lineX);
 
-            const lineY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            lineY.setAttribute('x1', padLeft);
-            lineY.setAttribute('y1', cy);
-            lineY.setAttribute('x2', cx);
-            lineY.setAttribute('y2', cy);
-            lineY.setAttribute('stroke', '#f97316');
-            lineY.setAttribute('stroke-width', '1');
-            lineY.setAttribute('stroke-dasharray', '3,3');
+            const lineY = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            lineY.setAttribute("x1", padLeft);
+            lineY.setAttribute("y1", pAtualY);
+            lineY.setAttribute("x2", pAtualX);
+            lineY.setAttribute("y2", pAtualY);
+            lineY.setAttribute("stroke", "#f97316");
+            lineY.setAttribute("stroke-width", "1");
+            lineY.setAttribute("stroke-dasharray", "3,3");
             svg.appendChild(lineY);
 
-            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            dot.setAttribute('cx', cx);
-            dot.setAttribute('cy', cy);
-            dot.setAttribute('r', '5');
-            dot.setAttribute('fill', '#f97316');
-            dot.setAttribute('stroke', '#ffffff');
-            dot.setAttribute('stroke-width', '1.5');
-            svg.appendChild(dot);
+            const circleAtual = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circleAtual.setAttribute("cx", pAtualX);
+            circleAtual.setAttribute("cy", pAtualY);
+            circleAtual.setAttribute("r", "5");
+            circleAtual.setAttribute("fill", "#f97316");
+            circleAtual.setAttribute("stroke", "#ffffff");
+            circleAtual.setAttribute("stroke-width", "1.5");
+            svg.appendChild(circleAtual);
         }
 
         atualizarFiltroBrocas();
@@ -2868,4 +2969,4 @@ else:
 </html>
 '''
 
-components.html(html_content, height=900, scrolling=True)
+components.html(html_content, height=850, scrolling=False)
