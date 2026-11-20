@@ -621,8 +621,16 @@ html_content = '''
                     </div>
                 </div>
 
-                <div id="comp-nota-interrompido" class="text-[11px] text-amber-200 bg-amber-950/50 border border-amber-600/60 rounded-md px-3 py-2 hidden">
-                    <strong>Corte Interrompido (Interceções / Cascatas):</strong> A vida útil inserida reflete cortes interrompidos com entradas/saídas em poços ou canais de refrigeração, onde o choque mecânico acelera o desgaste. Em corte contínuo favorável, esta ferramenta pode atingir cerca de <strong>90 metros</strong> (~600 furos a 150 mm).
+                <div id="comp-nota-interrompido" class="text-[11px] text-amber-200 bg-amber-950/50 border border-amber-600/60 rounded-md px-3 py-2.5 space-y-1.5 hidden">
+                    <div>
+                        <strong>Corte Interrompido (Interceções / Cascatas):</strong> A vida útil inserida reflete cortes interrompidos com entradas/saídas em poços ou canais de refrigeração, onde o choque mecânico acelera o desgaste.
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 pt-0.5">
+                        <span class="text-amber-300 font-medium">Ref. corte contínuo favorável:</span>
+                        <input type="number" id="comp-metros-continuo" value="90" step="5" min="1" max="2000" title="Definir metros de furação em corte contínuo para esta ferramenta/diâmetro" class="w-20 bg-slate-900 border border-amber-500/70 rounded px-2 py-0.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-300" oninput="atualizarComparacao()">
+                        <span class="text-amber-300 font-medium">m</span>
+                        <span id="comp-equiv-continuo" class="text-amber-100/90 font-normal">(~643 furos a 140.0 mm)</span>
+                    </div>
                 </div>
 
                 <div id="comp-aviso-grupo" class="text-[11px] text-amber-300 bg-amber-950/40 border border-amber-700/50 rounded-md px-3 py-2 hidden"></div>
@@ -2314,6 +2322,12 @@ html_content = '''
             const ctx = lerContextoAtual();
             if (!ctx.brocaKey || !ctx.toolData) return;
 
+            const metrosContinuoInput = parseFloat(document.getElementById('comp-metros-continuo').value);
+            const metrosContinuo = (!isNaN(metrosContinuoInput) && metrosContinuoInput > 0) ? metrosContinuoInput : 90;
+            const furosEquivContinuo = Math.max(1, Math.round((metrosContinuo * 1000) / Math.max(0.1, ctx.profundidade)));
+            const resumoContinuoStr = `${metrosContinuo} m (~${furosEquivContinuo} furos a ${ctx.profundidade.toFixed(1)} mm)`;
+            document.getElementById('comp-equiv-continuo').innerText = `(~${furosEquivContinuo} furos a ${ctx.profundidade.toFixed(1)} mm)`;
+
             const compKey = document.getElementById('comp-ferramenta').value;
             const avisoEl = document.getElementById('comp-aviso-grupo');
             const tbody = document.getElementById('comp-tabela-corpo');
@@ -2543,6 +2557,7 @@ html_content = '''
                 nomeComp: tituloComp,
                 grupoComp: grupoComparacao,
                 corteInterrompido: corteInterrompidoAtivo,
+                resumoContinuo: resumoContinuoStr,
                 custoHoraEfetivo: custoHoraEfetivo.toFixed(2),
                 precoAtual: precoAtual.toFixed(2),
                 precoAlvo: precoAlvo.toFixed(2),
@@ -2685,111 +2700,136 @@ html_content = '''
                 doc.setFontSize(10);
                 doc.text(`• Atual: ${c.nomeAtual} (${c.precoAtual} € | Vida c/ ${c.afiQtdAtual} reaf. @ ${c.afiCustoAtual}€: ${c.vidaTotalAtual} furos)`, 18, y); y += 6;
                 doc.text(`• Comparada: ${c.nomeComp} (${c.precoAlvo} € | Vida c/ ${c.afiQtdAlvo} reaf. @ ${c.afiCustoAlvo}€: ${c.vidaTotalAlvo} furos)`, 18, y); y += 6;
-                doc.text(`• Grupo: ${c.grupoComp} | Custo Hora Máquina: ${c.custoHoraEfetivo} €/h | Avanço vf: ${c.vfAtual} vs. ${c.vfComp} mm/min`, 18, y); y += 6;
-                doc.text(`• Tempo Lote: ${c.tempoLoteAtual} min vs. ${c.tempoLoteComp} min (${c.diffTempoMin})`, 18, y); y += 6;
-                doc.text(`• Custo Maq. Lote: ${c.custoMaqLoteAtual} € vs. ${c.custoMaqLoteComp} € | Custo Ferr. Lote: ${c.custoFerrLoteAtual} € vs. ${c.custoFerrLoteComp} €`, 18, y); y += 6;
-                doc.text(`• Custo Total Combinado Lote: ${c.custoTotalLoteAtual} € vs. ${c.custoTotalLoteComp} € (${c.diffTotalLote})`, 18, y); y += 6;
-                doc.text(`• Capacidade & Produtividade: ${c.capacidadeResumo}`, 18, y); y += 6;
-                doc.text(`• Ponto de Equilíbrio: ${c.breakEvenResumo}`, 18, y);
+                doc.text(`• Grupo: ${c.grupoComp} | Custo Hora: ${c.custoHoraEfetivo} €/h | Avanço (vf): ${c.vfAtual} vs ${c.vfComp} mm/min`, 18, y); y += 6;
+                doc.text(`• Tempo Lote: ${c.tempoLoteAtual} vs ${c.tempoLoteComp} min (${c.diffTempoMin})`, 18, y); y += 6;
+                doc.text(`• Custo Total Combinado Lote (Máq.+Ferr.): ${c.custoTotalLoteAtual} € vs ${c.custoTotalLoteComp} € (${c.diffTotalLote})`, 18, y); y += 6;
                 if (c.corteInterrompido) {
-                    y += 6;
-                    doc.text(`• Condição Aplicada: Corte Interrompido (interceções/cascatas; em corte contínuo favorável, referência ~90 m).`, 18, y);
+                    doc.text(`• Condição: Corte Interrompido (Interceções / Cascatas) — Ref. corte contínuo: ${c.resumoContinuo}`, 18, y); y += 6;
                 }
+                const linhasCap = doc.splitTextToSize(`• ${c.capacidadeResumo}`, 175);
+                doc.text(linhasCap, 18, y);
+                y += linhasCap.length * 5.5;
+                const linhasBe = doc.splitTextToSize(`• ${c.breakEvenResumo}`, 175);
+                doc.text(linhasBe, 18, y);
             }
 
-            doc.setLineWidth(0.5);
-            doc.setLineDash([2, 2], 0);
-            doc.line(15, 280, 195, 280);
-            doc.setFont("helvetica", "italic");
             doc.setFontSize(8);
-            doc.setTextColor(100, 100, 100);
-            doc.text("Valores calculados para condições estáveis e ferramentas de qualidade MAPAL. A validação da profundidade máxima deve ser confirmada com catálogo.", 15, 286);
+            doc.setTextColor(120, 120, 120);
+            doc.text("Documento gerado automaticamente por Álamo Ferramentas — Parâmetros baseados no catálogo MAPAL.", 15, 285);
 
-            const nomeArquivo = tipo === 'completo' 
-                ? `Proposta_Tecnica_Completa_${r.ferramenta.replace(/\s+/g, '_')}.pdf` 
-                : `Proposta_Comercial_Resumida_${r.ferramenta.replace(/\s+/g, '_')}.pdf`;
-
+            const nomeArquivo = `Proposta_MAPAL_${r.ferramenta.replace(/[^a-zA-Z0-9]/g, '_')}_${tipo}.pdf`;
             doc.save(nomeArquivo);
         }
 
-        function desenharGrafico(diametros, fArr, diamAtual, fAtual) {
+        function desenharGrafico(diametrosCat, fCatArr, dCalc, fCalc) {
             const svg = document.getElementById('svg-grafico');
             svg.innerHTML = '';
 
-            const padL = 42, padR = 16, padT = 14, padB = 26;
-            const w = 400 - padL - padR;
-            const h = 180 - padT - padB;
+            const width = 400;
+            const height = 180;
+            const padLeft = 40;
+            const padRight = 20;
+            const padTop = 20;
+            const padBottom = 30;
+            const gWidth = width - padLeft - padRight;
+            const gHeight = height - padTop - padBottom;
 
-            const todosX = [...diametros, diamAtual];
-            const todosY = [...fArr, fAtual];
+            let minX = Math.min(...diametrosCat, dCalc);
+            let maxX = Math.max(...diametrosCat, dCalc);
+            if (minX === maxX) { minX -= 1; maxX += 1; }
 
-            const minX = Math.min(...todosX);
-            const maxX = Math.max(...todosX);
-            const minY = 0;
-            const maxY = Math.max(...todosY) * 1.15;
+            let minY = Math.min(...fCatArr, fCalc) * 0.8;
+            let maxY = Math.max(...fCatArr, fCalc) * 1.1;
+            if (minY === maxY) { minY = 0; maxY = 1; }
 
-            const mapX = (val) => padL + ((val - minX) / (maxX - minX || 1)) * w;
-            const mapY = (val) => padT + h - ((val - minY) / (maxY - minY || 1)) * h;
+            const xScale = (val) => padLeft + ((val - minX) / (maxX - minX)) * gWidth;
+            const yScale = (val) => padTop + gHeight - ((val - minY) / (maxY - minY)) * gHeight;
 
             for (let i = 0; i <= 4; i++) {
                 const yVal = minY + (i / 4) * (maxY - minY);
-                const yPos = mapY(yVal);
-                const linha = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                linha.setAttribute("x1", padL); linha.setAttribute("y1", yPos);
-                linha.setAttribute("x2", padL + w); linha.setAttribute("y2", yPos);
-                linha.setAttribute("stroke", "#1e293b"); linha.setAttribute("stroke-width", "1");
-                svg.appendChild(linha);
+                const yPos = yScale(yVal);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', padLeft);
+                line.setAttribute('y1', yPos);
+                line.setAttribute('x2', width - padRight);
+                line.setAttribute('y2', yPos);
+                line.setAttribute('stroke', '#334155');
+                line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
 
-                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                txt.setAttribute("x", padL - 6); txt.setAttribute("y", yPos + 3);
-                txt.setAttribute("fill", "#64748b"); txt.setAttribute("font-size", "9");
-                txt.setAttribute("text-anchor", "end");
+                const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                txt.setAttribute('x', padLeft - 5);
+                txt.setAttribute('y', yPos + 3);
+                txt.setAttribute('fill', '#94a3b8');
+                txt.setAttribute('font-size', '9');
+                txt.setAttribute('text-anchor', 'end');
                 txt.textContent = yVal.toFixed(2);
                 svg.appendChild(txt);
             }
 
-            const numMarcasX = Math.min(diametros.length, 6);
-            for (let i = 0; i < numMarcasX; i++) {
-                const idx = Math.round(i * (diametros.length - 1) / (numMarcasX - 1 || 1));
-                const xVal = diametros[idx];
-                const xPos = mapX(xVal);
-                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                txt.setAttribute("x", xPos); txt.setAttribute("y", padT + h + 15);
-                txt.setAttribute("fill", "#64748b"); txt.setAttribute("font-size", "9");
-                txt.setAttribute("text-anchor", "middle");
-                txt.textContent = xVal.toFixed(0);
-                svg.appendChild(txt);
+            let pathD = '';
+            diametrosCat.forEach((d, idx) => {
+                const px = xScale(d);
+                const py = yScale(fCatArr[idx]);
+                pathD += (idx === 0 ? 'M ' : 'L ') + `${px} ${py} `;
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', px);
+                circle.setAttribute('cy', py);
+                circle.setAttribute('r', '3.5');
+                circle.setAttribute('fill', '#3b82f6');
+                svg.appendChild(circle);
+
+                const txtX = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                txtX.setAttribute('x', px);
+                txtX.setAttribute('y', height - 8);
+                txtX.setAttribute('fill', '#94a3b8');
+                txtX.setAttribute('font-size', '9');
+                txtX.setAttribute('text-anchor', 'middle');
+                txtX.textContent = d.toFixed(1);
+                svg.appendChild(txtX);
+            });
+
+            if (diametrosCat.length > 1) {
+                const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                polyline.setAttribute('d', pathD);
+                polyline.setAttribute('fill', 'none');
+                polyline.setAttribute('stroke', '#3b82f6');
+                polyline.setAttribute('stroke-width', '2');
+                svg.appendChild(polyline);
             }
 
-            let dPath = "";
-            for (let i = 0; i < diametros.length; i++) {
-                const px = mapX(diametros[i]);
-                const py = mapY(fArr[i]);
-                dPath += (i === 0 ? "M " : "L ") + px + " " + py + " ";
-            }
-            const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            pathEl.setAttribute("d", dPath);
-            pathEl.setAttribute("fill", "none");
-            pathEl.setAttribute("stroke", "#3b82f6");
-            pathEl.setAttribute("stroke-width", "2.5");
-            svg.appendChild(pathEl);
+            const cx = xScale(dCalc);
+            const cy = yScale(fCalc);
 
-            for (let i = 0; i < diametros.length; i++) {
-                const px = mapX(diametros[i]);
-                const py = mapY(fArr[i]);
-                const pt = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                pt.setAttribute("cx", px); pt.setAttribute("cy", py);
-                pt.setAttribute("r", "3.5"); pt.setAttribute("fill", "#3b82f6");
-                svg.appendChild(pt);
-            }
+            const lineX = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            lineX.setAttribute('x1', cx);
+            lineX.setAttribute('y1', cy);
+            lineX.setAttribute('x2', cx);
+            lineX.setAttribute('y2', padTop + gHeight);
+            lineX.setAttribute('stroke', '#f97316');
+            lineX.setAttribute('stroke-width', '1');
+            lineX.setAttribute('stroke-dasharray', '3,3');
+            svg.appendChild(lineX);
 
-            const cx = mapX(diamAtual);
-            const cy = mapY(fAtual);
-            const ptAtual = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            ptAtual.setAttribute("cx", cx); ptAtual.setAttribute("cy", cy);
-            ptAtual.setAttribute("r", "5.5"); ptAtual.setAttribute("fill", "#f97316");
-            ptAtual.setAttribute("stroke", "#ffffff"); ptAtual.setAttribute("stroke-width", "1.5");
-            svg.appendChild(ptAtual);
+            const lineY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            lineY.setAttribute('x1', padLeft);
+            lineY.setAttribute('y1', cy);
+            lineY.setAttribute('x2', cx);
+            lineY.setAttribute('y2', cy);
+            lineY.setAttribute('stroke', '#f97316');
+            lineY.setAttribute('stroke-width', '1');
+            lineY.setAttribute('stroke-dasharray', '3,3');
+            svg.appendChild(lineY);
+
+            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dot.setAttribute('cx', cx);
+            dot.setAttribute('cy', cy);
+            dot.setAttribute('r', '5');
+            dot.setAttribute('fill', '#f97316');
+            dot.setAttribute('stroke', '#ffffff');
+            dot.setAttribute('stroke-width', '1.5');
+            svg.appendChild(dot);
         }
 
         atualizarFiltroBrocas();
@@ -2798,4 +2838,4 @@ html_content = '''
 </html>
 '''
 
-components.html(html_content, height=960, scrolling=False)
+components.html(html_content, height=900, scrolling=True)
