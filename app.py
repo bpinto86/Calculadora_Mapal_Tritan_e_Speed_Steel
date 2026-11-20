@@ -47,7 +47,7 @@ html_content = '''
                     <span>↺</span> Reset Rápido
                 </button>
                 <button onclick="abrirModalComparacao()" class="bg-emerald-600 hover:bg-emerald-500 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
-                    <span>⚖️</span> Comparar Família
+                    <span>⚖️</span> Comparador
                 </button>
                 <button onclick="abrirModalExportacao()" class="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
                     <span>📄</span> Exportar Proposta PDF
