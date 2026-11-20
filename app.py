@@ -500,6 +500,44 @@ html_content = '''
         </div>
 
         <!-- Modal de Comparação Rápida de Família / Ferramenta do Cliente -->
+        requer_piloto = st.checkbox(
+    "Ferramenta do cliente requer furo-piloto prévio (ex.: broca canhão / longa)",
+    value=False,
+    key="comp_requer_piloto"
+)
+
+if requer_piloto:
+    col_p1, col_p2 = st.columns(2)
+    with col_p1:
+        tempo_piloto_seg = st.number_input(
+            "Tempo furo-piloto + troca (seg/furo)",
+            min_value=0.0,
+            value=20.0,
+            step=1.0,
+            key="comp_tempo_piloto_seg",
+            help="Inclui troca de ferramenta no magazine, aproximação, furação guia (2xD-3xD) e recuo."
+        )
+    with col_p2:
+        custo_piloto_furo = st.number_input(
+            "Custo broca piloto / furo (€)",
+            min_value=0.0,
+            value=0.05,
+            step=0.01,
+            format="%.2f",
+            key="comp_custo_piloto_furo",
+            help="Desgaste diluído da broca curta usada para fazer o furo-guia."
+        )
+else:
+    tempo_piloto_seg = 0.0
+    custo_piloto_furo = 0.0
+    # Tempo total do lote (minutos)
+tempo_piloto_lote_min = (tempo_piloto_seg * num_furos_lote) / 60.0 if requer_piloto else 0.0
+tempo_total_cliente_min = tempo_furo_cliente_lote_min + tempo_piloto_lote_min
+
+# Custos do lote (€)
+custo_maq_cliente_lote = (tempo_total_cliente_min / 60.0) * custo_hora_maquina
+custo_ferr_cliente_lote = (custo_furo_cliente + custo_piloto_furo) * num_furos_lote
+custo_total_cliente_lote = custo_maq_cliente_lote + custo_ferr_cliente_lote
         <div id="modal-comparacao" class="fixed inset-0 bg-black/75 flex items-center justify-center z-50 hidden p-3">
             <div class="bg-slate-800 border border-slate-700 rounded-lg p-5 w-full max-w-4xl shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto">
                 <div class="flex justify-between items-center border-b border-slate-700 pb-2.5">
