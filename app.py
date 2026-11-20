@@ -538,6 +538,36 @@ html_content = '''
                     <div class="space-y-1">
                         <label class="text-[10px] font-semibold text-amber-300 uppercase block">Vc Cliente (m/min)</label>
                         <input type="number" id="comp-cliente-vc" value="70" step="1" min="1" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                        requer_piloto = st.checkbox(
+    "Ferramenta do cliente requer furo-piloto prévio (ex.: broca canhão / longa)",
+    value=False,
+    key="comp_requer_piloto"
+)
+
+if requer_piloto:
+    col_p1, col_p2 = st.columns(2)
+    with col_p1:
+        tempo_piloto_seg = st.number_input(
+            "Tempo furo-piloto + troca (seg/furo)",
+            min_value=0.0,
+            value=20.0,
+            step=1.0,
+            key="comp_tempo_piloto_seg",
+            help="Inclui troca de ferramenta no magazine, aproximação, furação guia (2xD-3xD) e recuo."
+        )
+    with col_p2:
+        custo_piloto_furo = st.number_input(
+            "Custo broca piloto / furo (€)",
+            min_value=0.0,
+            value=0.05,
+            step=0.01,
+            format="%.2f",
+            key="comp_custo_piloto_furo",
+            help="Desgaste diluído da broca curta usada para fazer o furo-guia."
+        )
+else:
+    tempo_piloto_seg = 0.0
+    custo_piloto_furo = 0.0
                     </div>
                     <div class="space-y-1">
                         <label class="text-[10px] font-semibold text-amber-300 uppercase block">Avanço f Cliente (mm/rot)</label>
