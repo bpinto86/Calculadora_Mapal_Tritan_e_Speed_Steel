@@ -505,20 +505,27 @@ html_content = '''
                 <div class="flex justify-between items-center border-b border-slate-700 pb-2.5">
                     <div>
                         <h3 class="text-sm font-bold text-white flex items-center gap-2"><span>⚖️</span> Comparação Técnico-Comercial Lado a Lado</h3>
-                        <p class="text-[11px] text-slate-400">Compara desempenho de corte, preço da broca, vida útil, custo de máquina e ponto de equilíbrio.</p>
+                        <p class="text-[11px] text-slate-400">Compara desempenho de corte, preço da broca, reafiações, custo de máquina e capacidade produtiva.</p>
                     </div>
                     <button onclick="fecharModalComparacao()" class="text-slate-400 hover:text-white font-bold text-sm px-2 py-1">✕</button>
                 </div>
 
-                <!-- Seleção da ferramenta a comparar -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-900/90 p-3 rounded-lg border border-slate-700">
-                    <div class="md:col-span-2 space-y-1">
+                <!-- Seleção da ferramenta a comparar + Botão de Condição de Corte Interrompido -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-900/90 p-3 rounded-lg border border-slate-700 items-end">
+                    <div class="md:col-span-5 space-y-1">
                         <label class="text-[10px] font-semibold text-emerald-400 uppercase block">Selecionar Família ou Ferramenta do Cliente</label>
                         <select id="comp-ferramenta" class="w-full bg-slate-800 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="onChangeFonteComparacao()"></select>
                     </div>
-                    <div id="comp-bloco-variante" class="space-y-1">
-                        <label class="text-[10px] font-semibold text-cyan-400 uppercase block">Variante ×D da Comparação</label>
+                    <div id="comp-bloco-variante" class="md:col-span-2 space-y-1">
+                        <label class="text-[10px] font-semibold text-cyan-400 uppercase block">Variante ×D</label>
                         <select id="comp-variante" class="w-full bg-slate-800 border border-slate-700 rounded-md p-1.5 text-xs font-bold text-cyan-300 focus:outline-none focus:border-cyan-500" onchange="atualizarComparacao()"></select>
+                    </div>
+                    <div class="md:col-span-5 space-y-1">
+                        <label class="text-[10px] font-semibold text-amber-300 uppercase block">Condição da Aplicação</label>
+                        <button type="button" id="btn-corte-interrompido" onclick="toggleCorteInterrompido()" aria-pressed="false" class="w-full py-1.5 px-3 rounded-md text-xs font-semibold border transition flex items-center justify-center gap-1.5 bg-slate-800 border-slate-600 text-slate-300 hover:border-amber-500 hover:text-amber-200">
+                            <span id="icone-corte-interrompido">○</span>
+                            <span>Corte Interrompido (Interceções / Cascatas)</span>
+                        </button>
                     </div>
                 </div>
 
@@ -538,24 +545,34 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Parâmetros Económicos da Comparação: Preço Brocas, Vida Útil e Preço Hora Máquina -->
+                <!-- Parâmetros Económicos da Comparação: Preço Brocas, Vida Útil e Reafiações -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-900/80 p-3 rounded-lg border border-slate-700/80">
                     <div class="space-y-2 border-b md:border-b-0 md:border-r border-slate-800 pb-2 md:pb-0 md:pr-3">
                         <span class="text-[10px] font-bold text-blue-400 uppercase block">Ferramenta MAPAL Atual</span>
                         <div class="grid grid-cols-2 gap-2">
                             <div class="space-y-1">
                                 <label class="text-[10px] text-slate-400 block">Preço Broca (€)</label>
-                                <input type="number" id="comp-preco-atual" value="85.00" step="1" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
+                                <input type="number" id="comp-preco-atual" value="680.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
                             </div>
                             <div class="space-y-1">
                                 <div class="flex justify-between items-center">
-                                    <label class="text-[10px] text-slate-400">Vida Útil</label>
+                                    <label class="text-[10px] text-slate-400">Vida / Afiação</label>
                                     <select id="comp-vida-unid-atual" class="bg-slate-800 border border-slate-700 rounded px-1 text-[9px] text-cyan-400 focus:outline-none" onchange="atualizarComparacao()">
                                         <option value="furos" selected>furos</option>
                                         <option value="metros">metros</option>
                                     </select>
                                 </div>
-                                <input type="number" id="comp-vida-atual" value="500" step="10" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
+                                <input type="number" id="comp-vida-atual" value="90" step="10" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <div class="space-y-1">
+                                <label class="text-[10px] text-slate-400 block">N.º Reafiações</label>
+                                <input type="number" id="comp-afi-qtd-atual" value="0" step="1" min="0" max="30" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-cyan-300 text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] text-slate-400 block">Custo / Afiação (€)</label>
+                                <input type="number" id="comp-afi-custo-atual" value="25.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
                             </div>
                         </div>
                     </div>
@@ -565,11 +582,11 @@ html_content = '''
                         <div class="grid grid-cols-2 gap-2">
                             <div class="space-y-1">
                                 <label class="text-[10px] text-slate-400 block">Preço Broca (€)</label>
-                                <input type="number" id="comp-preco-alvo" value="45.00" step="1" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
+                                <input type="number" id="comp-preco-alvo" value="80.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
                             </div>
                             <div class="space-y-1">
                                 <div class="flex justify-between items-center">
-                                    <label class="text-[10px] text-slate-400">Vida Útil</label>
+                                    <label class="text-[10px] text-slate-400">Vida / Afiação</label>
                                     <select id="comp-vida-unid-alvo" class="bg-slate-800 border border-slate-700 rounded px-1 text-[9px] text-cyan-400 focus:outline-none" onchange="atualizarComparacao()">
                                         <option value="furos" selected>furos</option>
                                         <option value="metros">metros</option>
@@ -578,19 +595,34 @@ html_content = '''
                                 <input type="number" id="comp-vida-alvo" value="250" step="10" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
                             </div>
                         </div>
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <div class="space-y-1">
+                                <label class="text-[10px] text-slate-400 block">N.º Reafiações</label>
+                                <input type="number" id="comp-afi-qtd-alvo" value="0" step="1" min="0" max="30" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-cyan-300 text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] text-slate-400 block">Custo / Afiação (€)</label>
+                                <input type="number" id="comp-afi-custo-alvo" value="15.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Custo Hora Máquina na Comparação + Ponto de Equilíbrio -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-700/70">
+                <!-- Custo Hora Máquina + Capacidade Libertada & Ponto de Equilíbrio -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center bg-slate-900/60 px-3 py-2.5 rounded-lg border border-slate-700/70">
                     <div class="space-y-1">
                         <label class="text-[10px] font-semibold text-indigo-300 uppercase block">Preço / Custo Hora Máquina (€/h)</label>
                         <input type="number" id="comp-custo-hora" value="50.00" step="5" min="1" max="500" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-indigo-500" oninput="sincronizarCustoHoraComparacao()">
                     </div>
-                    <div class="md:col-span-2 space-y-0.5">
-                        <span class="text-[10px] font-semibold text-amber-300 uppercase block">Ponto de Equilíbrio (Break-Even)</span>
-                        <p id="comp-breakeven-texto" class="text-xs text-slate-200 font-medium">A calcular...</p>
+                    <div class="md:col-span-2 space-y-1">
+                        <span class="text-[10px] font-semibold text-amber-300 uppercase block">Capacidade Libertada &amp; Ponto de Equilíbrio</span>
+                        <p id="comp-capacidade-texto" class="text-xs text-cyan-200 font-medium">A calcular...</p>
+                        <p id="comp-breakeven-texto" class="text-[11px] text-slate-300">A calcular...</p>
                     </div>
+                </div>
+
+                <div id="comp-nota-interrompido" class="text-[11px] text-amber-200 bg-amber-950/50 border border-amber-600/60 rounded-md px-3 py-2 hidden">
+                    <strong>Corte Interrompido (Interceções / Cascatas):</strong> A vida útil inserida reflete cortes interrompidos com entradas/saídas em poços ou canais de refrigeração, onde o choque mecânico acelera o desgaste. Em corte contínuo favorável, esta ferramenta pode atingir cerca de <strong>90 metros</strong> (~600 furos a 150 mm).
                 </div>
 
                 <div id="comp-aviso-grupo" class="text-[11px] text-amber-300 bg-amber-950/40 border border-amber-700/50 rounded-md px-3 py-2 hidden"></div>
@@ -612,7 +644,7 @@ html_content = '''
                 <div class="flex flex-wrap justify-between items-center gap-2 pt-1">
                     <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
                         <input type="checkbox" id="comp-incluir-pdf" class="rounded bg-slate-900 border-slate-600 text-emerald-500 focus:ring-0" checked>
-                        <span>Incluir este comparativo (incluindo preços de broca e custo total) na exportação PDF</span>
+                        <span>Incluir este comparativo (preços, reafiações, capacidade e condição) no PDF</span>
                     </label>
                     <div class="flex gap-2">
                         <button id="btn-usar-comparada" onclick="aplicarFerramentaComparada()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition">Usar esta Ferramenta</button>
@@ -676,6 +708,7 @@ html_content = '''
         let fUnlocked = false;
         let vcUnlocked = false;
         let rpmMaxUnlocked = false;
+        let corteInterrompidoAtivo = false;
 
         const GRUPOS_MAPAL_PADRAO = {
             gruposList: [
@@ -1301,6 +1334,30 @@ html_content = '''
         function getDensidadePadrao(grupoKey) {
             const prefixo = grupoKey.charAt(0).toUpperCase();
             return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].densidade : 7.85;
+        }
+
+        function toggleCorteInterrompido() {
+            corteInterrompidoAtivo = !corteInterrompidoAtivo;
+            atualizarEstadoBotaoInterrompido();
+            atualizarComparacao();
+        }
+
+        function atualizarEstadoBotaoInterrompido() {
+            const btn = document.getElementById('btn-corte-interrompido');
+            const icone = document.getElementById('icone-corte-interrompido');
+            const nota = document.getElementById('comp-nota-interrompido');
+            if (!btn || !icone || !nota) return;
+
+            btn.setAttribute('aria-pressed', corteInterrompidoAtivo ? 'true' : 'false');
+            if (corteInterrompidoAtivo) {
+                btn.className = "w-full py-1.5 px-3 rounded-md text-xs font-semibold border transition flex items-center justify-center gap-1.5 bg-amber-600/25 border-amber-400 text-amber-200 shadow-sm";
+                icone.innerText = "●";
+                nota.classList.remove('hidden');
+            } else {
+                btn.className = "w-full py-1.5 px-3 rounded-md text-xs font-semibold border transition flex items-center justify-center gap-1.5 bg-slate-800 border-slate-600 text-slate-300 hover:border-amber-500 hover:text-amber-200";
+                icone.innerText = "○";
+                nota.classList.add('hidden');
+            }
         }
 
         function toggleFullScreen() {
@@ -2140,6 +2197,7 @@ html_content = '''
             if (!ctx.brocaKey) return;
 
             document.getElementById('comp-custo-hora').value = ctx.custoHora.toFixed(2);
+            atualizarEstadoBotaoInterrompido();
 
             const selFerramenta = document.getElementById('comp-ferramenta');
             const anterior = selFerramenta.value;
@@ -2223,22 +2281,32 @@ html_content = '''
             atualizarComparacao();
         }
 
-        function calcularCustoFerramentaPorFuro(precoBroca, vidaVal, vidaUnid, profundidadeMm, qtdFuros) {
+        function calcularEconomiaFerramenta(precoBroca, vidaPorCicloVal, vidaUnid, qtdReaf, custoReaf, profundidadeMm, qtdFuros) {
             const preco = isNaN(precoBroca) || precoBroca < 0 ? 0 : precoBroca;
-            const vida = isNaN(vidaVal) || vidaVal <= 0 ? 1 : vidaVal;
-            const vidaEmFuros = vidaUnid === 'metros'
-                ? Math.max(0.01, (vida * 1000) / Math.max(0.1, profundidadeMm))
-                : vida;
+            const vidaCiclo = isNaN(vidaPorCicloVal) || vidaPorCicloVal <= 0 ? 1 : vidaPorCicloVal;
+            const numReaf = Math.max(0, Math.floor(isNaN(qtdReaf) ? 0 : qtdReaf));
+            const custoAf = isNaN(custoReaf) || custoReaf < 0 ? 0 : custoReaf;
 
-            const custoBrocaPorFuro = preco / vidaEmFuros;
-            const brocasNecessariasLote = qtdFuros / vidaEmFuros;
-            const custoBrocaLote = brocasNecessariasLote * preco;
+            const furosPorCiclo = vidaUnid === 'metros'
+                ? Math.max(0.01, (vidaCiclo * 1000) / Math.max(0.1, profundidadeMm))
+                : vidaCiclo;
+
+            const ciclosPorFerramenta = 1 + numReaf;
+            const furosTotaisPorFerramenta = furosPorCiclo * ciclosPorFerramenta;
+            const custoTotalPorFerramenta = preco + (numReaf * custoAf);
+
+            const custoFerramentaPorFuro = custoTotalPorFerramenta / furosTotaisPorFerramenta;
+            const fracaoFerramentaLote = qtdFuros / furosTotaisPorFerramenta;
+            const custoFerramentaLote = fracaoFerramentaLote * custoTotalPorFerramenta;
 
             return {
-                vidaEmFuros,
-                custoBrocaPorFuro,
-                brocasNecessariasLote,
-                custoBrocaLote
+                furosPorCiclo,
+                ciclosPorFerramenta,
+                furosTotaisPorFerramenta,
+                custoTotalPorFerramenta,
+                custoFerramentaPorFuro,
+                fracaoFerramentaLote,
+                custoFerramentaLote
             };
         }
 
@@ -2324,44 +2392,55 @@ html_content = '''
             const precoAtual = parseFloat(document.getElementById('comp-preco-atual').value) || 0;
             const vidaAtual = parseFloat(document.getElementById('comp-vida-atual').value) || 1;
             const vidaUnidAtual = document.getElementById('comp-vida-unid-atual').value;
+            const afiQtdAtual = parseInt(document.getElementById('comp-afi-qtd-atual').value) || 0;
+            const afiCustoAtual = parseFloat(document.getElementById('comp-afi-custo-atual').value) || 0;
 
             const precoAlvo = parseFloat(document.getElementById('comp-preco-alvo').value) || 0;
             const vidaAlvo = parseFloat(document.getElementById('comp-vida-alvo').value) || 1;
             const vidaUnidAlvo = document.getElementById('comp-vida-unid-alvo').value;
+            const afiQtdAlvo = parseInt(document.getElementById('comp-afi-qtd-alvo').value) || 0;
+            const afiCustoAlvo = parseFloat(document.getElementById('comp-afi-custo-alvo').value) || 0;
 
-            const fAtualInfo = calcularCustoFerramentaPorFuro(precoAtual, vidaAtual, vidaUnidAtual, ctx.profundidade, ctx.qtdFuros);
-            const fCompInfo = calcularCustoFerramentaPorFuro(precoAlvo, vidaAlvo, vidaUnidAlvo, ctx.profundidade, ctx.qtdFuros);
+            const eAtual = calcularEconomiaFerramenta(precoAtual, vidaAtual, vidaUnidAtual, afiQtdAtual, afiCustoAtual, ctx.profundidade, ctx.qtdFuros);
+            const eComp = calcularEconomiaFerramenta(precoAlvo, vidaAlvo, vidaUnidAlvo, afiQtdAlvo, afiCustoAlvo, ctx.profundidade, ctx.qtdFuros);
 
-            const custoTotalFuroAtual = mAtual.custoMaqFuro + fAtualInfo.custoBrocaPorFuro;
-            const custoTotalFuroComp = mComp.custoMaqFuro + fCompInfo.custoBrocaPorFuro;
+            const custoTotalFuroAtual = mAtual.custoMaqFuro + eAtual.custoFerramentaPorFuro;
+            const custoTotalFuroComp = mComp.custoMaqFuro + eComp.custoFerramentaPorFuro;
 
-            const custoTotalLoteAtual = mAtual.custoMaqLote + fAtualInfo.custoBrocaLote;
-            const custoTotalLoteComp = mComp.custoMaqLote + fCompInfo.custoBrocaLote;
+            const custoTotalLoteAtual = mAtual.custoMaqLote + eAtual.custoFerramentaLote;
+            const custoTotalLoteComp = mComp.custoMaqLote + eComp.custoFerramentaLote;
 
-            const diffTempoMin = mComp.tempoTotalMin - mAtual.tempoTotalMin;
+            const tempoPoupadoMin = mComp.tempoTotalMin - mAtual.tempoTotalMin;
+            const tempoPoupadoHoras = tempoPoupadoMin / 60;
             const diffMaqLote = mComp.custoMaqLote - mAtual.custoMaqLote;
             const diffPrecoBroca = precoAlvo - precoAtual;
-            const diffBrocaLote = fCompInfo.custoBrocaLote - fAtualInfo.custoBrocaLote;
+            const diffFerrLote = eComp.custoFerramentaLote - eAtual.custoFerramentaLote;
             const diffTotalLote = custoTotalLoteComp - custoTotalLoteAtual;
             const diffVf = mComp.vf - mAtual.vf;
 
-            const custoOperacionalFuroAtual = mAtual.custoMaqFuro + fAtualInfo.custoBrocaPorFuro;
-            const custoOperacionalFuroComp = mComp.custoMaqFuro + fCompInfo.custoBrocaPorFuro;
-            const poupancaOperacionalPorFuro = custoOperacionalFuroComp - custoOperacionalFuroAtual;
+            const capEl = document.getElementById('comp-capacidade-texto');
+            if (tempoPoupadoHoras > 0.01) {
+                capEl.innerHTML = `MAPAL poupa <strong class="text-emerald-400">${tempoPoupadoHoras.toFixed(1)} h (${tempoPoupadoMin.toFixed(0)} min)</strong> no lote — liberta tempo de máquina para adjudicar e executar outros trabalhos.`;
+            } else if (tempoPoupadoHoras < -0.01) {
+                capEl.innerHTML = `Ferramenta comparada poupa <strong class="text-amber-300">${Math.abs(tempoPoupadoHoras).toFixed(1)} h (${Math.abs(tempoPoupadoMin).toFixed(0)} min)</strong> no lote face à seleção atual.`;
+            } else {
+                capEl.innerText = "Tempo de maquinação equivalente entre ambas as ferramentas.";
+            }
 
+            const poupancaOperacionalPorFuro = custoTotalFuroComp - custoTotalFuroAtual;
             const beEl = document.getElementById('comp-breakeven-texto');
             if (Math.abs(precoAtual - precoAlvo) < 0.001 && Math.abs(poupancaOperacionalPorFuro) < 0.00001) {
                 beEl.innerText = "Custos equivalentes entre ambas as ferramentas.";
             } else if (precoAtual > precoAlvo && poupancaOperacionalPorFuro > 0) {
                 const furosBe = Math.ceil((precoAtual - precoAlvo) / poupancaOperacionalPorFuro);
-                beEl.innerHTML = `Ferramenta MAPAL custa mais <strong class="text-amber-300">+${(precoAtual - precoAlvo).toFixed(2)} €</strong> na compra, mas poupa <strong class="text-emerald-400">${poupancaOperacionalPorFuro.toFixed(3)} €/furo</strong> (máq.+ferr.) → paga a diferença aos <strong class="text-cyan-300">${furosBe} furos</strong>.`;
+                beEl.innerHTML = `Diferença inicial de <strong class="text-amber-300">+${(precoAtual - precoAlvo).toFixed(2)} €</strong> na compra, mas poupa <strong class="text-emerald-400">${poupancaOperacionalPorFuro.toFixed(3)} €/furo</strong> (máq.+ferr.) → paga a diferença aos <strong class="text-cyan-300">${furosBe} furos</strong>.`;
             } else if (precoAtual < precoAlvo && poupancaOperacionalPorFuro < 0) {
                 const furosBe = Math.ceil((precoAlvo - precoAtual) / Math.abs(poupancaOperacionalPorFuro));
-                beEl.innerHTML = `Ferramenta comparada custa mais <strong class="text-amber-300">+${(precoAlvo - precoAtual).toFixed(2)} €</strong> na compra, mas poupa <strong class="text-emerald-400">${Math.abs(poupancaOperacionalPorFuro).toFixed(3)} €/furo</strong> (máq.+ferr.) → paga a diferença aos <strong class="text-cyan-300">${furosBe} furos</strong>.`;
+                beEl.innerHTML = `Diferença inicial de <strong class="text-amber-300">+${(precoAlvo - precoAtual).toFixed(2)} €</strong> na ferramenta comparada, mas poupa <strong class="text-emerald-400">${Math.abs(poupancaOperacionalPorFuro).toFixed(3)} €/furo</strong> → paga a diferença aos <strong class="text-cyan-300">${furosBe} furos</strong>.`;
             } else if (custoTotalLoteAtual < custoTotalLoteComp) {
-                beEl.innerHTML = `Ferramenta MAPAL já apresenta <strong class="text-emerald-400">menor custo total combinado</strong> desde o 1.º furo (poupança de <strong class="text-emerald-400">${Math.abs(diffTotalLote).toFixed(2)} €</strong> no lote).`;
+                beEl.innerHTML = `Ferramenta MAPAL já apresenta <strong class="text-emerald-400">menor custo total combinado</strong> no lote (ganho de <strong class="text-emerald-400">${Math.abs(diffTotalLote).toFixed(2)} €</strong>, além de libertar capacidade de máquina).`;
             } else {
-                beEl.innerHTML = `Ferramenta comparada apresenta <strong class="text-emerald-400">menor custo total combinado</strong> no lote atual (diferença de <strong class="text-amber-300">+${diffTotalLote.toFixed(2)} €</strong> na ferramenta MAPAL).`;
+                beEl.innerHTML = `No lote de ${ctx.qtdFuros} furos, a ferramenta comparada soma menos <strong class="text-emerald-400">${Math.abs(diffTotalLote).toFixed(2)} €</strong> em custo direto, mas a MAPAL liberta <strong class="text-cyan-300">${tempoPoupadoHoras.toFixed(1)} h</strong> de máquina.`;
             }
 
             const fmtDiff = (num, dec, sufix = '') => {
@@ -2390,9 +2469,9 @@ html_content = '''
                     label: `Tempo Total Lote (${ctx.qtdFuros} furos)`,
                     vAtual: `${mAtual.tempoTotalMin.toFixed(1)} min (${mAtual.tempoFuroSeg.toFixed(1)}s/f)`,
                     vComp: `${mComp.tempoTotalMin.toFixed(1)} min (${mComp.tempoFuroSeg.toFixed(1)}s/f)`,
-                    diff: fmtDiff(diffTempoMin, 1, ' min'),
+                    diff: fmtDiff(tempoPoupadoMin, 1, ' min'),
                     destaque: true,
-                    rawDiff: diffTempoMin
+                    rawDiff: tempoPoupadoMin
                 },
                 {
                     label: "Preço Unitário da Broca",
@@ -2403,20 +2482,20 @@ html_content = '''
                     rawDiff: diffPrecoBroca
                 },
                 {
-                    label: "Vida Útil Estimada",
-                    vAtual: `${fAtualInfo.vidaEmFuros.toFixed(0)} furos`,
-                    vComp: `${fCompInfo.vidaEmFuros.toFixed(0)} furos`,
-                    diff: `${(fCompInfo.vidaEmFuros - fAtualInfo.vidaEmFuros) >= 0 ? '+' : ''}${(fCompInfo.vidaEmFuros - fAtualInfo.vidaEmFuros).toFixed(0)} furos`,
+                    label: "Vida Total (c/ Reafiações)",
+                    vAtual: `${eAtual.furosTotaisPorFerramenta.toFixed(0)} furos (${afiQtdAtual} reaf. @ ${afiCustoAtual.toFixed(0)}€)`,
+                    vComp: `${eComp.furosTotaisPorFerramenta.toFixed(0)} furos (${afiQtdAlvo} reaf. @ ${afiCustoAlvo.toFixed(0)}€)`,
+                    diff: `${(eComp.furosTotaisPorFerramenta - eAtual.furosTotaisPorFerramenta) >= 0 ? '+' : ''}${(eComp.furosTotaisPorFerramenta - eAtual.furosTotaisPorFerramenta).toFixed(0)} furos`,
                     destaque: false,
-                    rawDiff: -(fCompInfo.vidaEmFuros - fAtualInfo.vidaEmFuros)
+                    rawDiff: -(eComp.furosTotaisPorFerramenta - eAtual.furosTotaisPorFerramenta)
                 },
                 {
                     label: "Custo Ferramenta / Furo",
-                    vAtual: `${fAtualInfo.custoBrocaPorFuro.toFixed(3)} €`,
-                    vComp: `${fCompInfo.custoBrocaPorFuro.toFixed(3)} €`,
-                    diff: fmtDiff(fCompInfo.custoBrocaPorFuro - fAtualInfo.custoBrocaPorFuro, 3, ' €'),
+                    vAtual: `${eAtual.custoFerramentaPorFuro.toFixed(3)} €`,
+                    vComp: `${eComp.custoFerramentaPorFuro.toFixed(3)} €`,
+                    diff: fmtDiff(eComp.custoFerramentaPorFuro - eAtual.custoFerramentaPorFuro, 3, ' €'),
                     destaque: false,
-                    rawDiff: fCompInfo.custoBrocaPorFuro - fAtualInfo.custoBrocaPorFuro
+                    rawDiff: eComp.custoFerramentaPorFuro - eAtual.custoFerramentaPorFuro
                 },
                 {
                     label: `Custo Maquinação Lote (@ ${custoHoraEfetivo.toFixed(0)}€/h)`,
@@ -2428,11 +2507,11 @@ html_content = '''
                 },
                 {
                     label: "Custo Ferramenta no Lote",
-                    vAtual: `${fAtualInfo.custoBrocaLote.toFixed(2)} € (${fAtualInfo.brocasNecessariasLote.toFixed(2)} un.)`,
-                    vComp: `${fCompInfo.custoBrocaLote.toFixed(2)} € (${fCompInfo.brocasNecessariasLote.toFixed(2)} un.)`,
-                    diff: fmtDiff(diffBrocaLote, 2, ' €'),
+                    vAtual: `${eAtual.custoFerramentaLote.toFixed(2)} € (${eAtual.fracaoFerramentaLote.toFixed(2)} ferr.)`,
+                    vComp: `${eComp.custoFerramentaLote.toFixed(2)} € (${eComp.fracaoFerramentaLote.toFixed(2)} ferr.)`,
+                    diff: fmtDiff(diffFerrLote, 2, ' €'),
                     destaque: false,
-                    rawDiff: diffBrocaLote
+                    rawDiff: diffFerrLote
                 },
                 {
                     label: "CUSTO TOTAL COMBINADO (Máq. + Ferr.)",
@@ -2463,23 +2542,29 @@ html_content = '''
                 nomeAtual: `${ctx.toolData.nome} (${ctx.varianteKey})`,
                 nomeComp: tituloComp,
                 grupoComp: grupoComparacao,
+                corteInterrompido: corteInterrompidoAtivo,
                 custoHoraEfetivo: custoHoraEfetivo.toFixed(2),
                 precoAtual: precoAtual.toFixed(2),
                 precoAlvo: precoAlvo.toFixed(2),
-                vidaAtualFuros: fAtualInfo.vidaEmFuros.toFixed(0),
-                vidaAlvoFuros: fCompInfo.vidaEmFuros.toFixed(0),
+                vidaTotalAtual: eAtual.furosTotaisPorFerramenta.toFixed(0),
+                vidaTotalAlvo: eComp.furosTotaisPorFerramenta.toFixed(0),
+                afiQtdAtual,
+                afiQtdAlvo,
+                afiCustoAtual: afiCustoAtual.toFixed(2),
+                afiCustoAlvo: afiCustoAlvo.toFixed(2),
                 vfAtual: mAtual.vf,
                 vfComp: mComp.vf,
                 tempoLoteAtual: mAtual.tempoTotalMin.toFixed(1),
                 tempoLoteComp: mComp.tempoTotalMin.toFixed(1),
                 custoMaqLoteAtual: mAtual.custoMaqLote.toFixed(2),
                 custoMaqLoteComp: mComp.custoMaqLote.toFixed(2),
-                custoBrocaLoteAtual: fAtualInfo.custoBrocaLote.toFixed(2),
-                custoBrocaLoteComp: fCompInfo.custoBrocaLote.toFixed(2),
+                custoFerrLoteAtual: eAtual.custoFerramentaLote.toFixed(2),
+                custoFerrLoteComp: eComp.custoFerramentaLote.toFixed(2),
                 custoTotalLoteAtual: custoTotalLoteAtual.toFixed(2),
                 custoTotalLoteComp: custoTotalLoteComp.toFixed(2),
-                diffTempoMin: fmtDiff(diffTempoMin, 1, ' min'),
+                diffTempoMin: fmtDiff(tempoPoupadoMin, 1, ' min'),
                 diffTotalLote: fmtDiff(diffTotalLote, 2, ' €'),
+                capacidadeResumo: capEl.innerText,
                 breakEvenResumo: beEl.innerText
             };
         }
@@ -2587,7 +2672,7 @@ html_content = '''
             if (incluirComp && cacheComparacao) {
                 const c = cacheComparacao;
                 y += 12;
-                if (y > 235) {
+                if (y > 225) {
                     doc.addPage();
                     y = 20;
                 }
@@ -2598,12 +2683,18 @@ html_content = '''
                 y += 7;
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(10);
-                doc.text(`• Atual: ${c.nomeAtual} (${c.precoAtual} € | Vida: ${c.vidaAtualFuros} furos) vs. ${c.nomeComp} (${c.precoAlvo} € | Vida: ${c.vidaAlvoFuros} furos)`, 18, y); y += 6;
+                doc.text(`• Atual: ${c.nomeAtual} (${c.precoAtual} € | Vida c/ ${c.afiQtdAtual} reaf. @ ${c.afiCustoAtual}€: ${c.vidaTotalAtual} furos)`, 18, y); y += 6;
+                doc.text(`• Comparada: ${c.nomeComp} (${c.precoAlvo} € | Vida c/ ${c.afiQtdAlvo} reaf. @ ${c.afiCustoAlvo}€: ${c.vidaTotalAlvo} furos)`, 18, y); y += 6;
                 doc.text(`• Grupo: ${c.grupoComp} | Custo Hora Máquina: ${c.custoHoraEfetivo} €/h | Avanço vf: ${c.vfAtual} vs. ${c.vfComp} mm/min`, 18, y); y += 6;
                 doc.text(`• Tempo Lote: ${c.tempoLoteAtual} min vs. ${c.tempoLoteComp} min (${c.diffTempoMin})`, 18, y); y += 6;
-                doc.text(`• Custo Maquinação Lote: ${c.custoMaqLoteAtual} € vs. ${c.custoMaqLoteComp} € | Custo Ferramenta Lote: ${c.custoBrocaLoteAtual} € vs. ${c.custoBrocaLoteComp} €`, 18, y); y += 6;
+                doc.text(`• Custo Maq. Lote: ${c.custoMaqLoteAtual} € vs. ${c.custoMaqLoteComp} € | Custo Ferr. Lote: ${c.custoFerrLoteAtual} € vs. ${c.custoFerrLoteComp} €`, 18, y); y += 6;
                 doc.text(`• Custo Total Combinado Lote: ${c.custoTotalLoteAtual} € vs. ${c.custoTotalLoteComp} € (${c.diffTotalLote})`, 18, y); y += 6;
+                doc.text(`• Capacidade & Produtividade: ${c.capacidadeResumo}`, 18, y); y += 6;
                 doc.text(`• Ponto de Equilíbrio: ${c.breakEvenResumo}`, 18, y);
+                if (c.corteInterrompido) {
+                    y += 6;
+                    doc.text(`• Condição Aplicada: Corte Interrompido (interceções/cascatas; em corte contínuo favorável, referência ~90 m).`, 18, y);
+                }
             }
 
             doc.setLineWidth(0.5);
@@ -2612,63 +2703,99 @@ html_content = '''
             doc.setFont("helvetica", "italic");
             doc.setFontSize(8);
             doc.setTextColor(100, 100, 100);
-            doc.text("Álamo Ferramentas — Líder em Soluções Tecnológicas para Ferramentaria Industrial", 15, 285);
+            doc.text("Valores calculados para condições estáveis e ferramentas de qualidade MAPAL. A validação da profundidade máxima deve ser confirmada com catálogo.", 15, 286);
 
-            doc.save(`Proposta_MAPAL_D${r.diametro}_${r.qtdFuros}furos.pdf`);
+            const nomeArquivo = tipo === 'completo' 
+                ? `Proposta_Tecnica_Completa_${r.ferramenta.replace(/\s+/g, '_')}.pdf` 
+                : `Proposta_Comercial_Resumida_${r.ferramenta.replace(/\s+/g, '_')}.pdf`;
+
+            doc.save(nomeArquivo);
         }
 
-        function desenharGrafico(diametros, fArr, dAtual, fAtual) {
+        function desenharGrafico(diametros, fArr, diamAtual, fAtual) {
             const svg = document.getElementById('svg-grafico');
             svg.innerHTML = '';
 
-            const width = 400;
-            const height = 180;
-            const pad = 25;
+            const padL = 42, padR = 16, padT = 14, padB = 26;
+            const w = 400 - padL - padR;
+            const h = 180 - padT - padB;
 
-            const minX = diametros[0];
-            const maxX = diametros[diametros.length - 1];
+            const todosX = [...diametros, diamAtual];
+            const todosY = [...fArr, fAtual];
+
+            const minX = Math.min(...todosX);
+            const maxX = Math.max(...todosX);
             const minY = 0;
-            const maxY = Math.max(...fArr) * 1.2 || 1;
+            const maxY = Math.max(...todosY) * 1.15;
 
-            function scaleX(x) {
-                return pad + (x - minX) / (maxX - minX || 1) * (width - 2 * pad);
+            const mapX = (val) => padL + ((val - minX) / (maxX - minX || 1)) * w;
+            const mapY = (val) => padT + h - ((val - minY) / (maxY - minY || 1)) * h;
+
+            for (let i = 0; i <= 4; i++) {
+                const yVal = minY + (i / 4) * (maxY - minY);
+                const yPos = mapY(yVal);
+                const linha = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                linha.setAttribute("x1", padL); linha.setAttribute("y1", yPos);
+                linha.setAttribute("x2", padL + w); linha.setAttribute("y2", yPos);
+                linha.setAttribute("stroke", "#1e293b"); linha.setAttribute("stroke-width", "1");
+                svg.appendChild(linha);
+
+                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                txt.setAttribute("x", padL - 6); txt.setAttribute("y", yPos + 3);
+                txt.setAttribute("fill", "#64748b"); txt.setAttribute("font-size", "9");
+                txt.setAttribute("text-anchor", "end");
+                txt.textContent = yVal.toFixed(2);
+                svg.appendChild(txt);
             }
-            function scaleY(y) {
-                return height - pad - (y - minY) / (maxY - minY || 1) * (height - 2 * pad);
+
+            const numMarcasX = Math.min(diametros.length, 6);
+            for (let i = 0; i < numMarcasX; i++) {
+                const idx = Math.round(i * (diametros.length - 1) / (numMarcasX - 1 || 1));
+                const xVal = diametros[idx];
+                const xPos = mapX(xVal);
+                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                txt.setAttribute("x", xPos); txt.setAttribute("y", padT + h + 15);
+                txt.setAttribute("fill", "#64748b"); txt.setAttribute("font-size", "9");
+                txt.setAttribute("text-anchor", "middle");
+                txt.textContent = xVal.toFixed(0);
+                svg.appendChild(txt);
             }
 
-            let html = `
-                <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#475569" stroke-width="1" />
-                <line x1="${pad}" y1="${pad}" x2="${pad}" y2="${height - pad}" stroke="#475569" stroke-width="1" />
-            `;
-
-            let polylinePoints = "";
+            let dPath = "";
             for (let i = 0; i < diametros.length; i++) {
-                const cx = scaleX(diametros[i]);
-                const cy = scaleY(fArr[i]);
-                polylinePoints += `${cx},${cy} `;
+                const px = mapX(diametros[i]);
+                const py = mapY(fArr[i]);
+                dPath += (i === 0 ? "M " : "L ") + px + " " + py + " ";
             }
-            html += `<polyline fill="none" stroke="#3b82f6" stroke-width="2" points="${polylinePoints}" />`;
+            const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            pathEl.setAttribute("d", dPath);
+            pathEl.setAttribute("fill", "none");
+            pathEl.setAttribute("stroke", "#3b82f6");
+            pathEl.setAttribute("stroke-width", "2.5");
+            svg.appendChild(pathEl);
 
             for (let i = 0; i < diametros.length; i++) {
-                const cx = scaleX(diametros[i]);
-                const cy = scaleY(fArr[i]);
-                html += `<circle cx="${cx}" cy="${cy}" r="3" fill="#3b82f6" />`;
+                const px = mapX(diametros[i]);
+                const py = mapY(fArr[i]);
+                const pt = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                pt.setAttribute("cx", px); pt.setAttribute("cy", py);
+                pt.setAttribute("r", "3.5"); pt.setAttribute("fill", "#3b82f6");
+                svg.appendChild(pt);
             }
 
-            const curX = scaleX(dAtual);
-            const curY = scaleY(fAtual);
-            html += `<circle cx="${curX}" cy="${curY}" r="4.5" fill="#f97316" stroke="#fff" stroke-width="1.5" />`;
-
-            svg.innerHTML = html;
+            const cx = mapX(diamAtual);
+            const cy = mapY(fAtual);
+            const ptAtual = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            ptAtual.setAttribute("cx", cx); ptAtual.setAttribute("cy", cy);
+            ptAtual.setAttribute("r", "5.5"); ptAtual.setAttribute("fill", "#f97316");
+            ptAtual.setAttribute("stroke", "#ffffff"); ptAtual.setAttribute("stroke-width", "1.5");
+            svg.appendChild(ptAtual);
         }
 
-        window.onload = function() {
-            atualizarFiltroBrocas();
-        };
+        atualizarFiltroBrocas();
     </script>
 </body>
 </html>
 '''
 
-components.html(html_content, height=900, scrolling=False)
+components.html(html_content, height=960, scrolling=False)
