@@ -331,7 +331,7 @@ html_content = '''
                 <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 shrink-0">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                            <span>🎛️</span> Monitor Gráfico de Carga do Spindle (Conta-Rotações)
+                            <span>🎛️</span> Monitor Gráfico de Carga do Spindle
                         </span>
                         <span class="text-[10px] text-slate-400">Zona Verde (&lt;70%) | Amarela (70-90%) | Vermelha (&gt;90% Stall)</span>
                     </div>
