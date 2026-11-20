@@ -47,7 +47,7 @@ html_content = '''
                     <span>↺</span> Reset Rápido
                 </button>
                 <button onclick="abrirModalComparacao()" class="bg-emerald-600 hover:bg-emerald-500 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
-                    <span>⚖️</span> Comparador
+                    <span>⚖️</span> Comparar Família
                 </button>
                 <button onclick="abrirModalExportacao()" class="bg-blue-600 hover:bg-blue-500 px-2.5 py-1 rounded-md text-xs font-medium text-white transition flex items-center gap-1.5">
                     <span>📄</span> Exportar Proposta PDF
@@ -331,7 +331,7 @@ html_content = '''
                 <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 shrink-0">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                            <span>🎛️</span> Monitor Gráfico de Carga do Spindle
+                            <span>🎛️</span> Monitor Gráfico de Carga do Spindle (Conta-Rotações)
                         </span>
                         <span class="text-[10px] text-slate-400">Zona Verde (&lt;70%) | Amarela (70-90%) | Vermelha (&gt;90% Stall)</span>
                     </div>
