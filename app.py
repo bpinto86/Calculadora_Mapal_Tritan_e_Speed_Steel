@@ -537,9 +537,7 @@ html_content = '''
                     <h3 class="text-sm font-bold text-amber-300 uppercase tracking-wide">Aviso Técnico Importante</h3>
                 </div>
                 <div class="bg-slate-900/90 p-3.5 rounded-md border border-slate-700 text-xs text-slate-200 leading-relaxed space-y-2">
-                    <p class="font-semibold text-white">Atenção, todos os parâmetros de corte são teóricos.</p>
-                    <p>Poderá haver alterações no momento da usabilidade.</p>
-                    <p class="text-amber-300/90">Tudo depende da máquina, aperto da peça, aperto da ferramenta e material a cortar.</p>
+                    <p class="font-semibold text-white">Atenção: todos os parâmetros de corte são teóricos e poderão sofrer alterações no momento da usabilidade, consoante a máquina, aperto da peça, aperto da ferramenta e material a cortar.</p>
                 </div>
                 <div class="flex justify-end">
                     <button type="button" onclick="fecharAvisoInicial()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-md text-xs font-bold text-white transition w-full sm:w-auto">
