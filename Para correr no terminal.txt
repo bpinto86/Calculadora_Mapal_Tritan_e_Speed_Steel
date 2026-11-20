@@ -1,0 +1,2 @@
+python exportar_json.py - atualiza excel
+streamlit run app.py - arranca com o site
