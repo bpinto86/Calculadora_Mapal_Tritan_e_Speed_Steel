@@ -501,17 +501,18 @@ html_content = '''
 
         <!-- Modal de Comparação Rápida de Família / Ferramenta do Cliente -->
         <div id="modal-comparacao" class="fixed inset-0 bg-black/75 flex items-center justify-center z-50 hidden p-3">
-            <div class="bg-slate-800 border border-slate-700 rounded-lg p-5 w-full max-w-3xl shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+            <div class="bg-slate-800 border border-slate-700 rounded-lg p-5 w-full max-w-4xl shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto">
                 <div class="flex justify-between items-center border-b border-slate-700 pb-2.5">
                     <div>
-                        <h3 class="text-sm font-bold text-white flex items-center gap-2"><span>⚖️</span> Comparação Rápida Lado a Lado</h3>
-                        <p class="text-[11px] text-slate-400">Compara a ferramenta MAPAL atual com outra família MAPAL ou com uma ferramenta do cliente (Vc e f).</p>
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2"><span>⚖️</span> Comparação Técnico-Comercial Lado a Lado</h3>
+                        <p class="text-[11px] text-slate-400">Compara desempenho de corte, preço da broca, vida útil, custo de máquina e ponto de equilíbrio.</p>
                     </div>
                     <button onclick="fecharModalComparacao()" class="text-slate-400 hover:text-white font-bold text-sm px-2 py-1">✕</button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-900/90 p-3 rounded-lg border border-slate-700">
-                    <div class="space-y-1">
+                <!-- Seleção da ferramenta a comparar -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-900/90 p-3 rounded-lg border border-slate-700">
+                    <div class="md:col-span-2 space-y-1">
                         <label class="text-[10px] font-semibold text-emerald-400 uppercase block">Selecionar Família ou Ferramenta do Cliente</label>
                         <select id="comp-ferramenta" class="w-full bg-slate-800 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="onChangeFonteComparacao()"></select>
                     </div>
@@ -537,6 +538,61 @@ html_content = '''
                     </div>
                 </div>
 
+                <!-- Parâmetros Económicos da Comparação: Preço Brocas, Vida Útil e Preço Hora Máquina -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-900/80 p-3 rounded-lg border border-slate-700/80">
+                    <div class="space-y-2 border-b md:border-b-0 md:border-r border-slate-800 pb-2 md:pb-0 md:pr-3">
+                        <span class="text-[10px] font-bold text-blue-400 uppercase block">Ferramenta MAPAL Atual</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="space-y-1">
+                                <label class="text-[10px] text-slate-400 block">Preço Broca (€)</label>
+                                <input type="number" id="comp-preco-atual" value="85.00" step="1" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
+                            </div>
+                            <div class="space-y-1">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-[10px] text-slate-400">Vida Útil</label>
+                                    <select id="comp-vida-unid-atual" class="bg-slate-800 border border-slate-700 rounded px-1 text-[9px] text-cyan-400 focus:outline-none" onchange="atualizarComparacao()">
+                                        <option value="furos" selected>furos</option>
+                                        <option value="metros">metros</option>
+                                    </select>
+                                </div>
+                                <input type="number" id="comp-vida-atual" value="500" step="10" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <span class="text-[10px] font-bold text-emerald-400 uppercase block">Ferramenta a Comparar / Cliente</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="space-y-1">
+                                <label class="text-[10px] text-slate-400 block">Preço Broca (€)</label>
+                                <input type="number" id="comp-preco-alvo" value="45.00" step="1" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
+                            </div>
+                            <div class="space-y-1">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-[10px] text-slate-400">Vida Útil</label>
+                                    <select id="comp-vida-unid-alvo" class="bg-slate-800 border border-slate-700 rounded px-1 text-[9px] text-cyan-400 focus:outline-none" onchange="atualizarComparacao()">
+                                        <option value="furos" selected>furos</option>
+                                        <option value="metros">metros</option>
+                                    </select>
+                                </div>
+                                <input type="number" id="comp-vida-alvo" value="250" step="10" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custo Hora Máquina na Comparação + Ponto de Equilíbrio -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-700/70">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-semibold text-indigo-300 uppercase block">Preço / Custo Hora Máquina (€/h)</label>
+                        <input type="number" id="comp-custo-hora" value="50.00" step="5" min="1" max="500" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-indigo-500" oninput="sincronizarCustoHoraComparacao()">
+                    </div>
+                    <div class="md:col-span-2 space-y-0.5">
+                        <span class="text-[10px] font-semibold text-amber-300 uppercase block">Ponto de Equilíbrio (Break-Even)</span>
+                        <p id="comp-breakeven-texto" class="text-xs text-slate-200 font-medium">A calcular...</p>
+                    </div>
+                </div>
+
                 <div id="comp-aviso-grupo" class="text-[11px] text-amber-300 bg-amber-950/40 border border-amber-700/50 rounded-md px-3 py-2 hidden"></div>
 
                 <div class="overflow-x-auto bg-slate-900 rounded-lg border border-slate-700">
@@ -556,7 +612,7 @@ html_content = '''
                 <div class="flex flex-wrap justify-between items-center gap-2 pt-1">
                     <label class="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
                         <input type="checkbox" id="comp-incluir-pdf" class="rounded bg-slate-900 border-slate-600 text-emerald-500 focus:ring-0" checked>
-                        <span>Incluir este comparativo na exportação PDF</span>
+                        <span>Incluir este comparativo (incluindo preços de broca e custo total) na exportação PDF</span>
                     </label>
                     <div class="flex gap-2">
                         <button id="btn-usar-comparada" onclick="aplicarFerramentaComparada()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition">Usar esta Ferramenta</button>
@@ -1407,9 +1463,9 @@ html_content = '''
             }
 
             const custoHoraSeg = custoHora / 3600;
-            const custoFuro = tempoFuroSeg * custoHoraSeg;
+            const custoMaqFuro = tempoFuroSeg * custoHoraSeg;
             const tempoTotalMin = (tempoFuroSeg * qtdFuros) / 60;
-            const custoTotalLote = custoFuro * qtdFuros;
+            const custoMaqLote = custoMaqFuro * qtdFuros;
 
             const kc = getKc(grupoEfetivoKey);
             const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
@@ -1432,8 +1488,8 @@ html_content = '''
                 vf,
                 tempoFuroSeg,
                 tempoTotalMin,
-                custoFuro,
-                custoTotalLote,
+                custoMaqFuro,
+                custoMaqLote,
                 forcaFf,
                 binarioMc,
                 potenciaReqKw
@@ -1471,9 +1527,9 @@ html_content = '''
             }
 
             const custoHoraSeg = custoHora / 3600;
-            const custoFuro = tempoFuroSeg * custoHoraSeg;
+            const custoMaqFuro = tempoFuroSeg * custoHoraSeg;
             const tempoTotalMin = (tempoFuroSeg * qtdFuros) / 60;
-            const custoTotalLote = custoFuro * qtdFuros;
+            const custoMaqLote = custoMaqFuro * qtdFuros;
 
             const kc = getKc(grupoEfetivoKey);
             const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
@@ -1488,8 +1544,8 @@ html_content = '''
                 vf,
                 tempoFuroSeg,
                 tempoTotalMin,
-                custoFuro,
-                custoTotalLote,
+                custoMaqFuro,
+                custoMaqLote,
                 forcaFf,
                 binarioMc,
                 potenciaReqKw
@@ -2083,6 +2139,8 @@ html_content = '''
             const ctx = lerContextoAtual();
             if (!ctx.brocaKey) return;
 
+            document.getElementById('comp-custo-hora').value = ctx.custoHora.toFixed(2);
+
             const selFerramenta = document.getElementById('comp-ferramenta');
             const anterior = selFerramenta.value;
             selFerramenta.innerHTML = '';
@@ -2114,6 +2172,16 @@ html_content = '''
 
         function fecharModalComparacao() {
             document.getElementById('modal-comparacao').classList.add('hidden');
+        }
+
+        function sincronizarCustoHoraComparacao() {
+            const valHora = parseFloat(document.getElementById('comp-custo-hora').value);
+            if (!isNaN(valHora) && valHora > 0) {
+                document.getElementById('custo-hora').value = valHora.toFixed(2);
+                atualizarCalculo();
+            } else {
+                atualizarComparacao();
+            }
         }
 
         function onChangeFonteComparacao() {
@@ -2155,6 +2223,25 @@ html_content = '''
             atualizarComparacao();
         }
 
+        function calcularCustoFerramentaPorFuro(precoBroca, vidaVal, vidaUnid, profundidadeMm, qtdFuros) {
+            const preco = isNaN(precoBroca) || precoBroca < 0 ? 0 : precoBroca;
+            const vida = isNaN(vidaVal) || vidaVal <= 0 ? 1 : vidaVal;
+            const vidaEmFuros = vidaUnid === 'metros'
+                ? Math.max(0.01, (vida * 1000) / Math.max(0.1, profundidadeMm))
+                : vida;
+
+            const custoBrocaPorFuro = preco / vidaEmFuros;
+            const brocasNecessariasLote = qtdFuros / vidaEmFuros;
+            const custoBrocaLote = brocasNecessariasLote * preco;
+
+            return {
+                vidaEmFuros,
+                custoBrocaPorFuro,
+                brocasNecessariasLote,
+                custoBrocaLote
+            };
+        }
+
         function atualizarComparacao() {
             const ctx = lerContextoAtual();
             if (!ctx.brocaKey || !ctx.toolData) return;
@@ -2163,9 +2250,12 @@ html_content = '''
             const avisoEl = document.getElementById('comp-aviso-grupo');
             const tbody = document.getElementById('comp-tabela-corpo');
 
+            const custoHoraCompInput = parseFloat(document.getElementById('comp-custo-hora').value);
+            const custoHoraEfetivo = (!isNaN(custoHoraCompInput) && custoHoraCompInput > 0) ? custoHoraCompInput : ctx.custoHora;
+
             const mAtual = calcularMetricasFerramenta(ctx.brocaKey, ctx.varianteKey, ctx.grupoEfetivoKey, {
                 diametro: ctx.diametro, profundidade: ctx.profundidade, qtdFuros: ctx.qtdFuros,
-                custoHora: ctx.custoHora, refrigAtual, vcPct, fPct, rpmMaxUnlocked,
+                custoHora: custoHoraEfetivo, refrigAtual, vcPct, fPct, rpmMaxUnlocked,
                 rpmMaxVal: ctx.rpmMaxVal, peckingCheck: ctx.peckingCheck,
                 peckingUnid: ctx.peckingUnid, peckingInputVal: ctx.peckingInputVal,
                 peckingRetensaoVal: ctx.peckingRetensaoVal
@@ -2189,7 +2279,7 @@ html_content = '''
 
                 mComp = calcularMetricasManualCliente(nomeCli, vcCli, fCli, ctx.grupoEfetivoKey, {
                     diametro: ctx.diametro, profundidade: ctx.profundidade, qtdFuros: ctx.qtdFuros,
-                    custoHora: ctx.custoHora, rpmMaxUnlocked, rpmMaxVal: ctx.rpmMaxVal,
+                    custoHora: custoHoraEfetivo, rpmMaxUnlocked, rpmMaxVal: ctx.rpmMaxVal,
                     peckingCheck: ctx.peckingCheck, peckingUnid: ctx.peckingUnid,
                     peckingInputVal: ctx.peckingInputVal, peckingRetensaoVal: ctx.peckingRetensaoVal
                 });
@@ -2222,7 +2312,7 @@ html_content = '''
 
                 mComp = calcularMetricasFerramenta(compKey, compVar, grupoComparacao, {
                     diametro: ctx.diametro, profundidade: ctx.profundidade, qtdFuros: ctx.qtdFuros,
-                    custoHora: ctx.custoHora, refrigAtual, vcPct, fPct, rpmMaxUnlocked,
+                    custoHora: custoHoraEfetivo, refrigAtual, vcPct, fPct, rpmMaxUnlocked,
                     rpmMaxVal: ctx.rpmMaxVal, peckingCheck: ctx.peckingCheck,
                     peckingUnid: ctx.peckingUnid, peckingInputVal: ctx.peckingInputVal,
                     peckingRetensaoVal: ctx.peckingRetensaoVal
@@ -2231,9 +2321,53 @@ html_content = '''
 
             if (!mComp) return;
 
+            const precoAtual = parseFloat(document.getElementById('comp-preco-atual').value) || 0;
+            const vidaAtual = parseFloat(document.getElementById('comp-vida-atual').value) || 1;
+            const vidaUnidAtual = document.getElementById('comp-vida-unid-atual').value;
+
+            const precoAlvo = parseFloat(document.getElementById('comp-preco-alvo').value) || 0;
+            const vidaAlvo = parseFloat(document.getElementById('comp-vida-alvo').value) || 1;
+            const vidaUnidAlvo = document.getElementById('comp-vida-unid-alvo').value;
+
+            const fAtualInfo = calcularCustoFerramentaPorFuro(precoAtual, vidaAtual, vidaUnidAtual, ctx.profundidade, ctx.qtdFuros);
+            const fCompInfo = calcularCustoFerramentaPorFuro(precoAlvo, vidaAlvo, vidaUnidAlvo, ctx.profundidade, ctx.qtdFuros);
+
+            const custoTotalFuroAtual = mAtual.custoMaqFuro + fAtualInfo.custoBrocaPorFuro;
+            const custoTotalFuroComp = mComp.custoMaqFuro + fCompInfo.custoBrocaPorFuro;
+
+            const custoTotalLoteAtual = mAtual.custoMaqLote + fAtualInfo.custoBrocaLote;
+            const custoTotalLoteComp = mComp.custoMaqLote + fCompInfo.custoBrocaLote;
+
             const diffTempoMin = mComp.tempoTotalMin - mAtual.tempoTotalMin;
-            const diffCustoLote = mComp.custoTotalLote - mAtual.custoTotalLote;
+            const diffMaqLote = mComp.custoMaqLote - mAtual.custoMaqLote;
+            const diffPrecoBroca = precoAlvo - precoAtual;
+            const diffBrocaLote = fCompInfo.custoBrocaLote - fAtualInfo.custoBrocaLote;
+            const diffTotalLote = custoTotalLoteComp - custoTotalLoteAtual;
             const diffVf = mComp.vf - mAtual.vf;
+
+            const custoOperacionalFuroAtual = mAtual.custoMaqFuro + fAtualInfo.custoBrocaPorFuro;
+            const custoOperacionalFuroComp = mComp.custoMaqFuro + fCompInfo.custoBrocaPorFuro;
+            const poupancaOperacionalPorFuro = custoOperacionalFuroComp - custoOperacionalFuroAtual;
+
+            const beEl = document.getElementById('comp-breakeven-texto');
+            if (Math.abs(precoAtual - precoAlvo) < 0.001 && Math.abs(poupancaOperacionalPorFuro) < 0.00001) {
+                beEl.innerText = "Custos equivalentes entre ambas as ferramentas.";
+            } else if (precoAtual > precoAlvo && poupancaOperacionalPorFuro > 0) {
+                const furosBe = Math.ceil((precoAtual - precoAlvo) / poupancaOperacionalPorFuro);
+                beEl.innerHTML = `Ferramenta MAPAL custa mais <strong class="text-amber-300">+${(precoAtual - precoAlvo).toFixed(2)} €</strong> na compra, mas poupa <strong class="text-emerald-400">${poupancaOperacionalPorFuro.toFixed(3)} €/furo</strong> (máq.+ferr.) → paga a diferença aos <strong class="text-cyan-300">${furosBe} furos</strong>.`;
+            } else if (precoAtual < precoAlvo && poupancaOperacionalPorFuro < 0) {
+                const furosBe = Math.ceil((precoAlvo - precoAtual) / Math.abs(poupancaOperacionalPorFuro));
+                beEl.innerHTML = `Ferramenta comparada custa mais <strong class="text-amber-300">+${(precoAlvo - precoAtual).toFixed(2)} €</strong> na compra, mas poupa <strong class="text-emerald-400">${Math.abs(poupancaOperacionalPorFuro).toFixed(3)} €/furo</strong> (máq.+ferr.) → paga a diferença aos <strong class="text-cyan-300">${furosBe} furos</strong>.`;
+            } else if (custoTotalLoteAtual < custoTotalLoteComp) {
+                beEl.innerHTML = `Ferramenta MAPAL já apresenta <strong class="text-emerald-400">menor custo total combinado</strong> desde o 1.º furo (poupança de <strong class="text-emerald-400">${Math.abs(diffTotalLote).toFixed(2)} €</strong> no lote).`;
+            } else {
+                beEl.innerHTML = `Ferramenta comparada apresenta <strong class="text-emerald-400">menor custo total combinado</strong> no lote atual (diferença de <strong class="text-amber-300">+${diffTotalLote.toFixed(2)} €</strong> na ferramenta MAPAL).`;
+            }
+
+            const fmtDiff = (num, dec, sufix = '') => {
+                const s = num >= 0 ? '+' : '';
+                return `${s}${num.toFixed(dec)}${sufix}`;
+            };
 
             const linhas = [
                 {
@@ -2241,87 +2375,112 @@ html_content = '''
                     vAtual: ctx.grupoEfetivoKey,
                     vComp: grupoComparacao,
                     diff: ctx.grupoEfetivoKey === grupoComparacao ? "Igual" : "Adaptado",
-                    destaque: false
-                },
-                {
-                    label: "Velocidade de Corte (Vc)",
-                    vAtual: `${Math.round(mAtual.vcFinal)} m/min`,
-                    vComp: `${Math.round(mComp.vcFinal)} m/min`,
-                    diff: `${Math.round(mComp.vcFinal - mAtual.vcFinal) >= 0 ? '+' : ''}${Math.round(mComp.vcFinal - mAtual.vcFinal)} m/min`,
-                    destaque: false
-                },
-                {
-                    label: "Rotações (n)",
-                    vAtual: `${mAtual.n} rpm`,
-                    vComp: `${mComp.n} rpm`,
-                    diff: `${mComp.n - mAtual.n >= 0 ? '+' : ''}${mComp.n - mAtual.n} rpm`,
-                    destaque: false
-                },
-                {
-                    label: "Avanço por Rotação (f)",
-                    vAtual: `${mAtual.fFinal.toFixed(4)} mm/rot`,
-                    vComp: `${mComp.fFinal.toFixed(4)} mm/rot`,
-                    diff: `${(mComp.fFinal - mAtual.fFinal) >= 0 ? '+' : ''}${(mComp.fFinal - mAtual.fFinal).toFixed(4)}`,
-                    destaque: false
+                    destaque: false,
+                    rawDiff: 0
                 },
                 {
                     label: "Avanço de Trabalho (vf)",
                     vAtual: `${mAtual.vf} mm/min`,
                     vComp: `${mComp.vf} mm/min`,
                     diff: `${diffVf >= 0 ? '+' : ''}${diffVf} mm/min`,
-                    destaque: true
-                },
-                {
-                    label: "Tempo / Furo",
-                    vAtual: `${mAtual.tempoFuroSeg.toFixed(1)} seg`,
-                    vComp: `${mComp.tempoFuroSeg.toFixed(1)} seg`,
-                    diff: `${(mComp.tempoFuroSeg - mAtual.tempoFuroSeg) >= 0 ? '+' : ''}${(mComp.tempoFuroSeg - mAtual.tempoFuroSeg).toFixed(1)} seg`,
-                    destaque: false
+                    destaque: true,
+                    rawDiff: -diffVf
                 },
                 {
                     label: `Tempo Total Lote (${ctx.qtdFuros} furos)`,
-                    vAtual: `${mAtual.tempoTotalMin.toFixed(1)} min`,
-                    vComp: `${mComp.tempoTotalMin.toFixed(1)} min`,
-                    diff: `${diffTempoMin >= 0 ? '+' : ''}${diffTempoMin.toFixed(1)} min`,
-                    destaque: true
+                    vAtual: `${mAtual.tempoTotalMin.toFixed(1)} min (${mAtual.tempoFuroSeg.toFixed(1)}s/f)`,
+                    vComp: `${mComp.tempoTotalMin.toFixed(1)} min (${mComp.tempoFuroSeg.toFixed(1)}s/f)`,
+                    diff: fmtDiff(diffTempoMin, 1, ' min'),
+                    destaque: true,
+                    rawDiff: diffTempoMin
                 },
                 {
-                    label: "Custo Maquinação / Furo",
-                    vAtual: `${mAtual.custoFuro.toFixed(2)} €`,
-                    vComp: `${mComp.custoFuro.toFixed(2)} €`,
-                    diff: `${(mComp.custoFuro - mAtual.custoFuro) >= 0 ? '+' : ''}${(mComp.custoFuro - mAtual.custoFuro).toFixed(2)} €`,
-                    destaque: false
+                    label: "Preço Unitário da Broca",
+                    vAtual: `${precoAtual.toFixed(2)} €`,
+                    vComp: `${precoAlvo.toFixed(2)} €`,
+                    diff: fmtDiff(diffPrecoBroca, 2, ' €'),
+                    destaque: false,
+                    rawDiff: diffPrecoBroca
                 },
                 {
-                    label: "Custo Total Maquinação (Lote)",
-                    vAtual: `${mAtual.custoTotalLote.toFixed(2)} €`,
-                    vComp: `${mComp.custoTotalLote.toFixed(2)} €`,
-                    diff: `${diffCustoLote >= 0 ? '+' : ''}${diffCustoLote.toFixed(2)} €`,
-                    destaque: true
+                    label: "Vida Útil Estimada",
+                    vAtual: `${fAtualInfo.vidaEmFuros.toFixed(0)} furos`,
+                    vComp: `${fCompInfo.vidaEmFuros.toFixed(0)} furos`,
+                    diff: `${(fCompInfo.vidaEmFuros - fAtualInfo.vidaEmFuros) >= 0 ? '+' : ''}${(fCompInfo.vidaEmFuros - fAtualInfo.vidaEmFuros).toFixed(0)} furos`,
+                    destaque: false,
+                    rawDiff: -(fCompInfo.vidaEmFuros - fAtualInfo.vidaEmFuros)
+                },
+                {
+                    label: "Custo Ferramenta / Furo",
+                    vAtual: `${fAtualInfo.custoBrocaPorFuro.toFixed(3)} €`,
+                    vComp: `${fCompInfo.custoBrocaPorFuro.toFixed(3)} €`,
+                    diff: fmtDiff(fCompInfo.custoBrocaPorFuro - fAtualInfo.custoBrocaPorFuro, 3, ' €'),
+                    destaque: false,
+                    rawDiff: fCompInfo.custoBrocaPorFuro - fAtualInfo.custoBrocaPorFuro
+                },
+                {
+                    label: `Custo Maquinação Lote (@ ${custoHoraEfetivo.toFixed(0)}€/h)`,
+                    vAtual: `${mAtual.custoMaqLote.toFixed(2)} €`,
+                    vComp: `${mComp.custoMaqLote.toFixed(2)} €`,
+                    diff: fmtDiff(diffMaqLote, 2, ' €'),
+                    destaque: false,
+                    rawDiff: diffMaqLote
+                },
+                {
+                    label: "Custo Ferramenta no Lote",
+                    vAtual: `${fAtualInfo.custoBrocaLote.toFixed(2)} € (${fAtualInfo.brocasNecessariasLote.toFixed(2)} un.)`,
+                    vComp: `${fCompInfo.custoBrocaLote.toFixed(2)} € (${fCompInfo.brocasNecessariasLote.toFixed(2)} un.)`,
+                    diff: fmtDiff(diffBrocaLote, 2, ' €'),
+                    destaque: false,
+                    rawDiff: diffBrocaLote
+                },
+                {
+                    label: "CUSTO TOTAL COMBINADO (Máq. + Ferr.)",
+                    vAtual: `${custoTotalLoteAtual.toFixed(2)} € (${custoTotalFuroAtual.toFixed(2)}€/f)`,
+                    vComp: `${custoTotalLoteComp.toFixed(2)} € (${custoTotalFuroComp.toFixed(2)}€/f)`,
+                    diff: fmtDiff(diffTotalLote, 2, ' €'),
+                    destaque: true,
+                    rawDiff: diffTotalLote
                 }
             ];
 
-            tbody.innerHTML = linhas.map(l => `
-                <tr class="${l.destaque ? 'bg-slate-800/60 font-semibold' : ''}">
-                    <td class="py-2 px-3 text-slate-300">${l.label}</td>
-                    <td class="py-2 px-3 text-white">${l.vAtual}</td>
-                    <td class="py-2 px-3 text-white">${l.vComp}</td>
-                    <td class="py-2 px-3 ${l.diff.startsWith('+') ? 'text-amber-300' : (l.diff.startsWith('-') ? 'text-emerald-400' : 'text-slate-400')}">${l.diff}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = linhas.map(l => {
+                let corDiff = 'text-slate-400';
+                if (l.rawDiff < -0.0001) corDiff = 'text-emerald-400';
+                else if (l.rawDiff > 0.0001) corDiff = 'text-amber-300';
+
+                return `
+                    <tr class="${l.destaque ? 'bg-slate-800/70 font-semibold' : ''}">
+                        <td class="py-2 px-3 text-slate-300">${l.label}</td>
+                        <td class="py-2 px-3 text-white">${l.vAtual}</td>
+                        <td class="py-2 px-3 text-white">${l.vComp}</td>
+                        <td class="py-2 px-3 ${corDiff}">${l.diff}</td>
+                    </tr>
+                `;
+            }).join('');
 
             cacheComparacao = {
                 nomeAtual: `${ctx.toolData.nome} (${ctx.varianteKey})`,
                 nomeComp: tituloComp,
                 grupoComp: grupoComparacao,
+                custoHoraEfetivo: custoHoraEfetivo.toFixed(2),
+                precoAtual: precoAtual.toFixed(2),
+                precoAlvo: precoAlvo.toFixed(2),
+                vidaAtualFuros: fAtualInfo.vidaEmFuros.toFixed(0),
+                vidaAlvoFuros: fCompInfo.vidaEmFuros.toFixed(0),
                 vfAtual: mAtual.vf,
                 vfComp: mComp.vf,
                 tempoLoteAtual: mAtual.tempoTotalMin.toFixed(1),
                 tempoLoteComp: mComp.tempoTotalMin.toFixed(1),
-                custoLoteAtual: mAtual.custoTotalLote.toFixed(2),
-                custoLoteComp: mComp.custoTotalLote.toFixed(2),
-                diffTempoMin: `${diffTempoMin >= 0 ? '+' : ''}${diffTempoMin.toFixed(1)} min`,
-                diffCustoLote: `${diffCustoLote >= 0 ? '+' : ''}${diffCustoLote.toFixed(2)} €`
+                custoMaqLoteAtual: mAtual.custoMaqLote.toFixed(2),
+                custoMaqLoteComp: mComp.custoMaqLote.toFixed(2),
+                custoBrocaLoteAtual: fAtualInfo.custoBrocaLote.toFixed(2),
+                custoBrocaLoteComp: fCompInfo.custoBrocaLote.toFixed(2),
+                custoTotalLoteAtual: custoTotalLoteAtual.toFixed(2),
+                custoTotalLoteComp: custoTotalLoteComp.toFixed(2),
+                diffTempoMin: fmtDiff(diffTempoMin, 1, ' min'),
+                diffTotalLote: fmtDiff(diffTotalLote, 2, ' €'),
+                breakEvenResumo: beEl.innerText
             };
         }
 
@@ -2428,17 +2587,23 @@ html_content = '''
             if (incluirComp && cacheComparacao) {
                 const c = cacheComparacao;
                 y += 12;
+                if (y > 235) {
+                    doc.addPage();
+                    y = 20;
+                }
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(12);
-                doc.text("COMPARATIVO RÁPIDO ENTRE FERRAMENTAS", 15, y);
+                doc.text("COMPARATIVO TÉCNICO-COMERCIAL ENTRE FERRAMENTAS", 15, y);
 
                 y += 7;
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(10);
-                doc.text(`• Atual: ${c.nomeAtual} vs. Comparada: ${c.nomeComp} (Grupo: ${c.grupoComp})`, 18, y); y += 6;
-                doc.text(`• Avanço vf: ${c.vfAtual} mm/min vs. ${c.vfComp} mm/min`, 18, y); y += 6;
+                doc.text(`• Atual: ${c.nomeAtual} (${c.precoAtual} € | Vida: ${c.vidaAtualFuros} furos) vs. ${c.nomeComp} (${c.precoAlvo} € | Vida: ${c.vidaAlvoFuros} furos)`, 18, y); y += 6;
+                doc.text(`• Grupo: ${c.grupoComp} | Custo Hora Máquina: ${c.custoHoraEfetivo} €/h | Avanço vf: ${c.vfAtual} vs. ${c.vfComp} mm/min`, 18, y); y += 6;
                 doc.text(`• Tempo Lote: ${c.tempoLoteAtual} min vs. ${c.tempoLoteComp} min (${c.diffTempoMin})`, 18, y); y += 6;
-                doc.text(`• Custo Maquinação Lote: ${c.custoLoteAtual} € vs. ${c.custoLoteComp} € (${c.diffCustoLote})`, 18, y);
+                doc.text(`• Custo Maquinação Lote: ${c.custoMaqLoteAtual} € vs. ${c.custoMaqLoteComp} € | Custo Ferramenta Lote: ${c.custoBrocaLoteAtual} € vs. ${c.custoBrocaLoteComp} €`, 18, y); y += 6;
+                doc.text(`• Custo Total Combinado Lote: ${c.custoTotalLoteAtual} € vs. ${c.custoTotalLoteComp} € (${c.diffTotalLote})`, 18, y); y += 6;
+                doc.text(`• Ponto de Equilíbrio: ${c.breakEvenResumo}`, 18, y);
             }
 
             doc.setLineWidth(0.5);
