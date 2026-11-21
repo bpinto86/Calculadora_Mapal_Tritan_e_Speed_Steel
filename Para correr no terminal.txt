@@ -10,3 +10,12 @@ actualizar o código
 git add .
 git commit -m "Atualizar código"
 git push
+
+
+
+executar após mexer no excel:
+
+python exportar_json.py
+git add .
+git commit -m "Atualizar referências"
+git push
