@@ -1,2 +1,12 @@
 python exportar_json.py - atualiza excel
 streamlit run app.py - arranca com o site
+git pull --rebase origin main - quando altero diretamente no git hub actualizar no visual studio code
+git push - actualizar o git hub
+
+
+
+actualizar o código
+
+git add .
+git commit -m "Atualizar código"
+git push
