@@ -105,10 +105,10 @@ html_content = '''
                         <button type="button" onclick="limparFiltrosCatalogo()" class="text-[10px] text-slate-400 hover:text-cyan-300 underline">Limpar filtros</button>
                     </div>
                     <div class="flex gap-1.5">
-                        <input type="text" id="ref-pesquisa" placeholder="Ex: 30902099, 135HA08, -HB, SCD661 12XD..." class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500" oninput="filtrarCatalogoCascata()" onkeydown="if(event.key==='Enter') aplicarPesquisaReferencia()">
+                        <input type="text" id="ref-pesquisa" placeholder="Ex: 30902099, 135HA08, -HB, SCD661 12XD..." class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500" oninput="filtrarCatalogoCascata('pesquisa')" onkeydown="if(event.key==='Enter') aplicarPesquisaReferencia()">
                         <button type="button" onclick="aplicarPesquisaReferencia()" class="bg-cyan-600 hover:bg-cyan-500 px-2.5 py-1 rounded-md text-xs font-semibold text-white transition shrink-0">Aplicar</button>
                     </div>
-                    <span id="ref-feedback" class="text-[10px] text-slate-400 block">Filtros vazios por defeito: selecione Gama, Refrigeração, DIN 6535, Ø d1 ou ×D.</span>
+                    <span id="ref-feedback" class="text-[10px] text-slate-400 block">Se souber a referência, pesquise acima; se não souber, filtre abaixo.</span>
                 </div>
 
                 <!-- Filtros em Cascata Interligados -->
@@ -140,9 +140,8 @@ html_content = '''
                         </div>
                         <div class="space-y-0.5">
                             <label class="text-[10px] font-medium text-slate-300 block">4. Diâmetro d1</label>
-                            <select id="filtro-d1" class="w-full bg-slate-800 border border-slate-700 rounded px-1.5 py-1 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="onFiltroCatalogoChange('d1')">
-                                <option value="">Todos</option>
-                            </select>
+                            <input type="number" id="filtro-d1" list="lista-d1-sugestoes" step="0.01" min="0.1" max="100" placeholder="Ex: 10.00" class="w-full bg-slate-800 border border-slate-700 rounded px-1.5 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500" oninput="onFiltroCatalogoChange('d1')" onchange="onFiltroCatalogoChange('d1')">
+                            <datalist id="lista-d1-sugestoes"></datalist>
                         </div>
                         <div class="space-y-0.5">
                             <label class="text-[10px] font-medium text-slate-300 block">5. Variante ×D</label>
@@ -174,8 +173,11 @@ html_content = '''
 
                 <!-- 3. Modelo de Ferramenta -->
                 <div class="space-y-1 shrink-0">
-                    <label class="text-[11px] font-medium text-slate-300">3. MODELO DE FERRAMENTA</label>
-                    <select id="broca" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="mudarBroca()">
+                    <div class="flex justify-between items-center">
+                        <label class="text-[11px] font-medium text-slate-300">3. MODELO DE FERRAMENTA</label>
+                        <span id="info-modelo-filtro" class="text-[9px] text-cyan-400 font-mono"></span>
+                    </div>
+                    <select id="broca" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="onMudarModeloFerramenta()">
                     </select>
                 </div>
 
@@ -212,15 +214,15 @@ html_content = '''
                         <label class="text-[11px] font-medium text-slate-300">6. DIÂMETRO (Ø)</label>
                         <div class="flex items-center gap-1">
                             <button onclick="ajustarDiametro(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">-</button>
-                            <input type="number" id="diametro" value="12.00" step="0.1" min="0.5" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="diametro" value="12.00" step="0.1" min="0.5" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="onDiametroPrincipalChange()">
                             <button onclick="ajustarDiametro(0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">+</button>
                         </div>
                     </div>
                     <div id="bloco-diametro-catalogo" class="space-y-1 hidden">
-                        <label class="text-[11px] font-medium text-emerald-400">6. DIÂMETRO (Ø) — CATÁLOGO</label>
-                        <div class="bg-slate-900/90 border border-emerald-700/60 rounded-md p-1.5 text-center">
+                        <label class="text-[11px] font-medium text-emerald-400">6. DIÂMETRO (Ø) — d1</label>
+                        <div class="bg-slate-900/90 border border-emerald-700/60 rounded-md p-1.5 text-center flex items-center justify-between px-2">
                             <div id="diametro-catalogo-valor" class="text-sm font-bold text-emerald-300">Ø 12.00 mm</div>
-                            <div class="text-[9px] text-slate-400">Definido na seleção progressiva</div>
+                            <button type="button" onclick="limparDiametroD1()" title="Limpar d1 e voltar ao Ø livre" class="text-[10px] text-slate-400 hover:text-white underline">Livre</button>
                         </div>
                     </div>
                     <div class="space-y-1">
@@ -491,7 +493,7 @@ html_content = '''
                 </div>
 
                 <!-- [PRO] Indicadores de Tempo e Volume -->
-                <div class="pro-only hidden grid grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
+                <div class="pro-only hidden grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
                     <div class="bg-gradient-to-r from-blue-900/40 to-slate-800 p-2.5 rounded-lg border border-blue-700/50 flex justify-between items-center">
                         <div>
                             <span class="text-[11px] text-blue-300 font-semibold uppercase tracking-wider">⏱️ Tempo de Ciclo (Total Lote / Unitário)</span>
@@ -515,7 +517,7 @@ html_content = '''
                 </div>
 
                 <!-- [PRO] Peso e Sucata -->
-                <div class="pro-only hidden grid grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
+                <div class="pro-only hidden grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
                     <div class="bg-gradient-to-r from-cyan-900/40 to-slate-800 p-2.5 rounded-lg border border-cyan-700/50 flex justify-between items-center">
                         <div>
                             <span class="text-[11px] text-cyan-300 font-semibold uppercase tracking-wider">⚖️ Peso Total de Limalha (Lote)</span>
@@ -1763,10 +1765,39 @@ html_content = '''
             return `${Number(val).toFixed(dec)}${unit}`;
         }
 
+        function obterD1Digitado() {
+            const raw = (document.getElementById('filtro-d1').value || '').trim().replace(',', '.');
+            if (!raw) return null;
+            const num = parseFloat(raw);
+            return (!isNaN(num) && num > 0) ? num : null;
+        }
+
+        function limparDiametroD1() {
+            document.getElementById('filtro-d1').value = '';
+            referenciaAtivaObj = null;
+            filtrarCatalogoCascata('d1');
+            atualizarPainelCotas();
+            atualizarCalculo();
+        }
+
+        function onDiametroPrincipalChange() {
+            const dNum = parseFloat(document.getElementById('diametro').value);
+            if (!isNaN(dNum) && dNum > 0) {
+                const inpD1 = document.getElementById('filtro-d1');
+                if (inpD1 && inpD1.value.trim() !== '') {
+                    inpD1.value = dNum.toFixed(2);
+                }
+                if (referenciaAtivaObj && referenciaAtivaObj.d1 !== undefined && Math.abs(Number(referenciaAtivaObj.d1) - dNum) > 0.001) {
+                    referenciaAtivaObj = null;
+                }
+            }
+            atualizarCalculo();
+        }
+
         function atualizarVisibilidadeDiametroManual() {
-            const valD1 = document.getElementById('filtro-d1').value;
+            const d1Num = obterD1Digitado();
             const refTemD1 = Boolean(referenciaAtivaObj && referenciaAtivaObj.d1 !== null && referenciaAtivaObj.d1 !== undefined && !isNaN(Number(referenciaAtivaObj.d1)));
-            const bloqueadoPorCatalogo = Boolean(valD1 || refTemD1);
+            const bloqueadoPorCatalogo = Boolean(d1Num !== null || refTemD1);
 
             const blocoManual = document.getElementById('bloco-diametro-manual');
             const blocoCat = document.getElementById('bloco-diametro-catalogo');
@@ -1815,8 +1846,11 @@ html_content = '''
             document.getElementById('filtro-d1').value = '';
             document.getElementById('filtro-xd').value = '';
             document.getElementById('filtro-order-no').value = '';
+            document.getElementById('ref-feedback').innerText = "Se souber a referência, pesquise acima; se não souber, filtre abaixo.";
+            document.getElementById('ref-feedback').className = "text-[10px] text-slate-400 block";
             referenciaAtivaObj = null;
-            filtrarCatalogoCascata();
+            filtrarCatalogoCascata('reset');
+            atualizarFiltroBrocas(false);
             atualizarPainelCotas();
             atualizarCalculo();
         }
@@ -1864,19 +1898,28 @@ html_content = '''
             });
         }
 
+        function matchD1Item(item, d1Num) {
+            if (d1Num === null || d1Num === undefined || isNaN(d1Num)) return true;
+            if (item.d1 === null || item.d1 === undefined || isNaN(Number(item.d1))) return false;
+            return Math.abs(Number(item.d1) - d1Num) <= 0.015;
+        }
+
         function filtrarCatalogoCascata(origem = null) {
             const selGama = document.getElementById('filtro-gama-cat');
             const selRefrig = document.getElementById('filtro-refrig-cat');
             const selEnc = document.getElementById('filtro-encabadouro-cat');
-            const selD1 = document.getElementById('filtro-d1');
+            const inpD1 = document.getElementById('filtro-d1');
+            const datalistD1 = document.getElementById('lista-d1-sugestoes');
             const selXd = document.getElementById('filtro-xd');
             const selOrder = document.getElementById('filtro-order-no');
+            const selModelo = document.getElementById('broca');
 
             let valGama = selGama.value;
             let valRefrig = selRefrig.value;
             let valEnc = selEnc.value;
-            let valD1 = selD1.value;
+            const d1Num = obterD1Digitado();
             let valXd = selXd.value;
+            const valModeloAtual = (origem === 'modelo' && selModelo && selModelo.value) ? selModelo.value.toLowerCase() : '';
 
             const base = getCandidatosCatalogoBase();
 
@@ -1885,8 +1928,9 @@ html_content = '''
                 obterGamaCatalogo(c) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
-                (!valD1 || (c.d1 !== null && Number(c.d1).toFixed(2) === valD1)) &&
-                (!valXd || String(c.variante || '').trim() === valXd)
+                matchD1Item(c, d1Num) &&
+                (!valXd || String(c.variante || '').trim() === valXd) &&
+                (!valModeloAtual || String(c.familia || '').trim().toLowerCase() === valModeloAtual)
             );
             const ordemGama = ['expert', 'performance', 'basic'];
             const gamaList = [...new Set(candGama.map(c => obterGamaCatalogo(c)))].sort((a, b) => {
@@ -1905,8 +1949,9 @@ html_content = '''
                 normalizarRefrigCatalogo(c) &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
-                (!valD1 || (c.d1 !== null && Number(c.d1).toFixed(2) === valD1)) &&
-                (!valXd || String(c.variante || '').trim() === valXd)
+                matchD1Item(c, d1Num) &&
+                (!valXd || String(c.variante || '').trim() === valXd) &&
+                (!valModeloAtual || String(c.familia || '').trim().toLowerCase() === valModeloAtual)
             );
             const ordemRefrig = ['int', 'ext', 'mql', 'ar'];
             const refrigList = [...new Set(candRefrig.map(c => normalizarRefrigCatalogo(c)))].sort((a, b) => {
@@ -1922,8 +1967,9 @@ html_content = '''
                 extrairEncabadouroDIN6535(c) &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
-                (!valD1 || (c.d1 !== null && Number(c.d1).toFixed(2) === valD1)) &&
-                (!valXd || String(c.variante || '').trim() === valXd)
+                matchD1Item(c, d1Num) &&
+                (!valXd || String(c.variante || '').trim() === valXd) &&
+                (!valModeloAtual || String(c.familia || '').trim().toLowerCase() === valModeloAtual)
             );
             const ordemEnc = ['HA', 'HB', 'HE'];
             const encList = [...new Set(candEnc.map(c => extrairEncabadouroDIN6535(c)))].sort((a, b) => {
@@ -1934,25 +1980,33 @@ html_content = '''
             if (valEnc && !encList.includes(valEnc)) valEnc = '';
             preencherSelectOpcoes(selEnc, encList, 'Todos DIN', e => `DIN ${e}`, valEnc);
 
-            // 4. Diâmetro d1 interligado
+            // 4. Sugestões de Diâmetro d1 para digitação assistida (datalist)
             const candD1 = base.filter(c =>
                 (c.d1 !== null && c.d1 !== undefined && !isNaN(Number(c.d1))) &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
-                (!valXd || String(c.variante || '').trim() === valXd)
+                (!valXd || String(c.variante || '').trim() === valXd) &&
+                (!valModeloAtual || String(c.familia || '').trim().toLowerCase() === valModeloAtual)
             );
-            const d1List = [...new Set(candD1.map(c => Number(c.d1).toFixed(2)))].sort((a, b) => parseFloat(a) - parseFloat(b));
-            if (valD1 && !d1List.includes(valD1)) valD1 = '';
-            preencherSelectOpcoes(selD1, d1List, 'Todos Ø', d => `Ø ${d} mm`, valD1);
+            const d1Sugestoes = [...new Set(candD1.map(c => Number(c.d1).toFixed(2)))].sort((a, b) => parseFloat(a) - parseFloat(b));
+            if (datalistD1) {
+                datalistD1.innerHTML = '';
+                d1Sugestoes.forEach(dStr => {
+                    const op = document.createElement('option');
+                    op.value = dStr;
+                    datalistD1.appendChild(op);
+                });
+            }
 
-            // 5. Variante ×D interligada
+            // 5. Variante ×D interligada com o d1 digitado
             const candXd = base.filter(c =>
                 c.variante &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
-                (!valD1 || (c.d1 !== null && Number(c.d1).toFixed(2) === valD1))
+                matchD1Item(c, d1Num) &&
+                (!valModeloAtual || String(c.familia || '').trim().toLowerCase() === valModeloAtual)
             );
             const xdList = [...new Set(candXd.map(c => String(c.variante).trim()))].sort();
             if (valXd && !xdList.includes(valXd)) valXd = '';
@@ -1962,8 +2016,9 @@ html_content = '''
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
-                (!valD1 || (c.d1 !== null && Number(c.d1).toFixed(2) === valD1)) &&
-                (!valXd || String(c.variante || '').trim() === valXd)
+                matchD1Item(c, d1Num) &&
+                (!valXd || String(c.variante || '').trim() === valXd) &&
+                (!valModeloAtual || String(c.familia || '').trim().toLowerCase() === valModeloAtual)
             );
 
             document.getElementById('contador-referencias').innerText = `${finais.length} ref.`;
@@ -1989,29 +2044,36 @@ html_content = '''
 
             window._finaisCatalogoAtuais = finais;
 
-            if (valD1) {
-                document.getElementById('diametro').value = parseFloat(valD1).toFixed(2);
+            if (d1Num !== null) {
+                document.getElementById('diametro').value = d1Num.toFixed(2);
             }
 
             if (valRefrig && ['int', 'ext', 'mql', 'ar'].includes(valRefrig) && origem === 'refrig') {
                 setRefrig(valRefrig);
             }
 
-            if (valGama && ['expert', 'performance', 'basic'].includes(valGama) && origem !== 'order') {
+            if (valGama && ['expert', 'performance', 'basic'].includes(valGama) && origem !== 'order' && origem !== 'modelo') {
                 if (linhaAtivaInterna !== valGama) {
                     linhaAtivaInterna = valGama;
-                    atualizarFiltroBrocas(true);
+                    atualizarFiltroBrocas(false);
                 }
             }
 
-            const temFiltroAtivo = Boolean(valGama || valRefrig || valEnc || valD1 || valXd || (document.getElementById('ref-pesquisa').value || '').trim());
-            if (finais.length === 1 && temFiltroAtivo) {
+            const temFiltroAtivo = Boolean(valGama || valRefrig || valEnc || (d1Num !== null) || valXd || (document.getElementById('ref-pesquisa').value || '').trim());
+            if (temFiltroAtivo && origem !== 'order' && origem !== 'modelo') {
+                atualizarFiltroBrocas(false);
+            }
+
+            if (finais.length === 1 && temFiltroAtivo && origem !== 'order') {
                 selOrder.value = '0';
                 onSelecionarOrderCatalogo();
             } else if (!temFiltroAtivo && origem !== 'order') {
                 referenciaAtivaObj = null;
                 atualizarPainelCotas();
             } else if (temFiltroAtivo && origem !== 'order') {
+                if (referenciaAtivaObj && !finais.includes(referenciaAtivaObj)) {
+                    referenciaAtivaObj = null;
+                }
                 atualizarPainelCotas();
                 atualizarCalculo();
             }
@@ -2070,7 +2132,7 @@ html_content = '''
             const lista = window._finaisCatalogoAtuais || [];
 
             if (!raw) {
-                feedback.innerText = "Filtros vazios por defeito: selecione Gama, Refrigeração, DIN 6535, Ø d1 ou ×D.";
+                feedback.innerText = "Se souber a referência, pesquise acima; se não souber, filtre abaixo.";
                 feedback.className = "text-[10px] text-slate-400 block";
                 return;
             }
@@ -2480,18 +2542,53 @@ html_content = '''
             };
         }
 
+        function obterFamiliasCompativeisCatalogo() {
+            const valGama = document.getElementById('filtro-gama-cat').value;
+            const valRefrig = document.getElementById('filtro-refrig-cat').value;
+            const valEnc = document.getElementById('filtro-encabadouro-cat').value;
+            const d1Num = obterD1Digitado();
+            const valXd = document.getElementById('filtro-xd').value;
+            const qPesquisa = (document.getElementById('ref-pesquisa').value || '').trim();
+
+            const temFiltroCatalogo = Boolean(valGama || valRefrig || valEnc || (d1Num !== null) || valXd || qPesquisa);
+            if (!temFiltroCatalogo || !Array.isArray(REFERENCIAS_JSON) || REFERENCIAS_JSON.length === 0) {
+                return null;
+            }
+
+            const base = getCandidatosCatalogoBase();
+            const compativeis = base.filter(c =>
+                (!valGama || obterGamaCatalogo(c) === valGama) &&
+                (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
+                (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
+                matchD1Item(c, d1Num) &&
+                (!valXd || String(c.variante || '').trim() === valXd)
+            );
+
+            const famSet = new Set();
+            compativeis.forEach(c => {
+                const fk = String(c.familia || '').trim().toLowerCase();
+                if (fk && dados[fk]) famSet.add(fk);
+            });
+            return famSet;
+        }
+
         function atualizarFiltroBrocas(manterSelecao = false) {
             const linhaSel = linhaAtivaInterna || 'expert';
             const categoriaSel = document.getElementById('categoria').value;
             const brocaSelect = document.getElementById('broca');
+            const infoModelo = document.getElementById('info-modelo-filtro');
             const atualBroca = manterSelecao ? brocaSelect.value : null;
-            
+            const famsCatalogo = obterFamiliasCompativeisCatalogo();
+
             brocaSelect.innerHTML = '';
             let primeiraChave = null;
 
+            const matchesCatalogo = (key) => !famsCatalogo || famsCatalogo.has(key.toLowerCase());
+
+            // 1. Prioridade: mesma linha + mesma categoria + compatível com filtros do catálogo
             for (const key in dados) {
                 const ferramenta = dados[key];
-                if (ferramenta.linha === linhaSel && ferramenta.categoria === categoriaSel) {
+                if (ferramenta.linha === linhaSel && ferramenta.categoria === categoriaSel && matchesCatalogo(key)) {
                     const opt = document.createElement('option');
                     opt.value = key;
                     opt.text = ferramenta.nome;
@@ -2500,28 +2597,66 @@ html_content = '''
                 }
             }
 
-            if (!primeiraChave) {
+            // 2. Se os filtros do catálogo apontam para outras linhas/categorias, listar também as compatíveis no catálogo
+            if (famsCatalogo && famsCatalogo.size > 0) {
                 for (const key in dados) {
-                    if (dados[key].linha === linhaSel) {
+                    const ferramenta = dados[key];
+                    const jaExiste = Array.from(brocaSelect.options).some(o => o.value === key);
+                    if (!jaExiste && matchesCatalogo(key)) {
                         const opt = document.createElement('option');
                         opt.value = key;
-                        opt.text = dados[key].nome;
+                        opt.text = `${ferramenta.nome} (${fmtGamaLabel(ferramenta.linha)})`;
                         brocaSelect.appendChild(opt);
                         if (!primeiraChave) primeiraChave = key;
                     }
+                }
+                if (infoModelo) {
+                    infoModelo.innerText = `${brocaSelect.options.length} compatível(is)`;
+                }
+            } else {
+                if (!primeiraChave) {
+                    for (const key in dados) {
+                        if (dados[key].linha === linhaSel) {
+                            const opt = document.createElement('option');
+                            opt.value = key;
+                            opt.text = dados[key].nome;
+                            brocaSelect.appendChild(opt);
+                            if (!primeiraChave) primeiraChave = key;
+                        }
+                    }
+                }
+                if (infoModelo) {
+                    infoModelo.innerText = `${brocaSelect.options.length} modelo(s)`;
                 }
             }
 
             if (!primeiraChave) {
                 const opt = document.createElement('option');
                 opt.value = "";
-                opt.text = "Nenhuma ferramenta nesta categoria";
+                opt.text = "Nenhuma ferramenta compatível";
                 brocaSelect.appendChild(opt);
-            } else if (atualBroca && dados[atualBroca]) {
+            } else if (atualBroca && dados[atualBroca] && Array.from(brocaSelect.options).some(o => o.value === atualBroca)) {
                 brocaSelect.value = atualBroca;
             }
 
             mudarBroca();
+        }
+
+        function onMudarModeloFerramenta() {
+            const brocaKey = document.getElementById('broca').value;
+            if (brocaKey && dados[brocaKey]) {
+                const toolData = dados[brocaKey];
+                linhaAtivaInterna = toolData.linha;
+                const selCat = document.getElementById('categoria');
+                if (selCat && selCat.value !== toolData.categoria) {
+                    selCat.value = toolData.categoria;
+                }
+                if (referenciaAtivaObj && String(referenciaAtivaObj.familia || '').trim().toLowerCase() !== brocaKey.toLowerCase()) {
+                    referenciaAtivaObj = null;
+                }
+            }
+            mudarBroca();
+            filtrarCatalogoCascata('modelo');
         }
 
         function mudarBroca(variantePreferida = null) {
@@ -2531,39 +2666,43 @@ html_content = '''
             if (!brocaKey || !dados[brocaKey]) return;
 
             const toolData = dados[brocaKey];
-            linhaAtivaInterna = toolData.linha;
-            const grupoAnterior = grupoSelect.value;
-
-            grupoSelect.innerHTML = '';
-            toolData.gruposList.forEach((gKey, idx) => {
-                const opt = document.createElement('option');
-                opt.value = gKey;
-                opt.text = toolData.gruposNames[gKey];
-                if ((grupoAnterior && toolData.gruposList.includes(grupoAnterior) && gKey === grupoAnterior) || ((!grupoAnterior || !toolData.gruposList.includes(grupoAnterior)) && idx === 0)) {
-                    opt.selected = true;
-                }
-                grupoSelect.appendChild(opt);
-            });
-
-            if (variantePreferida && toolData.variantes && toolData.variantes[variantePreferida]) {
-                const selXd = document.getElementById('filtro-xd');
-                if (selXd) selXd.value = variantePreferida;
-            }
 
             const btnInt = document.getElementById('ref-int');
             const avisoRefrig = document.getElementById('aviso-refrig');
-            
-            if (!toolData.temRefrigInt) {
+            if (toolData.temRefrigInt === false) {
                 btnInt.disabled = true;
-                btnInt.className = "py-1.5 rounded bg-slate-800 text-slate-600 cursor-not-allowed";
+                btnInt.classList.add('opacity-40', 'cursor-not-allowed');
                 avisoRefrig.classList.remove('hidden');
                 if (refrigAtual === 'int') {
                     setRefrig('ext');
                 }
             } else {
                 btnInt.disabled = false;
+                btnInt.classList.remove('opacity-40', 'cursor-not-allowed');
                 avisoRefrig.classList.add('hidden');
-                setRefrig('int');
+            }
+
+            const atualGrupo = grupoSelect.value;
+            grupoSelect.innerHTML = '';
+
+            toolData.gruposList.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g;
+                opt.text = toolData.gruposNames[g] || g;
+                grupoSelect.appendChild(opt);
+            });
+
+            if (atualGrupo && toolData.grupos[atualGrupo]) {
+                grupoSelect.value = atualGrupo;
+            } else if (toolData.gruposList.length > 0) {
+                grupoSelect.value = toolData.gruposList[0];
+            }
+
+            if (variantePreferida && toolData.variantes && toolData.variantes[variantePreferida]) {
+                const selXd = document.getElementById('filtro-xd');
+                if (selXd && Array.from(selXd.options).some(o => o.value === variantePreferida)) {
+                    selXd.value = variantePreferida;
+                }
             }
 
             mudarGrupoMaterial();
@@ -2572,29 +2711,24 @@ html_content = '''
         function mudarGrupoMaterial() {
             const grupoKey = document.getElementById('grupo').value;
             if (grupoKey) {
-                const densidadeSugerida = getDensidadePadrao(grupoKey);
-                document.getElementById('densidade').value = densidadeSugerida;
+                const prefixo = grupoKey.charAt(0).toUpperCase();
+                if (propriedadesGrupo[prefixo]) {
+                    document.getElementById('densidade').value = propriedadesGrupo[prefixo].densidade.toFixed(2);
+                }
             }
             atualizarCalculo();
         }
 
         function setRefrig(tipo) {
             const brocaKey = document.getElementById('broca').value;
-            const toolData = dados[brocaKey];
-            if (toolData && !toolData.temRefrigInt && tipo === 'int') return;
+            if (tipo === 'int' && brocaKey && dados[brocaKey] && dados[brocaKey].temRefrigInt === false) {
+                return;
+            }
 
             refrigAtual = tipo;
             ['int', 'ext', 'mql', 'ar'].forEach(t => {
                 const btn = document.getElementById(`ref-${t}`);
-                if (toolData && !toolData.temRefrigInt && t === 'int') {
-                    btn.disabled = true;
-                    btn.className = "py-1.5 rounded bg-slate-800 text-slate-600 cursor-not-allowed";
-                    return;
-                } else if (t === 'int') {
-                    btn.disabled = false;
-                }
-
-                if(t === tipo) {
+                if (t === tipo) {
                     btn.className = "py-1.5 rounded bg-blue-600 text-white transition";
                 } else {
                     btn.className = "py-1.5 rounded text-slate-400 hover:text-white transition";
@@ -2603,84 +2737,23 @@ html_content = '''
             atualizarCalculo();
         }
 
-        function toggleLock(tipo) {
-            if (tipo === 'f') {
-                fUnlocked = !fUnlocked;
-                const input = document.getElementById('input-f');
-                const btn = document.getElementById('btn-lock-f');
-                const card = document.getElementById('card-f');
-                const status = document.getElementById('status-f');
-                input.readOnly = !fUnlocked;
-                if (fUnlocked) {
-                    btn.innerText = '🔓';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-amber-500/80 transition-colors';
-                    input.className = 'w-full bg-slate-900 text-xl font-bold text-amber-300 mt-0.5 focus:outline-none rounded px-1 -ml-1 border border-amber-500/40';
-                    status.innerText = 'Manual';
-                    status.className = 'text-[9px] text-amber-400 font-semibold';
-                    input.focus();
-                } else {
-                    btn.innerText = '🔒';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors';
-                    input.className = 'w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1';
-                    status.innerText = 'Auto';
-                    status.className = 'text-[9px] text-slate-500';
-                    atualizarCalculo();
-                }
-            } else if (tipo === 'vc') {
-                vcUnlocked = !vcUnlocked;
-                const input = document.getElementById('input-vc');
-                const btn = document.getElementById('btn-lock-vc');
-                const card = document.getElementById('card-vc');
-                const status = document.getElementById('status-vc');
-                input.readOnly = !vcUnlocked;
-                if (vcUnlocked) {
-                    btn.innerText = '🔓';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-amber-500/80 transition-colors';
-                    input.className = 'w-full bg-slate-900 text-xl font-bold text-amber-300 mt-0.5 focus:outline-none rounded px-1 -ml-1 border border-amber-500/40';
-                    status.innerText = 'Manual';
-                    status.className = 'text-[9px] text-amber-400 font-semibold';
-                    input.focus();
-                } else {
-                    btn.innerText = '🔒';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors';
-                    input.className = 'w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1';
-                    status.innerText = 'Auto';
-                    status.className = 'text-[9px] text-slate-500';
-                    atualizarCalculo();
-                }
-            } else if (tipo === 'rpm-max') {
-                rpmMaxUnlocked = !rpmMaxUnlocked;
-                const input = document.getElementById('input-rpm-max');
-                const btn = document.getElementById('btn-lock-rpm-max');
-                const card = document.getElementById('card-rpm-max');
-                const status = document.getElementById('status-rpm-max');
-                input.readOnly = !rpmMaxUnlocked;
-                if (rpmMaxUnlocked) {
-                    btn.innerText = '🔓';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-cyan-500/80 transition-colors';
-                    input.className = 'w-full bg-slate-900 text-xl font-bold text-cyan-300 mt-0.5 focus:outline-none rounded px-1 -ml-1 border border-cyan-500/40';
-                    status.innerText = 'Ativo';
-                    status.className = 'text-[9px] text-cyan-400 font-semibold';
-                    input.focus();
-                } else {
-                    btn.innerText = '🔒';
-                    card.className = 'bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors';
-                    input.className = 'w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1';
-                    status.innerText = 'Inativo';
-                    status.className = 'text-[9px] text-slate-500';
-                }
-                atualizarCalculo();
-            }
+        function ajustarDiametro(delta) {
+            const input = document.getElementById('diametro');
+            let val = parseFloat(input.value) || 12.00;
+            val = Math.min(30, Math.max(0.5, val + delta));
+            input.value = val.toFixed(2);
+            onDiametroPrincipalChange();
         }
 
-        function onManualInput(tipo) {
-            if (tipo === 'f' && fUnlocked) {
-                atualizarCalculo(true);
-            } else if (tipo === 'vc' && vcUnlocked) {
-                atualizarCalculo(true);
-            } else if (tipo === 'rpm-max' && rpmMaxUnlocked) {
-                atualizarCalculo(true);
+        function ajustarPct(tipo, delta) {
+            if (tipo === 'vc') {
+                vcPct = Math.min(50, Math.max(-50, vcPct + delta));
+                document.getElementById('vc-slider').value = vcPct;
+            } else {
+                fPct = Math.min(50, Math.max(-50, fPct + delta));
+                document.getElementById('f-slider').value = fPct;
             }
+            atualizarCalculo();
         }
 
         function onSliderVc() {
@@ -2690,17 +2763,6 @@ html_content = '''
 
         function onSliderF() {
             fPct = parseInt(document.getElementById('f-slider').value, 10) || 0;
-            atualizarCalculo();
-        }
-
-        function ajustarPct(tipo, delta) {
-            if (tipo === 'vc') {
-                vcPct = Math.max(-50, Math.min(50, vcPct + delta));
-                document.getElementById('vc-slider').value = vcPct;
-            } else {
-                fPct = Math.max(-50, Math.min(50, fPct + delta));
-                document.getElementById('f-slider').value = fPct;
-            }
             atualizarCalculo();
         }
 
@@ -2715,150 +2777,262 @@ html_content = '''
             atualizarCalculo();
         }
 
-        function ajustarDiametro(delta) {
-            const input = document.getElementById('diametro');
-            let val = parseFloat(input.value) + delta;
-            if (val < 0.5) val = 0.5;
-            if (val > 30) val = 30;
-            input.value = val.toFixed(2);
+        function toggleLock(campo) {
+            if (campo === 'f') {
+                fUnlocked = !fUnlocked;
+                const inp = document.getElementById('input-f');
+                const btn = document.getElementById('btn-lock-f');
+                const card = document.getElementById('card-f');
+                const stEl = document.getElementById('status-f');
+                inp.readOnly = !fUnlocked;
+                if (fUnlocked) {
+                    btn.innerText = '🔓';
+                    card.classList.add('border-amber-500/80', 'bg-slate-800/95');
+                    card.classList.remove('border-slate-700');
+                    inp.classList.add('text-amber-300', 'bg-slate-900/70');
+                    inp.classList.remove('text-white', 'bg-transparent');
+                    stEl.innerText = 'Manual';
+                    stEl.className = 'text-[9px] text-amber-400 font-semibold';
+                    inp.focus();
+                } else {
+                    btn.innerText = '🔒';
+                    card.classList.remove('border-amber-500/80', 'bg-slate-800/95');
+                    card.classList.add('border-slate-700');
+                    inp.classList.remove('text-amber-300', 'bg-slate-900/70');
+                    inp.classList.add('text-white', 'bg-transparent');
+                    stEl.innerText = 'Auto';
+                    stEl.className = 'text-[9px] text-slate-500';
+                }
+            } else if (campo === 'vc') {
+                vcUnlocked = !vcUnlocked;
+                const inp = document.getElementById('input-vc');
+                const btn = document.getElementById('btn-lock-vc');
+                const card = document.getElementById('card-vc');
+                const stEl = document.getElementById('status-vc');
+                inp.readOnly = !vcUnlocked;
+                if (vcUnlocked) {
+                    btn.innerText = '🔓';
+                    card.classList.add('border-amber-500/80', 'bg-slate-800/95');
+                    card.classList.remove('border-slate-700');
+                    inp.classList.add('text-amber-300', 'bg-slate-900/70');
+                    inp.classList.remove('text-white', 'bg-transparent');
+                    stEl.innerText = 'Manual';
+                    stEl.className = 'text-[9px] text-amber-400 font-semibold';
+                    inp.focus();
+                } else {
+                    btn.innerText = '🔒';
+                    card.classList.remove('border-amber-500/80', 'bg-slate-800/95');
+                    card.classList.add('border-slate-700');
+                    inp.classList.remove('text-amber-300', 'bg-slate-900/70');
+                    inp.classList.add('text-white', 'bg-transparent');
+                    stEl.innerText = 'Auto';
+                    stEl.className = 'text-[9px] text-slate-500';
+                }
+            } else if (campo === 'rpm-max') {
+                rpmMaxUnlocked = !rpmMaxUnlocked;
+                const inp = document.getElementById('input-rpm-max');
+                const btn = document.getElementById('btn-lock-rpm-max');
+                const card = document.getElementById('card-rpm-max');
+                const stEl = document.getElementById('status-rpm-max');
+                inp.readOnly = !rpmMaxUnlocked;
+                if (rpmMaxUnlocked) {
+                    btn.innerText = '🔓';
+                    card.classList.add('border-cyan-500/80', 'bg-slate-800/95');
+                    card.classList.remove('border-slate-700');
+                    inp.classList.add('text-cyan-300', 'bg-slate-900/70');
+                    inp.classList.remove('text-white', 'bg-transparent');
+                    stEl.innerText = 'Ativo';
+                    stEl.className = 'text-[9px] text-cyan-400 font-semibold';
+                    inp.focus();
+                } else {
+                    btn.innerText = '🔒';
+                    card.classList.remove('border-cyan-500/80', 'bg-slate-800/95');
+                    card.classList.add('border-slate-700');
+                    inp.classList.remove('text-cyan-300', 'bg-slate-900/70');
+                    inp.classList.add('text-white', 'bg-transparent');
+                    stEl.innerText = 'Inativo';
+                    stEl.className = 'text-[9px] text-slate-500';
+                }
+            }
             atualizarCalculo();
         }
 
-        function atualizarGaugeMeiaLua(needleId, badgeId, valElId, valorAtual, capacidadeMax, unidadeLabel, formatDecimals = 1) {
-            const needle = document.getElementById(needleId);
-            const badge = document.getElementById(badgeId);
-            const valEl = document.getElementById(valElId);
-            if (!needle || !badge || !valEl) return;
+        function onManualInput(campo) {
+            atualizarCalculo();
+        }
 
-            valEl.innerText = `${valorAtual.toFixed(formatDecimals)} ${unidadeLabel}`;
+        function getGrupoEfetivo() {
+            const brocaKey = document.getElementById('broca').value;
+            const grupoKey = document.getElementById('grupo').value;
+            const ligaCheck = document.getElementById('liga-check').checked;
 
-            if (!capacidadeMax || capacidadeMax <= 0) {
+            if (!brocaKey || !dados[brocaKey] || !grupoKey) return grupoKey;
+            if (!ligaCheck) return grupoKey;
+
+            const lista = dados[brocaKey].gruposList;
+            const idx = lista.indexOf(grupoKey);
+            if (idx !== -1 && idx < lista.length - 1) {
+                return lista[idx + 1];
+            }
+            return grupoKey;
+        }
+
+        function atualizarGauge(tipo, valor, maxCap, unidade) {
+            const needle = document.getElementById(tipo === 'pot' ? 'needle-potencia' : 'needle-binario');
+            const valLabel = document.getElementById(tipo === 'pot' ? 'val-gauge-pot' : 'val-gauge-bin');
+            const badge = document.getElementById(tipo === 'pot' ? 'badge-gauge-pot' : 'badge-gauge-bin');
+
+            valLabel.innerText = `${valor.toFixed(tipo === 'pot' ? 2 : 1)} ${unidade}`;
+
+            if (!maxCap || maxCap <= 0) {
                 needle.setAttribute('transform', 'rotate(-90, 100, 100)');
-                badge.innerText = "Sem limite spindle";
-                badge.className = "text-[9px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400";
-                return { ratio: 0, over: false };
+                badge.innerText = 'Sem Limite Definido';
+                badge.className = 'text-[9px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-400';
+                return null;
             }
 
-            const ratio = valorAtual / capacidadeMax;
-            const clampedRatio = Math.max(0, Math.min(1.25, ratio));
+            const ratio = valor / maxCap;
+            const clampedRatio = Math.min(1.15, Math.max(0, ratio));
             const angle = -90 + (clampedRatio * 180);
             needle.setAttribute('transform', `rotate(${angle.toFixed(1)}, 100, 100)`);
 
-            const pct = Math.round(ratio * 100);
             if (ratio < 0.70) {
-                badge.innerText = `${pct}% · Seguro`;
-                badge.className = "text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700/60";
+                badge.innerText = `Seguro (${(ratio * 100).toFixed(0)}%)`;
+                badge.className = 'text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-700/50';
+                return null;
             } else if (ratio <= 0.90) {
-                badge.innerText = `${pct}% · Atenção`;
-                badge.className = "text-[9px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-600/60";
+                badge.innerText = `Atenção (${(ratio * 100).toFixed(0)}%)`;
+                badge.className = 'text-[9px] font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-700/50';
+                return null;
             } else if (ratio <= 1.0) {
-                badge.innerText = `${pct}% · Crítico`;
-                badge.className = "text-[9px] font-bold px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-600/70";
+                badge.innerText = `Crítico (${(ratio * 100).toFixed(0)}%)`;
+                badge.className = 'text-[9px] font-bold px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-700/50';
+                return null;
             } else {
-                badge.innerText = `${pct}% · EXCESSO`;
-                badge.className = "text-[9px] font-extrabold px-2 py-0.5 rounded bg-red-600 text-white";
+                const excessoPct = ((ratio - 1) * 100).toFixed(0);
+                badge.innerText = `STALL +${excessoPct}%`;
+                badge.className = 'text-[9px] font-extrabold px-2 py-0.5 rounded bg-red-600 text-white animate-pulse';
+                const nomeParam = tipo === 'pot' ? 'Potência' : 'Binário';
+                return `${nomeParam} excede a capacidade do spindle em +${excessoPct}% (${valor.toFixed(tipo === 'pot' ? 2 : 1)} ${unidade} vs máx. ${maxCap.toFixed(tipo === 'pot' ? 2 : 1)} ${unidade})`;
             }
-
-            return { ratio, over: ratio > 1.0 };
         }
 
-        function atualizarCalculo(isFromManual = false) {
+        function atualizarAlertaProfundidade(diametro, profundidade, toolData, varianteKey) {
+            const box = document.getElementById('alerta-profundidade');
+            const txt = document.getElementById('texto-limite-prof');
+            const badge = document.getElementById('badge-limite-prof');
+
+            const l3Catalogo = (referenciaAtivaObj && referenciaAtivaObj.l3 !== null && referenciaAtivaObj.l3 !== undefined && !isNaN(Number(referenciaAtivaObj.l3)))
+                ? Number(referenciaAtivaObj.l3)
+                : null;
+            const nomInfo = toolData ? obterLimiteNominal(toolData, varianteKey, diametro) : { ratio: 5, maxNominalMm: 5 * diametro };
+
+            if (l3Catalogo !== null) {
+                const margem = l3Catalogo - profundidade;
+                if (profundidade <= l3Catalogo) {
+                    box.className = 'bg-emerald-950/40 px-2.5 py-1.5 rounded-md border border-emerald-700/60 text-[10px] text-emerald-200 flex justify-between items-center gap-2 shrink-0';
+                    txt.innerText = `Dentro do limite real l3 (${l3Catalogo.toFixed(0)} mm máx. catálogo | margem ${margem.toFixed(1)} mm)`;
+                    badge.innerText = 'OK (l3)';
+                    badge.className = 'font-bold text-emerald-300 shrink-0';
+                } else {
+                    const excesso = profundidade - l3Catalogo;
+                    box.className = 'bg-red-950/70 px-2.5 py-1.5 rounded-md border border-red-500/80 text-[10px] text-red-200 flex justify-between items-center gap-2 shrink-0';
+                    txt.innerText = `EXCEDE l3 (${l3Catalogo.toFixed(0)} mm máx. real) em +${excesso.toFixed(1)} mm! Risco de colisão/encabadouro.`;
+                    badge.innerText = 'EXCEDE l3';
+                    badge.className = 'font-extrabold text-red-300 shrink-0';
+                }
+            } else {
+                box.className = 'bg-slate-900 px-2.5 py-1.5 rounded-md border border-amber-600/50 text-[10px] text-amber-200 flex justify-between items-center gap-2 shrink-0';
+                txt.innerText = `Sem cota l3 na ref. ativa · Nominal ${varianteKey} ≈ ${nomInfo.maxNominalMm.toFixed(1)} mm (selecione referência p/ validar l3)`;
+                badge.innerText = 'SEM l3';
+                badge.className = 'font-bold text-amber-300 shrink-0';
+            }
+        }
+
+        function atualizarCalculo() {
             const brocaKey = document.getElementById('broca').value;
             const grupoKey = document.getElementById('grupo').value;
-            const ligaAtiva = document.getElementById('liga-check').checked;
-            
+            const grupoEfetivoKey = getGrupoEfetivo();
+
             let diametro = parseFloat(document.getElementById('diametro').value);
-            if (isNaN(diametro) || diametro <= 0) diametro = 12.00;
-
             let profundidade = parseFloat(document.getElementById('profundidade').value);
-            if (isNaN(profundidade) || profundidade < 0.1) profundidade = 31.0;
-
             let qtdFuros = parseInt(document.getElementById('qtd-furos').value, 10);
-            if (isNaN(qtdFuros) || qtdFuros < 1) qtdFuros = 50;
-
             let densidade = parseFloat(document.getElementById('densidade').value);
-            if (isNaN(densidade) || densidade <= 0) densidade = 7.85;
-
             let precoSucata = parseFloat(document.getElementById('preco-sucata').value);
-            if (isNaN(precoSucata) || precoSucata < 0) precoSucata = 0.35;
-
             let custoHora = parseFloat(document.getElementById('custo-hora').value);
-            if (isNaN(custoHora) || custoHora <= 0) custoHora = 50.00;
+
+            if (isNaN(diametro) || diametro <= 0) diametro = 12.00;
+            if (isNaN(profundidade) || profundidade <= 0) profundidade = 31.0;
+            if (isNaN(qtdFuros) || qtdFuros < 1) qtdFuros = 50;
+            if (isNaN(densidade) || densidade <= 0) densidade = 7.85;
+            if (isNaN(precoSucata) || precoSucata < 0) precoSucata = 0.35;
+            if (isNaN(custoHora) || custoHora < 0) custoHora = 50.00;
+
+            document.getElementById('vc-pct-val').innerText = `${vcPct > 0 ? '+' : ''}${vcPct}%`;
+            document.getElementById('f-pct-val').innerText = `${fPct > 0 ? '+' : ''}${fPct}%`;
+
+            if (!brocaKey || !dados[brocaKey] || !grupoEfetivoKey || !dados[brocaKey].grupos[grupoEfetivoKey]) return;
+
+            const toolData = dados[brocaKey];
+            const grupoObj = toolData.grupos[grupoEfetivoKey];
+            const diametrosCat = toolData.diametros;
+            const fCatArr = grupoObj.f;
+            const varianteAtiva = getVarianteAtiva();
+
+            atualizarPainelCotas();
+            atualizarAlertaProfundidade(diametro, profundidade, toolData, varianteAtiva);
 
             const peckingCheck = document.getElementById('pecking-check').checked;
             const peckingUnid = document.getElementById('pecking-unidade').value;
             let peckingInputVal = parseFloat(document.getElementById('pecking-passo').value);
-            if (isNaN(peckingInputVal) || peckingInputVal <= 0) peckingInputVal = peckingUnid === 'xd' ? 3.0 : 36.0;
-
             let peckingRetensaoVal = parseFloat(document.getElementById('pecking-retensao').value);
+
+            if (isNaN(peckingInputVal) || peckingInputVal <= 0) peckingInputVal = peckingUnid === 'xd' ? 3.0 : 36.0;
             if (isNaN(peckingRetensaoVal) || peckingRetensaoVal <= 0) peckingRetensaoVal = 5000;
 
             const passoMm = peckingUnid === 'xd' ? (peckingInputVal * diametro) : peckingInputVal;
             const numPassos = Math.max(1, Math.ceil(profundidade / passoMm));
-            const equivTxt = peckingUnid === 'xd'
-                ? `Equiv: ${passoMm.toFixed(1)} mm (${numPassos} ${numPassos === 1 ? 'passo' : 'passos'})`
-                : `Equiv: ${(passoMm / diametro).toFixed(2)}×D (${numPassos} ${numPassos === 1 ? 'passo' : 'passos'})`;
-            document.getElementById('pecking-equiv').innerText = equivTxt;
+            const equivTexto = peckingUnid === 'xd'
+                ? `Equiv: ${passoMm.toFixed(1)} mm (${numPassos} passo${numPassos > 1 ? 's' : ''})`
+                : `Equiv: ${(passoMm / diametro).toFixed(2)}×D (${numPassos} passo${numPassos > 1 ? 's' : ''})`;
+            document.getElementById('pecking-equiv').innerText = equivTexto;
 
-            if (!brocaKey || !dados[brocaKey] || !grupoKey) return;
+            const rpmMaxVal = parseFloat(document.getElementById('input-rpm-max').value) || 8000;
 
-            const toolData = dados[brocaKey];
-            const gruposList = toolData.gruposList;
-
-            let grupoEfetivoKey = grupoKey;
-            if (ligaAtiva) {
-                const idxGrupo = gruposList.indexOf(grupoKey);
-                if (idxGrupo !== -1 && idxGrupo < gruposList.length - 1) {
-                    grupoEfetivoKey = gruposList[idxGrupo + 1];
-                }
-            }
-
-            const varianteAtiva = getVarianteAtiva();
-            let rpmMaxVal = parseFloat(document.getElementById('input-rpm-max').value);
-            if (isNaN(rpmMaxVal) || rpmMaxVal <= 0) rpmMaxVal = 8000;
-
-            const contexto = {
+            const calc = calcularMetricasFerramenta(brocaKey, varianteAtiva, grupoEfetivoKey, {
                 diametro, profundidade, qtdFuros, custoHora,
                 refrigAtual, vcPct, fPct, rpmMaxUnlocked, rpmMaxVal,
                 peckingCheck, peckingUnid, peckingInputVal, peckingRetensaoVal
-            };
+            });
 
-            const baseCalc = calcularMetricasFerramenta(brocaKey, varianteAtiva, grupoEfetivoKey, contexto);
-            if (!baseCalc) return;
-
-            let fFinal = baseCalc.fFinal;
-            let vcFinal = baseCalc.vcFinal;
-            let estadoTexto = baseCalc.estadoTexto;
-            let estadoCor = baseCalc.estadoCor;
+            let fFinal = calc.fFinal;
+            let vcFinal = calc.vcFinal;
 
             const inputF = document.getElementById('input-f');
             const inputVc = document.getElementById('input-vc');
 
-            if (fUnlocked && isFromManual) {
-                const manF = parseFloat(inputF.value);
-                if (!isNaN(manF) && manF > 0) {
-                    fFinal = manF;
+            if (fUnlocked) {
+                const manualF = parseFloat(inputF.value);
+                if (!isNaN(manualF) && manualF > 0) {
+                    fFinal = manualF;
                 }
-            } else if (!fUnlocked) {
-                inputF.value = fFinal.toFixed(4);
             } else {
-                const manF = parseFloat(inputF.value);
-                if (!isNaN(manF) && manF > 0) fFinal = manF;
+                inputF.value = fFinal.toFixed(4);
             }
 
-            if (vcUnlocked && isFromManual) {
-                const manVc = parseFloat(inputVc.value);
-                if (!isNaN(manVc) && manVc > 0) {
-                    vcFinal = manVc;
+            if (vcUnlocked) {
+                const manualVc = parseFloat(inputVc.value);
+                if (!isNaN(manualVc) && manualVc > 0) {
+                    vcFinal = manualVc;
                 }
-            } else if (!vcUnlocked) {
-                inputVc.value = Math.round(vcFinal);
             } else {
-                const manVc = parseFloat(inputVc.value);
-                if (!isNaN(manVc) && manVc > 0) vcFinal = manVc;
+                inputVc.value = Math.round(vcFinal);
             }
 
             let n = diametro > 0 ? Math.round((vcFinal * 1000) / (Math.PI * diametro)) : 0;
+            let estadoTexto = calc.estadoTexto;
+            let estadoCor = calc.estadoCor;
+
             if (rpmMaxUnlocked && rpmMaxVal > 0 && n > rpmMaxVal) {
                 n = rpmMaxVal;
                 vcFinal = (n * Math.PI * diametro) / 1000;
@@ -2870,6 +3044,7 @@ html_content = '''
             }
 
             const vf = Math.round(fFinal * n);
+
             const cursoEfetivo = profundidade + (0.3 * diametro);
             let tempoFuroSeg = vf > 0 ? (cursoEfetivo / vf) * 60 : 0;
 
@@ -2885,201 +3060,94 @@ html_content = '''
             const tempoTotalMin = (tempoFuroSeg * qtdFuros) / 60;
             const custoMaqLote = custoMaqFuro * qtdFuros;
 
-            const raioMm = diametro / 2;
-            const areaMm2 = Math.PI * Math.pow(raioMm, 2);
-            const volumeFuroMm3 = areaMm2 * profundidade;
-            const volumeTotalCm3 = (volumeFuroMm3 * qtdFuros) / 1000;
-
-            const taxaRemocaoCm3Min = tempoTotalMin > 0 ? (volumeTotalCm3 / tempoTotalMin) : 0;
-            const metragemTotalMetros = (profundidade * qtdFuros) / 1000;
-
-            const massaFuroGramas = (volumeFuroMm3 / 1000) * densidade;
-            const pesoTotalKg = (massaFuroGramas * qtdFuros) / 1000;
-            const valorSucataTotal = pesoTotalKg * precoSucata;
-            const valorSucataFuro = qtdFuros > 0 ? (valorSucataTotal / qtdFuros) : 0;
-
             const kc = getKc(grupoEfetivoKey);
             const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
-            const forcaKgf = forcaFf / 9.80665;
             const binarioMc = (kc * Math.pow(diametro, 2) * Math.pow(fFinal, 0.8)) / 8000;
             const potenciaReqKw = (binarioMc * n) / (9550 * 0.85);
 
-            let spindlePotInput = parseFloat(document.getElementById('spindle-potencia').value);
+            let potMaxInput = parseFloat(document.getElementById('spindle-potencia').value);
             const unidPot = document.getElementById('unidade-potencia').value;
-            let spindlePotKw = (!isNaN(spindlePotInput) && spindlePotInput > 0) ? spindlePotInput : 0;
-            if (unidPot === 'cv' && spindlePotKw > 0) {
-                spindlePotKw = spindlePotKw * 0.73549875;
+            let potMaxKw = null;
+            if (!isNaN(potMaxInput) && potMaxInput > 0) {
+                potMaxKw = unidPot === 'cv' ? (potMaxInput * 0.735499) : potMaxInput;
             }
 
-            let spindleBinInput = parseFloat(document.getElementById('spindle-binario').value);
-            const spindleBinNm = (!isNaN(spindleBinInput) && spindleBinInput > 0) ? spindleBinInput : 0;
+            let binMaxNm = parseFloat(document.getElementById('spindle-binario').value);
+            if (isNaN(binMaxNm) || binMaxNm <= 0) {
+                binMaxNm = null;
+            }
 
-            const potDisplayVal = unidPot === 'cv' ? (potenciaReqKw / 0.73549875) : potenciaReqKw;
-            const potDisplayUnid = unidPot === 'cv' ? 'CV' : 'kW';
-            const potDisplayMax = unidPot === 'cv' ? (spindlePotKw / 0.73549875) : spindlePotKw;
+            const alertaPot = atualizarGauge('pot', potenciaReqKw, potMaxKw, 'kW');
+            const alertaBin = atualizarGauge('bin', binarioMc, binMaxNm, 'N·m');
 
-            const potStatus = atualizarGaugeMeiaLua('needle-potencia', 'badge-gauge-pot', 'val-gauge-pot', potDisplayVal, potDisplayMax, potDisplayUnid, 2);
-            const binStatus = atualizarGaugeMeiaLua('needle-binario', 'badge-gauge-bin', 'val-gauge-bin', binarioMc, spindleBinNm, 'N·m', 1);
-
-            const alertaSobrecarga = document.getElementById('alerta-sobrecarga-spindle');
+            const boxSobrecarga = document.getElementById('alerta-sobrecarga-spindle');
             const textoSobrecarga = document.getElementById('texto-sobrecarga-spindle');
-            const badgeSobrecarga = document.getElementById('badge-sobrecarga-spindle');
-
-            const problemas = [];
-            if (potStatus.over) problemas.push(`Potência (${potDisplayVal.toFixed(2)} ${potDisplayUnid} / ${potDisplayMax.toFixed(2)} ${potDisplayUnid} = ${Math.round(potStatus.ratio * 100)}%)`);
-            if (binStatus.over) problemas.push(`Binário (${binarioMc.toFixed(1)} N·m / ${spindleBinNm.toFixed(1)} N·m = ${Math.round(binStatus.ratio * 100)}%)`);
-
-            if (problemas.length > 0) {
-                alertaSobrecarga.classList.remove('hidden');
-                textoSobrecarga.innerText = `Sobrecarga do Spindle (>100%): ${problemas.join(' e ')}. Reduza Vc, avanço (f) ou Ø.`;
-                badgeSobrecarga.innerText = "SOBRECARGA";
+            const alertasAtivos = [alertaPot, alertaBin].filter(Boolean);
+            if (alertasAtivos.length > 0) {
+                textoSobrecarga.innerText = alertasAtivos.join(' | ');
+                boxSobrecarga.classList.remove('hidden');
             } else {
-                alertaSobrecarga.classList.add('hidden');
+                boxSobrecarga.classList.add('hidden');
             }
 
-            document.getElementById('vc-pct-val').innerText = (vcPct > 0 ? '+' : '') + vcPct + '%';
-            document.getElementById('f-pct-val').innerText = (fPct > 0 ? '+' : '') + fPct + '%';
+            const areaMm2 = Math.PI * Math.pow(diametro / 2, 2);
+            const volumeFuroCm3 = (areaMm2 * profundidade) / 1000;
+            const volumeTotalCm3 = volumeFuroCm3 * qtdFuros;
+
+            const massaFuroG = volumeFuroCm3 * densidade;
+            const pesoTotalKg = (massaFuroG * qtdFuros) / 1000;
+
+            const valorSucataFuro = (massaFuroG / 1000) * precoSucata;
+            const valorSucataTotal = pesoTotalKg * precoSucata;
+
+            const metragemTotalM = (profundidade * qtdFuros) / 1000;
+            const taxaRemocaoCm3Min = (areaMm2 * vf) / 1000;
 
             document.getElementById('res-n').innerText = n;
             document.getElementById('res-vf').innerText = vf;
 
-            const alertaProf = document.getElementById('alerta-profundidade');
-            const textoLim = document.getElementById('texto-limite-prof');
-            const badgeLim = document.getElementById('badge-limite-prof');
-
-            if (referenciaAtivaObj && referenciaAtivaObj.l3 !== null && referenciaAtivaObj.l3 !== undefined && !isNaN(Number(referenciaAtivaObj.l3))) {
-                const l3Real = Number(referenciaAtivaObj.l3);
-                if (profundidade > l3Real) {
-                    alertaProf.className = "bg-rose-950/80 px-2.5 py-1.5 rounded-md border border-rose-500/70 text-[10px] text-rose-200 flex justify-between items-center gap-2 shrink-0";
-                    textoLim.innerText = `Profundidade (${profundidade.toFixed(1)} mm) excede l3 real da referência (${l3Real.toFixed(0)} mm).`;
-                    badgeLim.innerText = "EXCEDE l3";
-                    badgeLim.className = "font-extrabold text-rose-300 shrink-0";
-                } else {
-                    alertaProf.className = "bg-emerald-950/60 px-2.5 py-1.5 rounded-md border border-emerald-600/60 text-[10px] text-emerald-200 flex justify-between items-center gap-2 shrink-0";
-                    textoLim.innerText = `Profundidade (${profundidade.toFixed(1)} mm) dentro de l3 útil (${l3Real.toFixed(0)} mm · ${referenciaAtivaObj.order_no}).`;
-                    badgeLim.innerText = "OK (l3)";
-                    badgeLim.className = "font-extrabold text-emerald-300 shrink-0";
-                }
-            } else {
-                const limiteNom = baseCalc.limiteNominalMm;
-                if (profundidade > limiteNom) {
-                    alertaProf.className = "bg-amber-950/70 px-2.5 py-1.5 rounded-md border border-amber-500/70 text-[10px] text-amber-200 flex justify-between items-center gap-2 shrink-0";
-                    textoLim.innerText = `Profundidade (${profundidade.toFixed(1)} mm) acima do limite nominal ${varianteAtiva} (${limiteNom.toFixed(1)} mm). Validar l3 real.`;
-                    badgeLim.innerText = "ATENÇÃO";
-                    badgeLim.className = "font-extrabold text-amber-300 shrink-0";
-                } else {
-                    alertaProf.className = "bg-slate-900 px-2.5 py-1.5 rounded-md border border-slate-700 text-[10px] text-slate-300 flex justify-between items-center gap-2 shrink-0";
-                    textoLim.innerText = `Limite nominal ${varianteAtiva}: ${limiteNom.toFixed(1)} mm (selecionar referência para validar l3 exato).`;
-                    badgeLim.innerText = `${varianteAtiva}`;
-                    badgeLim.className = "font-bold text-cyan-300 shrink-0";
-                }
-            }
-
             document.getElementById('res-tempo-total').innerHTML = `${tempoTotalMin.toFixed(1)} min <span class="text-xs font-normal text-slate-300" id="res-tempo-unit">(${tempoFuroSeg.toFixed(1)} seg/furo)</span>`;
-            document.getElementById('res-metragem').innerText = `${metragemTotalMetros.toFixed(2)} metros`;
+            document.getElementById('res-metragem').innerText = `${metragemTotalM.toFixed(2)} metros`;
 
             document.getElementById('res-volume-total').innerText = `${volumeTotalCm3.toFixed(1)} cm³`;
             document.getElementById('res-taxa').innerText = `${taxaRemocaoCm3Min.toFixed(1)} cm³/min`;
 
             document.getElementById('res-peso').innerHTML = `${pesoTotalKg.toFixed(3)} <span class="text-sm font-normal text-slate-300">kg</span>`;
-            document.getElementById('res-peso-g').innerText = `${massaFuroGramas.toFixed(2)} g`;
+            document.getElementById('res-peso-g').innerText = `${massaFuroG.toFixed(2)} g / furo`;
 
             document.getElementById('res-sucata-val').innerHTML = `${valorSucataTotal.toFixed(2)} <span class="text-sm font-normal text-slate-300">€</span>`;
             document.getElementById('res-sucata-furo').innerText = `${valorSucataFuro.toFixed(4)} € / furo`;
 
-            document.getElementById('res-custo-total').innerHTML = `${custoMaqLote.toFixed(2)} € <span class="text-[10px] font-normal text-slate-300" id="res-custo-furo">(${custoMaqFuro.toFixed(2)} €/furo)</span>`;
+            document.getElementById('res-custo-total').innerHTML = `${custoMaqLote.toFixed(2)} € <span class="text-[10px] font-normal text-slate-300" id="res-custo-furo">(${custoMaqFuro.toFixed(3)} €/furo)</span>`;
             document.getElementById('res-custo-hora-ref').innerText = `${custoHora.toFixed(2)} €/h`;
 
             document.getElementById('res-forca').innerHTML = `${Math.round(forcaFf)} <span class="text-sm font-normal text-slate-300">N</span>`;
-            document.getElementById('res-forca-kgf').innerText = `${Math.round(forcaKgf)} kgf`;
+            document.getElementById('res-forca-kgf').innerText = `${(forcaFf / 9.80665).toFixed(1)} kgf`;
 
             document.getElementById('res-binario-card').innerHTML = `${binarioMc.toFixed(1)} <span class="text-sm font-normal text-slate-300">N·m</span>`;
 
-            const valEstado = document.getElementById('val-estado');
-            valEstado.innerText = estadoTexto;
-            valEstado.className = `text-[9px] font-bold ${estadoCor}`;
-            document.getElementById('badge-metodo').innerText = baseCalc.badgeMetodo;
-
-            const diametrosCat = toolData.diametros;
-            const fCatArr = toolData.grupos[grupoEfetivoKey].f;
+            document.getElementById('val-estado').innerText = estadoTexto;
+            document.getElementById('val-estado').className = `text-[9px] font-bold ${estadoCor}`;
+            document.getElementById('badge-metodo').innerText = calc.badgeMetodo;
 
             const tbody = document.getElementById('tabela-ref');
             tbody.innerHTML = '';
-            for (let i = 0; i < diametrosCat.length; i++) {
-                const dCat = diametrosCat[i];
+            diametrosCat.forEach((dCat, i) => {
                 const fCat = fCatArr[i];
                 const nCat = dCat > 0 ? Math.round((vcFinal * 1000) / (Math.PI * dCat)) : 0;
                 const vfCat = Math.round(fCat * nCat);
-
-                const isInterpolatedRow = (i === baseCalc.idxInf || i === baseCalc.idxInf + 1);
                 const tr = document.createElement('tr');
-                tr.className = isInterpolatedRow ? 'bg-blue-900/20 font-medium' : '';
+                tr.className = i === calc.idxInf ? 'bg-blue-900/30 font-semibold text-white' : 'text-slate-300';
                 tr.innerHTML = `
-                    <td class="py-1 ${isInterpolatedRow ? 'text-blue-300 font-bold' : ''}">${dCat.toFixed(2)}</td>
+                    <td class="py-1">${dCat.toFixed(2)}</td>
                     <td class="py-1">${fCat.toFixed(3)}</td>
-                    <td class="py-1 text-slate-300">${nCat}</td>
-                    <td class="py-1 text-slate-300">${vfCat}</td>
+                    <td class="py-1">${nCat}</td>
+                    <td class="py-1">${vfCat}</td>
                 `;
                 tbody.appendChild(tr);
-            }
+            });
 
             desenharGrafico(diametrosCat, fCatArr, diametro, fFinal);
-            atualizarPainelCotas();
-
-            window._ultimoCalculo = {
-                linha: linhaAtivaInterna,
-                categoria: document.getElementById('categoria').value,
-                brocaKey,
-                brocaNome: toolData.nome,
-                variante: varianteAtiva,
-                referenciaCatalogo: referenciaAtivaObj,
-                grupoSelecionado: grupoKey,
-                grupoEfetivo: grupoEfetivoKey,
-                grupoNome: toolData.gruposNames[grupoEfetivoKey] || grupoEfetivoKey,
-                ligaAtiva,
-                refrigAtual,
-                diametro,
-                profundidade,
-                qtdFuros,
-                densidade,
-                peckingCheck,
-                peckingUnid,
-                peckingInputVal,
-                passoMm,
-                numPassos,
-                peckingRetensaoVal,
-                precoSucata,
-                custoHora,
-                vcPct,
-                fPct,
-                fUnlocked,
-                vcUnlocked,
-                rpmMaxUnlocked,
-                rpmMaxVal,
-                vcFinal,
-                fFinal,
-                n,
-                vf,
-                tempoFuroSeg,
-                tempoTotalMin,
-                metragemTotalMetros,
-                volumeTotalCm3,
-                taxaRemocaoCm3Min,
-                massaFuroGramas,
-                pesoTotalKg,
-                valorSucataTotal,
-                valorSucataFuro,
-                custoMaqFuro,
-                custoMaqLote,
-                forcaFf,
-                forcaKgf,
-                binarioMc,
-                potenciaReqKw,
-                spindlePotVal: potDisplayMax,
-                spindlePotUnid: potDisplayUnid,
-                spindleBinNm,
-                estadoTexto
-            };
 
             if (!document.getElementById('modal-comparacao').classList.contains('hidden') || !document.getElementById('modal-resultado-comparacao').classList.contains('hidden')) {
                 atualizarComparacao();
@@ -3094,148 +3162,118 @@ html_content = '''
             const height = 180;
             const padLeft = 42;
             const padRight = 18;
-            const padTop = 14;
+            const padTop = 18;
             const padBottom = 28;
             const plotW = width - padLeft - padRight;
             const plotH = height - padTop - padBottom;
 
-            const allX = [...diametrosCat, dCalc];
-            const allY = [...fCatArr, fCalc];
+            const allD = [...diametrosCat, dCalc];
+            const allF = [...fCatArr, fCalc];
 
-            let minX = Math.min(...allX);
-            let maxX = Math.max(...allX);
-            let minY = Math.min(...allY);
-            let maxY = Math.max(...allY);
+            let minD = Math.min(...allD);
+            let maxD = Math.max(...allD);
+            if (minD === maxD) { minD -= 1; maxD += 1; }
+            const dMargin = (maxD - minD) * 0.08;
+            minD -= dMargin;
+            maxD += dMargin;
 
-            if (minX === maxX) { minX -= 1; maxX += 1; }
-            if (minY === maxY) { minY = Math.max(0, minY - 0.05); maxY += 0.05; }
+            let minF = Math.min(...allF);
+            let maxF = Math.max(...allF);
+            if (minF === maxF) { minF = 0; maxF += 0.1; }
+            const fMargin = (maxF - minF) * 0.12;
+            minF = Math.max(0, minF - fMargin);
+            maxF += fMargin;
 
-            const xMargin = (maxX - minX) * 0.06;
-            const yMargin = (maxY - minY) * 0.12;
-            minX = Math.max(0, minX - xMargin);
-            maxX = maxX + xMargin;
-            minY = Math.max(0, minY - yMargin);
-            maxY = maxY + yMargin;
-
-            const toSvgX = (x) => padLeft + ((x - minX) / (maxX - minX)) * plotW;
-            const toSvgY = (y) => padTop + plotH - ((y - minY) / (maxY - minY)) * plotH;
+            const xScale = d => padLeft + ((d - minD) / (maxD - minD)) * plotW;
+            const yScale = f => padTop + plotH - ((f - minF) / (maxF - minF)) * plotH;
 
             for (let i = 0; i <= 4; i++) {
-                const yVal = minY + (i / 4) * (maxY - minY);
-                const sy = toSvgY(yVal);
+                const fTick = minF + (i / 4) * (maxF - minF);
+                const yPos = yScale(fTick);
 
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('x1', padLeft);
-                line.setAttribute('y1', sy);
+                line.setAttribute('y1', yPos);
                 line.setAttribute('x2', width - padRight);
-                line.setAttribute('y2', sy);
+                line.setAttribute('y2', yPos);
                 line.setAttribute('stroke', '#1e293b');
                 line.setAttribute('stroke-width', '1');
                 svg.appendChild(line);
 
-                const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                txt.setAttribute('x', padLeft - 6);
-                txt.setAttribute('y', sy + 3);
-                txt.setAttribute('fill', '#94a3b8');
-                txt.setAttribute('font-size', '9');
-                txt.setAttribute('text-anchor', 'end');
-                txt.textContent = yVal.toFixed(2);
-                svg.appendChild(txt);
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', padLeft - 6);
+                label.setAttribute('y', yPos + 3);
+                label.setAttribute('text-anchor', 'end');
+                label.setAttribute('fill', '#94a3b8');
+                label.setAttribute('font-size', '9');
+                label.textContent = fTick.toFixed(2);
+                svg.appendChild(label);
             }
 
-            for (let i = 0; i <= 4; i++) {
-                const xVal = minX + (i / 4) * (maxX - minX);
-                const sx = toSvgX(xVal);
+            const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            xAxis.setAttribute('x1', padLeft);
+            xAxis.setAttribute('y1', padTop + plotH);
+            xAxis.setAttribute('x2', width - padRight);
+            xAxis.setAttribute('y2', padTop + plotH);
+            xAxis.setAttribute('stroke', '#475569');
+            xAxis.setAttribute('stroke-width', '1');
+            svg.appendChild(xAxis);
 
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', sx);
-                line.setAttribute('y1', padTop);
-                line.setAttribute('x2', sx);
-                line.setAttribute('y2', padTop + plotH);
-                line.setAttribute('stroke', '#1e293b');
-                line.setAttribute('stroke-width', '1');
-                svg.appendChild(line);
+            const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            yAxis.setAttribute('x1', padLeft);
+            yAxis.setAttribute('y1', padTop);
+            yAxis.setAttribute('x2', padLeft);
+            yAxis.setAttribute('y2', padTop + plotH);
+            yAxis.setAttribute('stroke', '#475569');
+            yAxis.setAttribute('stroke-width', '1');
+            svg.appendChild(yAxis);
 
-                const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                txt.setAttribute('x', sx);
-                txt.setAttribute('y', padTop + plotH + 13);
-                txt.setAttribute('fill', '#94a3b8');
-                txt.setAttribute('font-size', '9');
-                txt.setAttribute('text-anchor', 'middle');
-                txt.textContent = xVal.toFixed(1);
-                svg.appendChild(txt);
+            for (let i = 0; i < diametrosCat.length; i++) {
+                const xPos = xScale(diametrosCat[i]);
+                const tick = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                tick.setAttribute('x', xPos);
+                tick.setAttribute('y', padTop + plotH + 13);
+                tick.setAttribute('text-anchor', 'middle');
+                tick.setAttribute('fill', '#94a3b8');
+                tick.setAttribute('font-size', '9');
+                tick.textContent = diametrosCat[i].toFixed(1);
+                svg.appendChild(tick);
             }
 
-            const axisX = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            axisX.setAttribute('x1', padLeft);
-            axisX.setAttribute('y1', padTop + plotH);
-            axisX.setAttribute('x2', width - padRight);
-            axisX.setAttribute('y2', padTop + plotH);
-            axisX.setAttribute('stroke', '#475569');
-            axisX.setAttribute('stroke-width', '1.2');
-            svg.appendChild(axisX);
+            const xTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            xTitle.setAttribute('x', padLeft + plotW / 2);
+            xTitle.setAttribute('y', height - 3);
+            xTitle.setAttribute('text-anchor', 'middle');
+            xTitle.setAttribute('fill', '#64748b');
+            xTitle.setAttribute('font-size', '9');
+            xTitle.textContent = 'Diâmetro Ø (mm)';
+            svg.appendChild(xTitle);
 
-            const axisY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            axisY.setAttribute('x1', padLeft);
-            axisY.setAttribute('y1', padTop);
-            axisY.setAttribute('x2', padLeft);
-            axisY.setAttribute('y2', padTop + plotH);
-            axisY.setAttribute('stroke', '#475569');
-            axisY.setAttribute('stroke-width', '1.2');
-            svg.appendChild(axisY);
+            let pathD = '';
+            diametrosCat.forEach((dVal, i) => {
+                const px = xScale(dVal);
+                const py = yScale(fCatArr[i]);
+                pathD += (i === 0 ? `M ${px} ${py}` : ` L ${px} ${py}`);
+            });
 
-            const xLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            xLabel.setAttribute('x', padLeft + plotW / 2);
-            xLabel.setAttribute('y', height - 3);
-            xLabel.setAttribute('fill', '#cbd5e1');
-            xLabel.setAttribute('font-size', '9.5');
-            xLabel.setAttribute('font-weight', '600');
-            xLabel.setAttribute('text-anchor', 'middle');
-            xLabel.textContent = 'Diâmetro Ø (mm)';
-            svg.appendChild(xLabel);
+            const curve = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            curve.setAttribute('d', pathD);
+            curve.setAttribute('fill', 'none');
+            curve.setAttribute('stroke', '#3b82f6');
+            curve.setAttribute('stroke-width', '2');
+            svg.appendChild(curve);
 
-            const yLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            yLabel.setAttribute('x', 11);
-            yLabel.setAttribute('y', padTop + plotH / 2);
-            yLabel.setAttribute('fill', '#cbd5e1');
-            yLabel.setAttribute('font-size', '9.5');
-            yLabel.setAttribute('font-weight', '600');
-            yLabel.setAttribute('text-anchor', 'middle');
-            yLabel.setAttribute('transform', `rotate(-90, 11, ${padTop + plotH / 2})`);
-            yLabel.textContent = 'f (mm/rot)';
-            svg.appendChild(yLabel);
+            diametrosCat.forEach((dVal, i) => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', xScale(dVal));
+                circle.setAttribute('cy', yScale(fCatArr[i]));
+                circle.setAttribute('r', '3.5');
+                circle.setAttribute('fill', '#3b82f6');
+                svg.appendChild(circle);
+            });
 
-            if (diametrosCat.length > 0) {
-                let pathD = '';
-                diametrosCat.forEach((dx, idx) => {
-                    const sx = toSvgX(dx);
-                    const sy = toSvgY(fCatArr[idx]);
-                    pathD += (idx === 0 ? `M ${sx} ${sy}` : ` L ${sx} ${sy}`);
-                });
-
-                const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                polyline.setAttribute('d', pathD);
-                polyline.setAttribute('fill', 'none');
-                polyline.setAttribute('stroke', '#3b82f6');
-                polyline.setAttribute('stroke-width', '2');
-                svg.appendChild(polyline);
-
-                diametrosCat.forEach((dx, idx) => {
-                    const sx = toSvgX(dx);
-                    const sy = toSvgY(fCatArr[idx]);
-                    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    dot.setAttribute('cx', sx);
-                    dot.setAttribute('cy', sy);
-                    dot.setAttribute('r', '3.5');
-                    dot.setAttribute('fill', '#3b82f6');
-                    dot.setAttribute('stroke', '#0f172a');
-                    dot.setAttribute('stroke-width', '1');
-                    svg.appendChild(dot);
-                });
-            }
-
-            const cx = toSvgX(dCalc);
-            const cy = toSvgY(fCalc);
+            const cx = xScale(dCalc);
+            const cy = yScale(fCalc);
 
             const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             vLine.setAttribute('x1', cx);
@@ -3257,666 +3295,739 @@ html_content = '''
             hLine.setAttribute('stroke-dasharray', '3,2');
             svg.appendChild(hLine);
 
-            const cDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            cDot.setAttribute('cx', cx);
-            cDot.setAttribute('cy', cy);
-            cDot.setAttribute('r', '5');
-            cDot.setAttribute('fill', '#f97316');
-            cDot.setAttribute('stroke', '#ffffff');
-            cDot.setAttribute('stroke-width', '1.5');
-            svg.appendChild(cDot);
+            const calcDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            calcDot.setAttribute('cx', cx);
+            calcDot.setAttribute('cy', cy);
+            calcDot.setAttribute('r', '5');
+            calcDot.setAttribute('fill', '#f97316');
+            calcDot.setAttribute('stroke', '#ffffff');
+            calcDot.setAttribute('stroke-width', '1.5');
+            svg.appendChild(calcDot);
         }
 
-        function popularSelectComparacao() {
-            const sel = document.getElementById('comp-ferramenta');
-            const brocaAtual = document.getElementById('broca').value;
-            sel.innerHTML = '';
+        function obterContextoCalculoAtual() {
+            let diametro = parseFloat(document.getElementById('diametro').value);
+            let profundidade = parseFloat(document.getElementById('profundidade').value);
+            let qtdFuros = parseInt(document.getElementById('qtd-furos').value, 10);
+            let densidade = parseFloat(document.getElementById('densidade').value);
+            let precoSucata = parseFloat(document.getElementById('preco-sucata').value);
+            let custoHora = parseFloat(document.getElementById('custo-hora').value);
+
+            if (isNaN(diametro) || diametro <= 0) diametro = 12.00;
+            if (isNaN(profundidade) || profundidade <= 0) profundidade = 31.0;
+            if (isNaN(qtdFuros) || qtdFuros < 1) qtdFuros = 50;
+            if (isNaN(densidade) || densidade <= 0) densidade = 7.85;
+            if (isNaN(precoSucata) || precoSucata < 0) precoSucata = 0.35;
+            if (isNaN(custoHora) || custoHora < 0) custoHora = 50.00;
+
+            const peckingCheck = document.getElementById('pecking-check').checked;
+            const peckingUnid = document.getElementById('pecking-unidade').value;
+            let peckingInputVal = parseFloat(document.getElementById('pecking-passo').value);
+            let peckingRetensaoVal = parseFloat(document.getElementById('pecking-retensao').value);
+            if (isNaN(peckingInputVal) || peckingInputVal <= 0) peckingInputVal = peckingUnid === 'xd' ? 3.0 : 36.0;
+            if (isNaN(peckingRetensaoVal) || peckingRetensaoVal <= 0) peckingRetensaoVal = 5000;
+
+            const rpmMaxVal = parseFloat(document.getElementById('input-rpm-max').value) || 8000;
+
+            const requerPiloto = Boolean(document.getElementById('comp-requer-piloto')?.checked);
+            let tempoPilotoSeg = parseFloat(document.getElementById('comp-tempo-piloto-seg')?.value);
+            let custoPilotoFuro = parseFloat(document.getElementById('comp-custo-piloto-furo')?.value);
+            if (isNaN(tempoPilotoSeg) || tempoPilotoSeg < 0) tempoPilotoSeg = 0;
+            if (isNaN(custoPilotoFuro) || custoPilotoFuro < 0) custoPilotoFuro = 0;
+
+            const usaBrocaCanhao = Boolean(document.getElementById('comp-usa-broca-canhao')?.checked);
+            let tempoParagemAfiMin = parseFloat(document.getElementById('comp-tempo-paragem-afi-min')?.value);
+            if (isNaN(tempoParagemAfiMin) || tempoParagemAfiMin < 0) tempoParagemAfiMin = 0;
+
+            return {
+                diametro, profundidade, qtdFuros, densidade, precoSucata, custoHora,
+                refrigAtual, vcPct, fPct, rpmMaxUnlocked, rpmMaxVal,
+                peckingCheck, peckingUnid, peckingInputVal, peckingRetensaoVal,
+                requerPiloto, tempoPilotoSeg, custoPilotoFuro,
+                usaBrocaCanhao, tempoParagemAfiMin
+            };
+        }
+
+        function obterCustoHoraComparacao() {
+            const inpComp = document.getElementById('comp-custo-hora');
+            const inpMain = document.getElementById('custo-hora');
+            let val = parseFloat(inpComp ? inpComp.value : inpMain.value);
+            if (isNaN(val) || val < 0) {
+                val = parseFloat(inpMain.value);
+                if (isNaN(val) || val < 0) val = 50.00;
+            }
+            return val;
+        }
+
+        function sincronizarCustoHoraComparacao() {
+            const inpComp = document.getElementById('comp-custo-hora');
+            const inpMain = document.getElementById('custo-hora');
+            let val = parseFloat(inpComp.value);
+            if (isNaN(val) || val < 0) return;
+            inpMain.value = val.toFixed(2);
+            atualizarCalculo();
+        }
+
+        function abrirModalComparacao() {
+            if (!isProMode) return;
+            const atualBroca = document.getElementById('broca').value;
+            const selComp = document.getElementById('comp-ferramenta');
+            const inpCompHora = document.getElementById('comp-custo-hora');
+            const inpMainHora = document.getElementById('custo-hora');
+            if (inpCompHora && inpMainHora) {
+                const mainVal = parseFloat(inpMainHora.value);
+                if (!isNaN(mainVal) && mainVal >= 0) {
+                    inpCompHora.value = mainVal.toFixed(2);
+                }
+            }
+
+            selComp.innerHTML = '';
+
+            const optCliente = document.createElement('option');
+            optCliente.value = '__CLIENTE_MANUAL__';
+            optCliente.text = 'Ferramenta do Cliente (Vc e f manuais)';
+            selComp.appendChild(optCliente);
 
             for (const key in dados) {
                 const opt = document.createElement('option');
                 opt.value = key;
-                opt.text = `${dados[key].nome} (${key.toUpperCase()})`;
-                if (key === brocaAtual) opt.selected = true;
-                sel.appendChild(opt);
+                opt.text = `${dados[key].nome} (${dados[key].linha.toUpperCase()})`;
+                selComp.appendChild(opt);
             }
 
-            const optCliente = document.createElement('option');
-            optCliente.value = '__cliente__';
-            optCliente.text = '🛠️ Ferramenta do Cliente (Vc e f manuais)';
-            sel.appendChild(optCliente);
-
-            popularVariantesComparacao();
-        }
-
-        function popularVariantesComparacao() {
-            const fonteVal = document.getElementById('comp-ferramenta').value;
-            const blocoVar = document.getElementById('comp-bloco-variante');
-            const selVar = document.getElementById('comp-variante');
-            selVar.innerHTML = '';
-
-            if (fonteVal === '__cliente__' || !dados[fonteVal]) {
-                blocoVar.classList.add('hidden');
-                return;
-            }
-
-            blocoVar.classList.remove('hidden');
-            const toolData = dados[fonteVal];
-            const varKeys = Object.keys(toolData.variantes || {});
-            const varAtualCalc = getVarianteAtiva();
-
-            varKeys.forEach((vk, idx) => {
-                const opt = document.createElement('option');
-                opt.value = vk;
-                opt.text = vk;
-                if (vk === varAtualCalc || (!varKeys.includes(varAtualCalc) && idx === 0)) {
-                    opt.selected = true;
-                }
-                selVar.appendChild(opt);
-            });
-        }
-
-        function onChangeFonteComparacao() {
-            const fonteVal = document.getElementById('comp-ferramenta').value;
-            const blocoCliente = document.getElementById('comp-bloco-cliente');
-            const btnUsar = document.getElementById('btn-usar-comparada');
-
-            popularVariantesComparacao();
-
-            if (fonteVal === '__cliente__') {
-                blocoCliente.classList.remove('hidden');
-                btnUsar.classList.add('hidden');
+            if (atualBroca && dados[atualBroca]) {
+                selComp.value = atualBroca;
             } else {
-                blocoCliente.classList.add('hidden');
-                btnUsar.classList.remove('hidden');
+                selComp.value = '__CLIENTE_MANUAL__';
             }
-            atualizarComparacao();
-        }
 
-        function abrirModalComparacao() {
-            if (!isProMode) {
-                gerirModoPro();
-                return;
-            }
-            if (!window._ultimoCalculo) atualizarCalculo();
-            const calc = window._ultimoCalculo;
-            if (calc && calc.custoHora) {
-                document.getElementById('comp-custo-hora').value = calc.custoHora.toFixed(2);
-            }
-            atualizarEstadoBotaoInterrompido();
-            popularSelectComparacao();
             onChangeFonteComparacao();
             document.getElementById('modal-comparacao').classList.remove('hidden');
         }
 
         function fecharModalComparacao() {
-            document.getElementById('modal-comparacao').classList.add('hidden');
+            const modal = document.getElementById('modal-comparacao');
+            if (modal) modal.classList.add('hidden');
         }
 
         function abrirJanelaResultadoComparacao() {
-            if (!isProMode) {
-                gerirModoPro();
-                return;
-            }
+            if (!isProMode) return;
             atualizarComparacao();
-            document.getElementById('comp-incluir-pdf-res').checked = document.getElementById('comp-incluir-pdf').checked;
-            document.getElementById('modal-comparacao').classList.add('hidden');
+            const syncCb = document.getElementById('comp-incluir-pdf-res');
+            const mainCb = document.getElementById('comp-incluir-pdf');
+            if (syncCb && mainCb) {
+                syncCb.checked = mainCb.checked;
+            }
+            fecharModalComparacao();
             document.getElementById('modal-resultado-comparacao').classList.remove('hidden');
         }
 
         function fecharJanelaResultadoComparacao() {
-            document.getElementById('modal-resultado-comparacao').classList.add('hidden');
+            const modal = document.getElementById('modal-resultado-comparacao');
+            if (modal) modal.classList.add('hidden');
         }
 
         function voltarParaInputsComparacao() {
-            document.getElementById('modal-resultado-comparacao').classList.add('hidden');
+            fecharJanelaResultadoComparacao();
             document.getElementById('modal-comparacao').classList.remove('hidden');
         }
 
-        function sincronizarCustoHoraComparacao() {
-            let val = parseFloat(document.getElementById('comp-custo-hora').value);
-            if (!isNaN(val) && val > 0) {
-                document.getElementById('custo-hora').value = val.toFixed(2);
-                atualizarCalculo();
+        function onChangeFonteComparacao() {
+            const compKey = document.getElementById('comp-ferramenta').value;
+            const blocoCliente = document.getElementById('comp-bloco-cliente');
+            const blocoVariante = document.getElementById('comp-bloco-variante');
+            const selVar = document.getElementById('comp-variante');
+            const btnUsar = document.getElementById('btn-usar-comparada');
+
+            if (compKey === '__CLIENTE_MANUAL__') {
+                blocoCliente.classList.remove('hidden');
+                blocoVariante.classList.add('hidden');
+                btnUsar.classList.add('hidden');
             } else {
-                atualizarComparacao();
+                blocoCliente.classList.add('hidden');
+                blocoVariante.classList.remove('hidden');
+                btnUsar.classList.remove('hidden');
+
+                const alvoData = dados[compKey];
+                selVar.innerHTML = '';
+                if (alvoData && alvoData.variantes) {
+                    const varKeys = Object.keys(alvoData.variantes);
+                    varKeys.forEach(vk => {
+                        const opt = document.createElement('option');
+                        opt.value = vk;
+                        opt.text = vk;
+                        selVar.appendChild(opt);
+                    });
+                    const varAtual = getVarianteAtiva();
+                    if (alvoData.variantes[varAtual]) {
+                        selVar.value = varAtual;
+                    }
+                }
             }
+            atualizarComparacao();
         }
 
-        function calcularCustoFerramentaLote(precoUnit, vidaPorAf, vidaUnid, qtdAf, custoAf, qtdFuros, profundidadeMm) {
-            const p = Math.max(0, precoUnit || 0);
-            const v = Math.max(1, vidaPorAf || 1);
-            const afQtd = Math.max(0, Math.floor(qtdAf || 0));
-            const afCusto = Math.max(0, custoAf || 0);
-            const nFuros = Math.max(1, qtdFuros || 1);
-            const profM = Math.max(0.0001, (profundidadeMm || 1) / 1000);
+        function calcularCustoFerramentaLote(precoBroca, vidaPorAfiação, vidaUnidade, numReafiacoes, custoPorAfiação, qtdFuros, profundidadeMm) {
+            const nReaf = Math.max(0, Math.floor(numReafiacoes || 0));
+            const totalCiclosFerramenta = 1 + nReaf;
+            const vidaUnidEfetiva = vidaUnidade === 'metros'
+                ? Math.max(0.001, (vidaPorAfiação * 1000) / Math.max(0.1, profundidadeMm))
+                : Math.max(0.001, vidaPorAfiação);
+            const furosPorFerramentaCompleta = vidaUnidEfetiva * totalCiclosFerramenta;
+            const qtdFerramentasNecessarias = Math.ceil(qtdFuros / furosPorFerramentaCompleta);
+            const reafiacoesEfetuadas = Math.max(0, qtdFerramentasNecessarias * nReaf);
 
-            const vidaPorCicloFuros = vidaUnid === 'metros' ? Math.max(1, (v / profM)) : v;
-            const totalCiclosPorFerramenta = 1 + afQtd;
-            const vidaTotalFerramentaFuros = vidaPorCicloFuros * totalCiclosPorFerramenta;
-            const custoTotalPorFerramenta = p + (afQtd * afCusto);
-
-            const custoFerramentaPorFuro = custoTotalPorFerramenta / vidaTotalFerramentaFuros;
-            const custoFerramentaLote = custoFerramentaPorFuro * nFuros;
-            const numFerramentasLote = Math.ceil(nFuros / vidaTotalFerramentaFuros);
+            const custoFerramentaLote = (qtdFerramentasNecessarias * precoBroca) + (reafiacoesEfetuadas * custoPorAfiação);
+            const custoFerramentaPorFuro = custoFerramentaLote / Math.max(1, qtdFuros);
 
             return {
-                vidaPorCicloFuros,
-                vidaTotalFerramentaFuros,
-                custoTotalPorFerramenta,
-                custoFerramentaPorFuro,
+                qtdFerramentasNecessarias,
+                furosPorFerramentaCompleta,
+                vidaUnidEfetiva,
+                reafiacoesEfetuadas,
                 custoFerramentaLote,
-                numFerramentasLote
+                custoFerramentaPorFuro
             };
         }
 
-        function desenharGraficoBarrasComparacao(svgId, labelA, valA, corA, labelB, valB, corB, unidade) {
+        function desenharGraficoBarrasComparacao(svgId, labelA, valA, colorA, labelB, valB, colorB, unitSuffix, decimals = 2) {
             const svg = document.getElementById(svgId);
             if (!svg) return;
             svg.innerHTML = '';
 
-            const W = 300, H = 175;
-            const padL = 42, padR = 16, padT = 22, padB = 28;
-            const plotW = W - padL - padR;
-            const plotH = H - padT - padB;
+            const width = 300;
+            const height = 175;
+            const padLeft = 44;
+            const padRight = 16;
+            const padTop = 24;
+            const padBottom = 30;
+            const plotW = width - padLeft - padRight;
+            const plotH = height - padTop - padBottom;
 
-            const maxVal = Math.max(valA || 0, valB || 0, 0.01) * 1.18;
-            const toY = (v) => padT + plotH - (Math.max(0, v) / maxVal) * plotH;
+            const maxVal = Math.max(valA, valB, 0.01) * 1.18;
+            const yScale = v => padTop + plotH - (Math.max(0, v) / maxVal) * plotH;
 
             for (let i = 0; i <= 3; i++) {
-                const v = (maxVal * i) / 3;
-                const y = toY(v);
+                const tickVal = (i / 3) * maxVal;
+                const yPos = yScale(tickVal);
                 const grid = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                grid.setAttribute('x1', padL);
-                grid.setAttribute('y1', y);
-                grid.setAttribute('x2', W - padR);
-                grid.setAttribute('y2', y);
+                grid.setAttribute('x1', padLeft);
+                grid.setAttribute('y1', yPos);
+                grid.setAttribute('x2', width - padRight);
+                grid.setAttribute('y2', yPos);
                 grid.setAttribute('stroke', '#1e293b');
                 grid.setAttribute('stroke-width', '1');
                 svg.appendChild(grid);
 
-                const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                lbl.setAttribute('x', padL - 5);
-                lbl.setAttribute('y', y + 3);
-                lbl.setAttribute('fill', '#94a3b8');
-                lbl.setAttribute('font-size', '8.5');
-                lbl.setAttribute('text-anchor', 'end');
-                lbl.textContent = v >= 100 ? Math.round(v) : v.toFixed(1);
-                svg.appendChild(lbl);
+                const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                txt.setAttribute('x', padLeft - 5);
+                txt.setAttribute('y', yPos + 3);
+                txt.setAttribute('text-anchor', 'end');
+                txt.setAttribute('fill', '#94a3b8');
+                txt.setAttribute('font-size', '8.5');
+                txt.textContent = tickVal >= 1000 ? `${(tickVal / 1000).toFixed(1)}k` : tickVal.toFixed(tickVal >= 10 ? 0 : 1);
+                svg.appendChild(txt);
             }
 
             const axisX = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            axisX.setAttribute('x1', padL);
-            axisX.setAttribute('y1', padT + plotH);
-            axisX.setAttribute('x2', W - padR);
-            axisX.setAttribute('y2', padT + plotH);
+            axisX.setAttribute('x1', padLeft);
+            axisX.setAttribute('y1', padTop + plotH);
+            axisX.setAttribute('x2', width - padRight);
+            axisX.setAttribute('y2', padTop + plotH);
             axisX.setAttribute('stroke', '#475569');
-            axisX.setAttribute('stroke-width', '1.2');
+            axisX.setAttribute('stroke-width', '1');
             svg.appendChild(axisX);
 
-            const barW = Math.min(54, plotW / 4.2);
-            const xA = padL + plotW * 0.27 - barW / 2;
-            const xB = padL + plotW * 0.73 - barW / 2;
+            const slotW = plotW / 2;
+            const barW = Math.min(54, slotW * 0.52);
 
-            const drawBar = (x, val, color, shortName) => {
-                const hBar = Math.max(2, (Math.max(0, val) / maxVal) * plotH);
-                const yBar = padT + plotH - hBar;
+            const barras = [
+                { label: labelA, val: valA, color: colorA, cx: padLeft + slotW * 0.5 },
+                { label: labelB, val: valB, color: colorB, cx: padLeft + slotW * 1.5 }
+            ];
+
+            barras.forEach(b => {
+                const topY = yScale(b.val);
+                const barH = Math.max(2, (padTop + plotH) - topY);
+                const xPos = b.cx - barW / 2;
 
                 const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('x', x);
-                rect.setAttribute('y', yBar);
+                rect.setAttribute('x', xPos);
+                rect.setAttribute('y', topY);
                 rect.setAttribute('width', barW);
-                rect.setAttribute('height', hBar);
+                rect.setAttribute('height', barH);
                 rect.setAttribute('rx', '4');
-                rect.setAttribute('fill', color);
+                rect.setAttribute('fill', b.color);
                 svg.appendChild(rect);
 
                 const valTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                valTxt.setAttribute('x', x + barW / 2);
-                valTxt.setAttribute('y', Math.max(12, yBar - 5));
-                valTxt.setAttribute('fill', '#f8fafc');
-                valTxt.setAttribute('font-size', '9');
-                valTxt.setAttribute('font-weight', '700');
+                valTxt.setAttribute('x', b.cx);
+                valTxt.setAttribute('y', Math.max(12, topY - 5));
                 valTxt.setAttribute('text-anchor', 'middle');
-                valTxt.textContent = `${val.toFixed(unidade === '€' ? 2 : 1)}${unidade}`;
+                valTxt.setAttribute('fill', '#f8fafc');
+                valTxt.setAttribute('font-size', '9.5');
+                valTxt.setAttribute('font-weight', 'bold');
+                valTxt.textContent = `${b.val.toFixed(decimals)}${unitSuffix}`;
                 svg.appendChild(valTxt);
 
-                const xTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                xTxt.setAttribute('x', x + barW / 2);
-                xTxt.setAttribute('y', padT + plotH + 14);
-                xTxt.setAttribute('fill', '#cbd5e1');
-                xTxt.setAttribute('font-size', '9');
-                xTxt.setAttribute('text-anchor', 'middle');
-                xTxt.textContent = shortName;
-                svg.appendChild(xTxt);
-            };
-
-            drawBar(xA, valA, corA, labelA);
-            drawBar(xB, valB, corB, labelB);
+                const lblTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                lblTxt.setAttribute('x', b.cx);
+                lblTxt.setAttribute('y', padTop + plotH + 14);
+                lblTxt.setAttribute('text-anchor', 'middle');
+                lblTxt.setAttribute('fill', '#cbd5e1');
+                lblTxt.setAttribute('font-size', '9');
+                lblTxt.textContent = b.label;
+                svg.appendChild(lblTxt);
+            });
         }
 
-        function desenharGraficoBreakEven(svgId, custoFixoA, custoVarFuroA, custoFixoB, custoVarFuroB, qtdFuros) {
+        function desenharGraficoBreakEven(svgId, qtdFuros, custoFixoA, custoVarFuroA, custoFixoB, custoVarFuroB) {
             const svg = document.getElementById(svgId);
             if (!svg) return;
             svg.innerHTML = '';
 
-            const W = 300, H = 175;
-            const padL = 42, padR = 16, padT = 16, padB = 28;
-            const plotW = W - padL - padR;
-            const plotH = H - padT - padB;
+            const width = 300;
+            const height = 175;
+            const padLeft = 44;
+            const padRight = 14;
+            const padTop = 16;
+            const padBottom = 28;
+            const plotW = width - padLeft - padRight;
+            const plotH = height - padTop - padBottom;
 
-            const nMax = Math.max(1, qtdFuros || 50);
-            const totalA = custoFixoA + custoVarFuroA * nMax;
-            const totalB = custoFixoB + custoVarFuroB * nMax;
-            const maxY = Math.max(totalA, totalB, custoFixoA, custoFixoB, 1) * 1.12;
+            const nPontos = 20;
+            const passos = Math.max(1, qtdFuros);
+            const ptsA = [];
+            const ptsB = [];
 
-            const toX = (q) => padL + (q / nMax) * plotW;
-            const toY = (c) => padT + plotH - (Math.max(0, c) / maxY) * plotH;
+            for (let i = 0; i <= nPontos; i++) {
+                const furos = Math.round((i / nPontos) * passos);
+                const totA = custoFixoA + furos * custoVarFuroA;
+                const totB = custoFixoB + furos * custoVarFuroB;
+                ptsA.push({ furos, val: totA });
+                ptsB.push({ furos, val: totB });
+            }
+
+            const maxVal = Math.max(...ptsA.map(p => p.val), ...ptsB.map(p => p.val), 1) * 1.12;
+            const xScale = f => padLeft + (f / passos) * plotW;
+            const yScale = v => padTop + plotH - (v / maxVal) * plotH;
 
             for (let i = 0; i <= 3; i++) {
-                const yVal = (maxY * i) / 3;
-                const sy = toY(yVal);
-                const grid = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                grid.setAttribute('x1', padL);
-                grid.setAttribute('y1', sy);
-                grid.setAttribute('x2', W - padR);
-                grid.setAttribute('y2', sy);
-                grid.setAttribute('stroke', '#1e293b');
-                grid.setAttribute('stroke-width', '1');
-                svg.appendChild(grid);
+                const tickVal = (i / 3) * maxVal;
+                const yPos = yScale(tickVal);
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', padLeft);
+                line.setAttribute('y1', yPos);
+                line.setAttribute('x2', width - padRight);
+                line.setAttribute('y2', yPos);
+                line.setAttribute('stroke', '#1e293b');
+                line.setAttribute('stroke-width', '1');
+                svg.appendChild(line);
 
-                const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                lbl.setAttribute('x', padL - 5);
-                lbl.setAttribute('y', y + 3);
-                lbl.setAttribute('fill', '#94a3b8');
-                lbl.setAttribute('font-size', '8.5');
-                lbl.setAttribute('text-anchor', 'end');
-                lbl.textContent = `${Math.round(yVal)}€`;
-                svg.appendChild(lbl);
+                const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                txt.setAttribute('x', padLeft - 5);
+                txt.setAttribute('y', yPos + 3);
+                txt.setAttribute('text-anchor', 'end');
+                txt.setAttribute('fill', '#94a3b8');
+                txt.setAttribute('font-size', '8.5');
+                txt.textContent = tickVal >= 1000 ? `${(tickVal / 1000).toFixed(1)}k€` : `${tickVal.toFixed(0)}€`;
+                svg.appendChild(txt);
             }
 
             const axisX = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            axisX.setAttribute('x1', padL);
-            axisX.setAttribute('y1', padT + plotH);
-            axisX.setAttribute('x2', W - padR);
-            axisX.setAttribute('y2', padT + plotH);
+            axisX.setAttribute('x1', padLeft);
+            axisX.setAttribute('y1', padTop + plotH);
+            axisX.setAttribute('x2', width - padRight);
+            axisX.setAttribute('y2', padTop + plotH);
             axisX.setAttribute('stroke', '#475569');
-            axisX.setAttribute('stroke-width', '1.2');
+            axisX.setAttribute('stroke-width', '1');
             svg.appendChild(axisX);
 
-            const steps = 20;
-            let dA = '', dB = '';
-            for (let s = 0; s <= steps; s++) {
-                const q = (nMax * s) / steps;
-                const sx = toX(q);
-                const syA = toY(custoFixoA + custoVarFuroA * q);
-                const syB = toY(custoFixoB + custoVarFuroB * q);
-                dA += (s === 0 ? `M ${sx} ${syA}` : ` L ${sx} ${syA}`);
-                dB += (s === 0 ? `M ${sx} ${syB}` : ` L ${sx} ${syB}`);
-            }
+            const axisY = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            axisY.setAttribute('x1', padLeft);
+            axisY.setAttribute('y1', padTop);
+            axisY.setAttribute('x2', padLeft);
+            axisY.setAttribute('y2', padTop + plotH);
+            axisY.setAttribute('stroke', '#475569');
+            axisY.setAttribute('stroke-width', '1');
+            svg.appendChild(axisY);
 
-            const lineA = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            lineA.setAttribute('d', dA);
-            lineA.setAttribute('fill', 'none');
-            lineA.setAttribute('stroke', '#38bdf8');
-            lineA.setAttribute('stroke-width', '2');
-            svg.appendChild(lineA);
+            [0, Math.round(passos / 2), passos].forEach(fVal => {
+                const xPos = xScale(fVal);
+                const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                lbl.setAttribute('x', xPos);
+                lbl.setAttribute('y', padTop + plotH + 14);
+                lbl.setAttribute('text-anchor', 'middle');
+                lbl.setAttribute('fill', '#94a3b8');
+                lbl.setAttribute('font-size', '8.5');
+                lbl.textContent = `${fVal}`;
+                svg.appendChild(lbl);
+            });
 
-            const lineB = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            lineB.setAttribute('d', dB);
-            lineB.setAttribute('fill', 'none');
-            lineB.setAttribute('stroke', '#fbbf24');
-            lineB.setAttribute('stroke-width', '2');
-            lineB.setAttribute('stroke-dasharray', '4,2');
-            svg.appendChild(lineB);
+            const xTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            xTitle.setAttribute('x', padLeft + plotW / 2);
+            xTitle.setAttribute('y', height - 2);
+            xTitle.setAttribute('text-anchor', 'middle');
+            xTitle.setAttribute('fill', '#64748b');
+            xTitle.setAttribute('font-size', '8.5');
+            xTitle.textContent = 'Furos Acumulados no Lote';
+            svg.appendChild(xTitle);
 
-            const denom = custoVarFuroA - custoVarFuroB;
-            if (Math.abs(denom) > 1e-9) {
-                const qCross = (custoFixoB - custoFixoA) / denom;
-                if (qCross > 0 && qCross <= nMax) {
-                    const cCross = custoFixoA + custoVarFuroA * qCross;
-                    const cx = toX(qCross);
-                    const cy = toY(cCross);
+            const buildPath = pts => pts.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${xScale(p.furos).toFixed(1)} ${yScale(p.val).toFixed(1)}`).join(' ');
 
-                    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    dot.setAttribute('cx', cx);
-                    dot.setAttribute('cy', cy);
-                    dot.setAttribute('r', '4');
-                    dot.setAttribute('fill', '#34d399');
-                    dot.setAttribute('stroke', '#0f172a');
-                    dot.setAttribute('stroke-width', '1.2');
-                    svg.appendChild(dot);
+            const pathA = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            pathA.setAttribute('d', buildPath(ptsA));
+            pathA.setAttribute('fill', 'none');
+            pathA.setAttribute('stroke', '#38bdf8');
+            pathA.setAttribute('stroke-width', '2.2');
+            svg.appendChild(pathA);
 
-                    const cTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    cTxt.setAttribute('x', Math.min(W - padR - 25, Math.max(padL + 22, cx)));
-                    cTxt.setAttribute('y', Math.max(12, cy - 7));
-                    cTxt.setAttribute('fill', '#6ee7b7');
-                    cTxt.setAttribute('font-size', '8.5');
-                    cTxt.setAttribute('font-weight', '700');
-                    cTxt.setAttribute('text-anchor', 'middle');
-                    cTxt.textContent = `${Math.ceil(qCross)} furos`;
-                    svg.appendChild(cTxt);
-                }
-            }
-
-            const xStart = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            xStart.setAttribute('x', padL);
-            xStart.setAttribute('y', padT + plotH + 14);
-            xStart.setAttribute('fill', '#94a3b8');
-            xStart.setAttribute('font-size', '8.5');
-            xStart.textContent = '0';
-            svg.appendChild(xStart);
-
-            const xEnd = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            xEnd.setAttribute('x', W - padR);
-            xEnd.setAttribute('y', padT + plotH + 14);
-            xEnd.setAttribute('fill', '#94a3b8');
-            xEnd.setAttribute('font-size', '8.5');
-            xEnd.setAttribute('text-anchor', 'end');
-            xEnd.textContent = `${nMax} furos`;
-            svg.appendChild(xEnd);
+            const pathB = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            pathB.setAttribute('d', buildPath(ptsB));
+            pathB.setAttribute('fill', 'none');
+            pathB.setAttribute('stroke', '#fbbf24');
+            pathB.setAttribute('stroke-width', '2.2');
+            svg.appendChild(pathB);
         }
 
         function atualizarComparacao() {
-            if (!window._ultimoCalculo) atualizarCalculo();
-            const base = window._ultimoCalculo;
-            if (!base) return;
+            const atualBroca = document.getElementById('broca').value;
+            const grupoEfetivoKey = getGrupoEfetivo();
+            const compKey = document.getElementById('comp-ferramenta').value || '__CLIENTE_MANUAL__';
+            const compVariante = document.getElementById('comp-variante').value || '5xD';
+            const ctx = obterContextoCalculoAtual();
+            const custoHoraComp = obterCustoHoraComparacao();
+            ctx.custoHora = custoHoraComp;
 
-            const fonteAlvo = document.getElementById('comp-ferramenta').value;
-            const varianteAlvo = document.getElementById('comp-variante').value || base.variante;
-            const avisoGrupo = document.getElementById('comp-aviso-grupo');
+            const varAtual = getVarianteAtiva();
+            const metAtual = calcularMetricasFerramenta(atualBroca, varAtual, grupoEfetivoKey, ctx);
+            if (!metAtual) return;
 
-            let custoHoraComp = parseFloat(document.getElementById('comp-custo-hora').value);
-            if (isNaN(custoHoraComp) || custoHoraComp <= 0) custoHoraComp = base.custoHora;
-
-            let qtdFurosEfetivos = base.qtdFuros;
-            let notaInterrompidoTxt = '';
+            let metrosRefContinuo = parseFloat(document.getElementById('comp-metros-continuo')?.value);
+            if (isNaN(metrosRefContinuo) || metrosRefContinuo <= 0) metrosRefContinuo = 90;
+            const furosEquivContinuo = Math.max(1, Math.round((metrosRefContinuo * 1000) / Math.max(0.1, ctx.profundidade)));
             const equivContinuoEl = document.getElementById('comp-equiv-continuo');
-
-            if (corteInterrompidoAtivo) {
-                let metrosContinuo = parseFloat(document.getElementById('comp-metros-continuo').value);
-                if (isNaN(metrosContinuo) || metrosContinuo <= 0) metrosContinuo = 90;
-                const profMmSegura = Math.max(1, base.profundidade || 1);
-                const furosEquivContinuo = Math.max(1, Math.round((metrosContinuo * 1000) / profMmSegura));
-                if (equivContinuoEl) {
-                    equivContinuoEl.innerText = `(~${furosEquivContinuo} furos em ${profMmSegura.toFixed(0)} mm)`;
-                }
-                qtdFurosEfetivos = furosEquivContinuo;
-                notaInterrompidoTxt = `Corte interrompido: ${metrosContinuo.toFixed(0)} m contínuos equiv. a ~${furosEquivContinuo} furos de ${profMmSegura.toFixed(1)} mm (lote base: ${base.qtdFuros} furos).`;
+            if (equivContinuoEl) {
+                equivContinuoEl.innerText = `(~${furosEquivContinuo} furos p/ ${ctx.profundidade.toFixed(0)} mm)`;
             }
 
-            const precoAtual = Math.max(0, parseFloat(document.getElementById('comp-preco-atual').value) || 0);
-            const vidaAtual = Math.max(1, parseFloat(document.getElementById('comp-vida-atual').value) || 1);
+            let precoAtual = parseFloat(document.getElementById('comp-preco-atual').value);
+            let vidaAtual = parseFloat(document.getElementById('comp-vida-atual').value);
             const vidaUnidAtual = document.getElementById('comp-vida-unid-atual').value;
-            const afiQtdAtual = Math.max(0, parseInt(document.getElementById('comp-afi-qtd-atual').value, 10) || 0);
-            const afiCustoAtual = Math.max(0, parseFloat(document.getElementById('comp-afi-custo-atual').value) || 0);
+            let afiQtdAtual = parseInt(document.getElementById('comp-afi-qtd-atual').value, 10);
+            let afiCustoAtual = parseFloat(document.getElementById('comp-afi-custo-atual').value);
 
-            const precoAlvo = Math.max(0, parseFloat(document.getElementById('comp-preco-alvo').value) || 0);
-            const vidaAlvo = Math.max(1, parseFloat(document.getElementById('comp-vida-alvo').value) || 1);
+            let precoAlvo = parseFloat(document.getElementById('comp-preco-alvo').value);
+            let vidaAlvo = parseFloat(document.getElementById('comp-vida-alvo').value);
             const vidaUnidAlvo = document.getElementById('comp-vida-unid-alvo').value;
-            const afiQtdAlvo = Math.max(0, parseInt(document.getElementById('comp-afi-qtd-alvo').value, 10) || 0);
-            const afiCustoAlvo = Math.max(0, parseFloat(document.getElementById('comp-afi-custo-alvo').value) || 0);
+            let afiQtdAlvo = parseInt(document.getElementById('comp-afi-qtd-alvo').value, 10);
+            let afiCustoAlvo = parseFloat(document.getElementById('comp-afi-custo-alvo').value);
 
-            const requerPiloto = fonteAlvo === '__cliente__' && document.getElementById('comp-requer-piloto').checked;
-            const tempoPilotoSeg = requerPiloto ? Math.max(0, parseFloat(document.getElementById('comp-tempo-piloto-seg').value) || 0) : 0;
-            const custoPilotoFuro = requerPiloto ? Math.max(0, parseFloat(document.getElementById('comp-custo-piloto-furo').value) || 0) : 0;
-            const usaBrocaCanhao = requerPiloto && document.getElementById('comp-usa-broca-canhao').checked;
-            const tempoParagemAfiMin = usaBrocaCanhao ? Math.max(0, parseFloat(document.getElementById('comp-tempo-paragem-afi-min').value) || 0) : 0;
+            if (isNaN(precoAtual) || precoAtual < 0) precoAtual = 0;
+            if (isNaN(vidaAtual) || vidaAtual <= 0) vidaAtual = 1;
+            if (isNaN(afiQtdAtual) || afiQtdAtual < 0) afiQtdAtual = 0;
+            if (isNaN(afiCustoAtual) || afiCustoAtual < 0) afiCustoAtual = 0;
 
-            const contextoComp = {
-                diametro: base.diametro,
-                profundidade: base.profundidade,
-                qtdFuros: qtdFurosEfetivos,
-                custoHora: custoHoraComp,
-                refrigAtual: base.refrigAtual,
-                vcPct: base.vcPct,
-                fPct: base.fPct,
-                rpmMaxUnlocked: base.rpmMaxUnlocked,
-                rpmMaxVal: base.rpmMaxVal,
-                peckingCheck: base.peckingCheck,
-                peckingUnid: base.peckingUnid,
-                peckingInputVal: base.peckingInputVal,
-                peckingRetensaoVal: base.peckingRetensaoVal,
-                requerPiloto,
-                tempoPilotoSeg,
-                custoPilotoFuro,
-                usaBrocaCanhao,
-                tempoParagemAfiMin,
-                furosPorAfiação: vidaAlvo
-            };
+            if (isNaN(precoAlvo) || precoAlvo < 0) precoAlvo = 0;
+            if (isNaN(vidaAlvo) || vidaAlvo <= 0) vidaAlvo = 1;
+            if (isNaN(afiQtdAlvo) || afiQtdAlvo < 0) afiQtdAlvo = 0;
+            if (isNaN(afiCustoAlvo) || afiCustoAlvo < 0) afiCustoAlvo = 0;
 
-            const calcAtual = calcularMetricasFerramenta(base.brocaKey, base.variante, base.grupoEfetivo, contextoComp);
-            if (!calcAtual) return;
+            const avisoEl = document.getElementById('comp-aviso-grupo');
+            let metAlvo = null;
+            let nomeAlvo = "Ferramenta Comparada";
 
-            let calcAlvo = null;
-            let avisos = [];
-            if (notaInterrompidoTxt) avisos.push(notaInterrompidoTxt);
+            if (compKey === '__CLIENTE_MANUAL__') {
+                nomeAlvo = (document.getElementById('comp-cliente-nome').value || '').trim() || "Ferramenta do Cliente";
+                let vcCliente = parseFloat(document.getElementById('comp-cliente-vc').value);
+                let fCliente = parseFloat(document.getElementById('comp-cliente-f').value);
+                if (isNaN(vcCliente) || vcCliente <= 0) vcCliente = 70;
+                if (isNaN(fCliente) || fCliente <= 0) fCliente = 0.0200;
 
-            if (fonteAlvo === '__cliente__') {
-                const nomeCli = (document.getElementById('comp-cliente-nome').value || '').trim() || 'Ferramenta do Cliente';
-                const vcCli = Math.max(1, parseFloat(document.getElementById('comp-cliente-vc').value) || 1);
-                const fCli = Math.max(0.001, parseFloat(document.getElementById('comp-cliente-f').value) || 0.001);
-                calcAlvo = calcularMetricasManualCliente(nomeCli, vcCli, fCli, base.grupoEfetivo, contextoComp);
+                const furosCicloCliente = vidaUnidAlvo === 'metros'
+                    ? Math.max(1, Math.round((vidaAlvo * 1000) / Math.max(0.1, ctx.profundidade)))
+                    : Math.max(1, Math.round(vidaAlvo));
 
-                if (requerPiloto) {
-                    const extraTxt = usaBrocaCanhao
-                        ? ` + paragens afiação canhão (${calcAlvo.numParagensLote}× ${calcAlvo.tempoParagemMinVal.toFixed(0)} min = +${calcAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min)`
-                        : '';
-                    avisos.push(`Cliente com furo-piloto: +${tempoPilotoSeg.toFixed(0)} s/furo (+${calcAlvo.tempoPilotoLoteMin.toFixed(1)} min no lote) e +${custoPilotoFuro.toFixed(2)} €/furo (+${calcAlvo.custoPilotoLote.toFixed(2)} € no lote)${extraTxt}.`);
+                const ctxCliente = { ...ctx, furosPorAfiação: furosCicloCliente };
+                metAlvo = calcularMetricasManualCliente(nomeAlvo, vcCliente, fCliente, grupoEfetivoKey, ctxCliente);
+
+                const resumoCanhaoEl = document.getElementById('comp-canhao-resumo');
+                if (resumoCanhaoEl) {
+                    resumoCanhaoEl.innerText = metAlvo.canhaoAtivo
+                        ? `${metAlvo.numParagensLote} paragem(ns) · +${metAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min (${metAlvo.tempoParagemMinVal} min/afiação)`
+                        : '0 paragens · +0.0 min';
                 }
-            } else {
-                const toolAlvoObj = dados[fonteAlvo];
-                if (!toolAlvoObj) return;
-                let grupoAlvoEfetivo = base.grupoEfetivo;
-                if (!toolAlvoObj.grupos[grupoAlvoEfetivo]) {
-                    const prefixo = base.grupoEfetivo.charAt(0);
-                    const fallback = toolAlvoObj.gruposList.find(g => g.startsWith(prefixo)) || toolAlvoObj.gruposList[0];
-                    avisos.push(`Grupo ${base.grupoEfetivo} indisponível em ${toolAlvoObj.nome}; usado ${fallback}.`);
-                    grupoAlvoEfetivo = fallback;
+
+                let msgExtras = [];
+                if (corteInterrompidoAtivo) {
+                    msgExtras.push(`corte interrompido ativo (ref. contínuo: ${metrosRefContinuo} m / ~${furosEquivContinuo} furos)`);
                 }
-                calcAlvo = calcularMetricasFerramenta(fonteAlvo, varianteAlvo, grupoAlvoEfetivo, contextoComp);
-                if (!calcAlvo) return;
-                if (base.profundidade > calcAlvo.limiteNominalMm) {
-                    avisos.push(`Profundidade (${base.profundidade.toFixed(1)} mm) acima do limite nominal ${calcAlvo.varianteKey} de ${calcAlvo.nome} (${calcAlvo.limiteNominalMm.toFixed(1)} mm).`);
+                if (metAlvo.requerPiloto) {
+                    msgExtras.push(`furo-piloto +${metAlvo.pilotoSegEfetivo.toFixed(0)} s/furo e +${metAlvo.custoPilotoEfetivo.toFixed(2)} €/furo`);
                 }
-            }
-
-            if (avisos.length > 0) {
-                avisoGrupo.innerText = avisos.join(' ');
-                avisoGrupo.classList.remove('hidden');
-            } else {
-                avisoGrupo.classList.add('hidden');
-            }
-
-            const canhaoResumoEl = document.getElementById('comp-canhao-resumo');
-            if (canhaoResumoEl) {
-                canhaoResumoEl.innerText = `${calcAlvo.numParagensLote} paragens · +${calcAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min`;
-            }
-
-            const ferrAtual = calcularCustoFerramentaLote(precoAtual, vidaAtual, vidaUnidAtual, afiQtdAtual, afiCustoAtual, qtdFurosEfetivos, base.profundidade);
-            const ferrAlvo = calcularCustoFerramentaLote(precoAlvo, vidaAlvo, vidaUnidAlvo, afiQtdAlvo, afiCustoAlvo, qtdFurosEfetivos, base.profundidade);
-
-            const custoMaqAtualLote = (calcAtual.tempoTotalMin / 60) * custoHoraComp;
-            const custoMaqAlvoLote = (calcAlvo.tempoTotalMin / 60) * custoHoraComp;
-
-            const custoTotalAtual = custoMaqAtualLote + ferrAtual.custoFerramentaLote;
-            const custoTotalAlvo = custoMaqAlvoLote + ferrAlvo.custoFerramentaLote + (calcAlvo.custoPilotoLote || 0);
-            const custoTotalFuroAtual = custoTotalAtual / qtdFurosEfetivos;
-            const custoTotalFuroAlvo = custoTotalAlvo / qtdFurosEfetivos;
-
-            const diffTempoMin = calcAlvo.tempoTotalMin - calcAtual.tempoTotalMin;
-            const diffCustoLote = custoTotalAlvo - custoTotalAtual;
-
-            document.getElementById('res-comp-subtitulo').innerText =
-                `${base.brocaNome} (${base.variante}) vs. ${calcAlvo.nome}${calcAlvo.varianteKey ? ` (${calcAlvo.varianteKey})` : ''} · Lote: ${qtdFurosEfetivos} furos · Custo Hora: ${custoHoraComp.toFixed(2)} €/h${corteInterrompidoAtivo ? ' · CORTE INTERROMPIDO' : ''}`;
-
-            document.getElementById('comp-capacidade-texto').innerText =
-                `MAPAL: ${calcAtual.tempoTotalMin.toFixed(1)} min (${calcAtual.tempoFuroSeg.toFixed(1)} s/furo) | Comparada: ${calcAlvo.tempoTotalMin.toFixed(1)} min (${calcAlvo.tempoFuroSeg.toFixed(1)} s/furo) → Δ ${diffTempoMin >= 0 ? '+' : ''}${diffTempoMin.toFixed(1)} min.`;
-
-            const custoVarFuroAtual = ((calcAtual.tempoFuroSeg / 3600) * custoHoraComp) + ferrAtual.custoFerramentaPorFuro;
-            const custoVarFuroAlvo = ((calcAlvo.tempoFuroSeg / 3600) * custoHoraComp) + ferrAlvo.custoFerramentaPorFuro + (calcAlvo.custoPilotoEfetivo || 0);
-            const custoFixoAtual = ferrAtual.numFerramentasLote * ferrAtual.custoTotalPorFerramenta;
-            const custoFixoAlvo = ferrAlvo.numFerramentasLote * ferrAlvo.custoTotalPorFerramenta;
-
-            let breakevenTxt = '';
-            const denomBE = custoVarFuroAtual - custoVarFuroAlvo;
-            if (Math.abs(denomBE) < 1e-6) {
-                breakevenTxt = custoFixoAtual <= custoFixoAlvo
-                    ? `MAPAL já parte em vantagem desde o 1.º furo (Δ ${Math.abs(custoFixoAlvo - custoFixoAtual).toFixed(2)} €).`
-                    : `Comparada já parte em vantagem desde o 1.º furo.`;
-            } else {
-                const furosBE = (custoFixoAlvo - custoFixoAtual) / denomBE;
-                if (furosBE <= 0) {
-                    breakevenTxt = denomBE > 0
-                        ? `Comparada tem menor custo variável, mas nunca recupera o investimento inicial face à MAPAL neste cenário.`
-                        : `MAPAL é mais económica desde o 1.º furo (menor custo inicial e/ou menor custo por furo).`;
+                if (metAlvo.canhaoAtivo) {
+                    msgExtras.push(`broca canhão: ${metAlvo.numParagensLote} paragem(ns) de ${metAlvo.tempoParagemMinVal} min (+${metAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min no lote)`);
+                }
+                if (msgExtras.length > 0) {
+                    avisoEl.innerText = `Modo Cliente (${nomeAlvo}): ${msgExtras.join(' · ')}.`;
+                    avisoEl.classList.remove('hidden');
                 } else {
-                    const furosArred = Math.ceil(furosBE);
-                    const minEquiv = (furosArred * calcAtual.tempoFuroSeg) / 60;
-                    breakevenTxt = `Equilíbrio em ~${furosArred} furos (~${minEquiv.toFixed(1)} min de corte). ${denomBE > 0 ? 'A partir daí a comparada compensa.' : 'A partir daí a MAPAL compensa.'}`;
+                    avisoEl.classList.add('hidden');
+                }
+            } else {
+                metAlvo = calcularMetricasFerramenta(compKey, compVariante, grupoEfetivoKey, ctx);
+                nomeAlvo = metAlvo ? `${metAlvo.nome} (${compVariante})` : compKey;
+
+                let msgs = [];
+                if (!metAlvo) {
+                    msgs.push(`A ferramenta ${dados[compKey].nome} não possui dados para o grupo ${grupoEfetivoKey}. A usar parâmetros de referência equivalentes.`);
+                    metAlvo = { ...metAtual, nome: dados[compKey].nome, varianteKey: compVariante };
+                }
+                if (corteInterrompidoAtivo) {
+                    msgs.push(`Corte interrompido ativo: em interceções/cascatas, a estabilidade da aresta e o escoamento de cavaco favorecem ferramentas de maior robustez/geometria (ref. contínuo: ${metrosRefContinuo} m / ~${furosEquivContinuo} furos).`);
+                }
+                if (msgs.length > 0) {
+                    avisoEl.innerText = msgs.join(' ');
+                    avisoEl.classList.remove('hidden');
+                } else {
+                    avisoEl.classList.add('hidden');
                 }
             }
-            document.getElementById('comp-breakeven-texto').innerText = breakevenTxt;
 
-            if (diffCustoLote > 0) {
-                document.getElementById('comp-resumo-lote-destaque').innerText =
-                    `A solução MAPAL poupa ${diffCustoLote.toFixed(2)} € no lote (${custoTotalAtual.toFixed(2)} € vs. ${custoTotalAlvo.toFixed(2)} €).`;
-            } else if (diffCustoLote < 0) {
-                document.getElementById('comp-resumo-lote-destaque').innerText =
-                    `A ferramenta comparada fica ${Math.abs(diffCustoLote).toFixed(2)} € mais barata no lote (${custoTotalAlvo.toFixed(2)} € vs. ${custoTotalAtual.toFixed(2)} €).`;
-            } else {
-                document.getElementById('comp-resumo-lote-destaque').innerText =
-                    `Custo total equivalente no lote (${custoTotalAtual.toFixed(2)} €).`;
+            const ferrAtual = calcularCustoFerramentaLote(precoAtual, vidaAtual, vidaUnidAtual, afiQtdAtual, afiCustoAtual, ctx.qtdFuros, ctx.profundidade);
+            const ferrAlvo = calcularCustoFerramentaLote(precoAlvo, vidaAlvo, vidaUnidAlvo, afiQtdAlvo, afiCustoAlvo, ctx.qtdFuros, ctx.profundidade);
+
+            const custoPilotoAlvoLote = metAlvo.custoPilotoLote || 0;
+            const custoTotalAtual = metAtual.custoMaqLote + ferrAtual.custoFerramentaLote;
+            const custoTotalAlvo = metAlvo.custoMaqLote + ferrAlvo.custoFerramentaLote + custoPilotoAlvoLote;
+            const difCustoTotal = custoTotalAlvo - custoTotalAtual;
+
+            const custoFuroAtual = custoTotalAtual / ctx.qtdFuros;
+            const custoFuroAlvo = custoTotalAlvo / ctx.qtdFuros;
+            const difCustoFuro = custoFuroAlvo - custoFuroAtual;
+
+            const difTempoMin = metAlvo.tempoTotalMin - metAtual.tempoTotalMin;
+
+            document.getElementById('comp-th-atual').innerText = `${metAtual.nome} (${varAtual})`;
+            document.getElementById('comp-th-alvo').innerText = nomeAlvo;
+
+            const subtituloEl = document.getElementById('res-comp-subtitulo');
+            if (subtituloEl) {
+                const tagInter = corteInterrompidoAtivo ? ' · Corte Interrompido' : '';
+                subtituloEl.innerText = `${metAtual.nome} (${varAtual}) vs. ${nomeAlvo} · Grupo ${grupoEfetivoKey} · Lote ${ctx.qtdFuros} furos${tagInter}`;
             }
 
-            desenharGraficoBarrasComparacao('svg-comp-custo', 'MAPAL', custoTotalAtual, '#3b82f6', 'Comparada', custoTotalAlvo, '#f43f5e', '€');
-            desenharGraficoBarrasComparacao('svg-comp-tempo', 'MAPAL', calcAtual.tempoTotalMin, '#10b981', 'Comparada', calcAlvo.tempoTotalMin, '#f59e0b', 'm');
-            desenharGraficoBreakEven('svg-comp-breakeven', custoFixoAtual, custoVarFuroAtual, custoFixoAlvo, custoVarFuroAlvo, qtdFurosEfetivos);
+            const difTempoAbsMin = Math.abs(difTempoMin);
+            const difTempoStr = `${difTempoMin >= 0 ? '+' : '-'}${difTempoAbsMin.toFixed(1)} min`;
+            const pctTempo = metAtual.tempoTotalMin > 0 ? ((difTempoMin / metAtual.tempoTotalMin) * 100) : 0;
 
-            document.getElementById('comp-th-atual').innerText = `${base.brocaNome} (${base.variante})`;
-            document.getElementById('comp-th-alvo').innerText = `${calcAlvo.nome}${calcAlvo.varianteKey ? ` (${calcAlvo.varianteKey})` : ''}`;
+            let capTexto = '';
+            if (difTempoMin < -0.05) {
+                capTexto = `${nomeAlvo} é mais rápida em ${difTempoAbsMin.toFixed(1)} min (${pctTempo.toFixed(1)}%) no lote de ${ctx.qtdFuros} furos.`;
+            } else if (difTempoMin > 0.05) {
+                capTexto = `${metAtual.nome} poupa ${difTempoAbsMin.toFixed(1)} min (${Math.abs(pctTempo).toFixed(1)}%) no lote de ${ctx.qtdFuros} furos.`;
+            } else {
+                capTexto = `Tempo de ciclo equivalente entre ferramentas no lote de ${ctx.qtdFuros} furos.`;
+            }
+            if (metAlvo.canhaoAtivo && metAlvo.tempoParagemCanhaoLoteMin > 0) {
+                capTexto += ` Inclui +${metAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min de paragens (${metAlvo.numParagensLote}× ${metAlvo.tempoParagemMinVal} min) na broca canhão.`;
+            }
+            document.getElementById('comp-capacidade-texto').innerText = capTexto;
 
-            const vidaFmtAtual = vidaUnidAtual === 'metros'
-                ? `${vidaAtual} m/af (${ferrAtual.vidaPorCicloFuros.toFixed(0)} furos/af · ${afiQtdAtual} reaf.)`
-                : `${vidaAtual} furos/af (${afiQtdAtual} reaf. · ${ferrAtual.vidaTotalFerramentaFuros.toFixed(0)} furos/ferr.)`;
+            const custoHoraSeg = custoHoraComp / 3600;
+            const custoVarFuroAtual = (metAtual.tempoFuroSeg * custoHoraSeg) + (ferrAtual.custoFerramentaLote / Math.max(1, ferrAtual.furosPorFerramentaCompleta));
+            const custoVarFuroAlvo = (metAlvo.tempoFuroSeg * custoHoraSeg) + (ferrAlvo.custoFerramentaLote / Math.max(1, ferrAlvo.furosPorFerramentaCompleta)) + (metAlvo.custoPilotoEfetivo || 0);
 
-            const vidaFmtAlvo = vidaUnidAlvo === 'metros'
-                ? `${vidaAlvo} m/af (${ferrAlvo.vidaPorCicloFuros.toFixed(0)} furos/af · ${afiQtdAlvo} reaf.)`
-                : `${vidaAlvo} furos/af (${afiQtdAlvo} reaf. · ${ferrAlvo.vidaTotalFerramentaFuros.toFixed(0)} furos/ferr.)`;
+            const custoFixoCicloAtual = precoAtual + (afiQtdAtual * afiCustoAtual);
+            const custoFixoCicloAlvo = precoAlvo + (afiQtdAlvo * afiCustoAlvo);
+            const difCustoFixo = custoFixoCicloAtual - custoFixoCicloAlvo;
+            const ganhoVariavelPorFuro = custoVarFuroAlvo - custoVarFuroAtual;
 
-            const rows = [
-                ['Vc (m/min)', `${calcAtual.vcFinal.toFixed(1)} m/min`, `${calcAlvo.vcFinal.toFixed(1)} m/min`, `${(calcAlvo.vcFinal - calcAtual.vcFinal >= 0 ? '+' : '')}${(calcAlvo.vcFinal - calcAtual.vcFinal).toFixed(1)} m/min`],
-                ['Avanço f (mm/rot)', `${calcAtual.fFinal.toFixed(4)}`, `${calcAlvo.fFinal.toFixed(4)}`, `${(calcAlvo.fFinal - calcAtual.fFinal >= 0 ? '+' : '')}${(calcAlvo.fFinal - calcAtual.fFinal).toFixed(4)}`],
-                ['RPM / Avanço vf', `${calcAtual.n} rpm / ${calcAtual.vf} mm/min`, `${calcAlvo.n} rpm / ${calcAlvo.vf} mm/min`, `Δvf: ${calcAlvo.vf - calcAtual.vf >= 0 ? '+' : ''}${calcAlvo.vf - calcAtual.vf} mm/min`],
-                ['Vida / Reafiações', vidaFmtAtual, vidaFmtAlvo, `Ferr. lote: ${ferrAtual.numFerramentasLote} vs. ${ferrAlvo.numFerramentasLote}`],
-                ['Tempo / Furo', `${calcAtual.tempoFuroSeg.toFixed(1)} seg`, `${calcAlvo.tempoFuroSeg.toFixed(1)} seg`, `${(calcAlvo.tempoFuroSeg - calcAtual.tempoFuroSeg >= 0 ? '+' : '')}${(calcAlvo.tempoFuroSeg - calcAtual.tempoFuroSeg).toFixed(1)} seg`],
-                ['Tempo Total Lote', `${calcAtual.tempoTotalMin.toFixed(1)} min`, `${calcAlvo.tempoTotalMin.toFixed(1)} min`, `${diffTempoMin >= 0 ? '+' : ''}${diffTempoMin.toFixed(1)} min`],
-                ['Custo Ferramenta (Lote)', `${ferrAtual.custoFerramentaLote.toFixed(2)} €`, `${ferrAlvo.custoFerramentaLote.toFixed(2)} €`, `${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote >= 0 ? '+' : '')}${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote).toFixed(2)} €`],
-                ['Custo Máquina (Lote)', `${custoMaqAtualLote.toFixed(2)} €`, `${custoMaqAlvoLote.toFixed(2)} €`, `${(custoMaqAlvoLote - custoMaqAtualLote >= 0 ? '+' : '')}${(custoMaqAlvoLote - custoMaqAtualLote).toFixed(2)} €`],
-                ['Custo Total / Furo', `${custoTotalFuroAtual.toFixed(3)} €`, `${custoTotalFuroAlvo.toFixed(3)} €`, `${(custoTotalFuroAlvo - custoTotalFuroAtual >= 0 ? '+' : '')}${(custoTotalFuroAlvo - custoTotalFuroAtual).toFixed(3)} €`],
-                ['Custo Total Lote', `${custoTotalAtual.toFixed(2)} €`, `${custoTotalAlvo.toFixed(2)} €`, `${diffCustoLote >= 0 ? '+' : ''}${diffCustoLote.toFixed(2)} €`]
+            let breakevenTexto = '';
+            if (difCustoFixo > 0 && ganhoVariavelPorFuro > 0.0001) {
+                const furosBe = Math.ceil(difCustoFixo / ganhoVariavelPorFuro);
+                breakevenTexto = `Ferramenta mais cara compensa a partir de ~${furosBe} furos (custo fixo superior em +${difCustoFixo.toFixed(0)} €, mas poupa ${ganhoVariavelPorFuro.toFixed(3)} €/furo).`;
+            } else if (difCustoFixo < 0 && ganhoVariavelPorFuro < -0.0001) {
+                const furosBe = Math.ceil(Math.abs(difCustoFixo) / Math.abs(ganhoVariavelPorFuro));
+                breakevenTexto = `Diferença inicial de ${Math.abs(difCustoFixo).toFixed(0)} € é absorvida em ~${furosBe} furos.`;
+            } else if (difCustoTotal < 0) {
+                breakevenTexto = `Vantagem acumulada desde o 1.º furo, atingindo ${Math.abs(difCustoTotal).toFixed(2)} € no lote.`;
+            } else {
+                breakevenTexto = `Sem ponto de inversão no lote atual (${ctx.qtdFuros} furos).`;
+            }
+            document.getElementById('comp-breakeven-texto').innerText = breakevenTexto;
+
+            const destaqueLoteEl = document.getElementById('comp-resumo-lote-destaque');
+            if (difCustoTotal < -0.01) {
+                destaqueLoteEl.innerText = `Poupança de ${Math.abs(difCustoTotal).toFixed(2)} € no lote (${Math.abs(difCustoFuro).toFixed(3)} €/furo) com ${nomeAlvo}.`;
+                destaqueLoteEl.className = 'text-xs text-emerald-300 font-semibold mt-1';
+            } else if (difCustoTotal > 0.01) {
+                destaqueLoteEl.innerText = `Poupança de ${difCustoTotal.toFixed(2)} € no lote (${Math.abs(difCustoFuro).toFixed(3)} €/furo) com ${metAtual.nome}.`;
+                destaqueLoteEl.className = 'text-xs text-sky-300 font-semibold mt-1';
+            } else {
+                destaqueLoteEl.innerText = `Custo total equivalente no lote (${custoTotalAtual.toFixed(2)} €).`;
+                destaqueLoteEl.className = 'text-xs text-white font-semibold mt-1';
+            }
+
+            desenharGraficoBarrasComparacao('svg-comp-custo', 'MAPAL', custoTotalAtual, '#3b82f6', 'Comparada', custoTotalAlvo, '#f43f5e', '€', 2);
+            desenharGraficoBarrasComparacao('svg-comp-tempo', 'MAPAL', metAtual.tempoTotalMin, '#10b981', 'Comparada', metAlvo.tempoTotalMin, '#f59e0b', 'm', 1);
+            desenharGraficoBreakEven('svg-comp-breakeven', ctx.qtdFuros, ferrAtual.custoFerramentaLote, metAtual.custoMaqFuro, ferrAlvo.custoFerramentaLote, metAlvo.custoMaqFuro + (metAlvo.custoPilotoEfetivo || 0));
+
+            const linhas = [
+                {
+                    ind: 'Velocidade de Corte (Vc)',
+                    a: `${metAtual.vcFinal.toFixed(0)} m/min`,
+                    b: `${metAlvo.vcFinal.toFixed(0)} m/min`,
+                    d: `${(metAlvo.vcFinal - metAtual.vcFinal) >= 0 ? '+' : ''}${(metAlvo.vcFinal - metAtual.vcFinal).toFixed(0)} m/min`
+                },
+                {
+                    ind: 'Avanço por Rotação (f)',
+                    a: `${metAtual.fFinal.toFixed(4)} mm/rot`,
+                    b: `${metAlvo.fFinal.toFixed(4)} mm/rot`,
+                    d: `${(metAlvo.fFinal - metAtual.fFinal) >= 0 ? '+' : ''}${(metAlvo.fFinal - metAtual.fFinal).toFixed(4)}`
+                },
+                {
+                    ind: 'Rotações (n) / Avanço (vf)',
+                    a: `${metAtual.n} rpm / ${metAtual.vf} mm/min`,
+                    b: `${metAlvo.n} rpm / ${metAlvo.vf} mm/min`,
+                    d: `${(metAlvo.vf - metAtual.vf) >= 0 ? '+' : ''}${metAlvo.vf - metAtual.vf} mm/min`
+                },
+                {
+                    ind: 'Tempo Unitário / Furo',
+                    a: `${metAtual.tempoFuroSeg.toFixed(1)} seg`,
+                    b: `${metAlvo.tempoFuroSeg.toFixed(1)} seg`,
+                    d: `${(metAlvo.tempoFuroSeg - metAtual.tempoFuroSeg) >= 0 ? '+' : ''}${(metAlvo.tempoFuroSeg - metAtual.tempoFuroSeg).toFixed(1)} seg`
+                },
+                {
+                    ind: `Tempo Total (${ctx.qtdFuros} furos)`,
+                    a: `${metAtual.tempoTotalMin.toFixed(1)} min`,
+                    b: `${metAlvo.tempoTotalMin.toFixed(1)} min`,
+                    d: `${difTempoStr} (${pctTempo >= 0 ? '+' : ''}${pctTempo.toFixed(1)}%)`
+                },
+                {
+                    ind: 'Vida / Ferramentas / Reafiações',
+                    a: `${ferrAtual.furosPorFerramentaCompleta.toFixed(0)} furos · ${ferrAtual.qtdFerramentasNecessarias} ferr. (${ferrAtual.reafiacoesEfetuadas} reaf.)`,
+                    b: `${ferrAlvo.furosPorFerramentaCompleta.toFixed(0)} furos · ${ferrAlvo.qtdFerramentasNecessarias} ferr. (${ferrAlvo.reafiacoesEfetuadas} reaf.)`,
+                    d: `${(ferrAlvo.qtdFerramentasNecessarias - ferrAtual.qtdFerramentasNecessarias) >= 0 ? '+' : ''}${ferrAlvo.qtdFerramentasNecessarias - ferrAtual.qtdFerramentasNecessarias} ferr.`
+                },
+                {
+                    ind: 'Custo Ferramenta no Lote',
+                    a: `${ferrAtual.custoFerramentaLote.toFixed(2)} €`,
+                    b: `${ferrAlvo.custoFerramentaLote.toFixed(2)} €`,
+                    d: `${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote) >= 0 ? '+' : ''}${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote).toFixed(2)} €`
+                },
+                {
+                    ind: 'Custo Máquina no Lote',
+                    a: `${metAtual.custoMaqLote.toFixed(2)} €`,
+                    b: `${metAlvo.custoMaqLote.toFixed(2)} €`,
+                    d: `${(metAlvo.custoMaqLote - metAtual.custoMaqLote) >= 0 ? '+' : ''}${(metAlvo.custoMaqLote - metAtual.custoMaqLote).toFixed(2)} €`
+                },
+                {
+                    ind: 'Custo Total no Lote (Máq. + Ferr.)',
+                    a: `${custoTotalAtual.toFixed(2)} €`,
+                    b: `${custoTotalAlvo.toFixed(2)} €`,
+                    d: `${difCustoTotal >= 0 ? '+' : ''}${difCustoTotal.toFixed(2)} €`,
+                    destaque: true
+                },
+                {
+                    ind: 'Custo Total por Furo',
+                    a: `${custoFuroAtual.toFixed(3)} €`,
+                    b: `${custoFuroAlvo.toFixed(3)} €`,
+                    d: `${difCustoFuro >= 0 ? '+' : ''}${difCustoFuro.toFixed(3)} €`,
+                    destaque: true
+                }
             ];
 
-            if (requerPiloto) {
-                rows.splice(5, 0, [
-                    'Extra Piloto / Paragens',
-                    '0.0 s · 0.00 €/furo',
-                    `+${tempoPilotoSeg.toFixed(0)} s${usaBrocaCanhao ? ` + ${calcAlvo.numParagensLote} par. (${calcAlvo.tempoParagemCanhaoLoteMin.toFixed(1)}m)` : ''} · +${custoPilotoFuro.toFixed(2)} €/furo`,
-                    `+${(calcAlvo.custoPilotoLote || 0).toFixed(2)} € no lote`
-                ]);
+            if (metAlvo.requerPiloto) {
+                linhas.splice(4, 0, {
+                    ind: 'Tempo Furo-Piloto (Lote)',
+                    a: '0.0 min',
+                    b: `+${metAlvo.tempoPilotoLoteMin.toFixed(1)} min (${metAlvo.pilotoSegEfetivo.toFixed(0)} s/furo)`,
+                    d: `+${metAlvo.tempoPilotoLoteMin.toFixed(1)} min`
+                });
+                linhas.splice(8, 0, {
+                    ind: 'Custo Piloto no Lote',
+                    a: '0.00 €',
+                    b: `${custoPilotoAlvoLote.toFixed(2)} € (${metAlvo.custoPilotoEfetivo.toFixed(2)} €/furo)`,
+                    d: `+${custoPilotoAlvoLote.toFixed(2)} €`
+                });
             }
 
-            const tbody = document.getElementById('comp-tabela-corpo');
-            tbody.innerHTML = '';
-            rows.forEach(([ind, vAtual, vAlvo, vDiff], idx) => {
+            if (metAlvo.canhaoAtivo) {
+                linhas.splice(5, 0, {
+                    ind: 'Paragens Broca Canhão (Afiação)',
+                    a: '0 paragens (0.0 min)',
+                    b: `${metAlvo.numParagensLote} paragem(ns) (+${metAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min)`,
+                    d: `+${metAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min`
+                });
+            }
+
+            const tbodyComp = document.getElementById('comp-tabela-corpo');
+            tbodyComp.innerHTML = '';
+            linhas.forEach(l => {
                 const tr = document.createElement('tr');
-                const isTotal = idx === rows.length - 1;
-                tr.className = isTotal ? 'bg-slate-800/80 font-bold text-white' : 'hover:bg-slate-800/40';
+                tr.className = l.destaque ? 'bg-slate-800/80 font-bold text-white' : 'text-slate-300';
                 tr.innerHTML = `
-                    <td class="py-2 px-3 text-slate-200">${ind}</td>
-                    <td class="py-2 px-3 text-blue-300 font-mono">${vAtual}</td>
-                    <td class="py-2 px-3 text-emerald-300 font-mono">${vAlvo}</td>
-                    <td class="py-2 px-3 text-amber-300 font-mono">${vDiff}</td>
+                    <td class="py-1.5 px-3">${l.ind}</td>
+                    <td class="py-1.5 px-3 text-blue-300">${l.a}</td>
+                    <td class="py-1.5 px-3 text-emerald-300">${l.b}</td>
+                    <td class="py-1.5 px-3 text-amber-300">${l.d}</td>
                 `;
-                tbody.appendChild(tr);
+                tbodyComp.appendChild(tr);
             });
 
             window._ultimoComparativo = {
-                incluirNoPdf: document.getElementById('comp-incluir-pdf').checked,
-                fonteAlvo,
-                corteInterrompido: corteInterrompidoAtivo,
-                qtdFurosEfetivos,
+                nomeAlvo,
+                compKey,
+                compVariante,
+                corteInterrompidoAtivo,
+                metrosRefContinuo,
+                furosEquivContinuo,
                 custoHoraComp,
-                atual: {
-                    nome: `${base.brocaNome} (${base.variante})`,
-                    preco: precoAtual,
-                    vida: vidaAtual,
-                    vidaUnid: vidaUnidAtual,
-                    afiQtd: afiQtdAtual,
-                    afiCusto: afiCustoAtual,
-                    vc: calcAtual.vcFinal,
-                    f: calcAtual.fFinal,
-                    n: calcAtual.n,
-                    vf: calcAtual.vf,
-                    tempoFuroSeg: calcAtual.tempoFuroSeg,
-                    tempoTotalMin: calcAtual.tempoTotalMin,
-                    custoFerramentaLote: ferrAtual.custoFerramentaLote,
-                    custoMaqLote: custoMaqAtualLote,
-                    custoTotalFuro: custoTotalFuroAtual,
-                    custoTotalLote: custoTotalAtual
-                },
-                alvo: {
-                    nome: `${calcAlvo.nome}${calcAlvo.varianteKey ? ` (${calcAlvo.varianteKey})` : ''}`,
-                    preco: precoAlvo,
-                    vida: vidaAlvo,
-                    vidaUnid: vidaUnidAlvo,
-                    afiQtd: afiQtdAlvo,
-                    afiCusto: afiCustoAlvo,
-                    requerPiloto,
-                    tempoPilotoSeg,
-                    custoPilotoFuro,
-                    custoPilotoLote: calcAlvo.custoPilotoLote || 0,
-                    usaBrocaCanhao,
-                    tempoParagemAfiMin,
-                    numParagensLote: calcAlvo.numParagensLote || 0,
-                    tempoParagemCanhaoLoteMin: calcAlvo.tempoParagemCanhaoLoteMin || 0,
-                    vc: calcAlvo.vcFinal,
-                    f: calcAlvo.fFinal,
-                    n: calcAlvo.n,
-                    vf: calcAlvo.vf,
-                    tempoFuroSeg: calcAlvo.tempoFuroSeg,
-                    tempoTotalMin: calcAlvo.tempoTotalMin,
-                    custoFerramentaLote: ferrAlvo.custoFerramentaLote,
-                    custoMaqLote: custoMaqAlvoLote,
-                    custoTotalFuro: custoTotalFuroAlvo,
-                    custoTotalLote: custoTotalAlvo
-                },
-                diffTempoMin,
-                diffCustoLote,
-                breakevenTxt
+                metAtual,
+                metAlvo,
+                ferrAtual,
+                ferrAlvo,
+                custoPilotoAlvoLote,
+                custoTotalAtual,
+                custoTotalAlvo,
+                difCustoTotal,
+                custoFuroAtual,
+                custoFuroAlvo,
+                difCustoFuro,
+                difTempoMin,
+                pctTempo,
+                breakevenTexto,
+                linhas
             };
         }
 
         function aplicarFerramentaComparada() {
-            const fonteAlvo = document.getElementById('comp-ferramenta').value;
-            const varianteAlvo = document.getElementById('comp-variante').value;
-            if (!fonteAlvo || fonteAlvo === '__cliente__' || !dados[fonteAlvo]) return;
+            const compKey = document.getElementById('comp-ferramenta').value;
+            const compVariante = document.getElementById('comp-variante').value;
+            if (!compKey || compKey === '__CLIENTE_MANUAL__' || !dados[compKey]) return;
 
-            const toolAlvo = dados[fonteAlvo];
-            linhaAtivaInterna = toolAlvo.linha;
-            document.getElementById('categoria').value = toolAlvo.categoria;
+            const targetData = dados[compKey];
+            linhaAtivaInterna = targetData.linha;
+            document.getElementById('categoria').value = targetData.categoria;
             atualizarFiltroBrocas(true);
-            document.getElementById('broca').value = fonteAlvo;
-            mudarBroca(varianteAlvo || null);
-
+            document.getElementById('broca').value = compKey;
+            mudarBroca(compVariante);
             fecharJanelaResultadoComparacao();
             fecharModalComparacao();
-            atualizarCalculo();
         }
 
         function abrirModalExportacao() {
-            if (!window._ultimoCalculo) atualizarCalculo();
-            if (!isProMode) {
-                document.getElementById('radio-pdf-resumido').checked = true;
+            const radioResumido = document.getElementById('radio-pdf-resumido');
+            const radioCompleto = document.getElementById('radio-pdf-completo');
+            const descEl = document.getElementById('desc-modal-export');
+
+            if (isProMode) {
+                radioCompleto.checked = true;
+                descEl.innerText = 'Nível Pro ativo: escolha entre a Proposta Completa ou a Ficha Técnica:';
+            } else {
+                radioResumido.checked = true;
+                descEl.innerText = 'Nível Básico ativo: será gerada a Ficha Técnica / Parâmetros de Corte:';
             }
             document.getElementById('modal-export').classList.remove('hidden');
         }
@@ -3926,186 +4037,167 @@ html_content = '''
         }
 
         function gerarPDF() {
-            const calc = window._ultimoCalculo;
-            if (!calc) {
-                alert("Por favor, configure os parâmetros antes de exportar.");
-                return;
-            }
+            const tipoSelecionado = isProMode
+                ? (document.querySelector('input[name="tipo-relatorio"]:checked')?.value || 'completo')
+                : 'resumido';
+            const incluirComparativo = isProMode && Boolean(document.getElementById('comp-incluir-pdf')?.checked);
 
-            const tipoRadio = document.querySelector('input[name="tipo-relatorio"]:checked');
-            let tipoRelatorio = tipoRadio ? tipoRadio.value : 'resumido';
-            if (!isProMode) {
-                tipoRelatorio = 'resumido';
-            }
-            const isCompleto = (tipoRelatorio === 'completo');
+            fecharModalExportacao();
 
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 14;
-            let y = 15;
+            const brocaKey = document.getElementById('broca').value;
+            const grupoSelText = document.getElementById('grupo').options[document.getElementById('grupo').selectedIndex]?.text || '';
+            const grupoEfetivoKey = getGrupoEfetivo();
+            const ligaCheck = document.getElementById('liga-check').checked;
+            const varianteAtiva = getVarianteAtiva();
+            const ctx = obterContextoCalculoAtual();
 
-            const checkPageBreak = (neededHeight) => {
-                if (y + neededHeight > pageHeight - 16) {
-                    doc.addPage();
-                    y = 15;
-                }
-            };
+            const nomeFerramenta = brocaKey && dados[brocaKey] ? dados[brocaKey].nome : 'Ferramenta MAPAL';
+            const linhaLabel = fmtGamaLabel(linhaAtivaInterna);
+            const refrigLabels = { int: 'Interna', ext: 'Externa', mql: 'MQL', ar: 'Ar' };
+            const refrigLabel = refrigLabels[refrigAtual] || refrigAtual;
+
+            const nText = document.getElementById('res-n').innerText;
+            const vfText = document.getElementById('res-vf').innerText;
+            const fText = parseFloat(document.getElementById('input-f').value || 0).toFixed(4);
+            const vcText = parseFloat(document.getElementById('input-vc').value || 0).toFixed(0);
+            const forcaText = document.getElementById('res-forca').innerText.replace('N', '').trim();
+            const forcaKgfText = document.getElementById('res-forca-kgf').innerText;
+            const binText = document.getElementById('res-binario-card').innerText.replace('N·m', '').trim();
+            const potGaugeText = document.getElementById('val-gauge-pot').innerText;
+
+            const dataAtual = new Date().toLocaleDateString('pt-PT');
 
             doc.setFillColor(15, 23, 42);
-            doc.rect(0, 0, pageWidth, 26, 'F');
+            doc.rect(0, 0, 210, 28, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(14);
-            doc.text("MAPAL — Parâmetros de Corte & Análise Técnica", margin, 11);
+            doc.text('MAPAL — Parâmetros de Corte & Análise Técnica', 14, 12);
 
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8.5);
+            doc.setFontSize(9);
             doc.setTextColor(148, 163, 184);
-            const subtituloPdf = isCompleto
-                ? "Relatório Técnico-Comercial Completo (Nível Pro)"
-                : "Ficha Técnica de Parâmetros de Corte (Nível Básico)";
-            doc.text(subtituloPdf, margin, 17);
+            const subTituloPdf = tipoSelecionado === 'completo'
+                ? `Proposta Técnico-Comercial Completa (Pro) | Data: ${dataAtual}`
+                : `Ficha Técnica de Parâmetros de Corte | Data: ${dataAtual}`;
+            doc.text(subTituloPdf, 14, 20);
 
-            const dataStr = new Date().toLocaleString('pt-PT');
-            doc.text(`Emitido: ${dataStr}`, pageWidth - margin, 17, { align: 'right' });
+            let y = 36;
 
-            y = 33;
+            doc.setTextColor(30, 41, 59);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.text('1. Configuração da Ferramenta e Operação', 14, y);
+            y += 6;
 
-            const addSectionTitle = (title) => {
-                checkPageBreak(12);
-                doc.setFillColor(30, 41, 59);
-                doc.rect(margin, y - 4, pageWidth - margin * 2, 7, 'F');
-                doc.setTextColor(56, 189, 248);
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(9.5);
-                doc.text(title, margin + 2, y + 0.5);
-                y += 8;
-                doc.setTextColor(30, 41, 59);
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9);
-            };
-
-            const addKeyValueRow = (label1, val1, label2, val2) => {
-                checkPageBreak(7);
-                const colMid = margin + (pageWidth - margin * 2) / 2;
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(71, 85, 105);
-                doc.text(`${label1}:`, margin + 1, y);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(15, 23, 42);
-                doc.text(String(val1), margin + 36, y);
-
-                if (label2 !== undefined) {
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(71, 85, 105);
-                    doc.text(`${label2}:`, colMid + 1, y);
-                    doc.setFont('helvetica', 'normal');
-                    doc.setTextColor(15, 23, 42);
-                    doc.text(String(val2), colMid + 36, y);
-                }
-                y += 6;
-            };
-
-            addSectionTitle("1. IDENTIFICAÇÃO DA FERRAMENTA E MATERIAL");
-            addKeyValueRow("Linha / Gama", fmtGamaLabel(calc.linha), "Categoria", calc.categoria);
-            addKeyValueRow("Ferramenta", `${calc.brocaNome} (${calc.variante})`, "Refrigeração", calc.refrigAtual.toUpperCase());
-            if (calc.referenciaCatalogo) {
-                const rCat = calc.referenciaCatalogo;
-                const dinCat = extrairEncabadouroDIN6535(rCat) || '—';
-                addKeyValueRow("Order / Spec", `${rCat.order_no || '—'} | ${rCat.specification || '—'}`, "DIN 6535 / l3", `${dinCat} | l3: ${fmtCota(rCat.l3, 0)}`);
-                addKeyValueRow("Cotas d1 / d2", `${fmtCota(rCat.d1, 2)} / ${fmtCota(rCat.d2, 1)}`, "Cotas l1 / l2 / l4", `${fmtCota(rCat.l1, 0)} / ${fmtCota(rCat.l2, 0)} / ${fmtCota(rCat.l4, 0)}`);
-            }
-            addKeyValueRow("Grupo Base", calc.grupoSelecionado, "Grupo Efetivo", calc.grupoNome);
-            addKeyValueRow("Liga > 8%", calc.ligaAtiva ? "Sim (+1 grupo)" : "Não", "Estado", calc.estadoTexto);
-
-            addSectionTitle("2. GEOMETRIA E PARÂMETROS DE CORTE");
-            addKeyValueRow("Diâmetro (Ø)", `${calc.diametro.toFixed(2)} mm`, "Profundidade (L)", `${calc.profundidade.toFixed(1)} mm`);
-            addKeyValueRow("Vc Final", `${calc.vcFinal.toFixed(1)} m/min (${calc.vcPct >= 0 ? '+' : ''}${calc.vcPct}%)`, "Avanço (f)", `${calc.fFinal.toFixed(4)} mm/rot (${calc.fPct >= 0 ? '+' : ''}${calc.fPct}%)`);
-            addKeyValueRow("Rotação (n)", `${calc.n} rpm`, "Avanço (vf)", `${calc.vf} mm/min`);
-            if (calc.rpmMaxUnlocked) {
-                addKeyValueRow("RPM Máx. Ativo", `${calc.rpmMaxVal} rpm`, "Ajuste Manual", `${calc.vcUnlocked ? 'Vc ' : ''}${calc.fUnlocked ? 'f' : ''}` || 'Não');
-            }
-
-            addSectionTitle("3. ESFORÇOS MECÂNICOS E CAPACIDADE DO SPINDLE");
-            addKeyValueRow("Força Axial (Ff)", `${Math.round(calc.forcaFf)} N (${Math.round(calc.forcaKgf)} kgf)`, "Binário (Mc)", `${calc.binarioMc.toFixed(1)} N·m`);
-            const potReqStr = calc.spindlePotUnid === 'cv'
-                ? `${(calc.potenciaReqKw / 0.73549875).toFixed(2)} CV`
-                : `${calc.potenciaReqKw.toFixed(2)} kW`;
-            const potCapStr = calc.spindlePotVal > 0 ? `${calc.spindlePotVal.toFixed(2)} ${calc.spindlePotUnid}` : 'N/A';
-            const binCapStr = calc.spindleBinNm > 0 ? `${calc.spindleBinNm.toFixed(1)} N·m` : 'N/A';
-            addKeyValueRow("Potência Corte", potReqStr, "Cap. Spindle", `Pot: ${potCapStr} | Bin: ${binCapStr}`);
-
-            if (isCompleto) {
-                addSectionTitle("4. LOTE, CICLO, LIMALHA, SUCATA E CUSTOS (NÍVEL PRO)");
-                addKeyValueRow("Qtd. Furos (Lote)", `${calc.qtdFuros} furos`, "Metragem Total", `${calc.metragemTotalMetros.toFixed(2)} m`);
-                addKeyValueRow("Tempo / Furo", `${calc.tempoFuroSeg.toFixed(1)} seg`, "Tempo Total Lote", `${calc.tempoTotalMin.toFixed(1)} min`);
-                addKeyValueRow("Volume Removido", `${calc.volumeTotalCm3.toFixed(1)} cm³`, "Taxa Remoção", `${calc.taxaRemocaoCm3Min.toFixed(1)} cm³/min`);
-                addKeyValueRow("Densidade", `${calc.densidade.toFixed(2)} g/cm³`, "Peso Limalha Lote", `${calc.pesoTotalKg.toFixed(3)} kg (${calc.massaFuroGramas.toFixed(2)} g/furo)`);
-                addKeyValueRow("Preço Sucata", `${calc.precoSucata.toFixed(2)} €/kg`, "Valor Sucata Lote", `${calc.valorSucataTotal.toFixed(2)} € (${calc.valorSucataFuro.toFixed(4)} €/furo)`);
-                addKeyValueRow("Custo Hora Máq.", `${calc.custoHora.toFixed(2)} €/h`, "Custo Maquinação", `${calc.custoMaqLote.toFixed(2)} € (${calc.custoMaqFuro.toFixed(2)} €/furo)`);
-
-                if (calc.peckingCheck) {
-                    const passoDesc = calc.peckingUnid === 'xd'
-                        ? `${calc.peckingInputVal.toFixed(2)}×D (${calc.passoMm.toFixed(1)} mm)`
-                        : `${calc.passoMm.toFixed(1)} mm (${(calc.passoMm / calc.diametro).toFixed(2)}×D)`;
-                    addKeyValueRow("Pecking Ativo", `Sim (${calc.numPassos} passos)`, "Passo / Retração", `${passoDesc} @ ${calc.peckingRetensaoVal} mm/min`);
-                }
-
-                const comp = window._ultimoComparativo;
-                if (comp && comp.incluirNoPdf) {
-                    addSectionTitle("5. COMPARATIVO TÉCNICO-COMERCIAL");
-                    addKeyValueRow("Ferramenta Base", comp.atual.nome, "Ferramenta Alvo", comp.alvo.nome);
-                    addKeyValueRow("Vida / Af. Base", `${comp.atual.vida} ${comp.atual.vidaUnid} (${comp.atual.afiQtd} reaf. @ ${comp.atual.afiCusto.toFixed(2)}€)`, "Vida / Af. Alvo", `${comp.alvo.vida} ${comp.alvo.vidaUnid} (${comp.alvo.afiQtd} reaf. @ ${comp.alvo.afiCusto.toFixed(2)}€)`);
-                    addKeyValueRow("Tempo Lote Base", `${comp.atual.tempoTotalMin.toFixed(1)} min`, "Tempo Lote Alvo", `${comp.alvo.tempoTotalMin.toFixed(1)} min (Δ ${comp.diffTempoMin >= 0 ? '+' : ''}${comp.diffTempoMin.toFixed(1)} min)`);
-                    addKeyValueRow("Custo Lote Base", `${comp.atual.custoTotalLote.toFixed(2)} €`, "Custo Lote Alvo", `${comp.alvo.custoTotalLote.toFixed(2)} € (Δ ${comp.diffCustoLote >= 0 ? '+' : ''}${comp.diffCustoLote.toFixed(2)} €)`);
-                    if (comp.alvo.requerPiloto) {
-                        addKeyValueRow("Piloto / Furo", `+${comp.alvo.tempoPilotoSeg.toFixed(0)} s / +${comp.alvo.custoPilotoFuro.toFixed(2)} €`, "Extra Piloto Lote", `+${comp.alvo.custoPilotoLote.toFixed(2)} €`);
-                    }
-                    checkPageBreak(8);
-                    doc.setFont('helvetica', 'italic');
-                    doc.setFontSize(8);
-                    doc.setTextColor(71, 85, 105);
-                    doc.text(`Payback / Equilíbrio: ${comp.breakevenTxt}`, margin + 1, y);
-                    y += 6;
-                }
-            }
-
-            checkPageBreak(14);
-            y += 3;
-            doc.setDrawColor(203, 213, 225);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 5;
             doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.text(`Ferramenta: ${nomeFerramenta} (${linhaLabel} - ${varianteAtiva})`, 14, y); y += 5;
+            if (referenciaAtivaObj) {
+                const dinPdf = extrairEncabadouroDIN6535(referenciaAtivaObj) || '—';
+                doc.text(`Referência Catálogo: ${referenciaAtivaObj.order_no || '—'} | Spec: ${referenciaAtivaObj.specification || '—'} | DIN 6535: ${dinPdf} | l3: ${fmtCota(referenciaAtivaObj.l3, 0)}`, 14, y);
+                y += 5;
+            }
+            doc.text(`Material (MMG): ${grupoSelText}${ligaCheck ? ` -> Grupo Efetivo: ${grupoEfetivoKey} (Liga > 8%)` : ''}`, 14, y); y += 5;
+            doc.text(`Refrigeração: ${refrigLabel} | Diâmetro Ø: ${ctx.diametro.toFixed(2)} mm | Profundidade Furo L: ${ctx.profundidade.toFixed(1)} mm`, 14, y); y += 5;
+            if (vcPct !== 0 || fPct !== 0) {
+                doc.text(`Ajustes Aplicados: Ajuste Vc = ${vcPct > 0 ? '+' : ''}${vcPct}% | Ajuste Avanço f = ${fPct > 0 ? '+' : ''}${fPct}%`, 14, y);
+                y += 5;
+            }
+            y += 3;
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.text('2. Parâmetros de Corte e Esforços', 14, y);
+            y += 6;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.text(`Velocidade de Corte (Vc): ${vcText} m/min   |   Rotações (n): ${nText} rpm`, 14, y); y += 5;
+            doc.text(`Avanço por Rotação (f): ${fText} mm/rot   |   Avanço de Trabalho (vf): ${vfText} mm/min`, 14, y); y += 5;
+            doc.text(`Força Axial (Ff): ${forcaText} N (${forcaKgfText})   |   Binário (Mc): ${binText} N·m   |   Potência: ${potGaugeText}`, 14, y); y += 8;
+
+            if (tipoSelecionado === 'completo') {
+                const tempoTotal = document.getElementById('res-tempo-total').innerText;
+                const volumeTotal = document.getElementById('res-volume-total').innerText;
+                const pesoTotal = document.getElementById('res-peso').innerText.replace(/\s+/g, ' ').trim();
+                const sucataTotal = document.getElementById('res-sucata-val').innerText.replace(/\s+/g, ' ').trim();
+                const custoTotal = document.getElementById('res-custo-total').innerText.replace(/\s+/g, ' ').trim();
+
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(11);
+                doc.text('3. Produção, Custos e Sucata (Lote)', 14, y);
+                y += 6;
+
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9.5);
+                doc.text(`Quantidade de Furos (Lote): ${ctx.qtdFuros}   |   Custo Hora Máquina: ${ctx.custoHora.toFixed(2)} €/h`, 14, y); y += 5;
+                doc.text(`Tempo de Ciclo: ${tempoTotal}   |   Custo de Maquinação: ${custoTotal}`, 14, y); y += 5;
+                doc.text(`Volume Removido: ${volumeTotal}   |   Peso Limalha: ${pesoTotal} (Densidade: ${ctx.densidade.toFixed(2)} g/cm³)`, 14, y); y += 5;
+                doc.text(`Valor Sucata: ${sucataTotal} (Preço Sucata: ${ctx.precoSucata.toFixed(2)} €/kg)`, 14, y); y += 8;
+
+                if (incluirComparativo) {
+                    atualizarComparacao();
+                    const compData = window._ultimoComparativo;
+                    if (compData) {
+                        if (y > 235) {
+                            doc.addPage();
+                            y = 18;
+                        }
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(11);
+                        doc.text('4. Comparativo Técnico-Comercial', 14, y);
+                        y += 6;
+
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(9);
+                        doc.text(`MAPAL (${varAtual}) vs. ${compData.nomeAlvo} | Lote: ${ctx.qtdFuros} furos | Custo Hora: ${compData.custoHoraComp.toFixed(2)} €/h`, 14, y);
+                        y += 5;
+                        doc.text(`Custo Total Lote: MAPAL ${compData.custoTotalAtual.toFixed(2)} € vs. ${compData.nomeAlvo} ${compData.custoTotalAlvo.toFixed(2)} € (Dif: ${compData.difCustoTotal >= 0 ? '+' : ''}${compData.difCustoTotal.toFixed(2)} €)`, 14, y);
+                        y += 5;
+                        doc.text(`Custo / Furo: MAPAL ${compData.custoFuroAtual.toFixed(3)} € vs. ${compData.nomeAlvo} ${compData.custoFuroAlvo.toFixed(3)} € (Dif: ${compData.difCustoFuro >= 0 ? '+' : ''}${compData.difCustoFuro.toFixed(3)} €)`, 14, y);
+                        y += 5;
+                        doc.text(`Tempo Total Lote: MAPAL ${compData.metAtual.tempoTotalMin.toFixed(1)} min vs. ${compData.nomeAlvo} ${compData.metAlvo.tempoTotalMin.toFixed(1)} min (${compData.difTempoMin >= 0 ? '+' : ''}${compData.difTempoMin.toFixed(1)} min)`, 14, y);
+                        y += 5;
+                        doc.text(`Payback / Break-Even: ${compData.breakevenTexto}`, 14, y);
+                        y += 7;
+                    }
+                }
+            }
+
+            if (y > 250) {
+                doc.addPage();
+                y = 18;
+            }
+            doc.setDrawColor(203, 213, 225);
+            doc.line(14, y, 196, y);
+            y += 5;
+            doc.setFont('helvetica', 'italic');
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text("Nota: Valores teóricos de referência. Ajustar conforme rigidez da fixação, máquina e condição do material.", margin, y);
-            y += 5;
-            doc.text("Created by Bruno Pinto · bruno.pinto@alamo-ferramentas.com · +351 936 959 415", margin, y);
+            doc.text('Nota: Parâmetros teóricos recomendados. Ajustar conforme rigidez da máquina, fixação e condições reais de corte.', 14, y);
+            y += 4;
+            doc.text('Contacto: Bruno Pinto | bruno.pinto@alamo-ferramentas.com | +351 936 959 415', 14, y);
 
-            const nomeFicheiro = isCompleto
-                ? `MAPAL_Proposta_Pro_${calc.brocaKey}_${calc.diametro.toFixed(1)}mm.pdf`
-                : `MAPAL_Parametros_${calc.brocaKey}_${calc.diametro.toFixed(1)}mm.pdf`;
+            const nomeFicheiro = tipoSelecionado === 'completo'
+                ? `MAPAL_Proposta_Completa_${brocaKey || 'ferramenta'}_${ctx.diametro.toFixed(1)}mm.pdf`
+                : `MAPAL_Ficha_Tecnica_${brocaKey || 'ferramenta'}_${ctx.diametro.toFixed(1)}mm.pdf`;
 
             doc.save(nomeFicheiro);
-            fecharModalExportacao();
         }
 
-        aplicarModoUI();
+        filtrarCatalogoCascata('init');
         atualizarFiltroBrocas();
-        filtrarCatalogoCascata();
-        atualizarPainelCotas();
+        atualizarEstadoBotaoInterrompido();
+        aplicarModoUI();
     </script>
 </body>
 </html>
-'''
+'''.replace('__PRO_PASSWORD_PLACEHOLDER__', pro_password_js) \
+ .replace('__REFERENCIAS_JSON_PLACEHOLDER__', referencias_js) \
+ .replace('__PARAMETROS_JSON_PLACEHOLDER__', parametros_json_js)
 
-html_final = (
-    html_content
-    .replace("__PRO_PASSWORD_PLACEHOLDER__", pro_password_js)
-    .replace("__REFERENCIAS_JSON_PLACEHOLDER__", referencias_js)
-    .replace("__PARAMETROS_JSON_PLACEHOLDER__", parametros_json_js)
-)
-components.html(html_final, height=920, scrolling=False)
+components.html(html_content, height=920, scrolling=False)
