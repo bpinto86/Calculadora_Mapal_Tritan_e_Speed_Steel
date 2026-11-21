@@ -1684,24 +1684,64 @@ html_content = '''
                 if (upper.includes(key.toUpperCase())) {
                     encontradaKey = key;
                     break;
+                if (Array.isArray(PARAMETROS_JSON) && PARAMETROS_JSON.length > 0) {
+            const familiasMap = {};
+
+            PARAMETROS_JSON.forEach(row => {
+                if (!row || row.suportado === false) return;
+                const famRaw = String(row.familia || row.Familia || '').trim();
+                const famKey = famRaw.toLowerCase();
+                const grp = String(row.mmg || row.MMG || row.grupo || row.Grupo || '').trim();
+                if (!famKey || !grp) return;
+
+                if (!dados[famKey]) {
+                    if (!familiasMap[famKey]) {
+                        familiasMap[famKey] = construirFerramenta({
+                            linha: 'expert',
+                            categoria: 'solid',
+                            temRefrigInt: true,
+                            nome: famRaw.toUpperCase(),
+                            variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
+                            diametros: [],
+                            grupos: {}
+                        });
+                    }
+                    dados[famKey] = familiasMap[famKey];
                 }
-            }
 
-            if (!encontradaKey) {
-                feedback.innerText = `Referência "${raw}" não encontrada no catálogo nem nas famílias.`;
-                feedback.className = "text-[10px] text-amber-400 block";
-                return;
-            }
+                const vcObj = row.vc || {};
+                const vcInt = parseFloat(vcObj.interna ?? vcObj.int ?? row.Vc_Int ?? row.vc ?? 0) || 0;
+                const vcExt = parseFloat(vcObj.externa ?? vcObj.ext ?? row.Vc_Ext ?? row.vc ?? 0) || 0;
+                const vcMql = parseFloat(vcObj.mql ?? row.Vc_MQL ?? row.vc ?? 0) || 0;
+                const vcAr  = parseFloat(vcObj.ar ?? row.Vc_Ar ?? 0) || 0;
 
-            const toolData = dados[encontradaKey];
-            linhaAtivaInterna = toolData.linha;
-            document.getElementById('categoria').value = toolData.categoria;
-            atualizarFiltroBrocas(true);
-            document.getElementById('broca').value = encontradaKey;
+                const avancos = row.avancos_f || row.f_by_d || {};
+                const diams = Object.keys(avancos)
+                    .map(d => parseFloat(String(d).replace(',', '.')))
+                    .filter(d => !isNaN(d))
+                    .sort((a, b) => a - b);
 
-            const matchXd = upper.match(/(\d+)\s*X\s*D/);
-            let varianteDetetada = null;
-            if (matchXd && toolData.variantes) {
+                const fArr = diams.map(d => {
+                    const keyStr = Object.keys(avancos).find(k => parseFloat(String(k).replace(',', '.')) === d);
+                    const val = parseFloat(avancos[keyStr]);
+                    return isNaN(val) ? 0 : val;
+                });
+
+                if (diams.length > 0 && (!dados[famKey].diametros || dados[famKey].diametros.length === 0)) {
+                    dados[famKey].diametros = diams;
+                }
+
+                dados[famKey].grupos[grp] = {
+                    vc: { int: vcInt, ext: vcExt, mql: vcMql, ar: vcAr },
+                    f: fArr
+                };
+
+                if (!dados[famKey].gruposList.includes(grp)) {
+                    dados[famKey].gruposList.push(grp);
+                }
+                dados[famKey].gruposNames[grp] = GRUPOS_MAPAL_PADRAO.gruposNames[grp] || grp;
+            });
+        }
                 const candidata = `${matchXd[1]}xD`;
                 if (toolData.variantes[candidata]) {
                     varianteDetetada = candidata;

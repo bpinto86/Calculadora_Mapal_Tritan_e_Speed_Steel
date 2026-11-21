@@ -25,7 +25,7 @@ def _parse_diametro(col_name):
     if not m:
         return None
     val = float(m.group(1))
-    return str(int(val)) if val.is_integer() else str(val)
+    return f"{val:.1f}" if not val.is_integer() else f"{val:.1f}"
 
 
 def exportar_json(
@@ -38,7 +38,12 @@ def exportar_json(
     familia_atual = None
     col_map = None
 
-    vc_cols = ["Vc_Int", "Vc_Ext", "Vc_MQL", "Vc_Ar"]
+    vc_map = {
+        "interna": ["VC_INT", "VC INT", "INTERNA", "INT"],
+        "externa": ["VC_EXT", "VC EXT", "EXTERNA", "EXT"],
+        "mql": ["VC_MQL", "VC MQL", "MQL"],
+        "ar": ["VC_AR", "VC AR", "AR"],
+    }
 
     for _, row in df.iterrows():
         celulas = [
@@ -49,79 +54,67 @@ def exportar_json(
         if not celulas:
             continue
 
-        # Deteta título de família (ex.: linha com texto que não é cabeçalho de tabela nem MMG)
-        primeira = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
-        if (
-            primeira
-            and primeira.upper() not in {"MMG", "GRUPO", "VC_INT", "VC_EXT", "VC_MQL", "VC_AR"}
-            and not primeira.lower().startswith("mmg")
-            and "mmg" not in [c.lower() for c in row.astype(str)]
-        ):
-            # Verifica se a linha parece cabeçalho de tabela com diâmetros
-            tem_diametros = any(_parse_diametro(c) is not None for c in row.iloc[1:])
-            if not tem_diametros and len(celulas) == 1:
-                familia_atual = primeira
-                col_map = None
-                continue
-
-        # Deteta linha de cabeçalho da tabela (contém MMG / Grupo / Vc / diâmetros)
         row_upper = [str(x).strip().upper() if pd.notna(x) else "" for x in row.tolist()]
         if "MMG" in row_upper or "GRUPO" in row_upper:
-            col_map = {"mmg": None, "grupo": None, "vc": {}, "f_by_d": {}}
+            col_map = {"mmg": None, "vc": {}, "f_by_d": {}}
             for idx, val in enumerate(row.tolist()):
                 if pd.isna(val):
                     continue
                 nome = str(val).strip()
                 up = nome.upper()
-                if up == "MMG":
+                if up in {"MMG", "GRUPO", "MAT_GRUPO", "GRUPO_MAT"}:
                     col_map["mmg"] = idx
-                elif up in {"GRUPO", "MAT_GRUPO", "GRUPO_MAT"}:
-                    col_map["grupo"] = idx
-                elif up in {"VC_INT", "VC INT"}:
-                    col_map["vc"]["Vc_Int"] = idx
-                elif up in {"VC_EXT", "VC EXT"}:
-                    col_map["vc"]["Vc_Ext"] = idx
-                elif up in {"VC_MQL", "VC MQL"}:
-                    col_map["vc"]["Vc_MQL"] = idx
-                elif up in {"VC_AR", "VC AR"}:
-                    col_map["vc"]["Vc_Ar"] = idx
                 else:
-                    d_key = _parse_diametro(nome)
-                    if d_key is not None:
-                        col_map["f_by_d"][idx] = d_key
+                    matched_vc = None
+                    for k_vc, aliases in vc_map.items():
+                        if up in aliases:
+                            col_map["vc"][k_vc] = idx
+                            matched_vc = k_vc
+                            break
+                    if not matched_vc:
+                        d_key = _parse_diametro(nome)
+                        if d_key is not None:
+                            col_map["f_by_d"][idx] = d_key
             continue
 
-        # Lê linha de dados se existir cabeçalho ativo
+        primeira = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
+        if (
+            primeira
+            and primeira.upper() not in {"MMG", "GRUPO"}
+            and not re.match(r"^[PMKNHSC]\d+(\.\d+)?$", primeira.upper())
+            and len(celulas) <= 3
+            and all(_parse_num(c) is None for c in celulas[1:])
+        ):
+            familia_atual = primeira
+            col_map = None
+            continue
+
         if col_map and col_map["mmg"] is not None:
             mmg_raw = row.iloc[col_map["mmg"]]
             if pd.isna(mmg_raw) or str(mmg_raw).strip() == "":
                 continue
             mmg_val = str(mmg_raw).strip()
 
-            grupo_val = None
-            if col_map["grupo"] is not None:
-                g_raw = row.iloc[col_map["grupo"]]
-                if pd.notna(g_raw) and str(g_raw).strip() != "":
-                    grupo_val = str(g_raw).strip()
+            vc_entry = {}
+            for k_vc in ["interna", "externa", "mql", "ar"]:
+                c_idx = col_map["vc"].get(k_vc)
+                vc_entry[k_vc] = _parse_num(row.iloc[c_idx]) if c_idx is not None else None
 
-            entrada = {
-                "familia": familia_atual,
-                "grupo": grupo_val if grupo_val is not None else mmg_val,
-                "mmg": mmg_val,
-            }
-
-            for vc_key in vc_cols:
-                c_idx = col_map["vc"].get(vc_key)
-                entrada[vc_key] = _parse_num(row.iloc[c_idx]) if c_idx is not None else None
-
-            f_by_d = {}
+            avancos_f = {}
             for c_idx, d_key in col_map["f_by_d"].items():
-                f_val = _parse_num(row.iloc[c_idx])
-                if f_val is not None:
-                    f_by_d[d_key] = f_val
+                avancos_f[d_key] = _parse_num(row.iloc[c_idx])
 
-            entrada["f_by_d"] = f_by_d
-            registos.append(entrada)
+            tem_dados = any(v is not None for v in vc_entry.values()) or any(
+                v is not None for v in avancos_f.values()
+            )
+
+            registos.append({
+                "familia": familia_atual,
+                "mmg": mmg_val,
+                "vc": vc_entry,
+                "suportado": tem_dados,
+                "avancos_f": avancos_f,
+            })
 
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
