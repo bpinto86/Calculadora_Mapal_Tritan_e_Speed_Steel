@@ -1,118 +1,129 @@
 import json
+import math
+import re
 from pathlib import Path
 import pandas as pd
 
-EXCEL_PATH = Path("catalogo_teste.xlsx")
-OUT_DIR = Path("dados")
-OUT_DIR.mkdir(exist_ok=True)
 
-FAMILIAS_SEM_REFRIG_INT = {"SCD360", "SCD600"}
-COLUNAS_AVANCO_IDX = [6, 7, 8, 9, 10, 11]  # Colunas G a L
-
-
-def to_float_or_none(val):
-    if pd.isna(val) or str(val).strip() == "":
+def _parse_num(val):
+    if val is None or (isinstance(val, float) and math.isnan(val)):
         return None
+    if isinstance(val, (int, float)):
+        return float(val)
+    s = str(val).strip().replace(",", ".")
     try:
-        return float(str(val).replace(",", ".").strip())
+        return float(s)
     except ValueError:
         return None
 
-def to_order_str(val):
-    if pd.isna(val):
-        return ""
-    s = str(val).strip()
-    if s.endswith(".0"):
-        s = s[:-2]
-    return s
 
-df_dim = pd.read_excel(EXCEL_PATH, sheet_name="Dimensoes")
-df_par = pd.read_excel(EXCEL_PATH, sheet_name="Parametros_Corte", header=None)
-df_dim = pd.read_excel(EXCEL_PATH, sheet_name="Dimensoes")
-df_dim.columns = df_dim.columns.str.strip()
+def _parse_diametro(col_name):
+    if col_name is None or (isinstance(col_name, float) and math.isnan(col_name)):
+        return None
+    s = str(col_name).strip().replace(",", ".")
+    m = re.search(r"(?:[dDØø]\s*)?(\d+(?:\.\d+)?)", s)
+    if not m:
+        return None
+    val = float(m.group(1))
+    return str(int(val)) if val.is_integer() else str(val)
 
-# 1. Dimensões e referências
-referencias = []
-for _, r in df_dim.iterrows():
-    if pd.isna(r.get("Familia")) or pd.isna(r.get("Order_no")):
-        continue
-    referencias.append({
-        "operacao": "furacao",
-        "familia": str(r["Familia"]).strip(),
-        "variante": str(r.get("Variante", "")).strip(),
-        "refrigeracao": str(r.get("Refrig", "")).strip(),
-        "d1": to_float_or_none(r.get("d1")),
-        "d2": to_float_or_none(r.get("d2")),
-        "l1": to_float_or_none(r.get("l1")),
-        "l2": to_float_or_none(r.get("l2")),
-        "l3": to_float_or_none(r.get("l3")),
-        "l4": to_float_or_none(r.get("l4")),
-        "specification": str(r.get("Specification", "")).strip(),
-        "order_no": to_order_str(r["Order_no"]),
-    })
 
-# 2. Parâmetros de corte com cabeçalhos dinâmicos por bloco
-parametros = []
-diametros_bloco_atual = [1.0, 1.82, 3.31, 6.03, 10.99, 20.0]
+def exportar_json(
+    excel_path: str = "dados/parametros_corte.xlsx",
+    sheet_name: str = "Parametros_Corte",
+    output_path: str = "dados/furacao_parametros.json",
+) -> list[dict]:
+    df = pd.read_excel(excel_path, sheet_name=sheet_name, header=None)
+    registos = []
+    familia_atual = None
+    col_map = None
 
-for _, r in df_par.iterrows():
-    col0 = str(r.iloc[0]).strip() if len(r) > 0 and pd.notna(r.iloc[0]) else ""
-    col1 = str(r.iloc[1]).strip() if len(r) > 1 and pd.notna(r.iloc[1]) else ""
+    vc_cols = ["Vc_Int", "Vc_Ext", "Vc_MQL", "Vc_Ar"]
 
-    if not col0 and not col1:
-        continue
+    for _, row in df.iterrows():
+        celulas = [
+            str(x).strip()
+            for x in row.tolist()
+            if x is not None and not (isinstance(x, float) and math.isnan(x))
+        ]
+        if not celulas:
+            continue
 
-    # Deteta linha de cabeçalho de bloco
-    if col0.lower() == "familia" and col1.lower() == "mmg":
-        novos_diametros = []
-        for idx_c in COLUNAS_AVANCO_IDX:
-            d_val = to_float_or_none(r.iloc[idx_c]) if idx_c < len(r) else None
-            if d_val is not None:
-                novos_diametros.append(d_val)
-        if len(novos_diametros) == 6:
-            diametros_bloco_atual = novos_diametros
-        continue
+        # Deteta título de família (ex.: linha com texto que não é cabeçalho de tabela nem MMG)
+        primeira = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
+        if (
+            primeira
+            and primeira.upper() not in {"MMG", "GRUPO", "VC_INT", "VC_EXT", "VC_MQL", "VC_AR"}
+            and not primeira.lower().startswith("mmg")
+            and "mmg" not in [c.lower() for c in row.astype(str)]
+        ):
+            # Verifica se a linha parece cabeçalho de tabela com diâmetros
+            tem_diametros = any(_parse_diametro(c) is not None for c in row.iloc[1:])
+            if not tem_diametros and len(celulas) == 1:
+                familia_atual = primeira
+                col_map = None
+                continue
 
-    if not col0 or not col1:
-        continue
+        # Deteta linha de cabeçalho da tabela (contém MMG / Grupo / Vc / diâmetros)
+        row_upper = [str(x).strip().upper() if pd.notna(x) else "" for x in row.tolist()]
+        if "MMG" in row_upper or "GRUPO" in row_upper:
+            col_map = {"mmg": None, "grupo": None, "vc": {}, "f_by_d": {}}
+            for idx, val in enumerate(row.tolist()):
+                if pd.isna(val):
+                    continue
+                nome = str(val).strip()
+                up = nome.upper()
+                if up == "MMG":
+                    col_map["mmg"] = idx
+                elif up in {"GRUPO", "MAT_GRUPO", "GRUPO_MAT"}:
+                    col_map["grupo"] = idx
+                elif up in {"VC_INT", "VC INT"}:
+                    col_map["vc"]["Vc_Int"] = idx
+                elif up in {"VC_EXT", "VC EXT"}:
+                    col_map["vc"]["Vc_Ext"] = idx
+                elif up in {"VC_MQL", "VC MQL"}:
+                    col_map["vc"]["Vc_MQL"] = idx
+                elif up in {"VC_AR", "VC AR"}:
+                    col_map["vc"]["Vc_Ar"] = idx
+                else:
+                    d_key = _parse_diametro(nome)
+                    if d_key is not None:
+                        col_map["f_by_d"][idx] = d_key
+            continue
 
-    familia = col0
-    mmg = col1
+        # Lê linha de dados se existir cabeçalho ativo
+        if col_map and col_map["mmg"] is not None:
+            mmg_raw = row.iloc[col_map["mmg"]]
+            if pd.isna(mmg_raw) or str(mmg_raw).strip() == "":
+                continue
+            mmg_val = str(mmg_raw).strip()
 
-    vc_int = to_float_or_none(r.iloc[2]) if len(r) > 2 else None
-    vc_ext = to_float_or_none(r.iloc[3]) if len(r) > 3 else None
-    vc_mql = to_float_or_none(r.iloc[4]) if len(r) > 4 else None
-    vc_ar = to_float_or_none(r.iloc[5]) if len(r) > 5 else None
+            grupo_val = None
+            if col_map["grupo"] is not None:
+                g_raw = row.iloc[col_map["grupo"]]
+                if pd.notna(g_raw) and str(g_raw).strip() != "":
+                    grupo_val = str(g_raw).strip()
 
-    if familia.upper() in FAMILIAS_SEM_REFRIG_INT:
-        vc_int = None
+            entrada = {
+                "familia": familia_atual,
+                "grupo": grupo_val if grupo_val is not None else mmg_val,
+                "mmg": mmg_val,
+            }
 
-    avancos_por_diametro = {}
-    for d_ref, idx_c in zip(diametros_bloco_atual, COLUNAS_AVANCO_IDX):
-        val_f = to_float_or_none(r.iloc[idx_c]) if idx_c < len(r) else None
-        avancos_por_diametro[str(d_ref)] = val_f
+            for vc_key in vc_cols:
+                c_idx = col_map["vc"].get(vc_key)
+                entrada[vc_key] = _parse_num(row.iloc[c_idx]) if c_idx is not None else None
 
-    tem_vc = any(v is not None for v in [vc_int, vc_ext, vc_mql, vc_ar])
-    tem_avanco = any(v is not None for v in avancos_por_diametro.values())
+            f_by_d = {}
+            for c_idx, d_key in col_map["f_by_d"].items():
+                f_val = _parse_num(row.iloc[c_idx])
+                if f_val is not None:
+                    f_by_d[d_key] = f_val
 
-    parametros.append({
-        "familia": familia,
-        "mmg": mmg,
-        "vc": {
-            "interna": vc_int,
-            "externa": vc_ext,
-            "mql": vc_mql,
-            "ar": vc_ar,
-        },
-        "suportado": tem_vc and tem_avanco,
-        "avancos_f": avancos_por_diametro,
-    })
+            entrada["f_by_d"] = f_by_d
+            registos.append(entrada)
 
-(OUT_DIR / "referencias.json").write_text(
-    json.dumps(referencias, ensure_ascii=False, indent=2), encoding="utf-8"
-)
-(OUT_DIR / "furacao_parametros.json").write_text(
-    json.dumps(parametros, ensure_ascii=False, indent=2), encoding="utf-8"
-)
-
-print(f"OK: {len(referencias)} dimensões | {len(parametros)} linhas de corte.")
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(registos, indent=2, ensure_ascii=False), encoding="utf-8")
+    return registos
