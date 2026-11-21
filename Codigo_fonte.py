@@ -1186,6 +1186,27 @@ html_content = '''
             return isNaN(n) ? fallback : n;
         }
 
+        function normalizarCategoriaValor(rawCat) {
+            const c = String(rawCat || '').trim().toLowerCase();
+            if (!c) return '';
+            if (c.includes('spot') || c.includes('centr') || c.includes('ponto')) return 'spot';
+            if (c.includes('step') || c.includes('escalon')) return 'stepped';
+            if (c.includes('deep') || c.includes('profund')) return 'deep';
+            if (c.includes('ream') || c.includes('alarg')) return 'reaming';
+            if (c.includes('insert') || c.includes('pastilh')) return 'insert';
+            if (c.includes('solid') || c.includes('stand') || c.includes('fura')) return 'solid';
+            return c;
+        }
+
+        function normalizarGamaValor(rawGama) {
+            const g = String(rawGama || '').trim().toLowerCase();
+            if (!g) return '';
+            if (g.includes('expert')) return 'expert';
+            if (g.includes('performance')) return 'performance';
+            if (g.includes('basic')) return 'basic';
+            return g;
+        }
+
         function carregarParametrosJson() {
             if (!Array.isArray(PARAMETROS_JSON) || PARAMETROS_JSON.length === 0) return;
 
@@ -1194,15 +1215,21 @@ html_content = '''
                 const famRaw = String(row.familia || row.Familia || '').trim().toLowerCase();
                 if (!famRaw) return;
 
+                const gamaRow = normalizarGamaValor(row.gama || row.Gama || row.linha || row.Linha);
+                const catRow = normalizarCategoriaValor(row.categoria || row.Categoria || row.operacao);
+
                 if (!dados[famRaw]) {
                     dados[famRaw] = construirFerramenta({
-                        linha: 'expert',
-                        categoria: 'solid',
+                        linha: gamaRow || 'expert',
+                        categoria: catRow || 'solid',
                         temRefrigInt: true,
                         nome: famRaw.toUpperCase(),
                         variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
                         diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00]
                     });
+                } else {
+                    if (gamaRow) dados[famRaw].linha = gamaRow;
+                    if (catRow) dados[famRaw].categoria = catRow;
                 }
 
                 const tool = dados[famRaw];
@@ -1287,15 +1314,24 @@ html_content = '''
 
         function obterGamaCatalogo(item) {
             if (!item) return '';
+            const gCat = normalizarGamaValor(item.gama || item.linha);
+            if (gCat) return gCat;
             const famKey = String(item.familia || '').trim().toLowerCase();
             if (famKey && dados[famKey] && dados[famKey].linha) {
                 return dados[famKey].linha;
             }
-            const gRaw = String(item.linha || item.gama || '').trim().toLowerCase();
-            if (gRaw.includes('expert')) return 'expert';
-            if (gRaw.includes('performance')) return 'performance';
-            if (gRaw.includes('basic')) return 'basic';
-            return gRaw;
+            return '';
+        }
+
+        function obterCategoriaCatalogo(item) {
+            if (!item) return '';
+            const cCat = normalizarCategoriaValor(item.categoria || item.operacao);
+            if (cCat) return cCat;
+            const famKey = String(item.familia || '').trim().toLowerCase();
+            if (famKey && dados[famKey] && dados[famKey].categoria) {
+                return dados[famKey].categoria;
+            }
+            return '';
         }
 
         function fmtGamaLabel(gamaKey) {
@@ -1373,7 +1409,9 @@ html_content = '''
                 const din6535 = extrairEncabadouroDIN6535(r) || '—';
                 const refCode = normalizarRefrigCatalogo(r);
                 const refTxt = refCode ? ` | Refrig: ${fmtRefrigCatalogo(refCode)}` : '';
-                metaEl.innerText = `Order: ${r.order_no || '—'} | Spec: ${r.specification || '—'} | DIN 6535: ${din6535}${refTxt}`;
+                const gamaTxt = obterGamaCatalogo(r) ? ` | Gama: ${fmtGamaLabel(obterGamaCatalogo(r))}` : '';
+                const catTxt = obterCategoriaCatalogo(r) ? ` | Cat: ${obterCategoriaCatalogo(r)}` : '';
+                metaEl.innerText = `Order: ${r.order_no || '—'} | Spec: ${r.specification || '—'} | DIN 6535: ${din6535}${refTxt}${gamaTxt}${catTxt}`;
             } else {
                 const brocaKey = document.getElementById('broca').value;
                 const varFiltro = document.getElementById('filtro-xd').value;
@@ -1408,17 +1446,20 @@ html_content = '''
             return REFERENCIAS_JSON.filter(item => {
                 const din6535 = extrairEncabadouroDIN6535(item).toLowerCase();
                 const gama = obterGamaCatalogo(item).toLowerCase();
+                const categoria = obterCategoriaCatalogo(item).toLowerCase();
                 const refCode = normalizarRefrigCatalogo(item).toLowerCase();
                 const hay = [
                     item.order_no,
                     item.specification,
                     item.designacao,
+                    item.nome,
                     item.familia,
                     item.variante,
                     item.refrigeracao,
                     refCode,
                     din6535,
                     gama,
+                    categoria,
                     item.d1 !== null && item.d1 !== undefined ? Number(item.d1).toFixed(2) : ''
                 ].join(' ').toLowerCase();
                 return tokens.every(tok => hay.includes(tok));
@@ -1638,9 +1679,14 @@ html_content = '''
         function aplicarReferenciaCatalogo(item) {
             referenciaAtivaObj = item;
             const famKey = String(item.familia || '').trim().toLowerCase();
+            const gamaItem = obterGamaCatalogo(item);
+            const catItem = obterCategoriaCatalogo(item);
 
             if (famKey && dados[famKey]) {
                 const toolData = dados[famKey];
+                if (gamaItem) toolData.linha = gamaItem;
+                if (catItem) toolData.categoria = catItem;
+
                 linhaAtivaInterna = toolData.linha;
                 document.getElementById('categoria').value = toolData.categoria;
                 atualizarFiltroBrocas(true);
@@ -1649,6 +1695,9 @@ html_content = '''
                 const varNorm = String(item.variante || '').trim();
                 const matchVar = Object.keys(toolData.variantes || {}).find(k => k.toLowerCase() === varNorm.toLowerCase());
                 mudarBroca(matchVar || null);
+            } else {
+                if (gamaItem) linhaAtivaInterna = gamaItem;
+                if (catItem) document.getElementById('categoria').value = catItem;
             }
 
             const refCode = normalizarRefrigCatalogo(item);
@@ -3422,128 +3471,72 @@ html_content = '''
                     ind: 'Velocidade de Corte (Vc)',
                     a: `${metAtual.vcFinal.toFixed(0)} m/min`,
                     b: `${metAlvo.vcFinal.toFixed(0)} m/min`,
-                    d: `${(metAlvo.vcFinal - metAtual.vcFinal) >= 0 ? '+' : ''}${(metAlvo.vcFinal - metAtual.vcFinal).toFixed(0)} m/min`
+                    d: `${(metAlvo.vcFinal - metAtual.vcFinal) >= 0 ? '+' : ''}${(metAlvo.vcFinal - metAtual.vcFinal).toFixed(0)} m/min`,
+                    cls: metAlvo.vcFinal >= metAtual.vcFinal ? 'text-emerald-400' : 'text-amber-300'
                 },
                 {
                     ind: 'Avanço por Rotação (f)',
                     a: `${metAtual.fFinal.toFixed(4)} mm/rot`,
                     b: `${metAlvo.fFinal.toFixed(4)} mm/rot`,
-                    d: `${(metAlvo.fFinal - metAtual.fFinal) >= 0 ? '+' : ''}${(metAlvo.fFinal - metAtual.fFinal).toFixed(4)}`
+                    d: `${(metAlvo.fFinal - metAtual.fFinal) >= 0 ? '+' : ''}${(metAlvo.fFinal - metAtual.fFinal).toFixed(4)} mm/rot`,
+                    cls: metAlvo.fFinal >= metAtual.fFinal ? 'text-emerald-400' : 'text-amber-300'
                 },
                 {
-                    ind: 'Rotações (n) / Avanço (vf)',
-                    a: `${metAtual.n} rpm / ${metAtual.vf} mm/min`,
-                    b: `${metAlvo.n} rpm / ${metAlvo.vf} mm/min`,
-                    d: `${(metAlvo.vf - metAtual.vf) >= 0 ? '+' : ''}${metAlvo.vf - metAtual.vf} mm/min`
+                    ind: 'Avanço de Trabalho (vf)',
+                    a: `${metAtual.vf} mm/min`,
+                    b: `${metAlvo.vf} mm/min`,
+                    d: `${(metAlvo.vf - metAtual.vf) >= 0 ? '+' : ''}${metAlvo.vf - metAtual.vf} mm/min`,
+                    cls: metAlvo.vf >= metAtual.vf ? 'text-emerald-400' : 'text-amber-300'
                 },
                 {
-                    ind: 'Tempo Unitário / Furo',
-                    a: `${metAtual.tempoFuroSeg.toFixed(1)} seg`,
-                    b: `${metAlvo.tempoFuroSeg.toFixed(1)} seg`,
-                    d: `${(metAlvo.tempoFuroSeg - metAtual.tempoFuroSeg) >= 0 ? '+' : ''}${(metAlvo.tempoFuroSeg - metAtual.tempoFuroSeg).toFixed(1)} seg`
+                    ind: 'Tempo Total do Lote',
+                    a: `${metAtual.tempoTotalMin.toFixed(1)} min (${metAtual.tempoFuroSeg.toFixed(1)} s/furo)`,
+                    b: `${metAlvo.tempoTotalMin.toFixed(1)} min (${metAlvo.tempoFuroSeg.toFixed(1)} s/furo)`,
+                    d: `${difTempoStr} (${pctTempo >= 0 ? '+' : ''}${pctTempo.toFixed(1)}%)`,
+                    cls: difTempoMin <= 0 ? 'text-emerald-400' : 'text-rose-400'
                 },
                 {
-                    ind: `Tempo Total (${ctx.qtdFuros} furos)`,
-                    a: `${metAtual.tempoTotalMin.toFixed(1)} min`,
-                    b: `${metAlvo.tempoTotalMin.toFixed(1)} min`,
-                    d: `${difTempoStr} (${pctTempo >= 0 ? '+' : ''}${pctTempo.toFixed(1)}%)`
-                },
-                {
-                    ind: 'Vida / Ferramentas / Reafiações',
-                    a: `${ferrAtual.furosPorFerramentaCompleta.toFixed(0)} furos · ${ferrAtual.qtdFerramentasNecessarias} ferr. (${ferrAtual.reafiacoesEfetuadas} reaf.)`,
-                    b: `${ferrAlvo.furosPorFerramentaCompleta.toFixed(0)} furos · ${ferrAlvo.qtdFerramentasNecessarias} ferr. (${ferrAlvo.reafiacoesEfetuadas} reaf.)`,
-                    d: `${(ferrAlvo.qtdFerramentasNecessarias - ferrAtual.qtdFerramentasNecessarias) >= 0 ? '+' : ''}${ferrAlvo.qtdFerramentasNecessarias - ferrAtual.qtdFerramentasNecessarias} ferr.`
-                },
-                {
-                    ind: 'Custo Ferramenta no Lote',
-                    a: `${ferrAtual.custoFerramentaLote.toFixed(2)} €`,
-                    b: `${ferrAlvo.custoFerramentaLote.toFixed(2)} €`,
-                    d: `${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote) >= 0 ? '+' : ''}${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote).toFixed(2)} €`
-                },
-                {
-                    ind: 'Custo Máquina no Lote',
-                    a: `${metAtual.custoMaqLote.toFixed(2)} €`,
-                    b: `${metAlvo.custoMaqLote.toFixed(2)} €`,
-                    d: `${(metAlvo.custoMaqLote - metAtual.custoMaqLote) >= 0 ? '+' : ''}${(metAlvo.custoMaqLote - metAtual.custoMaqLote).toFixed(2)} €`
+                    ind: 'Ferramentas / Reafiações no Lote',
+                    a: `${ferrAtual.qtdFerramentasNecessarias} ferr. · ${ferrAtual.reafiacoesEfetuadas} reaf. (${ferrAtual.custoFerramentaLote.toFixed(2)} €)`,
+                    b: `${ferrAlvo.qtdFerramentasNecessarias} ferr. · ${ferrAlvo.reafiacoesEfetuadas} reaf. (${ferrAlvo.custoFerramentaLote.toFixed(2)} €)`,
+                    d: `${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote) >= 0 ? '+' : ''}${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote).toFixed(2)} €`,
+                    cls: ferrAlvo.custoFerramentaLote <= ferrAtual.custoFerramentaLote ? 'text-emerald-400' : 'text-rose-400'
                 },
                 {
                     ind: 'Custo Total no Lote (Máq. + Ferr.)',
                     a: `${custoTotalAtual.toFixed(2)} €`,
                     b: `${custoTotalAlvo.toFixed(2)} €`,
                     d: `${difCustoTotal >= 0 ? '+' : ''}${difCustoTotal.toFixed(2)} €`,
-                    destaque: true
+                    cls: difCustoTotal <= 0 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'
                 },
                 {
-                    ind: 'Custo Total por Furo',
-                    a: `${custoFuroAtual.toFixed(3)} €`,
-                    b: `${custoFuroAlvo.toFixed(3)} €`,
-                    d: `${difCustoFuro >= 0 ? '+' : ''}${difCustoFuro.toFixed(3)} €`,
-                    destaque: true
+                    ind: 'Custo Unitário por Furo',
+                    a: `${custoFuroAtual.toFixed(3)} €/furo`,
+                    b: `${custoFuroAlvo.toFixed(3)} €/furo`,
+                    d: `${difCustoFuro >= 0 ? '+' : ''}${difCustoFuro.toFixed(3)} €/furo`,
+                    cls: difCustoFuro <= 0 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'
+                },
+                {
+                    ind: 'Potência / Binário Requeridos',
+                    a: `${metAtual.potenciaReqKw.toFixed(2)} kW / ${metAtual.binarioMc.toFixed(1)} N·m`,
+                    b: `${metAlvo.potenciaReqKw.toFixed(2)} kW / ${metAlvo.binarioMc.toFixed(1)} N·m`,
+                    d: `${(metAlvo.potenciaReqKw - metAtual.potenciaReqKw) >= 0 ? '+' : ''}${(metAlvo.potenciaReqKw - metAtual.potenciaReqKw).toFixed(2)} kW`,
+                    cls: metAlvo.potenciaReqKw <= metAtual.potenciaReqKw ? 'text-emerald-400' : 'text-amber-300'
                 }
             ];
 
-            if (metAlvo.requerPiloto) {
-                linhas.splice(4, 0, {
-                    ind: 'Tempo Furo-Piloto (Lote)',
-                    a: '0.0 min',
-                    b: `+${metAlvo.tempoPilotoLoteMin.toFixed(1)} min (${metAlvo.pilotoSegEfetivo.toFixed(0)} s/furo)`,
-                    d: `+${metAlvo.tempoPilotoLoteMin.toFixed(1)} min`
-                });
-                linhas.splice(8, 0, {
-                    ind: 'Custo Piloto no Lote',
-                    a: '0.00 €',
-                    b: `${custoPilotoAlvoLote.toFixed(2)} € (${metAlvo.custoPilotoEfetivo.toFixed(2)} €/furo)`,
-                    d: `+${custoPilotoAlvoLote.toFixed(2)} €`
-                });
-            }
-
-            if (metAlvo.canhaoAtivo) {
-                linhas.splice(5, 0, {
-                    ind: 'Paragens Broca Canhão (Afiação)',
-                    a: '0 paragens (0.0 min)',
-                    b: `${metAlvo.numParagensLote} paragem(ns) (+${metAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min)`,
-                    d: `+${metAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min`
-                });
-            }
-
-            const tbodyComp = document.getElementById('comp-tabela-corpo');
-            tbodyComp.innerHTML = '';
+            const tbody = document.getElementById('comp-tabela-corpo');
+            tbody.innerHTML = '';
             linhas.forEach(l => {
                 const tr = document.createElement('tr');
-                tr.className = l.destaque ? 'bg-slate-800/80 font-bold text-white' : 'text-slate-300';
                 tr.innerHTML = `
-                    <td class="py-1.5 px-3">${l.ind}</td>
-                    <td class="py-1.5 px-3 text-blue-300">${l.a}</td>
-                    <td class="py-1.5 px-3 text-emerald-300">${l.b}</td>
-                    <td class="py-1.5 px-3 text-amber-300">${l.d}</td>
+                    <td class="py-2 px-3 font-medium text-slate-200">${l.ind}</td>
+                    <td class="py-2 px-3 text-slate-300">${l.a}</td>
+                    <td class="py-2 px-3 text-slate-300">${l.b}</td>
+                    <td class="py-2 px-3 ${l.cls}">${l.d}</td>
                 `;
-                tbodyComp.appendChild(tr);
+                tbody.appendChild(tr);
             });
-
-            window._ultimoComparativo = {
-                nomeAlvo,
-                compKey,
-                compVariante,
-                corteInterrompidoAtivo,
-                metrosRefContinuo,
-                furosEquivContinuo,
-                custoHoraComp,
-                metAtual,
-                metAlvo,
-                ferrAtual,
-                ferrAlvo,
-                custoPilotoAlvoLote,
-                custoTotalAtual,
-                custoTotalAlvo,
-                difCustoTotal,
-                custoFuroAtual,
-                custoFuroAlvo,
-                difCustoFuro,
-                difTempoMin,
-                pctTempo,
-                breakevenTexto,
-                linhas
-            };
         }
 
         function aplicarFerramentaComparada() {
@@ -3562,16 +3555,12 @@ html_content = '''
         }
 
         function abrirModalExportacao() {
-            const radioResumido = document.getElementById('radio-pdf-resumido');
-            const radioCompleto = document.getElementById('radio-pdf-completo');
             const descEl = document.getElementById('desc-modal-export');
-
             if (isProMode) {
-                radioCompleto.checked = true;
-                descEl.innerText = 'Nível Pro ativo: escolha entre a Proposta Completa ou a Ficha Técnica:';
+                descEl.innerText = "Modo Pro ativo: escolha entre Ficha Técnica ou Proposta Técnico-Comercial Completa:";
             } else {
-                radioResumido.checked = true;
-                descEl.innerText = 'Nível Básico ativo: será gerada a Ficha Técnica / Parâmetros de Corte:';
+                descEl.innerText = "Modo Básico ativo: será gerada a Ficha Técnica / Parâmetros de Corte:";
+                document.getElementById('radio-pdf-resumido').checked = true;
             }
             document.getElementById('modal-export').classList.remove('hidden');
         }
@@ -3581,190 +3570,162 @@ html_content = '''
         }
 
         function gerarPDF() {
-            const tipoSelecionado = isProMode
-                ? (document.querySelector('input[name="tipo-relatorio"]:checked')?.value || 'completo')
-                : 'resumido';
-            const incluirComparativo = isProMode && Boolean(document.getElementById('comp-incluir-pdf')?.checked);
-
-            fecharModalExportacao();
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                alert("Biblioteca jsPDF não carregada. Verifique a ligação à internet.");
+                return;
+            }
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
+            const tipoRadio = document.querySelector('input[name="tipo-relatorio"]:checked');
+            const tipoRelatorio = isProMode && tipoRadio ? tipoRadio.value : 'resumido';
+            const isCompleto = tipoRelatorio === 'completo';
+
             const brocaKey = document.getElementById('broca').value;
-            const grupoSelText = document.getElementById('grupo').options[document.getElementById('grupo').selectedIndex]?.text || '';
-            const grupoEfetivoKey = getGrupoEfetivo();
-            const ligaCheck = document.getElementById('liga-check').checked;
+            const toolData = dados[brocaKey] || { nome: '—', linha: '—' };
+            const grupoSel = document.getElementById('grupo').value;
+            const grupoEfetivo = getGrupoEfetivo();
+            const grupoNome = GRUPOS_MAPAL_PADRAO.gruposNames[grupoEfetivo] || grupoEfetivo;
+            const ligaAtiva = document.getElementById('liga-check').checked;
             const varianteAtiva = getVarianteAtiva();
-            const ctx = obterContextoCalculoAtual();
 
-            const nomeFerramenta = brocaKey && dados[brocaKey] ? dados[brocaKey].nome : 'Ferramenta';
-            const linhaFerramenta = brocaKey && dados[brocaKey] ? dados[brocaKey].linha.toUpperCase() : '';
-            const refrigMap = { 'int': 'Interna', 'ext': 'Externa', 'mql': 'MQL', 'ar': 'Ar' };
-            const refrigTexto = refrigMap[refrigAtual] || refrigAtual;
+            const refrigLabels = { int: 'Interna', ext: 'Externa', mql: 'MQL', ar: 'Ar' };
+            const refrigLabel = refrigLabels[refrigAtual] || refrigAtual;
 
+            const diametro = parseFloat(document.getElementById('diametro').value) || 12.00;
+            const profundidade = parseFloat(document.getElementById('profundidade').value) || 31.0;
             const vcVal = document.getElementById('input-vc').value;
             const fVal = document.getElementById('input-f').value;
             const nVal = document.getElementById('res-n').innerText;
             const vfVal = document.getElementById('res-vf').innerText;
-            const forcaVal = document.getElementById('res-forca').innerText.replace('N', '').trim();
-            const binarioVal = document.getElementById('res-binario-card').innerText.replace('N·m', '').trim();
-            const potVal = document.getElementById('val-gauge-pot').innerText;
+            const forcaVal = document.getElementById('res-forca').innerText.replace(/\s+/g, ' ').trim();
+            const binarioVal = document.getElementById('res-binario-card').innerText.replace(/\s+/g, ' ').trim();
+            const potReqVal = document.getElementById('val-gauge-pot').innerText;
 
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 12;
-            const contentW = pageWidth - margin * 2;
-            let y = 12;
-
-            function ensureSpace(neededMm) {
-                if (y + neededMm > pageHeight - 16) {
-                    doc.addPage();
-                    y = 14;
-                }
-            }
+            let y = 16;
 
             doc.setFillColor(15, 23, 42);
-            doc.rect(margin, y, contentW, 18, 'F');
+            doc.rect(0, 0, 210, 28, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(13);
-            const tituloDoc = tipoSelecionado === 'completo'
-                ? 'PROPOSTA TECNICO-COMERCIAL — MAPAL'
-                : 'FICHA TECNICA DE CORTE — MAPAL';
-            doc.text(tituloDoc, margin + 4, y + 7.5);
+            doc.setFontSize(14);
+            doc.text(isCompleto ? 'PROPOSTA TECNICO-COMERCIAL - PARAMETROS MAPAL' : 'FICHA TECNICA - PARAMETROS DE CORTE MAPAL', 14, 13);
+
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8.5);
+            doc.setFontSize(9);
             doc.setTextColor(148, 163, 184);
-            doc.text(`Gama: ${linhaFerramenta} | Data: ${new Date().toLocaleDateString('pt-PT')}`, margin + 4, y + 13.5);
-            y += 23;
+            const dataStr = new Date().toLocaleString('pt-PT');
+            doc.text(`Emitido em: ${dataStr}   |   Autor: Bruno Pinto (alamo-ferramentas.com)`, 14, 21);
 
-            doc.setFillColor(241, 245, 249);
-            doc.rect(margin, y, contentW, 24, 'F');
-            doc.setDrawColor(203, 213, 225);
-            doc.rect(margin, y, contentW, 24, 'S');
+            y = 36;
             doc.setTextColor(15, 23, 42);
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(9);
-            doc.text('1. FERRAMENTA, REFERENCIA E MATERIAL', margin + 3, y + 5.5);
+            doc.setFontSize(11);
+            doc.text('1. Configuracao da Operacao e Ferramenta', 14, y);
+            y += 6;
 
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8.5);
-            const refInfoTxt = referenciaAtivaObj
-                ? `${referenciaAtivaObj.order_no} (${referenciaAtivaObj.specification || ''})`
-                : `${nomeFerramenta} (${varianteAtiva})`;
-            doc.text(`Ferramenta / Ref.: ${refInfoTxt}`, margin + 3, y + 11.5);
-            doc.text(`Material (MMG): ${grupoSelText}${ligaCheck ? ` -> Efetivo: ${grupoEfetivoKey}` : ''}`, margin + 3, y + 16.5);
-            const l3TxtPdf = (referenciaAtivaObj && referenciaAtivaObj.l3) ? `${Number(referenciaAtivaObj.l3).toFixed(0)} mm` : 'N/D';
-            doc.text(`Diametro (Ø): ${ctx.diametro.toFixed(2)} mm | Profundidade (L): ${ctx.profundidade.toFixed(1)} mm (l3: ${l3TxtPdf}) | Refrig.: ${refrigTexto}`, margin + 3, y + 21.5);
-            y += 28;
+            doc.setFontSize(9.5);
+            const linhasConfig = [
+                `Ferramenta: ${toolData.nome} (${variantSafe(varianteAtiva)})   |   Linha: ${fmtGamaLabel(toolData.linha)}`,
+                `Material (MMG): ${grupoNome}${ligaAtiva ? ' [Regra >8% liga: ' + grupoEfetivo + ']' : ''}`,
+                `Refrigeracao: ${refrigLabel}   |   Diametro (d1): ${diametro.toFixed(2)} mm   |   Profundidade (L): ${profundidade.toFixed(1)} mm`
+            ];
+            if (referenciaAtivaObj) {
+                linhasConfig.push(`Referencia Catalogo: Order ${referenciaAtivaObj.order_no || '—'} | Spec ${referenciaAtivaObj.specification || '—'} | l3: ${fmtCota(referenciaAtivaObj.l3, 0)}`);
+            }
 
-            doc.setFillColor(239, 246, 255);
-            doc.rect(margin, y, contentW, 22, 'F');
-            doc.setDrawColor(147, 197, 253);
-            doc.rect(margin, y, contentW, 22, 'S');
-            doc.setTextColor(30, 58, 138);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(9);
-            doc.text('2. PARAMETROS DE CORTE E ESFORCOS', margin + 3, y + 5.5);
+            linhasConfig.forEach(txt => {
+                doc.text(txt, 14, y);
+                y += 5.5;
+            });
 
-            doc.setTextColor(15, 23, 42);
+            y += 3;
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(9);
-            doc.text(`Vc: ${vcVal} m/min`, margin + 3, y + 12.5);
-            doc.text(`Rotacoes (n): ${nVal} rpm`, margin + 48, y + 12.5);
-            doc.text(`Avanco (f): ${fVal} mm/rot`, margin + 98, y + 12.5);
-            doc.text(`Avanco (vf): ${vfVal} mm/min`, margin + 145, y + 12.5);
+            doc.setFontSize(11);
+            doc.text('2. Parametros de Corte e Esforcos Estimados', 14, y);
+            y += 6;
 
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8.5);
-            doc.text(`Forca Axial (Ff): ${forcaVal} N | Binario (Mc): ${binarioVal} N·m | Potencia Req.: ${potVal}`, margin + 3, y + 18.5);
-            y += 26;
+            doc.setFontSize(9.5);
+            const linhasCorte = [
+                `Velocidade de Corte (Vc): ${vcVal} m/min   |   Rotacoes (n): ${nVal} rpm`,
+                `Avanco por Rotacao (f): ${fVal} mm/rot   |   Avanco de Trabalho (vf): ${vfVal} mm/min`,
+                `Forca Axial (Ff): ${forcaVal}   |   Binario (Mc): ${binarioVal}   |   Potencia Req.: ${potReqVal}`
+            ];
+            linhasCorte.forEach(txt => {
+                doc.text(txt, 14, y);
+                y += 5.5;
+            });
 
-            if (tipoSelecionado === 'completo') {
-                ensureSpace(34);
-                const tempoTotalMin = document.getElementById('res-tempo-total').innerText.split('(')[0].trim();
-                const tempoUnit = document.getElementById('res-tempo-unit').innerText;
+            if (isCompleto) {
+                const qtdFuros = document.getElementById('qtd-furos').value;
+                const tempoTotal = document.getElementById('res-tempo-total').innerText.replace(/\s+/g, ' ').trim();
                 const volumeTotal = document.getElementById('res-volume-total').innerText;
-                const taxaRem = document.getElementById('res-taxa').innerText;
-                const pesoTotal = document.getElementById('res-peso').innerText;
-                const sucataTotal = document.getElementById('res-sucata-val').innerText;
-                const custoTotal = document.getElementById('res-custo-total').innerText.split('(')[0].trim();
-                const custoFuro = document.getElementById('res-custo-furo').innerText;
+                const pesoTotal = document.getElementById('res-peso').innerText.replace(/\s+/g, ' ').trim();
+                const sucataVal = document.getElementById('res-sucata-val').innerText.replace(/\s+/g, ' ').trim();
+                const custoTotal = document.getElementById('res-custo-total').innerText.replace(/\s+/g, ' ').trim();
 
-                doc.setFillColor(240, 253, 244);
-                doc.rect(margin, y, contentW, 30, 'F');
-                doc.setDrawColor(134, 239, 172);
-                doc.rect(margin, y, contentW, 30, 'S');
-                doc.setTextColor(20, 83, 45);
+                y += 3;
                 doc.setFont('helvetica', 'bold');
-                doc.setFontSize(9);
-                doc.text(`3. ANALISE DE LOTE, CUSTOS E MATERIAIS (${ctx.qtdFuros} FUROS)`, margin + 3, y + 5.5);
+                doc.setFontSize(11);
+                doc.text('3. Analise de Lote, Tempos, Limalha e Custos (Pro)', 14, y);
+                y += 6;
 
-                doc.setTextColor(15, 23, 42);
                 doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8.5);
-                doc.text(`Tempo Total: ${tempoTotalMin} ${tempoUnit}`, margin + 3, y + 12);
-                doc.text(`Custo Maquina: ${custoTotal} ${custoFuro} (@ ${ctx.custoHora.toFixed(2)} EUR/h)`, margin + 95, y + 12);
-                doc.text(`Volume Removido: ${volumeTotal} (Taxa: ${taxaRem})`, margin + 3, y + 18);
-                doc.text(`Peso Limalha: ${pesoTotal} | Sucata: ${sucataTotal}`, margin + 95, y + 18);
-                const peckingInfo = ctx.peckingCheck
-                    ? `Pecking Ativo (${ctx.peckingInputVal} ${ctx.peckingUnid === 'xd' ? 'xD' : 'mm'}, retracao ${ctx.peckingRetensaoVal} mm/min)`
-                    : 'Sem Pecking (furo continuo)';
-                doc.text(`Ciclo: ${peckingInfo}`, margin + 3, y + 24.5);
-                y += 34;
+                doc.setFontSize(9.5);
+                const linhasPro = [
+                    `Quantidade do Lote: ${qtdFuros} furos   |   Tempo Total: ${tempoTotal}`,
+                    `Volume Removido: ${volumeTotal}   |   Peso Limalha: ${pesoTotal}   |   Valor Sucata: ${sucataVal}`,
+                    `Custo Estimado de Maquinacao: ${custoTotal}`
+                ];
+                linhasPro.forEach(txt => {
+                    doc.text(txt, 14, y);
+                    y += 5.5;
+                });
 
-                if (incluirComparativo && window._ultimoComparativo) {
-                    const comp = window._ultimoComparativo;
-                    ensureSpace(55);
-                    doc.setFillColor(238, 242, 255);
-                    doc.rect(margin, y, contentW, 7, 'F');
-                    doc.setTextColor(49, 46, 129);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(9);
-                    const tagInterPdf = comp.corteInterrompidoAtivo ? ` [Corte Interrompido · Ref. ${comp.metrosRefContinuo}m / ~${comp.furosEquivContinuo} furos]` : '';
-                    doc.text(`4. COMPARATIVO: ${nomeFerramenta} (${varianteAtiva}) vs. ${comp.nomeAlvo}${tagInterPdf}`, margin + 3, y + 4.8);
-                    y += 9;
-
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(8);
-                    doc.setTextColor(30, 41, 59);
-                    doc.text('Indicador', margin + 2, y + 4);
-                    doc.text('MAPAL', margin + 74, y + 4);
-                    doc.text('Comparada', margin + 114, y + 4);
-                    doc.text('Diferenca', margin + 154, y + 4);
-                    y += 6;
-
-                    doc.setFont('helvetica', 'normal');
-                    comp.linhas.forEach(l => {
-                        ensureSpace(6);
-                        doc.setTextColor(30, 41, 59);
-                        doc.text(String(l.ind).slice(0, 42), margin + 2, y + 3.5);
-                        doc.text(String(l.a).slice(0, 22), margin + 74, y + 3.5);
-                        doc.text(String(l.b).slice(0, 22), margin + 114, y + 3.5);
-                        doc.text(String(l.d).slice(0, 22), margin + 154, y + 3.5);
-                        y += 5.2;
-                    });
+                const incluirComp = document.getElementById('comp-incluir-pdf') && document.getElementById('comp-incluir-pdf').checked;
+                if (incluirComp) {
+                    const compNome = document.getElementById('comp-th-alvo').innerText;
+                    const destaqueComp = document.getElementById('comp-resumo-lote-destaque').innerText;
+                    const capComp = document.getElementById('comp-capacidade-texto').innerText;
                     y += 3;
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(11);
+                    doc.text(`4. Comparativo Tecnico-Comercial vs. ${compNome}`, 14, y);
+                    y += 6;
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    const splitCap = doc.splitTextToSize(capComp, 180);
+                    doc.text(splitCap, 14, y);
+                    y += splitCap.length * 5;
+                    const splitDest = doc.splitTextToSize(destaqueComp, 180);
+                    doc.text(splitDest, 14, y);
+                    y += splitDest.length * 5;
                 }
             }
 
-            ensureSpace(14);
+            y = Math.max(y + 6, 268);
+            doc.setDrawColor(203, 213, 225);
+            doc.line(14, y - 3, 196, y - 3);
             doc.setFont('helvetica', 'italic');
-            doc.setFontSize(7.5);
+            doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text('Nota: Parametros teoricos de referencia. Ajustar conforme rigidez da fixacao, estado da ferramenta e condicoes de refrigeracao.', margin, y + 3);
+            const avisoRodape = doc.splitTextToSize("Nota: Todos os parametros de corte sao teoricos e poderao sofrer alteracoes consoante a maquina, fixacao da peca, fixacao da ferramenta e material.", 182);
+            doc.text(avisoRodape, 14, y);
 
-            const nomeFicheiro = tipoSelecionado === 'completo'
-                ? `Proposta_MAPAL_${brocaKey || 'ferramenta'}_${grupoEfetivoKey || 'MMG'}.pdf`
-                : `Ficha_Corte_MAPAL_${brocaKey || 'ferramenta'}_${grupoEfetivoKey || 'MMG'}.pdf`;
-
+            const nomeFicheiro = isCompleto ? `Proposta_MAPAL_${brocaKey || 'calculo'}.pdf` : `Ficha_MAPAL_${brocaKey || 'calculo'}.pdf`;
             doc.save(nomeFicheiro);
+            fecharModalExportacao();
+        }
+
+        function variantSafe(v) {
+            return v || '—';
         }
 
         window.addEventListener('DOMContentLoaded', () => {
             aplicarModoUI();
-            atualizarEstadoBotaoInterrompido();
             filtrarCatalogoCascata('init');
             atualizarFiltroBrocas(false);
             atualizarPainelCotas();
@@ -3775,8 +3736,11 @@ html_content = '''
 </html>
 '''
 
-html_content = html_content.replace("__PRO_PASSWORD_PLACEHOLDER__", pro_password_js)
-html_content = html_content.replace("__REFERENCIAS_JSON_PLACEHOLDER__", referencias_js)
-html_content = html_content.replace("__PARAMETROS_JSON_PLACEHOLDER__", parametros_json_js)
+html_final = (
+    html_content
+    .replace("__PRO_PASSWORD_PLACEHOLDER__", pro_password_js)
+    .replace("__REFERENCIAS_JSON_PLACEHOLDER__", referencias_js)
+    .replace("__PARAMETROS_JSON_PLACEHOLDER__", parametros_json_js)
+)
 
-components.html(html_content, height=960, scrolling=True)
+components.html(html_final, height=960, scrolling=True)

@@ -28,6 +28,12 @@ def _parse_diametro(col_name):
     return f"{val:.1f}"
 
 
+def _limpar_str(val):
+    if val is None or (isinstance(val, float) and math.isnan(val)):
+        return ""
+    return str(val).strip()
+
+
 def exportar_json(
     excel_path: str = "dados/parametros_corte.xlsx",
     sheet_name: str = "Parametros_Corte",
@@ -115,6 +121,78 @@ def exportar_json(
                 "suportado": tem_dados,
                 "avancos_f": avancos_f,
             })
+
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(registos, indent=2, ensure_ascii=False), encoding="utf-8")
+    return registos
+
+
+def exportar_referencias_json(
+    excel_path: str = "dados/catalogo_teste.xlsx",
+    sheet_name: str = "Dimensoes",
+    output_path: str = "dados/referencias.json",
+) -> list[dict]:
+    df = pd.read_excel(excel_path, sheet_name=sheet_name)
+    if df.empty:
+        out = Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text("[]", encoding="utf-8")
+        return []
+
+    cols_norm = {
+        re.sub(r"[^a-z0-9]+", "_", str(c).strip().lower()).strip("_"): c
+        for c in df.columns
+    }
+
+    def pick_col(*aliases):
+        for a in aliases:
+            key = re.sub(r"[^a-z0-9]+", "_", a.strip().lower()).strip("_")
+            if key in cols_norm:
+                return cols_norm[key]
+        return None
+
+    c_order = pick_col("order_no", "order no", "orderno", "order", "referencia", "ref")
+    c_spec = pick_col("specification", "especificacao", "designacao", "descricao")
+    c_fam = pick_col("familia", "family", "modelo")
+    c_var = pick_col("variante", "variant", "xd", "x_d")
+    c_refrig = pick_col("refrigeracao", "refrig", "coolant", "lubrificacao")
+    c_enc = pick_col("encabadouro", "din_6535", "din6535", "shank")
+    c_gama = pick_col("gama", "linha", "line")
+    c_cat = pick_col("categoria", "category", "operacao", "tipo_operacao")
+    c_d1 = pick_col("d1", "diametro", "diametro_d1", "dc")
+    c_d2 = pick_col("d2", "diametro_d2", "dcon")
+    c_l1 = pick_col("l1", "comp_total", "comprimento_total")
+    c_l2 = pick_col("l2", "comp_navalha", "comprimento_navalha", "lcn")
+    c_l3 = pick_col("l3", "util_corte", "comprimento_util", "lu")
+    c_l4 = pick_col("l4", "comp_encab", "comprimento_encabadouro")
+
+    registos = []
+    for _, row in df.iterrows():
+        order_val = _limpar_str(row[c_order]) if c_order else ""
+        spec_val = _limpar_str(row[c_spec]) if c_spec else ""
+        fam_val = _limpar_str(row[c_fam]) if c_fam else ""
+
+        if not order_val and not spec_val and not fam_val:
+            continue
+
+        item = {
+            "order_no": order_val,
+            "specification": spec_val,
+            "familia": fam_val,
+            "variante": _limpar_str(row[c_var]) if c_var else "",
+            "refrigeracao": _limpar_str(row[c_refrig]) if c_refrig else "",
+            "encabadouro": _limpar_str(row[c_enc]) if c_enc else "",
+            "gama": _limpar_str(row[c_gama]) if c_gama else "",
+            "categoria": _limpar_str(row[c_cat]) if c_cat else "",
+            "d1": _parse_num(row[c_d1]) if c_d1 else None,
+            "d2": _parse_num(row[c_d2]) if c_d2 else None,
+            "l1": _parse_num(row[c_l1]) if c_l1 else None,
+            "l2": _parse_num(row[c_l2]) if c_l2 else None,
+            "l3": _parse_num(row[c_l3]) if c_l3 else None,
+            "l4": _parse_num(row[c_l4]) if c_l4 else None,
+        }
+        registos.append(item)
 
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
