@@ -25,7 +25,7 @@ def _parse_diametro(col_name):
     if not m:
         return None
     val = float(m.group(1))
-    return f"{val:.1f}" if not val.is_integer() else f"{val:.1f}"
+    return f"{val:.1f}"
 
 
 def exportar_json(

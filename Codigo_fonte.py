@@ -1138,7 +1138,6 @@ html_content = '''
             }
         };
 
-        // Metadados estruturais das famílias (sem parâmetros de corte vc/f hardcoded)
         function construirFerramenta(cfg) {
             return {
                 linha: cfg.linha,
@@ -1191,7 +1190,7 @@ html_content = '''
             if (!Array.isArray(PARAMETROS_JSON) || PARAMETROS_JSON.length === 0) return;
 
             PARAMETROS_JSON.forEach(row => {
-                if (!row || typeof row !== 'object') return;
+                if (!row || typeof row !== 'object' || row.suportado === false) return;
                 const famRaw = String(row.familia || row.Familia || '').trim().toLowerCase();
                 if (!famRaw) return;
 
@@ -1201,7 +1200,7 @@ html_content = '''
                         categoria: 'solid',
                         temRefrigInt: true,
                         nome: famRaw.toUpperCase(),
-                        variantes: { '5xD': { ratio: 5 } },
+                        variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
                         diametros: [3.00, 4.50, 6.50, 9.50, 14.00, 20.00]
                     });
                 }
@@ -1210,20 +1209,29 @@ html_content = '''
                 const grp = String(row.grupo || row.Grupo || row.mmg || row.MMG || '').trim();
                 if (!grp) return;
 
+                const vcSrc = (row.vc && typeof row.vc === 'object') ? row.vc : {};
                 const vcObj = {
-                    int: numSafe(row.Vc_Int ?? row.vc_int ?? row.vc?.int ?? row.vc, 0),
-                    ext: numSafe(row.Vc_Ext ?? row.vc_ext ?? row.vc?.ext ?? row.vc, 0),
-                    mql: numSafe(row.Vc_MQL ?? row.vc_mql ?? row.vc?.mql ?? row.vc, 0),
-                    ar:  numSafe(row.Vc_Ar  ?? row.vc_ar  ?? row.vc?.ar  ?? 0, 0)
+                    int: numSafe(row.Vc_Int ?? row.vc_int ?? vcSrc.interna ?? vcSrc.int ?? row.vc, 0),
+                    ext: numSafe(row.Vc_Ext ?? row.vc_ext ?? vcSrc.externa ?? vcSrc.ext ?? row.vc, 0),
+                    mql: numSafe(row.Vc_MQL ?? row.vc_mql ?? vcSrc.mql ?? row.vc, 0),
+                    ar:  numSafe(row.Vc_Ar  ?? row.vc_ar  ?? vcSrc.ar  ?? 0, 0)
                 };
 
+                const mapaAvancos = row.avancos_f || row.f_by_d;
                 let fArr = [];
                 if (Array.isArray(row.f) && row.f.length > 0) {
                     fArr = row.f.map(x => numSafe(x, 0.05));
-                } else if (row.f_by_d && typeof row.f_by_d === 'object') {
+                } else if (mapaAvancos && typeof mapaAvancos === 'object') {
+                    const diamsJson = Object.keys(mapaAvancos)
+                        .map(k => parseFloat(String(k).replace(',', '.')))
+                        .filter(d => !isNaN(d))
+                        .sort((a, b) => a - b);
+                    if (diamsJson.length > 0) {
+                        tool.diametros = diamsJson;
+                    }
                     fArr = tool.diametros.map(d => {
-                        const matchKey = Object.keys(row.f_by_d).find(k => Math.abs(parseFloat(k) - d) < 0.02);
-                        return matchKey !== undefined ? numSafe(row.f_by_d[matchKey], 0.05) : 0.05;
+                        const matchKey = Object.keys(mapaAvancos).find(k => Math.abs(parseFloat(String(k).replace(',', '.')) - d) < 0.02);
+                        return matchKey !== undefined ? numSafe(mapaAvancos[matchKey], 0.05) : 0.05;
                     });
                 } else {
                     const fSingle = numSafe(row.f, 0.05);
@@ -1684,66 +1692,26 @@ html_content = '''
                 if (upper.includes(key.toUpperCase())) {
                     encontradaKey = key;
                     break;
-                if (Array.isArray(PARAMETROS_JSON) && PARAMETROS_JSON.length > 0) {
-            const familiasMap = {};
-
-            PARAMETROS_JSON.forEach(row => {
-                if (!row || row.suportado === false) return;
-                const famRaw = String(row.familia || row.Familia || '').trim();
-                const famKey = famRaw.toLowerCase();
-                const grp = String(row.mmg || row.MMG || row.grupo || row.Grupo || '').trim();
-                if (!famKey || !grp) return;
-
-                if (!dados[famKey]) {
-                    if (!familiasMap[famKey]) {
-                        familiasMap[famKey] = construirFerramenta({
-                            linha: 'expert',
-                            categoria: 'solid',
-                            temRefrigInt: true,
-                            nome: famRaw.toUpperCase(),
-                            variantes: { '5xD': { ratio: 5 }, '8xD': { ratio: 8 } },
-                            diametros: [],
-                            grupos: {}
-                        });
-                    }
-                    dados[famKey] = familiasMap[famKey];
                 }
+            }
 
-                const vcObj = row.vc || {};
-                const vcInt = parseFloat(vcObj.interna ?? vcObj.int ?? row.Vc_Int ?? row.vc ?? 0) || 0;
-                const vcExt = parseFloat(vcObj.externa ?? vcObj.ext ?? row.Vc_Ext ?? row.vc ?? 0) || 0;
-                const vcMql = parseFloat(vcObj.mql ?? row.Vc_MQL ?? row.vc ?? 0) || 0;
-                const vcAr  = parseFloat(vcObj.ar ?? row.Vc_Ar ?? 0) || 0;
+            if (!encontradaKey) {
+                feedback.innerText = `Nenhuma referência ou família encontrada para "${raw}".`;
+                feedback.className = "text-[10px] text-amber-400 block";
+                return;
+            }
 
-                const avancos = row.avancos_f || row.f_by_d || {};
-                const diams = Object.keys(avancos)
-                    .map(d => parseFloat(String(d).replace(',', '.')))
-                    .filter(d => !isNaN(d))
-                    .sort((a, b) => a - b);
+            const toolData = dados[encontradaKey];
+            linhaAtivaInterna = toolData.linha;
+            document.getElementById('categoria').value = toolData.categoria;
+            atualizarFiltroBrocas(true);
+            document.getElementById('broca').value = encontradaKey;
 
-                const fArr = diams.map(d => {
-                    const keyStr = Object.keys(avancos).find(k => parseFloat(String(k).replace(',', '.')) === d);
-                    const val = parseFloat(avancos[keyStr]);
-                    return isNaN(val) ? 0 : val;
-                });
-
-                if (diams.length > 0 && (!dados[famKey].diametros || dados[famKey].diametros.length === 0)) {
-                    dados[famKey].diametros = diams;
-                }
-
-                dados[famKey].grupos[grp] = {
-                    vc: { int: vcInt, ext: vcExt, mql: vcMql, ar: vcAr },
-                    f: fArr
-                };
-
-                if (!dados[famKey].gruposList.includes(grp)) {
-                    dados[famKey].gruposList.push(grp);
-                }
-                dados[famKey].gruposNames[grp] = GRUPOS_MAPAL_PADRAO.gruposNames[grp] || grp;
-            });
-        }
+            let varianteDetetada = null;
+            const matchXd = upper.match(/(\d+)\s*X\s*D/);
+            if (matchXd) {
                 const candidata = `${matchXd[1]}xD`;
-                if (toolData.variantes[candidata]) {
+                if (toolData.variantes && toolData.variantes[candidata]) {
                     varianteDetetada = candidata;
                 }
             }
@@ -3630,161 +3598,185 @@ html_content = '''
             const varianteAtiva = getVarianteAtiva();
             const ctx = obterContextoCalculoAtual();
 
-            const nomeFerramenta = brocaKey && dados[brocaKey] ? dados[brocaKey].nome : 'Ferramenta MAPAL';
-            const linhaLabel = fmtGamaLabel(linhaAtivaInterna);
-            const refrigLabels = { int: 'Interna', ext: 'Externa', mql: 'MQL', ar: 'Ar' };
-            const refrigLabel = refrigLabels[refrigAtual] || refrigAtual;
+            const nomeFerramenta = brocaKey && dados[brocaKey] ? dados[brocaKey].nome : 'Ferramenta';
+            const linhaFerramenta = brocaKey && dados[brocaKey] ? dados[brocaKey].linha.toUpperCase() : '';
+            const refrigMap = { 'int': 'Interna', 'ext': 'Externa', 'mql': 'MQL', 'ar': 'Ar' };
+            const refrigTexto = refrigMap[refrigAtual] || refrigAtual;
 
-            const nText = document.getElementById('res-n').innerText;
-            const vfText = document.getElementById('res-vf').innerText;
-            const fText = parseFloat(document.getElementById('input-f').value || 0).toFixed(4);
-            const vcText = parseFloat(document.getElementById('input-vc').value || 0).toFixed(0);
-            const forcaText = document.getElementById('res-forca').innerText.replace('N', '').trim();
-            const forcaKgfText = document.getElementById('res-forca-kgf').innerText;
-            const binText = document.getElementById('res-binario-card').innerText.replace('N·m', '').trim();
-            const potGaugeText = document.getElementById('val-gauge-pot').innerText;
+            const vcVal = document.getElementById('input-vc').value;
+            const fVal = document.getElementById('input-f').value;
+            const nVal = document.getElementById('res-n').innerText;
+            const vfVal = document.getElementById('res-vf').innerText;
+            const forcaVal = document.getElementById('res-forca').innerText.replace('N', '').trim();
+            const binarioVal = document.getElementById('res-binario-card').innerText.replace('N·m', '').trim();
+            const potVal = document.getElementById('val-gauge-pot').innerText;
 
-            const dataAtual = new Date().toLocaleDateString('pt-PT');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 12;
+            const contentW = pageWidth - margin * 2;
+            let y = 12;
+
+            function ensureSpace(neededMm) {
+                if (y + neededMm > pageHeight - 16) {
+                    doc.addPage();
+                    y = 14;
+                }
+            }
 
             doc.setFillColor(15, 23, 42);
-            doc.rect(0, 0, 210, 28, 'F');
+            doc.rect(margin, y, contentW, 18, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(14);
-            doc.text('MAPAL — Parâmetros de Corte & Análise Técnica', 14, 12);
-
+            doc.setFontSize(13);
+            const tituloDoc = tipoSelecionado === 'completo'
+                ? 'PROPOSTA TECNICO-COMERCIAL — MAPAL'
+                : 'FICHA TECNICA DE CORTE — MAPAL';
+            doc.text(tituloDoc, margin + 4, y + 7.5);
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
+            doc.setFontSize(8.5);
             doc.setTextColor(148, 163, 184);
-            const subTituloPdf = tipoSelecionado === 'completo'
-                ? `Proposta Técnico-Comercial Completa (Pro) | Data: ${dataAtual}`
-                : `Ficha Técnica de Parâmetros de Corte | Data: ${dataAtual}`;
-            doc.text(subTituloPdf, 14, 20);
+            doc.text(`Gama: ${linhaFerramenta} | Data: ${new Date().toLocaleDateString('pt-PT')}`, margin + 4, y + 13.5);
+            y += 23;
 
-            let y = 36;
-
-            doc.setTextColor(30, 41, 59);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(11);
-            doc.text('1. Configuração da Ferramenta e Operação', 14, y);
-            y += 6;
-
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9.5);
-            doc.text(`Ferramenta: ${nomeFerramenta} (${linhaLabel} - ${varianteAtiva})`, 14, y); y += 5;
-            if (referenciaAtivaObj) {
-                const dinPdf = extrairEncabadouroDIN6535(referenciaAtivaObj) || '—';
-                doc.text(`Referência Catálogo: ${referenciaAtivaObj.order_no || '—'} | Spec: ${referenciaAtivaObj.specification || '—'} | DIN 6535: ${dinPdf} | l3: ${fmtCota(referenciaAtivaObj.l3, 0)}`, 14, y);
-                y += 5;
-            }
-            doc.text(`Material (MMG): ${grupoSelText}${ligaCheck ? ` -> Grupo Efetivo: ${grupoEfetivoKey} (Liga > 8%)` : ''}`, 14, y); y += 5;
-            doc.text(`Refrigeração: ${refrigLabel} | Diâmetro Ø: ${ctx.diametro.toFixed(2)} mm | Profundidade Furo L: ${ctx.profundidade.toFixed(1)} mm`, 14, y); y += 5;
-            if (vcPct !== 0 || fPct !== 0) {
-                doc.text(`Ajustes Aplicados: Ajuste Vc = ${vcPct > 0 ? '+' : ''}${vcPct}% | Ajuste Avanço f = ${fPct > 0 ? '+' : ''}${fPct}%`, 14, y);
-                y += 5;
-            }
-            y += 3;
-
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(11);
-            doc.text('2. Parâmetros de Corte e Esforços', 14, y);
-            y += 6;
-
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9.5);
-            doc.text(`Velocidade de Corte (Vc): ${vcText} m/min   |   Rotações (n): ${nText} rpm`, 14, y); y += 5;
-            doc.text(`Avanço por Rotação (f): ${fText} mm/rot   |   Avanço de Trabalho (vf): ${vfText} mm/min`, 14, y); y += 5;
-            doc.text(`Força Axial (Ff): ${forcaText} N (${forcaKgfText})   |   Binário (Mc): ${binText} N·m   |   Potência: ${potGaugeText}`, 14, y);
-            y += 8;
-
-            if (tipoSelecionado === 'completo' && isProMode) {
-                const tempoTotalText = document.getElementById('res-tempo-total').innerText;
-                const metragemText = document.getElementById('res-metragem').innerText;
-                const volumeText = document.getElementById('res-volume-total').innerText;
-                const taxaText = document.getElementById('res-taxa').innerText;
-                const pesoText = document.getElementById('res-peso').innerText;
-                const pesoGText = document.getElementById('res-peso-g').innerText;
-                const sucataValText = document.getElementById('res-sucata-val').innerText;
-                const custoTotalText = document.getElementById('res-custo-total').innerText;
-
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(11);
-                doc.text('3. Produção, Limalha, Sucata e Custos (Lote)', 14, y);
-                y += 6;
-
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9.5);
-                doc.text(`Quantidade do Lote: ${ctx.qtdFuros} furos   |   Densidade: ${ctx.densidade.toFixed(2)} g/cm³   |   Custo Hora: ${ctx.custoHora.toFixed(2)} €/h`, 14, y); y += 5;
-                if (ctx.peckingCheck) {
-                    const passoLabel = ctx.peckingUnid === 'xd' ? `${ctx.peckingInputVal}×D` : `${ctx.peckingInputVal} mm`;
-                    doc.text(`Ciclo Pecking Ativo: Passo Q = ${passoLabel} | Avanço Retração = ${ctx.peckingRetensaoVal} mm/min`, 14, y); y += 5;
-                }
-                doc.text(`Tempo Total Lote: ${tempoTotalText}   |   Metragem Linear: ${metragemText}`, 14, y); y += 5;
-                doc.text(`Volume Removido: ${volumeText}   |   Taxa Remoção: ${taxaText}`, 14, y); y += 5;
-                doc.text(`Peso Total Limalha: ${pesoText} (${pesoGText})   |   Valor Sucata: ${sucataValText} (${ctx.precoSucata.toFixed(2)} €/kg)`, 14, y); y += 5;
-                doc.text(`Custo de Maquinação: ${custoTotalText}`, 14, y); y += 8;
-
-                if (incluirComparativo) {
-                    atualizarComparacao();
-                    const comp = window._ultimoComparativo;
-                    if (comp) {
-                        if (y > 220) {
-                            doc.addPage();
-                            y = 18;
-                        }
-                        doc.setFont('helvetica', 'bold');
-                        doc.setFontSize(11);
-                        doc.text('4. Comparativo Técnico-Comercial', 14, y);
-                        y += 6;
-
-                        doc.setFont('helvetica', 'normal');
-                        doc.setFontSize(9);
-                        doc.text(`MAPAL (${comp.metAtual.nome}) vs. ${comp.nomeAlvo}`, 14, y); y += 4.5;
-                        if (comp.corteInterrompidoAtivo) {
-                            doc.text(`Condição: Corte Interrompido (Ref. contínuo: ${comp.metrosRefContinuo} m / ~${comp.furosEquivContinuo} furos)`, 14, y);
-                            y += 4.5;
-                        }
-                        doc.text(`Break-Even: ${comp.breakevenTexto}`, 14, y); y += 5.5;
-
-                        comp.linhas.forEach(l => {
-                            if (y > 275) {
-                                doc.addPage();
-                                y = 18;
-                            }
-                            doc.setFont('helvetica', l.destaque ? 'bold' : 'normal');
-                            doc.text(`${l.ind}: MAPAL = ${l.a} | Comparada = ${l.b} | Dif = ${l.d}`, 14, y);
-                            y += 4.5;
-                        });
-                    }
-                }
-            }
-
+            doc.setFillColor(241, 245, 249);
+            doc.rect(margin, y, contentW, 24, 'F');
             doc.setDrawColor(203, 213, 225);
-            doc.line(14, 278, 196, 278);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8);
-            doc.setTextColor(100, 116, 139);
-            doc.text('Created by Bruno Pinto  |  bruno.pinto@alamo-ferramentas.com  |  +351 936 959 415', 14, 284);
+            doc.rect(margin, y, contentW, 24, 'S');
+            doc.setTextColor(15, 23, 42);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9);
+            doc.text('1. FERRAMENTA, REFERENCIA E MATERIAL', margin + 3, y + 5.5);
 
-            const sufixoFicheiro = tipoSelecionado === 'completo' ? 'Proposta_Completa' : 'Ficha_Tecnica';
-            doc.save(`MAPAL_${brocaKey || 'Ferramenta'}_${sufixoFicheiro}.pdf`);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            const refInfoTxt = referenciaAtivaObj
+                ? `${referenciaAtivaObj.order_no} (${referenciaAtivaObj.specification || ''})`
+                : `${nomeFerramenta} (${varianteAtiva})`;
+            doc.text(`Ferramenta / Ref.: ${refInfoTxt}`, margin + 3, y + 11.5);
+            doc.text(`Material (MMG): ${grupoSelText}${ligaCheck ? ` -> Efetivo: ${grupoEfetivoKey}` : ''}`, margin + 3, y + 16.5);
+            const l3TxtPdf = (referenciaAtivaObj && referenciaAtivaObj.l3) ? `${Number(referenciaAtivaObj.l3).toFixed(0)} mm` : 'N/D';
+            doc.text(`Diametro (Ø): ${ctx.diametro.toFixed(2)} mm | Profundidade (L): ${ctx.profundidade.toFixed(1)} mm (l3: ${l3TxtPdf}) | Refrig.: ${refrigTexto}`, margin + 3, y + 21.5);
+            y += 28;
+
+            doc.setFillColor(239, 246, 255);
+            doc.rect(margin, y, contentW, 22, 'F');
+            doc.setDrawColor(147, 197, 253);
+            doc.rect(margin, y, contentW, 22, 'S');
+            doc.setTextColor(30, 58, 138);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9);
+            doc.text('2. PARAMETROS DE CORTE E ESFORCOS', margin + 3, y + 5.5);
+
+            doc.setTextColor(15, 23, 42);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9);
+            doc.text(`Vc: ${vcVal} m/min`, margin + 3, y + 12.5);
+            doc.text(`Rotacoes (n): ${nVal} rpm`, margin + 48, y + 12.5);
+            doc.text(`Avanco (f): ${fVal} mm/rot`, margin + 98, y + 12.5);
+            doc.text(`Avanco (vf): ${vfVal} mm/min`, margin + 145, y + 12.5);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.text(`Forca Axial (Ff): ${forcaVal} N | Binario (Mc): ${binarioVal} N·m | Potencia Req.: ${potVal}`, margin + 3, y + 18.5);
+            y += 26;
+
+            if (tipoSelecionado === 'completo') {
+                ensureSpace(34);
+                const tempoTotalMin = document.getElementById('res-tempo-total').innerText.split('(')[0].trim();
+                const tempoUnit = document.getElementById('res-tempo-unit').innerText;
+                const volumeTotal = document.getElementById('res-volume-total').innerText;
+                const taxaRem = document.getElementById('res-taxa').innerText;
+                const pesoTotal = document.getElementById('res-peso').innerText;
+                const sucataTotal = document.getElementById('res-sucata-val').innerText;
+                const custoTotal = document.getElementById('res-custo-total').innerText.split('(')[0].trim();
+                const custoFuro = document.getElementById('res-custo-furo').innerText;
+
+                doc.setFillColor(240, 253, 244);
+                doc.rect(margin, y, contentW, 30, 'F');
+                doc.setDrawColor(134, 239, 172);
+                doc.rect(margin, y, contentW, 30, 'S');
+                doc.setTextColor(20, 83, 45);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9);
+                doc.text(`3. ANALISE DE LOTE, CUSTOS E MATERIAIS (${ctx.qtdFuros} FUROS)`, margin + 3, y + 5.5);
+
+                doc.setTextColor(15, 23, 42);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8.5);
+                doc.text(`Tempo Total: ${tempoTotalMin} ${tempoUnit}`, margin + 3, y + 12);
+                doc.text(`Custo Maquina: ${custoTotal} ${custoFuro} (@ ${ctx.custoHora.toFixed(2)} EUR/h)`, margin + 95, y + 12);
+                doc.text(`Volume Removido: ${volumeTotal} (Taxa: ${taxaRem})`, margin + 3, y + 18);
+                doc.text(`Peso Limalha: ${pesoTotal} | Sucata: ${sucataTotal}`, margin + 95, y + 18);
+                const peckingInfo = ctx.peckingCheck
+                    ? `Pecking Ativo (${ctx.peckingInputVal} ${ctx.peckingUnid === 'xd' ? 'xD' : 'mm'}, retracao ${ctx.peckingRetensaoVal} mm/min)`
+                    : 'Sem Pecking (furo continuo)';
+                doc.text(`Ciclo: ${peckingInfo}`, margin + 3, y + 24.5);
+                y += 34;
+
+                if (incluirComparativo && window._ultimoComparativo) {
+                    const comp = window._ultimoComparativo;
+                    ensureSpace(55);
+                    doc.setFillColor(238, 242, 255);
+                    doc.rect(margin, y, contentW, 7, 'F');
+                    doc.setTextColor(49, 46, 129);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(9);
+                    const tagInterPdf = comp.corteInterrompidoAtivo ? ` [Corte Interrompido · Ref. ${comp.metrosRefContinuo}m / ~${comp.furosEquivContinuo} furos]` : '';
+                    doc.text(`4. COMPARATIVO: ${nomeFerramenta} (${varianteAtiva}) vs. ${comp.nomeAlvo}${tagInterPdf}`, margin + 3, y + 4.8);
+                    y += 9;
+
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(8);
+                    doc.setTextColor(30, 41, 59);
+                    doc.text('Indicador', margin + 2, y + 4);
+                    doc.text('MAPAL', margin + 74, y + 4);
+                    doc.text('Comparada', margin + 114, y + 4);
+                    doc.text('Diferenca', margin + 154, y + 4);
+                    y += 6;
+
+                    doc.setFont('helvetica', 'normal');
+                    comp.linhas.forEach(l => {
+                        ensureSpace(6);
+                        doc.setTextColor(30, 41, 59);
+                        doc.text(String(l.ind).slice(0, 42), margin + 2, y + 3.5);
+                        doc.text(String(l.a).slice(0, 22), margin + 74, y + 3.5);
+                        doc.text(String(l.b).slice(0, 22), margin + 114, y + 3.5);
+                        doc.text(String(l.d).slice(0, 22), margin + 154, y + 3.5);
+                        y += 5.2;
+                    });
+                    y += 3;
+                }
+            }
+
+            ensureSpace(14);
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(7.5);
+            doc.setTextColor(100, 116, 139);
+            doc.text('Nota: Parametros teoricos de referencia. Ajustar conforme rigidez da fixacao, estado da ferramenta e condicoes de refrigeracao.', margin, y + 3);
+
+            const nomeFicheiro = tipoSelecionado === 'completo'
+                ? `Proposta_MAPAL_${brocaKey || 'ferramenta'}_${grupoEfetivoKey || 'MMG'}.pdf`
+                : `Ficha_Corte_MAPAL_${brocaKey || 'ferramenta'}_${grupoEfetivoKey || 'MMG'}.pdf`;
+
+            doc.save(nomeFicheiro);
         }
 
-        aplicarModoUI();
-        filtrarCatalogoCascata('init');
-        atualizarFiltroBrocas(false);
-        atualizarPainelCotas();
-        atualizarCalculo();
+        window.addEventListener('DOMContentLoaded', () => {
+            aplicarModoUI();
+            atualizarEstadoBotaoInterrompido();
+            filtrarCatalogoCascata('init');
+            atualizarFiltroBrocas(false);
+            atualizarPainelCotas();
+            atualizarCalculo();
+        });
     </script>
 </body>
 </html>
 '''
 
-html_final = (
-    html_content
-    .replace("__PRO_PASSWORD_PLACEHOLDER__", pro_password_js)
-    .replace("__REFERENCIAS_JSON_PLACEHOLDER__", referencias_js)
-    .replace("__PARAMETROS_JSON_PLACEHOLDER__", parametros_json_js)
-)
+html_content = html_content.replace("__PRO_PASSWORD_PLACEHOLDER__", pro_password_js)
+html_content = html_content.replace("__REFERENCIAS_JSON_PLACEHOLDER__", referencias_js)
+html_content = html_content.replace("__PARAMETROS_JSON_PLACEHOLDER__", parametros_json_js)
 
-components.html(html_final, height=960, scrolling=False)
+components.html(html_content, height=960, scrolling=True)
