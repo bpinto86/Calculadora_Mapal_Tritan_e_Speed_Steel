@@ -2764,33 +2764,40 @@ html_content = '''
             const binarioMc = (kc * Math.pow(diametro, 2) * Math.pow(fFinal, 0.8)) / 8000;
             const potenciaReqKw = (binarioMc * n) / (9550 * 0.85);
 
-            // Validação de profundidade com l3 da referência (quando disponível) ou limite nominal xD
-            const alertaProf = document.getElementById('alerta-profundidade');
-            const textoLimiteProf = document.getElementById('texto-limite-prof');
-            const badgeLimiteProf = document.getElementById('badge-limite-prof');
-            const limiteInfo = obterLimiteNominal(toolData, varianteKey, diametro);
-            const maxNominalProf = limiteInfo.maxNominalMm;
-            const l3Ref = (referenciaAtivaObj && referenciaAtivaObj.l3 !== null && referenciaAtivaObj.l3 !== undefined && !isNaN(Number(referenciaAtivaObj.l3))) ? Number(referenciaAtivaObj.l3) : null;
+            // Validação de profundidade: l3 prevalece quando existe referência selecionada
+const alertaProf = document.getElementById('alerta-profundidade');
+const textoLimiteProf = document.getElementById('texto-limite-prof');
+const badgeLimiteProf = document.getElementById('badge-limite-prof');
+const limiteInfo = obterLimiteNominal(toolData, varianteKey, diametro);
+const maxNominalProf = limiteInfo.maxNominalMm;
+const l3Ref = (
+    referenciaAtivaObj &&
+    referenciaAtivaObj.l3 !== null &&
+    referenciaAtivaObj.l3 !== undefined &&
+    !isNaN(Number(referenciaAtivaObj.l3)) &&
+    Number(referenciaAtivaObj.l3) > 0
+) ? Number(referenciaAtivaObj.l3) : null;
 
-            const limiteReferencia = l3Ref !== null ? Math.min(l3Ref, maxNominalProf) : maxNominalProf;
+const limiteAtivo = l3Ref !== null ? l3Ref : maxNominalProf;
+const tol = 0.001;
 
-            if (profundidade > limiteReferencia) {
-                const detalheLimite = l3Ref !== null
-                    ? `Prof. ${profundidade.toFixed(1)} mm > l3 (${l3Ref.toFixed(0)} mm) / ${varianteKey} (${maxNominalProf.toFixed(0)} mm)`
-                    : `Prof. ${profundidade.toFixed(1)} mm > ${varianteKey} (${maxNominalProf.toFixed(1)} mm)`;
-                textoLimiteProf.innerText = `${detalheLimite} — validar com catálogo e descarga de cavaco`;
-                badgeLimiteProf.innerText = "EXCEDE l3 / ×D";
-                badgeLimiteProf.className = "font-bold text-rose-400 shrink-0";
-                alertaProf.className = "bg-rose-950/50 px-2.5 py-1.5 rounded-md border border-rose-500/70 text-[10px] text-rose-200 flex justify-between items-center gap-2 shrink-0";
-            } else {
-                const detalheOk = l3Ref !== null
-                    ? `Dentro do útil l3 (${l3Ref.toFixed(0)} mm) e ${varianteKey} (${maxNominalProf.toFixed(0)} mm)`
-                    : `Dentro da capacidade nominal ${varianteKey} (máx. ${maxNominalProf.toFixed(1)} mm)`;
-                textoLimiteProf.innerText = detalheOk;
-                badgeLimiteProf.innerText = "DENTRO DO LIMITE";
-                badgeLimiteProf.className = "font-bold text-emerald-400 shrink-0";
-                alertaProf.className = "bg-emerald-950/30 px-2.5 py-1.5 rounded-md border border-emerald-700/60 text-[10px] text-emerald-100 flex justify-between items-center gap-2 shrink-0";
-            }
+if (profundidade > limiteAtivo + tol) {
+    const detalheLimite = l3Ref !== null
+        ? `Prof. ${profundidade.toFixed(2)} mm > l3 (${l3Ref.toFixed(1)} mm) [ref. ${varianteKey}: ${maxNominalProf.toFixed(1)} mm]`
+        : `Prof. ${profundidade.toFixed(2)} mm > ${varianteKey} (${maxNominalProf.toFixed(1)} mm)`;
+    textoLimiteProf.innerText = `${detalheLimite} — validar com catálogo e descarga de cavaco`;
+    badgeLimiteProf.innerText = l3Ref !== null ? "EXCEDE l3" : "EXCEDE ×D";
+    badgeLimiteProf.className = "font-bold text-rose-400 shrink-0";
+    alertaProf.className = "bg-rose-950/50 px-2.5 py-1.5 rounded-md border border-rose-500/70 text-[10px] text-rose-200 flex justify-between items-center gap-2 shrink-0";
+} else {
+    const detalheOk = l3Ref !== null
+        ? `Dentro do útil l3 (${l3Ref.toFixed(1)} mm) — referência ${varianteKey} (${maxNominalProf.toFixed(1)} mm)`
+        : `Dentro da capacidade nominal ${varianteKey} (máx. ${maxNominalProf.toFixed(1)} mm)`;
+    textoLimiteProf.innerText = detalheOk;
+    badgeLimiteProf.innerText = "DENTRO DO LIMITE";
+    badgeLimiteProf.className = "font-bold text-emerald-400 shrink-0";
+    alertaProf.className = "bg-emerald-950/30 px-2.5 py-1.5 rounded-md border border-emerald-700/60 text-[10px] text-emerald-100 flex justify-between items-center gap-2 shrink-0";
+}
 
             const unidPot = document.getElementById('unidade-potencia').value;
             const potInputVal = parseFloat(document.getElementById('spindle-potencia').value);
