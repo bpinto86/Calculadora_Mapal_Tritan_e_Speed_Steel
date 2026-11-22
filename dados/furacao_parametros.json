@@ -1384,5 +1384,753 @@
       "14.5": 0.84,
       "20.0": 0.98
     }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1.1",
+    "vc": {
+      "interna": null,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.04,
+      "1.8": 0.06,
+      "3.3": 0.08,
+      "6.0": 0.13,
+      "11.0": 0.2,
+      "20.0": 0.27
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1.2",
+    "vc": {
+      "interna": null,
+      "externa": 55.0,
+      "mql": 55.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.05,
+      "1.8": 0.07,
+      "3.3": 0.11,
+      "6.0": 0.16,
+      "11.0": 0.24,
+      "20.0": 0.33
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2.1",
+    "vc": {
+      "interna": null,
+      "externa": 65.0,
+      "mql": 65.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.05,
+      "1.8": 0.07,
+      "3.3": 0.1,
+      "6.0": 0.15,
+      "11.0": 0.23,
+      "20.0": 0.31
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2.2",
+    "vc": {
+      "interna": null,
+      "externa": 45.0,
+      "mql": 45.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.05,
+      "1.8": 0.06,
+      "3.3": 0.09,
+      "6.0": 0.13,
+      "11.0": 0.18,
+      "20.0": 0.25
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3.1",
+    "vc": {
+      "interna": null,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.04,
+      "1.8": 0.06,
+      "3.3": 0.09,
+      "6.0": 0.14,
+      "11.0": 0.21,
+      "20.0": 0.28
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3.2",
+    "vc": {
+      "interna": null,
+      "externa": 40.0,
+      "mql": 40.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.04,
+      "1.8": 0.05,
+      "3.3": 0.08,
+      "6.0": 0.12,
+      "11.0": 0.17,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3.3",
+    "vc": {
+      "interna": null,
+      "externa": 35.0,
+      "mql": 40.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.04,
+      "1.8": 0.05,
+      "3.3": 0.06,
+      "6.0": 0.09,
+      "11.0": 0.13,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P4.1",
+    "vc": {
+      "interna": null,
+      "externa": 35.0,
+      "mql": 40.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.03,
+      "1.8": 0.04,
+      "3.3": 0.06,
+      "6.0": 0.09,
+      "11.0": 0.14,
+      "20.0": 0.19
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P5.1",
+    "vc": {
+      "interna": null,
+      "externa": 65.0,
+      "mql": 65.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.05,
+      "1.8": 0.07,
+      "3.3": 0.1,
+      "6.0": 0.15,
+      "11.0": 0.23,
+      "20.0": 0.31
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P6.1",
+    "vc": {
+      "interna": null,
+      "externa": 35.0,
+      "mql": 40.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.03,
+      "1.8": 0.04,
+      "3.3": 0.06,
+      "6.0": 0.09,
+      "11.0": 0.14,
+      "20.0": 0.19
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K1.1",
+    "vc": {
+      "interna": null,
+      "externa": 60.0,
+      "mql": 60.0,
+      "ar": 60.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.04,
+      "1.8": 0.07,
+      "3.3": 0.12,
+      "6.0": 0.2,
+      "11.0": 0.32,
+      "20.0": 0.44
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2.1",
+    "vc": {
+      "interna": null,
+      "externa": 70.0,
+      "mql": 80.0,
+      "ar": 80.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.05,
+      "1.8": 0.07,
+      "3.3": 0.12,
+      "6.0": 0.19,
+      "11.0": 0.3,
+      "20.0": 0.41
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2.2",
+    "vc": {
+      "interna": null,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.04,
+      "1.8": 0.07,
+      "3.3": 0.11,
+      "6.0": 0.17,
+      "11.0": 0.26,
+      "20.0": 0.35
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2.3",
+    "vc": {
+      "interna": null,
+      "externa": 25.0,
+      "mql": 35.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.04,
+      "1.8": 0.05,
+      "3.3": 0.08,
+      "6.0": 0.12,
+      "11.0": 0.17,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K3.1",
+    "vc": {
+      "interna": null,
+      "externa": 55.0,
+      "mql": 55.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.05,
+      "1.8": 0.07,
+      "3.3": 0.11,
+      "6.0": 0.18,
+      "11.0": 0.27,
+      "20.0": 0.38
+    }
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K3.2",
+    "vc": {
+      "interna": null,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "1.0": 0.05,
+      "1.8": 0.07,
+      "3.3": 0.1,
+      "6.0": 0.15,
+      "11.0": 0.22,
+      "20.0": 0.3
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1.1",
+    "vc": {
+      "interna": null,
+      "externa": 100.0,
+      "mql": 100.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.1,
+      "4.5": 0.13,
+      "6.5": 0.17,
+      "9.5": 0.22,
+      "14.0": 0.28,
+      "20.0": 0.33
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1.2",
+    "vc": {
+      "interna": null,
+      "externa": 85.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.12,
+      "4.5": 0.16,
+      "6.5": 0.21,
+      "9.5": 0.27,
+      "14.0": 0.34,
+      "20.0": 0.41
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2.1",
+    "vc": {
+      "interna": null,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.11,
+      "4.5": 0.15,
+      "6.5": 0.2,
+      "9.5": 0.26,
+      "14.0": 0.33,
+      "20.0": 0.38
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2.2",
+    "vc": {
+      "interna": null,
+      "externa": 65.0,
+      "mql": 65.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.1,
+      "4.5": 0.13,
+      "6.5": 0.16,
+      "9.5": 0.21,
+      "14.0": 0.26,
+      "20.0": 0.3
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3.1",
+    "vc": {
+      "interna": null,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.1,
+      "4.5": 0.14,
+      "6.5": 0.18,
+      "9.5": 0.23,
+      "14.0": 0.29,
+      "20.0": 0.35
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3.2",
+    "vc": {
+      "interna": null,
+      "externa": 60.0,
+      "mql": 60.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.09,
+      "4.5": 0.12,
+      "6.5": 0.15,
+      "9.5": 0.19,
+      "14.0": 0.24,
+      "20.0": 0.28
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3.3",
+    "vc": {
+      "interna": null,
+      "externa": 50.0,
+      "mql": 55.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.07,
+      "4.5": 0.09,
+      "6.5": 0.12,
+      "9.5": 0.15,
+      "14.0": 0.19,
+      "20.0": 0.22
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P4.1",
+    "vc": {
+      "interna": null,
+      "externa": 50.0,
+      "mql": 55.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.07,
+      "4.5": 0.09,
+      "6.5": 0.12,
+      "9.5": 0.15,
+      "14.0": 0.19,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P5.1",
+    "vc": {
+      "interna": null,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.11,
+      "4.5": 0.15,
+      "6.5": 0.2,
+      "9.5": 0.26,
+      "14.0": 0.33,
+      "20.0": 0.38
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P6.1",
+    "vc": {
+      "interna": null,
+      "externa": 50.0,
+      "mql": 55.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.07,
+      "4.5": 0.09,
+      "6.5": 0.12,
+      "9.5": 0.15,
+      "14.0": 0.19,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K1.1",
+    "vc": {
+      "interna": null,
+      "externa": 85.0,
+      "mql": 85.0,
+      "ar": 85.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.13,
+      "4.5": 0.19,
+      "6.5": 0.26,
+      "9.5": 0.35,
+      "14.0": 0.45,
+      "20.0": 0.54
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2.1",
+    "vc": {
+      "interna": null,
+      "externa": 100.0,
+      "mql": 120.0,
+      "ar": 120.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.13,
+      "4.5": 0.18,
+      "6.5": 0.25,
+      "9.5": 0.33,
+      "14.0": 0.42,
+      "20.0": 0.5
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2.2",
+    "vc": {
+      "interna": null,
+      "externa": 75.0,
+      "mql": 75.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.12,
+      "4.5": 0.16,
+      "6.5": 0.22,
+      "9.5": 0.28,
+      "14.0": 0.36,
+      "20.0": 0.43
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2.3",
+    "vc": {
+      "interna": null,
+      "externa": 40.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.09,
+      "4.5": 0.12,
+      "6.5": 0.15,
+      "9.5": 0.19,
+      "14.0": 0.24,
+      "20.0": 0.28
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K3.1",
+    "vc": {
+      "interna": null,
+      "externa": 80.0,
+      "mql": 80.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.13,
+      "4.5": 0.18,
+      "6.5": 0.23,
+      "9.5": 0.31,
+      "14.0": 0.39,
+      "20.0": 0.46
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K3.2",
+    "vc": {
+      "interna": null,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.11,
+      "4.5": 0.15,
+      "6.5": 0.19,
+      "9.5": 0.25,
+      "14.0": 0.31,
+      "20.0": 0.36
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H1.1",
+    "vc": {
+      "interna": null,
+      "externa": 90.0,
+      "mql": 90.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.09,
+      "4.5": 0.12,
+      "6.5": 0.15,
+      "9.5": 0.19,
+      "14.0": 0.24,
+      "20.0": 0.28
+    }
+  },
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H1.2",
+    "vc": {
+      "interna": null,
+      "externa": 25.0,
+      "mql": 25.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "3.0": 0.05,
+      "4.5": 0.06,
+      "6.5": 0.08,
+      "9.5": 0.11,
+      "14.0": 0.14,
+      "20.0": 0.16
+    }
   }
 ]

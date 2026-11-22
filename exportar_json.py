@@ -206,6 +206,36 @@ def exportar_json(
                 "avancos_f": avancos_f,
             })
 
+    # --- REGRA DE HERANÇA AUTOMÁTICA: SCD**1 -> SCD**0 ---
+    familias_com_params = {_norm_key(r["familia"]) for r in registos if r.get("familia")}
+    registos_herdados = []
+
+    for r in registos:
+        fam_norm = _norm_key(r.get("familia", ""))
+        if re.match(r"^SCD\d+1$", fam_norm):
+            fam_irma_norm = fam_norm[:-1] + "0"
+            if fam_irma_norm in familias_map and fam_irma_norm not in familias_com_params:
+                info_irma = familias_map[fam_irma_norm]
+                vc_irma = dict(r["vc"])
+                vc_irma["interna"] = None
+                avancos_irma = dict(r["avancos_f"])
+                tem_dados_irma = any(v is not None for v in vc_irma.values()) or any(
+                    v is not None for v in avancos_irma.values()
+                )
+                registos_herdados.append({
+                    "familia": info_irma.get("familia") or fam_irma_norm,
+                    "nome_produto": info_irma.get("nome_produto", r.get("nome_produto", "")),
+                    "gama": info_irma.get("gama", r.get("gama", "")),
+                    "categoria": info_irma.get("categoria", r.get("categoria", "")),
+                    "mmg": r["mmg"],
+                    "vc": vc_irma,
+                    "suportado": tem_dados_irma,
+                    "avancos_f": avancos_irma,
+                })
+
+    registos.extend(registos_herdados)
+    # -----------------------------------------------------
+
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(registos, indent=2, ensure_ascii=False), encoding="utf-8")
