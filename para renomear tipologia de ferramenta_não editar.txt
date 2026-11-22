@@ -1,0 +1,6 @@
+Solid Carbide / Standard Drilling
+Insert Drilling (Pastilhas Amovíveis)
+Spot Drilling (Centragem / Ponto)
+Stepped Drilling (Escalonada)
+Deep Drilling (Furação Profunda)
+Drill Reaming (Alargamento)
