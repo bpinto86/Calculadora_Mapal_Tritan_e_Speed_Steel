@@ -1,6 +1,9 @@
 [
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P1.1",
     "vc": {
       "interna": 75.0,
@@ -11,15 +14,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.04,
-      "1.82": 0.06,
-      "3.31": 0.08,
-      "6.03": 0.13,
-      "10.99": 0.2,
+      "1.8": 0.06,
+      "3.3": 0.08,
+      "6.0": 0.13,
+      "11.0": 0.2,
       "20.0": 0.27
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P1.2",
     "vc": {
       "interna": 70.0,
@@ -30,15 +36,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.05,
-      "1.82": 0.07,
-      "3.31": 0.11,
-      "6.03": 0.16,
-      "10.99": 0.24,
+      "1.8": 0.07,
+      "3.3": 0.11,
+      "6.0": 0.16,
+      "11.0": 0.24,
       "20.0": 0.33
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P2.1",
     "vc": {
       "interna": 75.0,
@@ -49,15 +58,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.05,
-      "1.82": 0.07,
-      "3.31": 0.1,
-      "6.03": 0.15,
-      "10.99": 0.23,
+      "1.8": 0.07,
+      "3.3": 0.1,
+      "6.0": 0.15,
+      "11.0": 0.23,
       "20.0": 0.31
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P2.2",
     "vc": {
       "interna": 55.0,
@@ -68,15 +80,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.05,
-      "1.82": 0.06,
-      "3.31": 0.09,
-      "6.03": 0.13,
-      "10.99": 0.18,
+      "1.8": 0.06,
+      "3.3": 0.09,
+      "6.0": 0.13,
+      "11.0": 0.18,
       "20.0": 0.25
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P3.1",
     "vc": {
       "interna": 55.0,
@@ -87,15 +102,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.04,
-      "1.82": 0.06,
-      "3.31": 0.09,
-      "6.03": 0.14,
-      "10.99": 0.21,
+      "1.8": 0.06,
+      "3.3": 0.09,
+      "6.0": 0.14,
+      "11.0": 0.21,
       "20.0": 0.28
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P3.2",
     "vc": {
       "interna": 45.0,
@@ -106,15 +124,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.04,
-      "1.82": 0.05,
-      "3.31": 0.08,
-      "6.03": 0.12,
-      "10.99": 0.17,
+      "1.8": 0.05,
+      "3.3": 0.08,
+      "6.0": 0.12,
+      "11.0": 0.17,
       "20.0": 0.23
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P3.3",
     "vc": {
       "interna": 45.0,
@@ -125,15 +146,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.04,
-      "1.82": 0.05,
-      "3.31": 0.06,
-      "6.03": 0.09,
-      "10.99": 0.13,
+      "1.8": 0.05,
+      "3.3": 0.06,
+      "6.0": 0.09,
+      "11.0": 0.13,
       "20.0": 0.18
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P4.1",
     "vc": {
       "interna": 45.0,
@@ -144,15 +168,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.03,
-      "1.82": 0.04,
-      "3.31": 0.06,
-      "6.03": 0.09,
-      "10.99": 0.14,
+      "1.8": 0.04,
+      "3.3": 0.06,
+      "6.0": 0.09,
+      "11.0": 0.14,
       "20.0": 0.19
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P5.1",
     "vc": {
       "interna": 75.0,
@@ -163,15 +190,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.05,
-      "1.82": 0.07,
-      "3.31": 0.1,
-      "6.03": 0.15,
-      "10.99": 0.23,
+      "1.8": 0.07,
+      "3.3": 0.1,
+      "6.0": 0.15,
+      "11.0": 0.23,
       "20.0": 0.31
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P6.1",
     "vc": {
       "interna": 45.0,
@@ -182,15 +212,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.03,
-      "1.82": 0.04,
-      "3.31": 0.06,
-      "6.03": 0.09,
-      "10.99": 0.14,
+      "1.8": 0.04,
+      "3.3": 0.06,
+      "6.0": 0.09,
+      "11.0": 0.14,
       "20.0": 0.19
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K1.1",
     "vc": {
       "interna": 80.0,
@@ -201,15 +234,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.04,
-      "1.82": 0.07,
-      "3.31": 0.12,
-      "6.03": 0.2,
-      "10.99": 0.32,
+      "1.8": 0.07,
+      "3.3": 0.12,
+      "6.0": 0.2,
+      "11.0": 0.32,
       "20.0": 0.44
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K2.1",
     "vc": {
       "interna": 110.0,
@@ -220,15 +256,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.05,
-      "1.82": 0.07,
-      "3.31": 0.12,
-      "6.03": 0.19,
-      "10.99": 0.3,
+      "1.8": 0.07,
+      "3.3": 0.12,
+      "6.0": 0.19,
+      "11.0": 0.3,
       "20.0": 0.41
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K2.2",
     "vc": {
       "interna": 70.0,
@@ -239,15 +278,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.04,
-      "1.82": 0.07,
-      "3.31": 0.11,
-      "6.03": 0.17,
-      "10.99": 0.26,
+      "1.8": 0.07,
+      "3.3": 0.11,
+      "6.0": 0.17,
+      "11.0": 0.26,
       "20.0": 0.35
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K2.3",
     "vc": {
       "interna": 40.0,
@@ -258,15 +300,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.04,
-      "1.82": 0.05,
-      "3.31": 0.08,
-      "6.03": 0.12,
-      "10.99": 0.17,
+      "1.8": 0.05,
+      "3.3": 0.08,
+      "6.0": 0.12,
+      "11.0": 0.17,
       "20.0": 0.23
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K3.1",
     "vc": {
       "interna": 60.0,
@@ -277,15 +322,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.05,
-      "1.82": 0.07,
-      "3.31": 0.11,
-      "6.03": 0.18,
-      "10.99": 0.27,
+      "1.8": 0.07,
+      "3.3": 0.11,
+      "6.0": 0.18,
+      "11.0": 0.27,
       "20.0": 0.38
     }
   },
   {
     "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K3.2",
     "vc": {
       "interna": 55.0,
@@ -296,15 +344,18 @@
     "suportado": true,
     "avancos_f": {
       "1.0": 0.05,
-      "1.82": 0.07,
-      "3.31": 0.1,
-      "6.03": 0.15,
-      "10.99": 0.22,
+      "1.8": 0.07,
+      "3.3": 0.1,
+      "6.0": 0.15,
+      "11.0": 0.22,
       "20.0": 0.3
     }
   },
   {
     "familia": "SCD661",
+    "nome_produto": "Tritan-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P1.1",
     "vc": {
       "interna": 115.0,
@@ -324,6 +375,9 @@
   },
   {
     "familia": "SCD661",
+    "nome_produto": "Tritan-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P1.2",
     "vc": {
       "interna": 105.0,
@@ -343,6 +397,9 @@
   },
   {
     "familia": "SCD661",
+    "nome_produto": "Tritan-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P2.1",
     "vc": {
       "interna": 115.0,
@@ -362,6 +419,9 @@
   },
   {
     "familia": "SCD661",
+    "nome_produto": "Tritan-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P2.2",
     "vc": {
       "interna": 80.0,
@@ -381,6 +441,9 @@
   },
   {
     "familia": "SCD661",
+    "nome_produto": "Tritan-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P3.1",
     "vc": {
       "interna": 85.0,
@@ -400,6 +463,9 @@
   },
   {
     "familia": "SCD661",
+    "nome_produto": "Tritan-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P3.2",
     "vc": {
       "interna": 70.0,
@@ -419,6 +485,9 @@
   },
   {
     "familia": "SCD661",
+    "nome_produto": "Tritan-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P3.3",
     "vc": {
       "interna": 70.0,
@@ -438,6 +507,9 @@
   },
   {
     "familia": "SCD661",
+    "nome_produto": "Tritan-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P5.1",
     "vc": {
       "interna": 115.0,
@@ -456,159 +528,10 @@
     }
   },
   {
-    "familia": "SCD661",
-    "mmg": "M1.1",
-    "vc": {
-      "interna": null,
-      "externa": null,
-      "mql": null,
-      "ar": null
-    },
-    "suportado": false,
-    "avancos_f": {
-      "4.0": null,
-      "5.5": null,
-      "7.5": null,
-      "10.5": null,
-      "14.5": null,
-      "20.0": null
-    }
-  },
-  {
-    "familia": "SCD661",
-    "mmg": "M1.2",
-    "vc": {
-      "interna": 55.0,
-      "externa": 35.0,
-      "mql": 35.0,
-      "ar": null
-    },
-    "suportado": true,
-    "avancos_f": {
-      "4.0": 0.11,
-      "5.5": 0.14,
-      "7.5": 0.18,
-      "10.5": 0.22,
-      "14.5": 0.27,
-      "20.0": 0.31
-    }
-  },
-  {
-    "familia": "SCD661",
-    "mmg": "K1.1",
-    "vc": {
-      "interna": 140.0,
-      "externa": 100.0,
-      "mql": 100.0,
-      "ar": 100.0
-    },
-    "suportado": true,
-    "avancos_f": {
-      "4.0": 0.34,
-      "5.5": 0.45,
-      "7.5": 0.58,
-      "10.5": 0.75,
-      "14.5": 0.92,
-      "20.0": 1.08
-    }
-  },
-  {
-    "familia": "SCD661",
-    "mmg": "K2.1",
-    "vc": {
-      "interna": 185.0,
-      "externa": 115.0,
-      "mql": 140.0,
-      "ar": 140.0
-    },
-    "suportado": true,
-    "avancos_f": {
-      "4.0": 0.34,
-      "5.5": 0.43,
-      "7.5": 0.55,
-      "10.5": 0.7,
-      "14.5": 0.85,
-      "20.0": 1.0
-    }
-  },
-  {
-    "familia": "SCD661",
-    "mmg": "K2.2",
-    "vc": {
-      "interna": 115.0,
-      "externa": 85.0,
-      "mql": 85.0,
-      "ar": null
-    },
-    "suportado": true,
-    "avancos_f": {
-      "4.0": 0.3,
-      "5.5": 0.38,
-      "7.5": 0.48,
-      "10.5": 0.61,
-      "14.5": 0.74,
-      "20.0": 0.86
-    }
-  },
-  {
-    "familia": "SCD661",
-    "mmg": "K2.3",
-    "vc": {
-      "interna": 70.0,
-      "externa": 45.0,
-      "mql": 60.0,
-      "ar": null
-    },
-    "suportado": true,
-    "avancos_f": {
-      "4.0": 0.16,
-      "5.5": 0.2,
-      "7.5": 0.25,
-      "10.5": 0.31,
-      "14.5": 0.38,
-      "20.0": 0.44
-    }
-  },
-  {
-    "familia": "SCD661",
-    "mmg": "K3.1",
-    "vc": {
-      "interna": 105.0,
-      "externa": 90.0,
-      "mql": 90.0,
-      "ar": null
-    },
-    "suportado": true,
-    "avancos_f": {
-      "4.0": 0.32,
-      "5.5": 0.41,
-      "7.5": 0.52,
-      "10.5": 0.65,
-      "14.5": 0.79,
-      "20.0": 0.92
-    }
-  },
-  {
-    "familia": "SCD661",
-    "mmg": "K3.2",
-    "vc": {
-      "interna": 90.0,
-      "externa": 80.0,
-      "mql": 80.0,
-      "ar": null
-    },
-    "suportado": true,
-    "avancos_f": {
-      "4.0": 0.27,
-      "5.5": 0.34,
-      "7.5": 0.42,
-      "10.5": 0.52,
-      "14.5": 0.63,
-      "20.0": 0.73
-    }
-  },
-  {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P1.1",
     "vc": {
       "interna": 110.0,
@@ -628,6 +551,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P1.2",
     "vc": {
       "interna": 100.0,
@@ -647,6 +573,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P2.1",
     "vc": {
       "interna": 110.0,
@@ -666,6 +595,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P2.2",
     "vc": {
       "interna": 75.0,
@@ -685,6 +617,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P3.1",
     "vc": {
       "interna": 85.0,
@@ -704,6 +639,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P3.2",
     "vc": {
       "interna": 65.0,
@@ -723,6 +661,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P3.3",
     "vc": {
       "interna": 65.0,
@@ -742,6 +683,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P4.1",
     "vc": {
       "interna": 65.0,
@@ -761,6 +705,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P5.1",
     "vc": {
       "interna": 110.0,
@@ -780,6 +727,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "P6.1",
     "vc": {
       "interna": 65.0,
@@ -799,6 +749,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K1.1",
     "vc": {
       "interna": 120.0,
@@ -818,6 +771,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K2.1",
     "vc": {
       "interna": 160.0,
@@ -837,6 +793,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K2.2",
     "vc": {
       "interna": 100.0,
@@ -856,6 +815,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K2.3",
     "vc": {
       "interna": 60.0,
@@ -875,6 +837,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K3.1",
     "vc": {
       "interna": 90.0,
@@ -894,6 +859,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "K3.2",
     "vc": {
       "interna": 80.0,
@@ -913,6 +881,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "H1.1",
     "vc": {
       "interna": 90.0,
@@ -932,6 +903,9 @@
   },
   {
     "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
     "mmg": "H1.2",
     "vc": {
       "interna": 25.0,

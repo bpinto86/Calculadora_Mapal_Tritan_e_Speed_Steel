@@ -43,7 +43,7 @@ def _norm_col(col_name):
 
 
 def exportar_familias_json(
-    excel_path: str = "dados/catalogo_teste.xlsx",
+    excel_path: str = "catalogo_teste.xlsx",
     sheet_name: str = "Familias",
     output_path: str = "dados/familias.json",
 ) -> list[dict]:
@@ -213,7 +213,7 @@ def exportar_json(
 
 
 def exportar_referencias_json(
-    excel_path: str = "dados/catalogo_teste.xlsx",
+    excel_path: str = "catalogo_teste.xlsx",
     sheet_name: str = "Dimensoes",
     output_path: str = "dados/referencias.json",
     familias_map: dict[str, dict] | None = None,
@@ -295,7 +295,7 @@ def exportar_referencias_json(
 
 
 def exportar_tudo_json(
-    excel_path: str = "dados/catalogo_teste.xlsx",
+    excel_path: str = "catalogo_teste.xlsx",
     output_dir: str = "dados",
 ) -> dict[str, list[dict]]:
     out_base = Path(output_dir)
