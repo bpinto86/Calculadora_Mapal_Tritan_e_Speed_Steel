@@ -922,5 +922,467 @@
       "14.0": 0.14,
       "20.0": 0.16
     }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1.1",
+    "vc": {
+      "interna": 115.0,
+      "externa": 105.0,
+      "mql": 105.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.22,
+      "5.5": 0.27,
+      "7.5": 0.34,
+      "10.5": 0.42,
+      "14.5": 0.51,
+      "20.0": 0.59
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1.2",
+    "vc": {
+      "interna": 105.0,
+      "externa": 85.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.27,
+      "5.5": 0.34,
+      "7.5": 0.42,
+      "10.5": 0.53,
+      "14.5": 0.64,
+      "20.0": 0.74
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2.1",
+    "vc": {
+      "interna": 115.0,
+      "externa": 100.0,
+      "mql": 100.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.25,
+      "5.5": 0.32,
+      "7.5": 0.4,
+      "10.5": 0.5,
+      "14.5": 0.6,
+      "20.0": 0.7
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2.2",
+    "vc": {
+      "interna": 80.0,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.21,
+      "5.5": 0.26,
+      "7.5": 0.32,
+      "10.5": 0.4,
+      "14.5": 0.48,
+      "20.0": 0.55
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3.1",
+    "vc": {
+      "interna": 85.0,
+      "externa": 75.0,
+      "mql": 75.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.23,
+      "5.5": 0.29,
+      "7.5": 0.36,
+      "10.5": 0.45,
+      "14.5": 0.54,
+      "20.0": 0.63
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3.2",
+    "vc": {
+      "interna": 70.0,
+      "externa": 65.0,
+      "mql": 65.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.19,
+      "5.5": 0.24,
+      "7.5": 0.3,
+      "10.5": 0.37,
+      "14.5": 0.44,
+      "20.0": 0.51
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3.3",
+    "vc": {
+      "interna": 70.0,
+      "externa": 50.0,
+      "mql": 60.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.16,
+      "5.5": 0.19,
+      "7.5": 0.24,
+      "10.5": 0.29,
+      "14.5": 0.34,
+      "20.0": 0.4
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P5.1",
+    "vc": {
+      "interna": 115.0,
+      "externa": 100.0,
+      "mql": 100.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.25,
+      "5.5": 0.32,
+      "7.5": 0.4,
+      "10.5": 0.5,
+      "14.5": 0.6,
+      "20.0": 0.7
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "M1.1",
+    "vc": {
+      "interna": 55.0,
+      "externa": 35.0,
+      "mql": 35.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.14,
+      "7.5": 0.18,
+      "10.5": 0.22,
+      "14.5": 0.27,
+      "20.0": 0.31
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K1.1",
+    "vc": {
+      "interna": 140.0,
+      "externa": 100.0,
+      "mql": 100.0,
+      "ar": 100.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.31,
+      "5.5": 0.41,
+      "7.5": 0.53,
+      "10.5": 0.68,
+      "14.5": 0.84,
+      "20.0": 0.98
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2.1",
+    "vc": {
+      "interna": 185.0,
+      "externa": 115.0,
+      "mql": 140.0,
+      "ar": 140.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.3,
+      "5.5": 0.39,
+      "7.5": 0.5,
+      "10.5": 0.64,
+      "14.5": 0.78,
+      "20.0": 0.91
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2.2",
+    "vc": {
+      "interna": 115.0,
+      "externa": 85.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.27,
+      "5.5": 0.35,
+      "7.5": 0.44,
+      "10.5": 0.55,
+      "14.5": 0.67,
+      "20.0": 0.78
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2.3",
+    "vc": {
+      "interna": 70.0,
+      "externa": 45.0,
+      "mql": 60.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.18,
+      "7.5": 0.22,
+      "10.5": 0.28,
+      "14.5": 0.33,
+      "20.0": 0.38
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K3.1",
+    "vc": {
+      "interna": 105.0,
+      "externa": 90.0,
+      "mql": 90.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.29,
+      "5.5": 0.37,
+      "7.5": 0.47,
+      "10.5": 0.59,
+      "14.5": 0.72,
+      "20.0": 0.84
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K3.2",
+    "vc": {
+      "interna": 90.0,
+      "externa": 80.0,
+      "mql": 80.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.25,
+      "5.5": 0.31,
+      "7.5": 0.38,
+      "10.5": 0.48,
+      "14.5": 0.57,
+      "20.0": 0.66
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1.1",
+    "vc": {
+      "interna": 345.0,
+      "externa": 230.0,
+      "mql": 290.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.22,
+      "5.5": 0.27,
+      "7.5": 0.34,
+      "10.5": 0.42,
+      "14.5": 0.51,
+      "20.0": 0.59
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1.2",
+    "vc": {
+      "interna": 290.0,
+      "externa": 205.0,
+      "mql": 230.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.27,
+      "5.5": 0.35,
+      "7.5": 0.44,
+      "10.5": 0.55,
+      "14.5": 0.67,
+      "20.0": 0.78
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1.3",
+    "vc": {
+      "interna": 255.0,
+      "externa": 175.0,
+      "mql": 205.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.27,
+      "5.5": 0.35,
+      "7.5": 0.44,
+      "10.5": 0.55,
+      "14.5": 0.67,
+      "20.0": 0.78
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1.4",
+    "vc": {
+      "interna": 205.0,
+      "externa": 140.0,
+      "mql": 175.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.27,
+      "5.5": 0.35,
+      "7.5": 0.44,
+      "10.5": 0.55,
+      "14.5": 0.67,
+      "20.0": 0.78
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N2.2",
+    "vc": {
+      "interna": 140.0,
+      "externa": 105.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.2,
+      "5.5": 0.26,
+      "7.5": 0.33,
+      "10.5": 0.41,
+      "14.5": 0.5,
+      "20.0": 0.58
+    }
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N2.3",
+    "vc": {
+      "interna": 230.0,
+      "externa": 185.0,
+      "mql": 185.0,
+      "ar": 140.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.31,
+      "5.5": 0.41,
+      "7.5": 0.53,
+      "10.5": 0.68,
+      "14.5": 0.84,
+      "20.0": 0.98
+    }
   }
 ]
