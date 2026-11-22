@@ -171,19 +171,19 @@
     "familia": "SCD561",
     "nome_produto": "Tritan-Step-Drill-Steel",
     "gama": "Expert Line",
-    "categoria": "Stepped Drilling (Escalonada)"
+    "categoria": "Stepped Drilling (Broca Escalonada)"
   },
   {
     "familia": "SCD591",
     "nome_produto": "MEGA-Step-Drill-Steel-Plus",
     "gama": "Performance Line",
-    "categoria": "Stepped Drilling (Escalonada)"
+    "categoria": "Stepped Drilling (Broca Escalonada)"
   },
   {
     "familia": "SCD590",
     "nome_produto": "MEGA-Step-Drill-Steel-Plus",
     "gama": "Performance Line",
-    "categoria": "Stepped Drilling (Escalonada)"
+    "categoria": "Stepped Drilling (Broca Escalonada)"
   },
   {
     "familia": "SCD581",
@@ -207,7 +207,7 @@
     "familia": "SDR301",
     "nome_produto": "Tritan-Drill-Reamer",
     "gama": "Expert Line",
-    "categoria": "Drill Reaming (Alargamento)"
+    "categoria": "Drill Reaming (Broca Mandril)"
   },
   {
     "familia": "01P-Uni-Plus",
