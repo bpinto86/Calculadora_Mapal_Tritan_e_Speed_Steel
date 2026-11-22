@@ -5808,6 +5808,578 @@
     }
   },
   {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "M2.1",
+    "vc": {
+      "interna": 75.0,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.09,
+      "14.5": 0.1,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "K1.1",
+    "vc": {
+      "interna": 245.0,
+      "externa": 175.0,
+      "mql": 175.0,
+      "ar": 175.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.17,
+      "5.5": 0.19,
+      "7.5": 0.22,
+      "10.5": 0.25,
+      "14.5": 0.27,
+      "20.0": 0.3
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "K2.1",
+    "vc": {
+      "interna": 225.0,
+      "externa": 140.0,
+      "mql": 170.0,
+      "ar": 170.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.16,
+      "5.5": 0.18,
+      "7.5": 0.2,
+      "10.5": 0.23,
+      "14.5": 0.25,
+      "20.0": 0.27
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "K2.2",
+    "vc": {
+      "interna": 170.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "K2.3",
+    "vc": {
+      "interna": 100.0,
+      "externa": 70.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "K3.1",
+    "vc": {
+      "interna": 155.0,
+      "externa": 135.0,
+      "mql": 135.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.15,
+      "5.5": 0.17,
+      "7.5": 0.19,
+      "10.5": 0.21,
+      "14.5": 0.23,
+      "20.0": 0.25
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "K3.2",
+    "vc": {
+      "interna": 135.0,
+      "externa": 120.0,
+      "mql": 120.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.12,
+      "5.5": 0.13,
+      "7.5": 0.15,
+      "10.5": 0.17,
+      "14.5": 0.19,
+      "20.0": 0.2
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N1.1",
+    "vc": {
+      "interna": 300.0,
+      "externa": 200.0,
+      "mql": 250.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N1.2",
+    "vc": {
+      "interna": 250.0,
+      "externa": 180.0,
+      "mql": 200.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N1.3",
+    "vc": {
+      "interna": 220.0,
+      "externa": 150.0,
+      "mql": 180.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N1.4",
+    "vc": {
+      "interna": 180.0,
+      "externa": 120.0,
+      "mql": 150.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N2.1",
+    "vc": {
+      "interna": 140.0,
+      "externa": 100.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N2.2",
+    "vc": {
+      "interna": 120.0,
+      "externa": 90.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N2.3",
+    "vc": {
+      "interna": 200.0,
+      "externa": 160.0,
+      "mql": 160.0,
+      "ar": 120.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.17,
+      "5.5": 0.19,
+      "7.5": 0.22,
+      "10.5": 0.25,
+      "14.5": 0.27,
+      "20.0": 0.3
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N4.1",
+    "vc": {
+      "interna": null,
+      "externa": 60.0,
+      "mql": null,
+      "ar": 50.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N4.2",
+    "vc": {
+      "interna": null,
+      "externa": 65.0,
+      "mql": null,
+      "ar": 40.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.07,
+      "5.5": 0.08,
+      "7.5": 0.09,
+      "10.5": 0.11,
+      "14.5": 0.12,
+      "20.0": 0.12
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "N4.3",
+    "vc": {
+      "interna": null,
+      "externa": null,
+      "mql": null,
+      "ar": 400.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.07,
+      "5.5": 0.08,
+      "7.5": 0.09,
+      "10.5": 0.11,
+      "14.5": 0.12,
+      "20.0": 0.12
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "S1.1",
+    "vc": {
+      "interna": 40.0,
+      "externa": 25.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.062,
+      "5.5": 0.069,
+      "7.5": 0.078,
+      "10.5": 0.088,
+      "14.5": 0.097,
+      "20.0": 0.104
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "S2.1",
+    "vc": {
+      "interna": 30.0,
+      "externa": 20.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.053,
+      "5.5": 0.059,
+      "7.5": 0.067,
+      "10.5": 0.075,
+      "14.5": 0.083,
+      "20.0": 0.089
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "S2.2",
+    "vc": {
+      "interna": 25.0,
+      "externa": 15.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.044,
+      "5.5": 0.05,
+      "7.5": 0.056,
+      "10.5": 0.063,
+      "14.5": 0.069,
+      "20.0": 0.074
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "S3.1",
+    "vc": {
+      "interna": 20.0,
+      "externa": 15.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.035,
+      "5.5": 0.04,
+      "7.5": 0.045,
+      "10.5": 0.05,
+      "14.5": 0.055,
+      "20.0": 0.059
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "S3.2",
+    "vc": {
+      "interna": 15.0,
+      "externa": 10.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.044,
+      "5.5": 0.05,
+      "7.5": 0.056,
+      "10.5": 0.063,
+      "14.5": 0.069,
+      "20.0": 0.074
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "S4.1",
+    "vc": {
+      "interna": 15.0,
+      "externa": 10.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.035,
+      "5.5": 0.04,
+      "7.5": 0.045,
+      "10.5": 0.05,
+      "14.5": 0.055,
+      "20.0": 0.059
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "S5.1",
+    "vc": {
+      "interna": 15.0,
+      "externa": 10.0,
+      "mql": null,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.035,
+      "5.5": 0.04,
+      "7.5": 0.045,
+      "10.5": 0.05,
+      "14.5": 0.055,
+      "20.0": 0.059
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "H1.1",
+    "vc": {
+      "interna": 80.0,
+      "externa": 80.0,
+      "mql": 80.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.078,
+      "5.5": 0.087,
+      "7.5": 0.098,
+      "10.5": 0.109,
+      "14.5": 0.12,
+      "20.0": 0.128
+    }
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)",
+    "mmg": "H1.2",
+    "vc": {
+      "interna": 30.0,
+      "externa": 30.0,
+      "mql": 30.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.053,
+      "5.5": 0.059,
+      "7.5": 0.067,
+      "10.5": 0.075,
+      "14.5": 0.083,
+      "20.0": 0.089
+    }
+  },
+  {
     "familia": "SCD360",
     "nome_produto": "ECU-Drill-Steel",
     "gama": "Basic Line",
