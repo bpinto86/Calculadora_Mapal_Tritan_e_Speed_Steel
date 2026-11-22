@@ -1,0 +1,152 @@
+[
+  {
+    "familia": "SCD600",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD601",
+    "nome_produto": "MEGA-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD120",
+    "nome_produto": "MEGA-Drill-Inox",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD121",
+    "nome_produto": "MEGA-Drill-Inox",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD131",
+    "nome_produto": "MEGA-Drill-Alu",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD140",
+    "nome_produto": "MEGA-Drill-Hardened",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD250",
+    "nome_produto": "MEGA-Drill-Composite-MD",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD371",
+    "nome_produto": "MICRO-Drill-Steel",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD610",
+    "nome_produto": "MEGA-Quadro-Drill-Plus",
+    "gama": "Performance Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD611",
+    "nome_produto": "MEGA-Quadro-Drill-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD631",
+    "nome_produto": "Tritan-Drill-Uni-Plus",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD661",
+    "nome_produto": "Tritan-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD221",
+    "nome_produto": "MEGA-Speed-Drill-Uni",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD621",
+    "nome_produto": "MEGA-Speed-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD411",
+    "nome_produto": "MEGA-Speed-Drill-Inox",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD421",
+    "nome_produto": "MEGA-Speed-Drill-Iron",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD231",
+    "nome_produto": "MEGA-180°-Drill",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD241",
+    "nome_produto": "MEGA-180°-Drill-Alu",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD270",
+    "nome_produto": "MEGA-Drill-Composite-UDX",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD271",
+    "nome_produto": "MEGA-Drill-Composite-UDX",
+    "gama": "Expert Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD350",
+    "nome_produto": "ECU-Drill-Uni",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD351",
+    "nome_produto": "ECU-Drill-Uni",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD360",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD361",
+    "nome_produto": "ECU-Drill-Steel",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD211",
+    "nome_produto": "ECU-G-Drill",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling"
+  }
+]
