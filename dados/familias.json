@@ -148,5 +148,137 @@
     "nome_produto": "ECU-G-Drill",
     "gama": "Basic Line",
     "categoria": "Solid Carbide / Sandard Drilling"
+  },
+  {
+    "familia": "SCD670",
+    "nome_produto": "Tritan-Spot-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)"
+  },
+  {
+    "familia": "SCD450",
+    "nome_produto": "ECU-Centre-Drill",
+    "gama": "Basic Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)"
+  },
+  {
+    "familia": "CPD100",
+    "nome_produto": "CPD-Spot-Drill",
+    "gama": "Basic Line",
+    "categoria": "Spot Drilling (Centragem / Ponto)"
+  },
+  {
+    "familia": "SCD561",
+    "nome_produto": "Tritan-Step-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Stepped Drilling (Escalonada)"
+  },
+  {
+    "familia": "SCD591",
+    "nome_produto": "MEGA-Step-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Stepped Drilling (Escalonada)"
+  },
+  {
+    "familia": "SCD590",
+    "nome_produto": "MEGA-Step-Drill-Steel-Plus",
+    "gama": "Performance Line",
+    "categoria": "Stepped Drilling (Escalonada)"
+  },
+  {
+    "familia": "SCD581",
+    "nome_produto": "MICRO-Step-Drill-Steel",
+    "gama": "Performance Line",
+    "categoria": "Deep Drilling (Furação Profunda)"
+  },
+  {
+    "familia": "SCD171",
+    "nome_produto": "MICRO-Deep-Drill",
+    "gama": "Performance Line",
+    "categoria": "Deep Drilling (Furação Profunda)"
+  },
+  {
+    "familia": "SCD181",
+    "nome_produto": "MEGA-Deep-Drill-Alu",
+    "gama": "Performance Line",
+    "categoria": "Deep Drilling (Furação Profunda)"
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)"
+  },
+  {
+    "familia": "01P-Uni-Plus",
+    "nome_produto": "TTD Uni-Plus replaceable drill head",
+    "gama": "Performance Line",
+    "categoria": "TTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "04-Steel",
+    "nome_produto": "TTD Steel replaceable drill head",
+    "gama": "Performance Line",
+    "categoria": "TTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "02-Inox",
+    "nome_produto": "TTD Inox replaceable drill head",
+    "gama": "Performance Line",
+    "categoria": "TTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "05-Iron",
+    "nome_produto": "TTD Iron replaceable drill head",
+    "gama": "Performance Line",
+    "categoria": "TTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "03-Alu",
+    "nome_produto": "TTD Alu replaceable drill head",
+    "gama": "Performance Line",
+    "categoria": "TTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "01-Uni",
+    "nome_produto": "TTD-Tritan Uni replaceable drill head",
+    "gama": "Expert Line",
+    "categoria": "TTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "01-Steel",
+    "nome_produto": "QTD Steel Indexable Insert",
+    "gama": "Performance Line",
+    "categoria": "QTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "05-Pyramid",
+    "nome_produto": "QTD Steel-Pyramid Indexable Insert",
+    "gama": "Performance Line",
+    "categoria": "QTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "10-Uni",
+    "nome_produto": "QTD Uni EK-Shaped Indexable Insert",
+    "gama": "Performance Line",
+    "categoria": "QTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "02-Inox",
+    "nome_produto": "QTD Inox Indexable Insert",
+    "gama": "Performance Line",
+    "categoria": "QTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "04-Iron",
+    "nome_produto": "QTD Iron Indexable Insert",
+    "gama": "Performance Line",
+    "categoria": "QTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "4 03-Alu",
+    "nome_produto": "QTD Alu Indexable Insert",
+    "gama": "Performance Line",
+    "categoria": "QTD Insert Drilling (Pastilhas Amovíveis)"
   }
 ]
