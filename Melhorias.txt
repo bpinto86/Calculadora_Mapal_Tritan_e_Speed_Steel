@@ -1,0 +1,7 @@
+Ainda não coloquei as medidas das pastilhas, tenho que fazer um código novo para a aplicação chamar bem os dados das pastilhas
+
+criar os grupos e subgrupos no excel e depois retrirar tudo da aplicação
+Criar filtros grupos de materiais e sugrupos
+M
+M1
+M2 etc...
