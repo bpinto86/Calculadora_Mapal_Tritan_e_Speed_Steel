@@ -180,10 +180,10 @@ html_content = '''
                         <span id="contador-referencias" class="text-[10px] text-slate-400 font-mono">0 ref.</span>
                     </div>
 
-                    <!-- 2. Grupo de Materiais (MMG) integrado e sincronizado na Seleção Progressiva -->
+                    <!-- 1. Grupo de Materiais (MMG) integrado e sincronizado na Seleção Progressiva -->
                     <div class="bg-slate-950/75 p-2 rounded-md border border-blue-900/50 space-y-1.5">
                         <div class="flex justify-between items-center gap-1">
-                            <label class="text-[10px] font-semibold text-blue-300 uppercase tracking-wider">2. Grupo de Materiais (MMG)</label>
+                            <label class="text-[10px] font-semibold text-blue-300 uppercase tracking-wider">1. Grupo de Materiais (MMG)</label>
                             <span id="mmg-selecao-detalhe" class="text-[10px] font-mono text-slate-300 truncate max-w-[175px]">—</span>
                         </div>
 
