@@ -119,15 +119,21 @@ html_content = '''
                         <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Seleção Progressiva do Catálogo</span>
                         <span id="contador-referencias" class="text-[10px] text-slate-400 font-mono">0 ref.</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-1.5">
+                    <div class="grid grid-cols-3 gap-1.5">
                         <div class="space-y-0.5">
-                            <label class="text-[10px] font-medium text-slate-300 block">1. Gama / Linha</label>
+                            <label class="text-[10px] font-medium text-slate-300 block">1. Tipo Operação</label>
+                            <select id="categoria" class="w-full bg-slate-800 border border-slate-700 rounded px-1.5 py-1 text-xs text-purple-300 font-semibold focus:outline-none focus:border-emerald-500" onchange="onFiltroCatalogoChange('categoria')">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                        <div class="space-y-0.5">
+                            <label class="text-[10px] font-medium text-slate-300 block">2. Gama / Linha</label>
                             <select id="filtro-gama-cat" class="w-full bg-slate-800 border border-slate-700 rounded px-1.5 py-1 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="onFiltroCatalogoChange('gama')">
                                 <option value="">Todas</option>
                             </select>
                         </div>
                         <div class="space-y-0.5">
-                            <label class="text-[10px] font-medium text-slate-300 block">2. Refrigeração</label>
+                            <label class="text-[10px] font-medium text-slate-300 block">3. Refrigeração</label>
                             <select id="filtro-refrig-cat" class="w-full bg-slate-800 border border-slate-700 rounded px-1.5 py-1 text-xs text-sky-300 font-semibold focus:outline-none focus:border-emerald-500" onchange="onFiltroCatalogoChange('refrig')">
                                 <option value="">Todas</option>
                             </select>
@@ -135,51 +141,42 @@ html_content = '''
                     </div>
                     <div class="grid grid-cols-3 gap-1.5">
                         <div class="space-y-0.5">
-                            <label class="text-[10px] font-medium text-slate-300 block">3. DIN 6535</label>
+                            <label class="text-[10px] font-medium text-slate-300 block">4. DIN 6535</label>
                             <select id="filtro-encabadouro-cat" class="w-full bg-slate-800 border border-slate-700 rounded px-1.5 py-1 text-xs text-amber-300 font-semibold focus:outline-none focus:border-emerald-500" onchange="onFiltroCatalogoChange('encabadouro')">
                                 <option value="">Todos</option>
                             </select>
                         </div>
                         <div class="space-y-0.5">
-                            <label class="text-[10px] font-medium text-slate-300 block">4. Diâmetro d1</label>
+                            <label class="text-[10px] font-medium text-slate-300 block">5. Diâmetro d1</label>
                             <input type="number" id="filtro-d1" list="lista-d1-sugestoes" step="0.01" min="0.1" max="100" placeholder="Ex: 10.00" class="w-full bg-slate-800 border border-slate-700 rounded px-1.5 py-1 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500" oninput="onFiltroCatalogoChange('d1')" onchange="onFiltroCatalogoChange('d1')">
                             <datalist id="lista-d1-sugestoes"></datalist>
                         </div>
                         <div class="space-y-0.5">
-                            <label class="text-[10px] font-medium text-slate-300 block">5. Variante ×D</label>
+                            <label class="text-[10px] font-medium text-slate-300 block">6. Variante ×D</label>
                             <select id="filtro-xd" class="w-full bg-slate-800 border border-slate-700 rounded px-1.5 py-1 text-xs text-cyan-300 font-semibold focus:outline-none focus:border-emerald-500" onchange="onFiltroCatalogoChange('xd')">
                                 <option value="">Todas</option>
                             </select>
                         </div>
                     </div>
                     <div class="space-y-0.5">
-                        <label class="text-[10px] font-medium text-slate-300 block">6. Referência / Order no.</label>
+                        <div class="flex justify-between items-center">
+                            <label class="text-[10px] font-medium text-slate-300 block">7. Modelo de Ferramenta</label>
+                            <span id="info-modelo-filtro" class="text-[9px] text-cyan-400 font-mono"></span>
+                        </div>
+                        <select id="broca" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="onMudarModeloFerramenta()">
+                        </select>
+                    </div>
+                    <div class="space-y-0.5">
+                        <label class="text-[10px] font-medium text-slate-300 block">8. Referência / Order no.</label>
                         <select id="filtro-order-no" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="onSelecionarOrderCatalogo()">
                             <option value="">— Selecionar referência compatível —</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- 2. Tipo de Operação / Categoria (dados de Categoria da aba Familias) -->
+                <!-- 2. Grupo de Materiais -->
                 <div class="space-y-1 shrink-0">
-                    <label class="text-[11px] font-medium text-slate-300">2. TIPO DE OPERAÇÃO / CATEGORIA</label>
-                    <select id="categoria" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="atualizarFiltroBrocas()">
-                    </select>
-                </div>
-
-                <!-- 3. Modelo de Ferramenta (dados de Familia e Nome do produto da aba Familias) -->
-                <div class="space-y-1 shrink-0">
-                    <div class="flex justify-between items-center">
-                        <label class="text-[11px] font-medium text-slate-300">3. MODELO DE FERRAMENTA</label>
-                        <span id="info-modelo-filtro" class="text-[9px] text-cyan-400 font-mono"></span>
-                    </div>
-                    <select id="broca" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="onMudarModeloFerramenta()">
-                    </select>
-                </div>
-
-                <!-- 4. Grupo de Materiais -->
-                <div class="space-y-1 shrink-0">
-                    <label class="text-[11px] font-medium text-slate-300">4. GRUPO DE MATERIAIS (MMG)</label>
+                    <label class="text-[11px] font-medium text-slate-300">2. GRUPO DE MATERIAIS (MMG)</label>
                     <select id="grupo" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-xs text-white focus:outline-none focus:border-blue-500" onchange="mudarGrupoMaterial()">
                     </select>
                 </div>
@@ -192,9 +189,9 @@ html_content = '''
                     </label>
                 </div>
 
-                <!-- 5. Método de Refrigeração -->
+                <!-- 3. Método de Refrigeração -->
                 <div class="space-y-1 shrink-0">
-                    <label class="text-[11px] font-medium text-slate-300">5. MÉTODO DE REFRIGERAÇÃO A USAR</label>
+                    <label class="text-[11px] font-medium text-slate-300">3. MÉTODO DE REFRIGERAÇÃO A USAR</label>
                     <div class="grid grid-cols-4 gap-1 bg-slate-900 p-1 rounded-md border border-slate-700 text-[11px] text-center font-medium">
                         <button type="button" onclick="setRefrig('int')" id="ref-int" class="py-1.5 rounded bg-blue-600 text-white transition">Interna</button>
                         <button type="button" onclick="setRefrig('ext')" id="ref-ext" class="py-1.5 rounded text-slate-400 hover:text-white transition">Externa</button>
@@ -204,10 +201,10 @@ html_content = '''
                     <p id="aviso-refrig" class="text-[9px] text-amber-400 hidden">Nota: Esta ferramenta não permite refrigeração interna.</p>
                 </div>
 
-                <!-- 6. Dimensões -->
+                <!-- 4. Dimensões -->
                 <div class="grid grid-cols-2 gap-2 shrink-0">
                     <div id="bloco-diametro-manual" class="space-y-1">
-                        <label class="text-[11px] font-medium text-slate-300">6. DIÂMETRO (Ø)</label>
+                        <label class="text-[11px] font-medium text-slate-300">4. DIÂMETRO (Ø)</label>
                         <div class="flex items-center gap-1">
                             <button onclick="ajustarDiametro(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">-</button>
                             <input type="number" id="diametro" value="12.00" step="0.1" min="0.5" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="onDiametroPrincipalChange()">
@@ -215,14 +212,14 @@ html_content = '''
                         </div>
                     </div>
                     <div id="bloco-diametro-catalogo" class="space-y-1 hidden">
-                        <label class="text-[11px] font-medium text-emerald-400">6. DIÂMETRO (Ø) — d1</label>
+                        <label class="text-[11px] font-medium text-emerald-400">4. DIÂMETRO (Ø) — d1</label>
                         <div class="bg-slate-900/90 border border-emerald-700/60 rounded-md p-1.5 text-center flex items-center justify-between px-2">
                             <div id="diametro-catalogo-valor" class="text-sm font-bold text-emerald-300">Ø 12.00 mm</div>
                             <button type="button" onclick="limparDiametroD1()" title="Limpar d1 e voltar ao Ø livre" class="text-[10px] text-slate-400 hover:text-white underline">Livre</button>
                         </div>
                     </div>
                     <div class="space-y-1">
-                        <label class="text-[11px] font-medium text-slate-300">7. PROFUNDIDADE/FURO (L)</label>
+                        <label class="text-[11px] font-medium text-slate-300">5. PROFUNDIDADE/FURO (L)</label>
                         <div class="flex items-center gap-1">
                             <input type="number" id="profundidade" value="31.0" step="1" min="0.1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                             <span class="text-[10px] text-slate-400 font-medium">mm</span>
@@ -240,11 +237,11 @@ html_content = '''
                 <div class="pro-only hidden space-y-2.5 shrink-0">
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <div class="space-y-1">
-                            <label class="text-[11px] font-medium text-slate-300">8. QTD. FUROS (LOTE)</label>
+                            <label class="text-[11px] font-medium text-slate-300">6. QTD. FUROS (LOTE)</label>
                             <input type="number" id="qtd-furos" value="50" step="1" min="1" max="100000" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                         <div class="space-y-1">
-                            <label class="text-[11px] font-medium text-slate-300">9. DENSIDADE (g/cm³)</label>
+                            <label class="text-[11px] font-medium text-slate-300">7. DENSIDADE (g/cm³)</label>
                             <input type="number" id="densidade" value="7.85" step="0.01" min="0.5" max="25" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                     </div>
@@ -277,11 +274,11 @@ html_content = '''
 
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <div class="space-y-1">
-                            <label class="text-[11px] font-medium text-slate-300">10. VALOR SUCATA (€/kg)</label>
+                            <label class="text-[11px] font-medium text-slate-300">8. VALOR SUCATA (€/kg)</label>
                             <input type="number" id="preco-sucata" value="0.35" step="0.05" min="0" max="50" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                         <div class="space-y-1">
-                            <label class="text-[11px] font-medium text-slate-300">11. CUSTO HORA MÁQUINA (€/h)</label>
+                            <label class="text-[11px] font-medium text-slate-300">9. CUSTO HORA MÁQUINA (€/h)</label>
                             <input type="number" id="custo-hora" value="50.00" step="5" min="1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                     </div>
@@ -1549,12 +1546,14 @@ html_content = '''
 
         function limparFiltrosCatalogo() {
             document.getElementById('ref-pesquisa').value = '';
+            document.getElementById('categoria').value = '';
             document.getElementById('filtro-gama-cat').value = '';
             document.getElementById('filtro-refrig-cat').value = '';
             document.getElementById('filtro-encabadouro-cat').value = '';
             document.getElementById('filtro-d1').value = '';
             document.getElementById('filtro-xd').value = '';
             document.getElementById('filtro-order-no').value = '';
+            linhaAtivaInterna = '';
             document.getElementById('ref-feedback').innerText = "Se souber a referência, pesquise acima; se não souber, filtre abaixo.";
             document.getElementById('ref-feedback').className = "text-[10px] text-slate-400 block";
             referenciaAtivaObj = null;
@@ -1620,7 +1619,43 @@ html_content = '''
             return Math.abs(Number(item.d1) - d1Num) <= 0.015;
         }
 
+        function obterTodasCategoriasUnicas() {
+            const categoriasUnicas = [];
+            const vistos = new Set();
+
+            if (Array.isArray(FAMILIAS_JSON)) {
+                FAMILIAS_JSON.forEach(f => {
+                    const cat = String(f.categoria || f.Categoria || '').trim();
+                    if (cat && !vistos.has(cat)) {
+                        vistos.add(cat);
+                        categoriasUnicas.push(cat);
+                    }
+                });
+            }
+
+            if (Array.isArray(REFERENCIAS_JSON)) {
+                REFERENCIAS_JSON.forEach(item => {
+                    const cat = obterCategoriaCatalogo(item);
+                    if (cat && !vistos.has(cat)) {
+                        vistos.add(cat);
+                        categoriasUnicas.push(cat);
+                    }
+                });
+            }
+
+            Object.values(dados).forEach(tool => {
+                const cat = String(tool.categoria || '').trim();
+                if (cat && !vistos.has(cat)) {
+                    vistos.add(cat);
+                    categoriasUnicas.push(cat);
+                }
+            });
+
+            return categoriasUnicas;
+        }
+
         function filtrarCatalogoCascata(origem = null) {
+            const selCat = document.getElementById('categoria');
             const selGama = document.getElementById('filtro-gama-cat');
             const selRefrig = document.getElementById('filtro-refrig-cat');
             const selEnc = document.getElementById('filtro-encabadouro-cat');
@@ -1629,6 +1664,7 @@ html_content = '''
             const selOrder = document.getElementById('filtro-order-no');
             const selModelo = document.getElementById('broca');
 
+            let valCat = selCat ? selCat.value : '';
             let valGama = selGama.value;
             let valRefrig = selRefrig.value;
             let valEnc = selEnc.value;
@@ -1638,8 +1674,29 @@ html_content = '''
 
             const base = getCandidatosCatalogoBase();
 
+            // 1. Tipo de Operação
+            const candCat = base.filter(c =>
+                obterCategoriaCatalogo(c) &&
+                (!valGama || obterGamaCatalogo(c) === valGama) &&
+                (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
+                (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
+                matchD1Item(c, d1Num) &&
+                (!valXd || String(c.variante || '').trim() === valXd) &&
+                (!valModeloAtual || String(c.familia || '').trim().toLowerCase() === valModeloAtual)
+            );
+            let catList = [...new Set(candCat.map(c => obterCategoriaCatalogo(c)))];
+            if (catList.length === 0) {
+                catList = obterTodasCategoriasUnicas();
+            }
+            if (valCat && !catList.includes(valCat)) valCat = '';
+            if (selCat) {
+                preencherSelectOpcoes(selCat, catList, 'Todas Operações', c => c, valCat);
+            }
+
+            // 2. Gama / Linha
             const candGama = base.filter(c =>
                 obterGamaCatalogo(c) &&
+                (!valCat || obterCategoriaCatalogo(c) === valCat) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
                 matchD1Item(c, d1Num) &&
@@ -1658,8 +1715,10 @@ html_content = '''
             if (valGama && !gamaList.includes(valGama)) valGama = '';
             preencherSelectOpcoes(selGama, gamaList, 'Todas Gamas', fmtGamaLabel, valGama);
 
+            // 3. Refrigeração
             const candRefrig = base.filter(c =>
                 normalizarRefrigCatalogo(c) &&
+                (!valCat || obterCategoriaCatalogo(c) === valCat) &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
                 matchD1Item(c, d1Num) &&
@@ -1675,8 +1734,10 @@ html_content = '''
             if (valRefrig && !refrigList.includes(valRefrig)) valRefrig = '';
             preencherSelectOpcoes(selRefrig, refrigList, 'Todas Refrig.', fmtRefrigCatalogo, valRefrig);
 
+            // 4. DIN 6535
             const candEnc = base.filter(c =>
                 extrairEncabadouroDIN6535(c) &&
+                (!valCat || obterCategoriaCatalogo(c) === valCat) &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 matchD1Item(c, d1Num) &&
@@ -1692,8 +1753,10 @@ html_content = '''
             if (valEnc && !encList.includes(valEnc)) valEnc = '';
             preencherSelectOpcoes(selEnc, encList, 'Todos DIN', e => `DIN ${e}`, valEnc);
 
+            // 5. Diâmetro d1
             const candD1 = base.filter(c =>
                 (c.d1 !== null && c.d1 !== undefined && !isNaN(Number(c.d1))) &&
+                (!valCat || obterCategoriaCatalogo(c) === valCat) &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
@@ -1710,8 +1773,10 @@ html_content = '''
                 });
             }
 
+            // 6. Variante ×D
             const candXd = base.filter(c =>
                 c.variante &&
+                (!valCat || obterCategoriaCatalogo(c) === valCat) &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
@@ -1722,7 +1787,9 @@ html_content = '''
             if (valXd && !xdList.includes(valXd)) valXd = '';
             preencherSelectOpcoes(selXd, xdList, 'Todas ×D', x => x, valXd);
 
+            // 7 & 8. Modelos e Referências Finais
             const finais = base.filter(c =>
+                (!valCat || obterCategoriaCatalogo(c) === valCat) &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
@@ -1762,17 +1829,12 @@ html_content = '''
                 setRefrig(valRefrig);
             }
 
-            if (valGama && ['expert', 'performance', 'basic'].includes(valGama) && origem !== 'order' && origem !== 'modelo') {
-                if (linhaAtivaInterna !== valGama) {
-                    linhaAtivaInterna = valGama;
-                    atualizarFiltroBrocas(false);
-                }
+            if (origem !== 'order' && origem !== 'modelo') {
+                linhaAtivaInterna = valGama || '';
+                atualizarFiltroBrocas(true);
             }
 
-            const temFiltroAtivo = Boolean(valGama || valRefrig || valEnc || (d1Num !== null) || valXd || (document.getElementById('ref-pesquisa').value || '').trim());
-            if (temFiltroAtivo && origem !== 'order' && origem !== 'modelo') {
-                atualizarFiltroBrocas(false);
-            }
+            const temFiltroAtivo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || (document.getElementById('ref-pesquisa').value || '').trim());
 
             if (finais.length === 1 && temFiltroAtivo && origem !== 'order') {
                 selOrder.value = '0';
@@ -2262,6 +2324,7 @@ html_content = '''
         }
 
         function obterFamiliasCompativeisCatalogo() {
+            const valCat = document.getElementById('categoria').value;
             const valGama = document.getElementById('filtro-gama-cat').value;
             const valRefrig = document.getElementById('filtro-refrig-cat').value;
             const valEnc = document.getElementById('filtro-encabadouro-cat').value;
@@ -2269,13 +2332,14 @@ html_content = '''
             const valXd = document.getElementById('filtro-xd').value;
             const qPesquisa = (document.getElementById('ref-pesquisa').value || '').trim();
 
-            const temFiltroCatalogo = Boolean(valGama || valRefrig || valEnc || (d1Num !== null) || valXd || qPesquisa);
+            const temFiltroCatalogo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || qPesquisa);
             if (!temFiltroCatalogo || !Array.isArray(REFERENCIAS_JSON) || REFERENCIAS_JSON.length === 0) {
                 return null;
             }
 
             const base = getCandidatosCatalogoBase();
             const compativeis = base.filter(c =>
+                (!valCat || obterCategoriaCatalogo(c) === valCat) &&
                 (!valGama || obterGamaCatalogo(c) === valGama) &&
                 (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
                 (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
