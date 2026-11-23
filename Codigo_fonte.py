@@ -202,7 +202,7 @@ html_content = '''
                     <div class="space-y-0.5">
                         <div class="flex justify-between items-center">
                             <label class="text-[10px] font-medium text-slate-300 block">7. Modelo de Ferramenta</label>
-                            <span id="MERDA" class="text-[9px] text-cyan-400 font-mono"></span>
+                            <span id="MERDA" class="merda2232"></span>
                         </div>
                         <select id="broca" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="onMudarModeloFerramenta()">
                         </select>
