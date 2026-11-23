@@ -173,12 +173,45 @@ html_content = '''
                     <span id="ref-feedback" class="text-[10px] text-slate-400 block">Se souber a referência, pesquise acima; se não souber, filtre abaixo.</span>
                 </div>
 
-                <!-- Filtros em Cascata Interligados + 2. Grupo de Materiais (MMG) por Botões -->
+                <!-- Seleção Progressiva do Catálogo (Sincronizada com 2. Grupo de Materiais MMG) -->
                 <div class="bg-slate-900/70 p-2.5 rounded-md border border-slate-700/80 space-y-2 shrink-0">
                     <div class="flex justify-between items-center">
                         <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Seleção Progressiva do Catálogo</span>
                         <span id="contador-referencias" class="text-[10px] text-slate-400 font-mono">0 ref.</span>
                     </div>
+
+                    <!-- 2. Grupo de Materiais (MMG) integrado e sincronizado na Seleção Progressiva -->
+                    <div class="bg-slate-950/75 p-2 rounded-md border border-blue-900/50 space-y-1.5">
+                        <div class="flex justify-between items-center gap-1">
+                            <label class="text-[10px] font-semibold text-blue-300 uppercase tracking-wider">2. Grupo de Materiais (MMG)</label>
+                            <span id="mmg-selecao-detalhe" class="text-[10px] font-mono text-slate-300 truncate max-w-[175px]">—</span>
+                        </div>
+
+                        <!-- Botões Principais de Grupo -->
+                        <div id="mmg-botoes-grupo" class="grid grid-cols-6 gap-1"></div>
+
+                        <!-- Botões de Subgrupo -->
+                        <div id="mmg-painel-subgrupo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
+                            <div class="flex justify-between items-center">
+                                <span id="mmg-label-subgrupo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Subgrupo</span>
+                                <span id="mmg-materiais-freq" class="text-[9px] text-slate-400 truncate max-w-[190px]"></span>
+                            </div>
+                            <div id="mmg-botoes-subgrupo" class="flex flex-wrap gap-1"></div>
+                        </div>
+
+                        <!-- Botões de Código MMG / Grupo de Maquinação -->
+                        <div id="mmg-painel-codigo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
+                            <div class="flex justify-between items-center">
+                                <span id="mmg-label-codigo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Grupo MAPAL (MMG)</span>
+                                <span id="mmg-detalhe-codigo" class="text-[9px] text-cyan-300 truncate max-w-[185px]"></span>
+                            </div>
+                            <div id="mmg-botoes-codigo" class="flex flex-wrap gap-1 max-h-24 overflow-y-auto"></div>
+                        </div>
+
+                        <!-- Estado sincronizado de código/registo ativo -->
+                        <select id="grupo" class="hidden" onchange="onSelectGrupoManual()"></select>
+                    </div>
+
                     <div class="grid grid-cols-3 gap-1.5">
                         <div class="space-y-0.5">
                             <label class="text-[10px] font-medium text-slate-300 block">1. Tipo Operação</label>
@@ -232,38 +265,6 @@ html_content = '''
                         <select id="filtro-order-no" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-emerald-500" onchange="onSelecionarOrderCatalogo()">
                             <option value="">— Selecionar referência compatível —</option>
                         </select>
-                    </div>
-
-                    <!-- Filtro de Materiais por Botões (Grupo ISO 513 + Subgrupo + Código MMG) -->
-                    <div class="space-y-1.5 pt-1.5 border-t border-slate-800">
-                        <div class="flex justify-between items-center">
-                            <label class="text-[10px] font-semibold text-blue-300 uppercase tracking-wider">2. Grupo de Materiais (MMG)</label>
-                            <span id="mmg-selecao-detalhe" class="text-[10px] font-mono text-slate-300 truncate max-w-[180px]">—</span>
-                        </div>
-
-                        <!-- Botões Principais de Grupo -->
-                        <div id="mmg-botoes-grupo" class="grid grid-cols-6 gap-1"></div>
-
-                        <!-- Botões de Subgrupo (aparecem quando há um grupo selecionado) -->
-                        <div id="mmg-painel-subgrupo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
-                            <div class="flex justify-between items-center">
-                                <span id="mmg-label-subgrupo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Subgrupo</span>
-                                <span id="mmg-materiais-freq" class="text-[9px] text-slate-400 truncate max-w-[190px]"></span>
-                            </div>
-                            <div id="mmg-botoes-subgrupo" class="flex flex-wrap gap-1"></div>
-                        </div>
-
-                        <!-- Botões de Código MMG / Grupo de Maquinação -->
-                        <div id="mmg-painel-codigo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
-                            <div class="flex justify-between items-center">
-                                <span id="mmg-label-codigo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Grupo MAPAL (MMG)</span>
-                                <span id="mmg-detalhe-codigo" class="text-[9px] text-cyan-300 truncate max-w-[185px]"></span>
-                            </div>
-                            <div id="mmg-botoes-codigo" class="flex flex-wrap gap-1 max-h-24 overflow-y-auto"></div>
-                        </div>
-
-                        <!-- Estado sincronizado de código/registo ativo -->
-                        <select id="grupo" class="hidden" onchange="onSelectGrupoManual()"></select>
                     </div>
                 </div>
 
@@ -1226,6 +1227,29 @@ html_content = '''
             return gruposMmgMap[cod] || cod;
         }
 
+        function ferramentaSuportaFiltroMmg(tool, isoSel, subSel, codSel) {
+            if (!tool || !tool.grupos) return true;
+            const grps = tool.gruposList && tool.gruposList.length > 0 ? tool.gruposList : Object.keys(tool.grupos);
+            if (!grps || grps.length === 0) return true;
+            if (!isoSel && !subSel && !codSel) return true;
+
+            return grps.some(g => {
+                const gTrim = String(g).trim();
+                if (codSel) {
+                    return gTrim.toUpperCase() === codSel.toUpperCase();
+                }
+                const gIso = (mmgMetaPorCodigo[gTrim]?.iso || extrairIsoDeCodigo(gTrim)).toUpperCase();
+                const gSub = (mmgMetaPorCodigo[gTrim]?.subgrupo || extrairSubgrupoDeCodigo(gTrim)).toUpperCase();
+                if (subSel) {
+                    return gSub === subSel.toUpperCase() || gTrim.toUpperCase().startsWith(subSel.toUpperCase());
+                }
+                if (isoSel) {
+                    return gIso === isoSel.toUpperCase();
+                }
+                return true;
+            });
+        }
+
         function renderBotoesCodigoMmg(gruposDisponiveisFerramenta = [], filtrarPorFerramenta = false) {
             const painelCod = document.getElementById('mmg-painel-codigo');
             const contCod = document.getElementById('mmg-botoes-codigo');
@@ -1415,24 +1439,20 @@ html_content = '''
             if (mmgGrupoSelecionado === isoCode) {
                 mmgGrupoSelecionado = null;
                 mmgSubgrupoSelecionado = null;
+                const selG = document.getElementById('grupo');
+                if (selG) selG.value = '';
             } else {
                 mmgGrupoSelecionado = isoCode;
                 mmgSubgrupoSelecionado = null;
                 aplicarFiltroMmgNaFerramenta();
             }
-            const brocaKey = document.getElementById('broca').value;
-            const gruposDisp = (brocaKey && dados[brocaKey]) ? dados[brocaKey].gruposList : [];
-            renderBotoesMmg(gruposDisp);
-            mudarGrupoMaterial();
+            sincronizarSelecaoComCatalogo('mmg');
         }
 
         function selecionarSubgrupoBotao(subCode) {
             mmgSubgrupoSelecionado = subCode;
             aplicarFiltroMmgNaFerramenta();
-            const brocaKey = document.getElementById('broca').value;
-            const gruposDisp = (brocaKey && dados[brocaKey]) ? dados[brocaKey].gruposList : [];
-            renderBotoesMmg(gruposDisp);
-            mudarGrupoMaterial();
+            sincronizarSelecaoComCatalogo('mmg');
         }
 
         function aplicarFiltroMmgNaFerramenta() {
@@ -1465,7 +1485,12 @@ html_content = '''
                 });
                 if (matchIso) {
                     grupoSelect.value = matchIso;
+                    return;
                 }
+            }
+
+            if (!mmgGrupoSelecionado && !mmgSubgrupoSelecionado) {
+                grupoSelect.value = '';
             }
         }
 
@@ -1478,10 +1503,41 @@ html_content = '''
                 if (iso) mmgGrupoSelecionado = iso;
                 if (sub) mmgSubgrupoSelecionado = sub;
             }
-            const brocaKey = document.getElementById('broca').value;
-            const gruposDisp = (brocaKey && dados[brocaKey]) ? dados[brocaKey].gruposList : [];
+            sincronizarSelecaoComCatalogo('mmg');
+        }
+
+        function sincronizarSelecaoComCatalogo(origem = 'mmg') {
+            const grupoKey = document.getElementById('grupo').value || '';
+            if (grupoKey) {
+                const prefixo = grupoKey.charAt(0).toUpperCase();
+                if (propriedadesGrupo[prefixo]) {
+                    document.getElementById('densidade').value = propriedadesGrupo[prefixo].densidade.toFixed(2);
+                }
+            }
+
+            const brocaEl = document.getElementById('broca');
+            const brocaAtual = brocaEl ? brocaEl.value : '';
+            if (brocaAtual && dados[brocaAtual]) {
+                const compAtual = ferramentaSuportaFiltroMmg(dados[brocaAtual], mmgGrupoSelecionado, mmgSubgrupoSelecionado, grupoKey);
+                if (!compAtual) {
+                    brocaEl.value = '';
+                    referenciaAtivaObj = null;
+                }
+            }
+
+            filtrarCatalogoCascata(origem);
+            atualizarFiltroBrocas(true);
+
+            const brocaFinal = document.getElementById('broca').value;
+            const gruposDisp = (brocaFinal && dados[brocaFinal]) ? dados[brocaFinal].gruposList : [];
             renderBotoesMmg(gruposDisp);
-            mudarGrupoMaterial();
+
+            const detEl = document.getElementById('mmg-selecao-detalhe');
+            if (detEl) {
+                detEl.innerText = grupoKey ? obterLabelGrupoMmg(grupoKey) : (mmgSubgrupoSelecionado || mmgGrupoSelecionado || '—');
+            }
+            atualizarPainelCotas();
+            atualizarCalculo();
         }
 
         function construirFerramenta(cfg) {
@@ -1914,6 +1970,7 @@ html_content = '''
             document.getElementById('filtro-xd').value = '';
             document.getElementById('filtro-order-no').value = '';
             document.getElementById('broca').value = '';
+            document.getElementById('grupo').value = '';
             mmgGrupoSelecionado = null;
             mmgSubgrupoSelecionado = null;
             linhaAtivaInterna = '';
@@ -2027,6 +2084,7 @@ html_content = '''
             const selXd = document.getElementById('filtro-xd');
             const selOrder = document.getElementById('filtro-order-no');
             const selModelo = document.getElementById('broca');
+            const grupoCodSel = document.getElementById('grupo')?.value || '';
 
             let valCat = selCat ? selCat.value : '';
             let valGama = selGama.value;
@@ -2036,7 +2094,13 @@ html_content = '''
             let valXd = selXd.value;
             const valModeloAtual = (origem === 'modelo' && selModelo && selModelo.value) ? selModelo.value.toLowerCase() : '';
 
-            const base = getCandidatosCatalogoBase();
+            const matchMmgItem = (c) => {
+                const fk = String(c.familia || '').trim().toLowerCase();
+                const tool = fk ? dados[fk] : null;
+                return ferramentaSuportaFiltroMmg(tool, mmgGrupoSelecionado, mmgSubgrupoSelecionado, grupoCodSel);
+            };
+
+            const base = getCandidatosCatalogoBase().filter(matchMmgItem);
 
             const candCat = base.filter(c =>
                 obterCategoriaCatalogo(c) &&
@@ -2191,7 +2255,7 @@ html_content = '''
                 atualizarFiltroBrocas(true);
             }
 
-            const temFiltroAtivo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || (document.getElementById('ref-pesquisa').value || '').trim());
+            const temFiltroAtivo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || (document.getElementById('ref-pesquisa').value || '').trim() || mmgGrupoSelecionado || mmgSubgrupoSelecionado || grupoCodSel);
 
             if (finais.length === 1 && temFiltroAtivo && origem !== 'order') {
                 selOrder.value = '0';
@@ -2690,27 +2754,45 @@ html_content = '''
             const d1Num = obterD1Digitado();
             const valXd = document.getElementById('filtro-xd').value;
             const qPesquisa = (document.getElementById('ref-pesquisa').value || '').trim();
+            const grupoCodSel = document.getElementById('grupo')?.value || '';
 
-            const temFiltroCatalogo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || qPesquisa);
-            if (!temFiltroCatalogo || !Array.isArray(REFERENCIAS_JSON) || REFERENCIAS_JSON.length === 0) {
+            const temFiltroCatalogo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || qPesquisa || mmgGrupoSelecionado || mmgSubgrupoSelecionado || grupoCodSel);
+            if (!temFiltroCatalogo) {
                 return null;
             }
 
-            const base = getCandidatosCatalogoBase();
-            const compativeis = base.filter(c =>
-                (!valCat || obterCategoriaCatalogo(c) === valCat) &&
-                (!valGama || obterGamaCatalogo(c) === valGama) &&
-                (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
-                (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
-                matchD1Item(c, d1Num) &&
-                (!valXd || String(c.variante || '').trim() === valXd)
-            );
-
             const famSet = new Set();
-            compativeis.forEach(c => {
-                const fk = String(c.familia || '').trim().toLowerCase();
-                if (fk && dados[fk]) famSet.add(fk);
+            Object.entries(dados).forEach(([fk, tool]) => {
+                if (ferramentaSuportaFiltroMmg(tool, mmgGrupoSelecionado, mmgSubgrupoSelecionado, grupoCodSel)) {
+                    famSet.add(fk.toLowerCase());
+                }
             });
+
+            if (Array.isArray(REFERENCIAS_JSON) && REFERENCIAS_JSON.length > 0) {
+                const base = getCandidatosCatalogoBase().filter(c => {
+                    const fk = String(c.familia || '').trim().toLowerCase();
+                    const tool = fk ? dados[fk] : null;
+                    return ferramentaSuportaFiltroMmg(tool, mmgGrupoSelecionado, mmgSubgrupoSelecionado, grupoCodSel);
+                });
+                const compativeis = base.filter(c =>
+                    (!valCat || obterCategoriaCatalogo(c) === valCat) &&
+                    (!valGama || obterGamaCatalogo(c) === valGama) &&
+                    (!valRefrig || normalizarRefrigCatalogo(c) === valRefrig) &&
+                    (!valEnc || extrairEncabadouroDIN6535(c) === valEnc) &&
+                    matchD1Item(c, d1Num) &&
+                    (!valXd || String(c.variante || '').trim() === valXd)
+                );
+                const temFiltroRefEspecifico = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || qPesquisa);
+                if (temFiltroRefEspecifico) {
+                    const refFamSet = new Set();
+                    compativeis.forEach(c => {
+                        const fk = String(c.familia || '').trim().toLowerCase();
+                        if (fk && dados[fk]) refFamSet.add(fk);
+                    });
+                    return refFamSet;
+                }
+            }
+
             return famSet;
         }
 
@@ -4010,190 +4092,142 @@ html_content = '''
 
             let capTexto = '';
             if (difTempoMin < -0.05) {
-                capTexto = `${nomeAlvo} é mais rápida em ${difTempoAbsMin.toFixed(1)} min (${pctTempo.toFixed(1)}%) no lote de ${ctx.qtdFuros} furos.`;
+                capTexto = `${nomeAlvo} é mais rápida em ${difTempoAbsMin.toFixed(1)} min (${pctTempo.toFixed(1)}%) no lote de ${ctx.qtdFuros} furos (${metAlvo.tempoFuroSeg.toFixed(1)} s/furo vs ${metAtual.tempoFuroSeg.toFixed(1)} s/furo).`;
             } else if (difTempoMin > 0.05) {
-                capTexto = `${metAtual.nome} poupa ${difTempoAbsMin.toFixed(1)} min (${Math.abs(pctTempo).toFixed(1)}%) no lote de ${ctx.qtdFuros} furos.`;
+                capTexto = `${metAtual.nome} poupa ${difTempoAbsMin.toFixed(1)} min (+${pctTempo.toFixed(1)}% mais rápida) no lote de ${ctx.qtdFuros} furos (${metAtual.tempoFuroSeg.toFixed(1)} s/furo vs ${metAlvo.tempoFuroSeg.toFixed(1)} s/furo).`;
             } else {
-                capTexto = `Tempo de ciclo equivalente entre ferramentas no lote de ${ctx.qtdFuros} furos.`;
+                capTexto = `Tempos equivalentes no lote (${metAtual.tempoTotalMin.toFixed(1)} min vs ${metAlvo.tempoTotalMin.toFixed(1)} min).`;
             }
-            if (metAlvo.canhaoAtivo && metAlvo.tempoParagemCanhaoLoteMin > 0) {
-                capTexto += ` Inclui +${metAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min de paragens (${metAlvo.numParagensLote}× ${metAlvo.tempoParagemMinVal} min) na broca canhão.`;
+            if (metAlvo.requerPiloto) {
+                capTexto += ` Inclui furo-piloto (${metAlvo.pilotoSegEfetivo.toFixed(0)} s/furo).`;
+            }
+            if (metAlvo.canhaoAtivo) {
+                capTexto += ` Inclui ${metAlvo.numParagensLote} paragem(ns) de broca canhão (+${metAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min).`;
             }
             document.getElementById('comp-capacidade-texto').innerText = capTexto;
 
-            const custoHoraSeg = custoHoraComp / 3600;
-            const custoVarFuroAtual = (metAtual.tempoFuroSeg * custoHoraSeg) + (ferrAtual.custoFerramentaLote / Math.max(1, ferrAtual.furosPorFerramentaCompleta));
-            const custoVarFuroAlvo = (metAlvo.tempoFuroSeg * custoHoraSeg) + (ferrAlvo.custoFerramentaLote / Math.max(1, ferrAlvo.furosPorFerramentaCompleta)) + (metAlvo.custoPilotoEfetivo || 0);
+            const custoFixoA = precoAtual;
+            const custoFixoB = precoAlvo;
+            const custoVarA = metAtual.custoMaqFuro + (ferrAtual.custoFerramentaLote - precoAtual) / Math.max(1, ferrAtual.qtdFerramentasNecessarias * ferrAtual.furosPorFerramentaCompleta);
+            const custoVarB = metAlvo.custoMaqFuro + (ferrAlvo.custoFerramentaLote - precoAlvo) / Math.max(1, ferrAlvo.qtdFerramentasNecessarias * ferrAlvo.furosPorFerramentaCompleta) + (metAlvo.custoPilotoEfetivo || 0);
 
-            const custoFixoAtual = ferrAtual.qtdFerramentasNecessarias * precoAtual;
-            const custoFixoAlvo = ferrAlvo.qtdFerramentasNecessarias * precoAlvo;
-
-            let beTexto = '';
-            const deltaVarFuro = custoVarFuroAlvo - custoVarFuroAtual;
-            const deltaFixo = custoFixoAtual - custoFixoAlvo;
-
-            if (deltaFixo > 0 && deltaVarFuro > 0.00001) {
-                const furosBe = deltaFixo / deltaVarFuro;
-                beTexto = `A ferramenta mais cara compensa a partir de ~${Math.ceil(furosBe)} furos (redução de ${deltaVarFuro.toFixed(3)} €/furo no custo variável).`;
-            } else if (deltaFixo < 0 && deltaVarFuro < -0.00001) {
-                const furosBe = Math.abs(deltaFixo) / Math.abs(deltaVarFuro);
-                beTexto = `A ferramenta de maior investimento inicial iguala custos após ~${Math.ceil(furosBe)} furos.`;
+            let breakevenTexto = '';
+            if (Math.abs(custoVarA - custoVarB) < 0.0001) {
+                breakevenTexto = custoFixoA === custoFixoB
+                    ? `Custos paralelos em todo o lote.`
+                    : `Sem cruzamento de custos (diferença fixa inicial de ${Math.abs(custoFixoB - custoFixoA).toFixed(2)} €).`;
             } else {
-                beTexto = `Sem ponto de cruzamento relevante no intervalo avaliado (${ctx.qtdFuros} furos).`;
+                const furosBe = (custoFixoB - custoFixoA) / (custoVarA - custoVarB);
+                if (furosBe > 0 && furosBe <= ctx.qtdFuros * 3) {
+                    const furosBeInt = Math.ceil(furosBe);
+                    breakevenTexto = `Equilíbrio em ~${furosBeInt} furos (${furosBe <= ctx.qtdFuros ? 'atingido neste lote de ' + ctx.qtdFuros + ' furos' : 'acima do lote atual de ' + ctx.qtdFuros + ' furos'}).`;
+                } else {
+                    breakevenTexto = custoTotalAtual <= custoTotalAlvo
+                        ? `${metAtual.nome} mantém vantagem de custo desde o início do lote.`
+                        : `${nomeAlvo} mantém menor custo acumulado no intervalo avaliado.`;
+                }
             }
-            document.getElementById('comp-breakeven-texto').innerText = beTexto;
+            document.getElementById('comp-breakeven-texto').innerText = breakevenTexto;
 
             const destaqueLoteEl = document.getElementById('comp-resumo-lote-destaque');
             if (destaqueLoteEl) {
-                if (difCustoTotal < -0.005) {
-                    destaqueLoteEl.innerText = `${nomeAlvo} reduz o custo total do lote em ${Math.abs(difCustoTotal).toFixed(2)} € (${Math.abs(difCustoFuro).toFixed(3)} €/furo).`;
-                    destaqueLoteEl.className = 'text-xs text-emerald-300 font-semibold mt-1';
-                } else if (difCustoTotal > 0.005) {
-                    destaqueLoteEl.innerText = `${metAtual.nome} poupa ${difCustoTotal.toFixed(2)} € no lote (${Math.abs(difCustoFuro).toFixed(3)} €/furo) vs. ${nomeAlvo}.`;
-                    destaqueLoteEl.className = 'text-xs text-sky-300 font-semibold mt-1';
+                if (difCustoTotal < -0.01) {
+                    destaqueLoteEl.innerText = `${nomeAlvo} reduz o custo total do lote em ${Math.abs(difCustoTotal).toFixed(2)} € (${custoTotalAlvo.toFixed(2)} € vs ${custoTotalAtual.toFixed(2)} €).`;
+                } else if (difCustoTotal > 0.01) {
+                    destaqueLoteEl.innerText = `${metAtual.nome} poupa ${difCustoTotal.toFixed(2)} € no lote (${custoTotalAtual.toFixed(2)} € vs ${custoTotalAlvo.toFixed(2)} €).`;
                 } else {
-                    destaqueLoteEl.innerText = `Custo total no lote praticamente idêntico (${custoTotalAtual.toFixed(2)} €).`;
-                    destaqueLoteEl.className = 'text-xs text-white font-medium mt-1';
+                    destaqueLoteEl.innerText = `Custo total empatado no lote (${custoTotalAtual.toFixed(2)} €).`;
                 }
             }
 
-            desenharGraficoBarrasComparacao(
-                'svg-comp-custo',
-                'MAPAL',
-                custoTotalAtual,
-                '#3b82f6',
-                compKey === '__CLIENTE_MANUAL__' ? 'Cliente' : 'Comparada',
-                custoTotalAlvo,
-                '#f43f5e',
-                '€',
-                2
-            );
+            desenharGraficoBarrasComparacao('svg-comp-custo', 'MAPAL', custoTotalAtual, '#3b82f6', 'Comparada', custoTotalAlvo, '#f43f5e', '€', 2);
+            desenharGraficoBarrasComparacao('svg-comp-tempo', 'MAPAL', metAtual.tempoTotalMin, '#10b981', 'Comparada', metAlvo.tempoTotalMin, '#f59e0b', 'm', 1);
+            desenharGraficoBreakEven('svg-comp-breakeven', ctx.qtdFuros, custoFixoA, custoVarA, custoFixoB, custoVarB);
 
-            desenharGraficoBarrasComparacao(
-                'svg-comp-tempo',
-                'MAPAL',
-                metAtual.tempoTotalMin,
-                '#10b981',
-                compKey === '__CLIENTE_MANUAL__' ? 'Cliente' : 'Comparada',
-                metAlvo.tempoTotalMin,
-                '#f59e0b',
-                'm',
-                1
-            );
-
-            desenharGraficoBreakEven(
-                'svg-comp-breakeven',
-                ctx.qtdFuros,
-                custoFixoAtual,
-                custoVarFuroAtual,
-                custoFixoAlvo,
-                custoVarFuroAlvo
-            );
-
+            const tbody = document.getElementById('comp-tabela-corpo');
             const linhas = [
                 {
                     ind: 'Vc (m/min)',
                     a: `${Math.round(metAtual.vcFinal)} m/min`,
                     b: `${Math.round(metAlvo.vcFinal)} m/min`,
-                    d: `${(metAlvo.vcFinal - metAtual.vcFinal) >= 0 ? '+' : ''}${Math.round(metAlvo.vcFinal - metAtual.vcFinal)} m/min`,
-                    cls: (metAlvo.vcFinal - metAtual.vcFinal) >= 0 ? 'text-emerald-400' : 'text-amber-400'
+                    d: `${(metAlvo.vcFinal - metAtual.vcFinal) >= 0 ? '+' : ''}${Math.round(metAlvo.vcFinal - metAtual.vcFinal)} m/min`
                 },
                 {
                     ind: 'Avanço f (mm/rot)',
                     a: `${metAtual.fFinal.toFixed(4)}`,
                     b: `${metAlvo.fFinal.toFixed(4)}`,
-                    d: `${(metAlvo.fFinal - metAtual.fFinal) >= 0 ? '+' : ''}${(metAlvo.fFinal - metAtual.fFinal).toFixed(4)}`,
-                    cls: (metAlvo.fFinal - metAtual.fFinal) >= 0 ? 'text-emerald-400' : 'text-amber-400'
+                    d: `${(metAlvo.fFinal - metAtual.fFinal) >= 0 ? '+' : ''}${(metAlvo.fFinal - metAtual.fFinal).toFixed(4)}`
                 },
                 {
-                    ind: 'Rotações n (rpm)',
-                    a: `${metAtual.n}`,
-                    b: `${metAlvo.n}`,
-                    d: `${(metAlvo.n - metAtual.n) >= 0 ? '+' : ''}${metAlvo.n - metAtual.n}`,
-                    cls: 'text-slate-300'
+                    ind: 'Rotação n (rpm)',
+                    a: `${metAtual.n} rpm`,
+                    b: `${metAlvo.n} rpm`,
+                    d: `${(metAlvo.n - metAtual.n) >= 0 ? '+' : ''}${metAlvo.n - metAtual.n} rpm`
                 },
                 {
-                    ind: 'Avanço Trabalho vf (mm/min)',
-                    a: `${metAtual.vf}`,
-                    b: `${metAlvo.vf}`,
-                    d: `${(metAlvo.vf - metAtual.vf) >= 0 ? '+' : ''}${metAlvo.vf - metAtual.vf}`,
-                    cls: (metAlvo.vf - metAtual.vf) >= 0 ? 'text-emerald-400' : 'text-amber-400'
+                    ind: 'Avanço Trabalho v_f',
+                    a: `${metAtual.vf} mm/min`,
+                    b: `${metAlvo.vf} mm/min`,
+                    d: `${(metAlvo.vf - metAtual.vf) >= 0 ? '+' : ''}${metAlvo.vf - metAtual.vf} mm/min`
                 },
                 {
                     ind: 'Tempo / Furo',
-                    a: `${metAtual.tempoFuroSeg.toFixed(1)} s`,
-                    b: `${metAlvo.tempoFuroSeg.toFixed(1)} s`,
-                    d: `${(metAlvo.tempoFuroSeg - metAtual.tempoFuroSeg) >= 0 ? '+' : ''}${(metAlvo.tempoFuroSeg - metAtual.tempoFuroSeg).toFixed(1)} s`,
-                    cls: (metAlvo.tempoFuroSeg - metAtual.tempoFuroSeg) <= 0 ? 'text-emerald-400' : 'text-rose-400'
+                    a: `${metAtual.tempoFuroSeg.toFixed(1)} seg`,
+                    b: `${metAlvo.tempoFuroSeg.toFixed(1)} seg`,
+                    d: `${(metAlvo.tempoFuroSeg - metAtual.tempoFuroSeg) >= 0 ? '+' : ''}${(metAlvo.tempoFuroSeg - metAtual.tempoFuroSeg).toFixed(1)} seg`
                 },
                 {
-                    ind: `Tempo Lote (${ctx.qtdFuros} furos)`,
+                    ind: `Tempo Total (${ctx.qtdFuros} furos)`,
                     a: `${metAtual.tempoTotalMin.toFixed(1)} min`,
                     b: `${metAlvo.tempoTotalMin.toFixed(1)} min`,
-                    d: difTempoStr,
-                    cls: difTempoMin <= 0 ? 'text-emerald-400' : 'text-rose-400'
+                    d: `${difTempoStr}`
                 },
                 {
-                    ind: 'Vida Útil / Ferramenta',
-                    a: `${ferrAtual.furosPorFerramentaCompleta.toFixed(0)} furos (${1 + afiQtdAtual}× ${vidaAtual} ${vidaUnidAtual})`,
-                    b: `${ferrAlvo.furosPorFerramentaCompleta.toFixed(0)} furos (${1 + afiQtdAlvo}× ${vidaAlvo} ${vidaUnidAlvo})`,
-                    d: `${(ferrAlvo.furosPorFerramentaCompleta - ferrAtual.furosPorFerramentaCompleta) >= 0 ? '+' : ''}${(ferrAlvo.furosPorFerramentaCompleta - ferrAtual.furosPorFerramentaCompleta).toFixed(0)} furos`,
-                    cls: (ferrAlvo.furosPorFerramentaCompleta - ferrAtual.furosPorFerramentaCompleta) >= 0 ? 'text-emerald-400' : 'text-amber-400'
+                    ind: 'Vida / Afiação & Reafiações',
+                    a: `${vidaAtual} ${vidaUnidAtual} × ${1 + afiQtdAtual} ciclo(s) (${ferrAtual.qtdFerramentasNecessarias} ferr.)`,
+                    b: `${vidaAlvo} ${vidaUnidAlvo} × ${1 + afiQtdAlvo} ciclo(s) (${ferrAlvo.qtdFerramentasNecessarias} ferr.)`,
+                    d: `${ferrAlvo.qtdFerramentasNecessarias - ferrAtual.qtdFerramentasNecessarias >= 0 ? '+' : ''}${ferrAlvo.qtdFerramentasNecessarias - ferrAtual.qtdFerramentasNecessarias} ferr.`
                 },
                 {
-                    ind: 'Ferramentas / Reafiações no Lote',
-                    a: `${ferrAtual.qtdFerramentasNecessarias} ferr. / ${ferrAtual.reafiacoesEfetuadas} reaf.`,
-                    b: `${ferrAlvo.qtdFerramentasNecessarias} ferr. / ${ferrAlvo.reafiacoesEfetuadas} reaf.`,
-                    d: `${(ferrAlvo.qtdFerramentasNecessarias - ferrAtual.qtdFerramentasNecessarias) >= 0 ? '+' : ''}${ferrAlvo.qtdFerramentasNecessarias - ferrAtual.qtdFerramentasNecessarias} ferr.`,
-                    cls: (ferrAlvo.qtdFerramentasNecessarias - ferrAtual.qtdFerramentasNecessarias) <= 0 ? 'text-emerald-400' : 'text-rose-400'
-                },
-                {
-                    ind: 'Custo Ferramentas + Afiações',
+                    ind: 'Custo Ferramenta + Afiações (Lote)',
                     a: `${ferrAtual.custoFerramentaLote.toFixed(2)} €`,
                     b: `${ferrAlvo.custoFerramentaLote.toFixed(2)} €`,
-                    d: `${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote) >= 0 ? '+' : ''}${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote).toFixed(2)} €`,
-                    cls: (ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote) <= 0 ? 'text-emerald-400' : 'text-rose-400'
+                    d: `${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote) >= 0 ? '+' : ''}${(ferrAlvo.custoFerramentaLote - ferrAtual.custoFerramentaLote).toFixed(2)} €`
                 },
-                {
-                    ind: 'Custo Piloto / Extras Lote',
+                ...(metAlvo.requerPiloto ? [{
+                    ind: 'Custo Piloto + Paragens Canhão (Lote)',
                     a: `0.00 €`,
-                    b: `${custoPilotoAlvoLote.toFixed(2)} €`,
-                    d: `${custoPilotoAlvoLote > 0 ? '+' : ''}${custoPilotoAlvoLote.toFixed(2)} €`,
-                    cls: custoPilotoAlvoLote > 0 ? 'text-rose-400' : 'text-slate-300'
-                },
+                    b: `${custoPilotoAlvoLote.toFixed(2)} € (${metAlvo.pilotoSegEfetivo.toFixed(0)}s/furo${metAlvo.canhaoAtivo ? ` + ${metAlvo.numParagensLote}×${metAlvo.tempoParagemMinVal}m` : ''})`,
+                    d: `+${custoPilotoAlvoLote.toFixed(2)} €`
+                }] : []),
                 {
-                    ind: `Custo Máquina (${custoHoraComp.toFixed(0)} €/h)`,
+                    ind: `Custo Máquina (${custoHoraComp.toFixed(2)} €/h)`,
                     a: `${metAtual.custoMaqLote.toFixed(2)} €`,
                     b: `${metAlvo.custoMaqLote.toFixed(2)} €`,
-                    d: `${(metAlvo.custoMaqLote - metAtual.custoMaqLote) >= 0 ? '+' : ''}${(metAlvo.custoMaqLote - metAtual.custoMaqLote).toFixed(2)} €`,
-                    cls: (metAlvo.custoMaqLote - metAtual.custoMaqLote) <= 0 ? 'text-emerald-400' : 'text-rose-400'
+                    d: `${(metAlvo.custoMaqLote - metAtual.custoMaqLote) >= 0 ? '+' : ''}${(metAlvo.custoMaqLote - metAtual.custoMaqLote).toFixed(2)} €`
                 },
                 {
                     ind: 'Custo Total Lote (Máq. + Ferr.)',
                     a: `${custoTotalAtual.toFixed(2)} €`,
                     b: `${custoTotalAlvo.toFixed(2)} €`,
-                    d: `${difCustoTotal >= 0 ? '+' : ''}${difCustoTotal.toFixed(2)} €`,
-                    cls: difCustoTotal <= 0 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'
+                    d: `${difCustoTotal >= 0 ? '+' : ''}${difCustoTotal.toFixed(2)} €`
                 },
                 {
-                    ind: 'Custo Total por Furo',
-                    a: `${custoFuroAtual.toFixed(3)} €/furo`,
-                    b: `${custoFuroAlvo.toFixed(3)} €/furo`,
-                    d: `${difCustoFuro >= 0 ? '+' : ''}${difCustoFuro.toFixed(3)} €/furo`,
-                    cls: difCustoFuro <= 0 ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'
+                    ind: 'Custo Total / Furo',
+                    a: `${custoFuroAtual.toFixed(3)} €`,
+                    b: `${custoFuroAlvo.toFixed(3)} €`,
+                    d: `${difCustoFuro >= 0 ? '+' : ''}${difCustoFuro.toFixed(3)} €`
                 }
             ];
 
-            const tbody = document.getElementById('comp-tabela-corpo');
             tbody.innerHTML = '';
             linhas.forEach(l => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-800/40';
                 tr.innerHTML = `
                     <td class="py-1.5 px-3 font-medium text-slate-200">${l.ind}</td>
-                    <td class="py-1.5 px-3 text-slate-300">${l.a}</td>
-                    <td class="py-1.5 px-3 text-slate-300">${l.b}</td>
-                    <td class="py-1.5 px-3 ${l.cls}">${l.d}</td>
+                    <td class="py-1.5 px-3 text-blue-300 font-mono">${l.a}</td>
+                    <td class="py-1.5 px-3 text-emerald-300 font-mono">${l.b}</td>
+                    <td class="py-1.5 px-3 text-amber-300 font-mono font-semibold">${l.d}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -4201,52 +4235,47 @@ html_content = '''
             window._ultimoComparativo = {
                 nomeAtual: `${metAtual.nome} (${varAtual})`,
                 nomeAlvo,
-                grupo: grupoEfetivoKey,
+                grupoEfetivoKey,
+                qtdFuros: ctx.qtdFuros,
+                custoHora: custoHoraComp,
                 corteInterrompido: corteInterrompidoAtivo,
                 metrosRefContinuo,
                 furosEquivContinuo,
-                custoHora: custoHoraComp,
-                qtdFuros: ctx.qtdFuros,
-                metAtual,
-                metAlvo,
-                ferrAtual,
-                ferrAlvo,
-                custoTotalAtual,
-                custoTotalAlvo,
-                difCustoTotal,
-                custoFuroAtual,
-                custoFuroAlvo,
-                difCustoFuro,
-                difTempoMin,
-                beTexto
+                requerPiloto: metAlvo.requerPiloto,
+                pilotoSegEfetivo: metAlvo.pilotoSegEfetivo,
+                custoPilotoEfetivo: metAlvo.custoPilotoEfetivo,
+                custoPilotoAlvoLote,
+                canhaoAtivo: metAlvo.canhaoAtivo,
+                numParagensLote: metAlvo.numParagensLote,
+                tempoParagemMinVal: metAlvo.tempoParagemMinVal,
+                tempoParagemCanhaoLoteMin: metAlvo.tempoParagemCanhaoLoteMin,
+                capTexto,
+                breakevenTexto,
+                linhas
             };
         }
 
         function aplicarFerramentaComparada() {
             const compKey = document.getElementById('comp-ferramenta').value;
+            const compVariante = document.getElementById('comp-variante').value;
             if (!compKey || compKey === '__CLIENTE_MANUAL__' || !dados[compKey]) return;
 
-            const alvoData = dados[compKey];
-            const compVariante = document.getElementById('comp-variante').value;
-            const grupoEfetivoKey = getGrupoEfetivo();
-
-            linhaAtivaInterna = alvoData.linha;
+            const toolData = dados[compKey];
+            linhaAtivaInterna = toolData.linha;
+            if (toolData.categoria) {
+                document.getElementById('categoria').value = toolData.categoria;
+            }
             atualizarFiltroBrocas(true);
             document.getElementById('broca').value = compKey;
             mudarBroca(compVariante);
-
-            if (grupoEfetivoKey && alvoData.grupos[grupoEfetivoKey]) {
-                document.getElementById('grupo').value = grupoEfetivoKey;
-                onSelectGrupoManual();
-            }
-
             fecharJanelaResultadoComparacao();
             fecharModalComparacao();
-            atualizarCalculo();
         }
 
         function abrirModalExportacao() {
-            aplicarModoUI();
+            if (!isProMode) {
+                document.getElementById('radio-pdf-resumido').checked = true;
+            }
             document.getElementById('modal-export').classList.remove('hidden');
         }
 
@@ -4256,23 +4285,22 @@ html_content = '''
 
         function gerarPDF() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const doc = new jsPDF();
 
-            const radioComp = document.getElementById('radio-pdf-completo');
-            const tipoRelatorio = (isProMode && radioComp && radioComp.checked) ? 'completo' : 'resumido';
-            const incluirComp = isProMode && Boolean(document.getElementById('comp-incluir-pdf').checked) && Boolean(window._ultimoComparativo);
+            const tipoRadio = document.querySelector('input[name="tipo-relatorio"]:checked');
+            const tipoRelatorio = isProMode && tipoRadio ? tipoRadio.value : 'resumido';
+            const incluirComparativo = isProMode && document.getElementById('comp-incluir-pdf').checked && window._ultimoComparativo;
 
             const brocaKey = document.getElementById('broca').value;
-            const toolData = brocaKey && dados[brocaKey] ? dados[brocaKey] : null;
-            const nomeFerramenta = toolData ? toolData.nome : (referenciaAtivaObj ? `${referenciaAtivaObj.familia || ''} — ${referenciaAtivaObj.nome_produto || ''}` : 'Parâmetros Diretos');
-            const variante = getVarianteAtiva();
-            const grupoBase = document.getElementById('grupo').value || '—';
-            const grupoEfetivo = getGrupoEfetivo() || grupoBase;
-            const nomeGrupoEfetivo = obterLabelGrupoMmg(grupoEfetivo);
-            const ligaAtiva = document.getElementById('liga-check').checked;
+            const grupoKey = document.getElementById('grupo').value;
+            const grupoEfetivoKey = getGrupoEfetivo();
+            const ligaCheck = document.getElementById('liga-check').checked;
+            const varianteAtiva = getVarianteAtiva();
 
-            const refrigMap = { 'int': 'Interna', 'ext': 'Externa', 'mql': 'MQL', 'ar': 'Ar' };
-            const refrigLabel = refrigMap[refrigAtual] || refrigAtual;
+            const nomeFerramenta = (brocaKey && dados[brocaKey]) ? dados[brocaKey].nome : 'Sem modelo selecionado';
+            const nomeGrupo = grupoEfetivoKey ? obterLabelGrupoMmg(grupoEfetivoKey) : '—';
+            const nomeGama = fmtGamaLabel(linhaAtivaInterna);
+            const nomeCategoria = document.getElementById('categoria').value || 'Todas';
 
             const diametro = parseFloat(document.getElementById('diametro').value) || 12.00;
             const profundidade = parseFloat(document.getElementById('profundidade').value) || 31.0;
@@ -4281,137 +4309,156 @@ html_content = '''
             const precoSucata = parseFloat(document.getElementById('preco-sucata').value) || 0.35;
             const custoHora = parseFloat(document.getElementById('custo-hora').value) || 50.00;
 
-            const fVal = document.getElementById('input-f').value;
-            const vcVal = document.getElementById('input-vc').value;
-            const nVal = document.getElementById('res-n').innerText;
-            const vfVal = document.getElementById('res-vf').innerText;
-
+            const vc = document.getElementById('input-vc').value;
+            const n = document.getElementById('res-n').innerText;
+            const f = document.getElementById('input-f').value;
+            const vf = document.getElementById('res-vf').innerText;
+            const forca = document.getElementById('res-forca').innerText.replace(/\s+/g, ' ').trim();
+            const binario = document.getElementById('res-binario-card').innerText.replace(/\s+/g, ' ').trim();
             const potReq = document.getElementById('val-gauge-pot').innerText;
-            const binReq = document.getElementById('val-gauge-bin').innerText;
-            const forcaVal = document.getElementById('res-forca').innerText.replace(/\s+/g, ' ').trim();
-            const forcaKgfVal = document.getElementById('res-forca-kgf').innerText;
 
-            let y = 16;
+            const peckingCheck = document.getElementById('pecking-check').checked;
+            const peckingEquiv = document.getElementById('pecking-equiv').innerText;
+
+            const refMap = { 'int': 'Interna', 'ext': 'Externa', 'mql': 'MQL', 'ar': 'Ar' };
+            const refTexto = refMap[refrigAtual] || refrigAtual;
+
+            const dataAtual = new Date().toLocaleDateString('pt-PT');
 
             doc.setFillColor(15, 23, 42);
             doc.rect(0, 0, 210, 28, 'F');
             doc.setTextColor(255, 255, 255);
+            doc.setFontSize(15);
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(14);
-            doc.text(tipoRelatorio === 'completo' ? 'PROPOSTA TECNICO-COMERCIAL DE CORTE (PRO)' : 'FICHA TECNICA DE PARAMETROS DE CORTE', 14, 13);
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
-            doc.setTextColor(148, 163, 184);
-            doc.text('MAPAL - Calculo de Maquinacao & Analise de Custos | Bruno Pinto', 14, 21);
-            doc.text(new Date().toLocaleDateString('pt-PT'), 196, 21, { align: 'right' });
+            const tituloDoc = tipoRelatorio === 'completo'
+                ? 'PROPOSTA TÉCNICO-COMERCIAL MAPAL'
+                : 'FICHA TÉCNICA — PARÂMETROS DE CORTE MAPAL';
+            doc.text(tituloDoc, 14, 13);
 
-            y = 36;
-            doc.setTextColor(30, 41, 59);
-            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(148, 163, 184);
+            const subDoc = tipoRelatorio === 'completo'
+                ? `Relatório Completo (Pro) | Data: ${dataAtual}`
+                : `Relatório Técnico (${isProMode ? 'Pro' : 'Básico'}) | Data: ${dataAtual}`;
+            doc.text(subDoc, 14, 21);
+
+            let y = 38;
+            doc.setTextColor(15, 23, 42);
             doc.setFontSize(11);
-            doc.text('1. Configuracao da Operacao', 14, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text('1. Configuração da Ferramenta e Material', 14, y);
             y += 6;
 
-            doc.setFont('helvetica', 'normal');
             doc.setFontSize(9.5);
-            doc.text(`Ferramenta: ${nomeFerramenta} (${variante})`, 14, y);
-            doc.text(`Refrigeracao: ${refrigLabel}`, 115, y);
-            y += 5.5;
-
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Categoria: ${nomeCategoria} | Gama: ${nomeGama}`, 14, y); y += 5;
+            doc.text(`Modelo: ${nomeFerramenta} (${varianteAtiva})`, 14, y); y += 5;
             if (referenciaAtivaObj) {
-                const enc = extrairEncabadouroDIN6535(referenciaAtivaObj) || '—';
-                doc.text(`Order no.: ${referenciaAtivaObj.order_no || '—'} | Spec: ${referenciaAtivaObj.specification || '—'} | DIN 6535: ${enc}`, 14, y);
-                y += 5.5;
+                const encPdf = extrairEncabadouroDIN6535(referenciaAtivaObj) || '—';
+                doc.text(`Order no.: ${referenciaAtivaObj.order_no || '—'} | Spec: ${referenciaAtivaObj.specification || '—'} | DIN 6535: ${encPdf}`, 14, y); y += 5;
+                doc.text(`Cotas: d1=${fmtCota(referenciaAtivaObj.d1, 2)} | d2=${fmtCota(referenciaAtivaObj.d2, 1)} | l1=${fmtCota(referenciaAtivaObj.l1, 0)} | l2=${fmtCota(referenciaAtivaObj.l2, 0)} | l3=${fmtCota(referenciaAtivaObj.l3, 0)} | l4=${fmtCota(referenciaAtivaObj.l4, 0)}`, 14, y); y += 5;
             }
+            doc.text(`Grupo Material: ${nomeGrupo}${ligaCheck ? ` (Liga >8% aplicado de ${grupoKey} -> ${grupoEfetivoKey})` : ''}`, 14, y); y += 5;
+            doc.text(`Refrigeração: ${refTexto} | Diâmetro: Ø ${diametro.toFixed(2)} mm | Profundidade: ${profundidade.toFixed(1)} mm`, 14, y); y += 5;
+            if (tipoRelatorio === 'completo') {
+                doc.text(`Qtd. Furos (Lote): ${qtdFuros} | Densidade: ${densidade.toFixed(2)} g/cm³ | Sucata: ${precoSucata.toFixed(2)} €/kg | Custo Hora: ${custoHora.toFixed(2)} €/h`, 14, y); y += 5;
+                if (peckingCheck) {
+                    doc.text(`Ciclo Pecking: Ativo (${peckingEquiv})`, 14, y); y += 5;
+                }
+            }
+            y += 3;
 
-            doc.text(`Material (Grupo Efetivo): ${nomeGrupoEfetivo}${ligaAtiva ? ' (Liga >8% aplicado)' : ''}`, 14, y);
-            doc.text(`Diametro: ${diametro.toFixed(2)} mm | Prof.: ${profundidade.toFixed(1)} mm`, 115, y);
-            y += 8;
-
-            doc.setFont('helvetica', 'bold');
             doc.setFontSize(11);
-            doc.text('2. Parametros de Corte e Esforcos', 14, y);
+            doc.setFont('helvetica', 'bold');
+            doc.text('2. Parâmetros de Corte e Esforços Calculados', 14, y);
             y += 6;
 
             doc.setFillColor(241, 245, 249);
-            doc.rect(14, y - 4, 182, 16, 'F');
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
-            doc.setTextColor(15, 23, 42);
-            doc.text(`Vc: ${vcVal} m/min`, 18, y + 2);
-            doc.text(`Rotacoes (n): ${nVal} rpm`, 64, y + 2);
-            doc.text(`Avanco (f): ${fVal} mm/rot`, 112, y + 2);
-            doc.text(`Avanco Trab. (vf): ${vfVal} mm/min`, 155, y + 2);
-            doc.setFont('helvetica', 'normal');
+            doc.rect(14, y - 4, 182, 8, 'F');
             doc.setFontSize(9);
-            doc.text(`Potencia: ${potReq}   |   Binario (Mc): ${binReq}   |   Forca Axial (Ff): ${forcaVal} (${forcaKgfVal})`, 18, y + 9);
-            y += 22;
+            doc.setFont('helvetica', 'bold');
+            doc.text('Parâmetro', 16, y + 1);
+            doc.text('Valor Calculado', 95, y + 1);
+            doc.text('Observação', 140, y + 1);
+            y += 7;
+
+            doc.setFont('helvetica', 'normal');
+            const rows = [
+                ['Velocidade de Corte (Vc)', `${vc} m/min`, `Ajuste: ${vcPct >= 0 ? '+' : ''}${vcPct}%`],
+                ['Rotação (n)', `${n} rpm`, 'Calculado'],
+                ['Avanço (f)', `${f} mm/rot`, `Ajuste: ${fPct >= 0 ? '+' : ''}${fPct}%`],
+                ['Avanço de Trabalho (v_f)', `${vf} mm/min`, 'f × n'],
+                ['Potência Requerida', potReq, 'Estimativa spindle'],
+                ['Binário de Corte (Mc)', binario, 'Estimado por kc'],
+                ['Força Axial (Ff)', forca, 'Esforço em Z']
+            ];
 
             if (tipoRelatorio === 'completo') {
-                const tempoTotal = document.getElementById('res-tempo-total').innerText.replace(/\s+/g, ' ').trim();
-                const volTotal = document.getElementById('res-volume-total').innerText;
-                const taxaRem = document.getElementById('res-taxa').innerText;
-                const pesoTotal = document.getElementById('res-peso').innerText.replace(/\s+/g, ' ').trim();
-                const pesoUnit = document.getElementById('res-peso-g').innerText;
-                const sucataTotal = document.getElementById('res-sucata-val').innerText.replace(/\s+/g, ' ').trim();
-                const custoTotal = document.getElementById('res-custo-total').innerText.replace(/\s+/g, ' ').trim();
-
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(11);
-                doc.text('3. Analise de Lote, Tempos, Custos e Sucata', 14, y);
-                y += 6;
-
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9.5);
-                doc.text(`Quantidade do Lote: ${qtdFuros} furos   |   Densidade: ${densidade.toFixed(2)} g/cm3   |   Custo Hora: ${custoHora.toFixed(2)} EUR/h`, 14, y);
-                y += 5.5;
-                doc.text(`Tempo de Ciclo Total: ${tempoTotal}`, 14, y);
-                doc.text(`Volume Removido: ${volTotal} (${taxaRem})`, 115, y);
-                y += 5.5;
-                doc.text(`Peso Total Limalha: ${pesoTotal} (${pesoUnit})`, 14, y);
-                doc.text(`Valor Sucata (${precoSucata.toFixed(2)} EUR/kg): ${sucataTotal}`, 115, y);
-                y += 5.5;
-                doc.setFont('helvetica', 'bold');
-                doc.text(`Custo Estimado de Maquinacao: ${custoTotal}`, 14, y);
-                y += 9;
-
-                if (incluirComp && window._ultimoComparativo) {
-                    const c = window._ultimoComparativo;
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(11);
-                    doc.text('4. Comparativo Tecnico-Comercial', 14, y);
-                    y += 6;
-
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(9);
-                    doc.text(`Atual: ${c.nomeAtual}  vs.  Alvo: ${c.nomeAlvo} (Grupo ${c.grupo})`, 14, y);
-                    y += 5;
-                    doc.text(`Custo Total Lote: ${c.custoTotalAtual.toFixed(2)} EUR vs. ${c.custoTotalAlvo.toFixed(2)} EUR (Dif: ${c.difCustoTotal >= 0 ? '+' : ''}${c.difCustoTotal.toFixed(2)} EUR)`, 14, y);
-                    y += 5;
-                    doc.text(`Custo / Furo: ${c.custoFuroAtual.toFixed(3)} EUR vs. ${c.custoFuroAlvo.toFixed(3)} EUR (Dif: ${c.difCustoFuro >= 0 ? '+' : ''}${c.difCustoFuro.toFixed(3)} EUR)`, 14, y);
-                    y += 5;
-                    doc.text(`Tempo Lote: ${c.metAtual.tempoTotalMin.toFixed(1)} min vs. ${c.metAlvo.tempoTotalMin.toFixed(1)} min (Dif: ${c.difTempoMin >= 0 ? '+' : ''}${c.difTempoMin.toFixed(1)} min)`, 14, y);
-                    y += 5;
-                    doc.text(`Payback / Break-Even: ${c.beTexto}`, 14, y);
-                    y += 8;
-                }
+                rows.push(
+                    ['Tempo de Ciclo Total', document.getElementById('res-tempo-total').innerText.replace(/\s+/g, ' ').trim(), `${qtdFuros} furos`],
+                    ['Volume / Taxa Remoção', `${document.getElementById('res-volume-total').innerText} | ${document.getElementById('res-taxa').innerText}`, 'Lote / MRR'],
+                    ['Peso de Limalha / Sucata', `${document.getElementById('res-peso').innerText.replace(/\s+/g, ' ').trim()} | ${document.getElementById('res-sucata-val').innerText.replace(/\s+/g, ' ').trim()}`, `Retorno: ${document.getElementById('res-sucata-furo').innerText}`],
+                    ['Custo de Maquinação', document.getElementById('res-custo-total').innerText.replace(/\s+/g, ' ').trim(), `Base: ${custoHora.toFixed(2)} €/h`]
+                );
             }
 
-            doc.setFont('helvetica', 'italic');
+            rows.forEach(r => {
+                doc.text(r[0], 16, y);
+                doc.text(r[1], 95, y);
+                doc.text(r[2], 140, y);
+                y += 6;
+            });
+
+            if (incluirComparativo) {
+                const c = window._ultimoComparativo;
+                if (y > 215) {
+                    doc.addPage();
+                    y = 20;
+                } else {
+                    y += 4;
+                }
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`3. Comparativo Técnico-Comercial (${c.nomeAtual} vs. ${c.nomeAlvo})`, 14, y);
+                y += 6;
+                doc.setFontSize(8.5);
+                doc.setFont('helvetica', 'normal');
+                if (c.corteInterrompido) {
+                    doc.text(`Condição: Corte Interrompido (Ref. contínuo: ${c.metrosRefContinuo} m / ~${c.furosEquivContinuo} furos)`, 14, y);
+                    y += 5;
+                }
+                const capLines = doc.splitTextToSize(`Capacidade: ${c.capTexto}`, 180);
+                doc.text(capLines, 14, y);
+                y += capLines.length * 4.5 + 1;
+
+                const beLines = doc.splitTextToSize(`Break-Even: ${c.breakevenTexto}`, 180);
+                doc.text(beLines, 14, y);
+                y += beLines.length * 4.5 + 3;
+
+                c.linhas.forEach(l => {
+                    if (y > 275) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    doc.text(`${l.ind}: ${l.a}  |  ${l.b}  |  Dif: ${l.d}`, 14, y);
+                    y += 5;
+                });
+            }
+
             doc.setFontSize(8);
             doc.setTextColor(100, 116, 139);
-            doc.text('Nota: Valores calculados teoricamente com base nos dados MAPAL e parametros definidos. Validar em maquina.', 14, 282);
-            doc.text('Bruno Pinto | bruno.pinto@alamo-ferramentas.com | +351 936 959 415', 14, 287);
+            doc.text('Created by Bruno Pinto | bruno.pinto@alamo-ferramentas.com | +351 936 959 415', 14, 287);
 
             const nomeFicheiro = tipoRelatorio === 'completo'
-                ? `Proposta_MAPAL_${brocaKey || 'Direto'}_D${diametro.toFixed(1)}.pdf`
-                : `Parametros_MAPAL_${brocaKey || 'Direto'}_D${diametro.toFixed(1)}.pdf`;
+                ? `Proposta_MAPAL_${brocaKey || 'referencia'}_${grupoEfetivoKey || 'MMG'}.pdf`
+                : `Ficha_MAPAL_${brocaKey || 'referencia'}_${grupoEfetivoKey || 'MMG'}.pdf`;
 
             doc.save(nomeFicheiro);
             fecharModalExportacao();
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
+        function inicializarAplicacao() {
             carregarCatalogoEParametrosJson();
             aplicarModoUI();
             atualizarEstadoBotaoInterrompido();
@@ -4419,10 +4466,21 @@ html_content = '''
             atualizarFiltroBrocas(false);
             atualizarPainelCotas();
             atualizarCalculo();
-        });
+        }
+
+        window.addEventListener('DOMContentLoaded', inicializarAplicacao);
     </script>
 </body>
 </html>
-'''.replace('__PRO_PASSWORD_PLACEHOLDER__', pro_password_js).replace('__FAMILIAS_JSON_PLACEHOLDER__', familias_js).replace('__REFERENCIAS_JSON_PLACEHOLDER__', referencias_js).replace('__PARAMETROS_JSON_PLACEHOLDER__', parametros_json_js).replace('__GRUPOS_MMG_JSON_PLACEHOLDER__', grupos_mmg_js)
+'''
 
-components.html(html_content, height=980, scrolling=True)
+html_content = (
+    html_content
+    .replace("__PRO_PASSWORD_PLACEHOLDER__", pro_password_js)
+    .replace("__FAMILIAS_JSON_PLACEHOLDER__", familias_js)
+    .replace("__REFERENCIAS_JSON_PLACEHOLDER__", referencias_js)
+    .replace("__PARAMETROS_JSON_PLACEHOLDER__", parametros_json_js)
+    .replace("__GRUPOS_MMG_JSON_PLACEHOLDER__", grupos_mmg_js)
+)
+
+components.html(html_content, height=960, scrolling=True)
