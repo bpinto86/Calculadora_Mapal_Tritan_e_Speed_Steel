@@ -42,6 +42,127 @@ def _norm_col(col_name):
     return re.sub(r"[^a-z0-9]+", "_", str(col_name).strip().lower()).strip("_")
 
 
+def _extrair_registos_aba_mmg(xls: pd.ExcelFile, sheet_name: str, origem: str) -> list[dict]:
+    if sheet_name not in xls.sheet_names:
+        return []
+
+    df = pd.read_excel(xls, sheet_name=sheet_name)
+    if df.empty:
+        return []
+
+    cols_norm = {_norm_col(c): c for c in df.columns}
+
+    def pick_col(*aliases):
+        for a in aliases:
+            k = _norm_col(a)
+            if k in cols_norm:
+                return cols_norm[k]
+        return None
+
+    c_codigo = pick_col(
+        "grupo_de_maquinacao",
+        "grupo_mapal_mmg",
+        "grupo_mapal",
+        "mmg",
+        "grupo",
+        "codigo",
+    )
+    c_iso = pick_col("grupo_iso", "grupo_iso_513", "iso")
+    c_subgrupo = pick_col("subgrupo")
+    c_material = pick_col(
+        "material_da_peca_workpiece_material",
+        "material_da_peca",
+        "workpiece_material",
+        "material",
+    )
+    c_estrutura = pick_col(
+        "estrutura_composicao_structure_composition",
+        "estrutura_composicao",
+        "estrutura",
+    )
+    c_condicao = pick_col("condicao_condition", "condicao")
+    c_resistencia = pick_col(
+        "resistencia_dureza_strength_hardness_n_mm_hrc",
+        "resistencia_a_tracao_r_n_mm_tensile_strength_r_n_mm",
+        "resistencia_dureza",
+        "resistencia",
+    )
+    c_dureza = pick_col("dureza_hardness_hb_hrc", "dureza")
+    c_freq = pick_col(
+        "materiais_frequentes_frequently_machined_workpiece_materials",
+        "materiais_frequentes",
+        "descricao_1_describition_1",
+        "descricao_1",
+    )
+
+    registos = []
+    for _, row in df.iterrows():
+        codigo = _limpar_str(row[c_codigo]) if c_codigo else ""
+        if not codigo:
+            continue
+
+        material = _limpar_str(row[c_material]) if c_material else ""
+        iso = _limpar_str(row[c_iso]) if c_iso else (codigo[0].upper() if codigo else "")
+        subgrupo = _limpar_str(row[c_subgrupo]) if c_subgrupo else ""
+        estrutura = _limpar_str(row[c_estrutura]) if c_estrutura else ""
+        condicao = _limpar_str(row[c_condicao]) if c_condicao else ""
+        resistencia = _limpar_str(row[c_resistencia]) if c_resistencia else ""
+        dureza = _limpar_str(row[c_dureza]) if c_dureza else ""
+        materiais_freq = _limpar_str(row[c_freq]) if c_freq else ""
+
+        detalhes = [
+            x for x in [estrutura, condicao, resistencia, dureza]
+            if x and x != "-"
+        ]
+        if material and detalhes:
+            label = f"{codigo} — {material} ({' | '.join(detalhes[:2])})"
+        elif material:
+            label = f"{codigo} — {material}"
+        elif detalhes:
+            label = f"{codigo} ({' | '.join(detalhes[:2])})"
+        else:
+            label = codigo
+
+        registos.append({
+            "codigo": codigo,
+            "label": label,
+            "iso": iso,
+            "subgrupo": subgrupo,
+            "material": material,
+            "estrutura": estrutura,
+            "condicao": condicao,
+            "resistencia": resistencia,
+            "dureza": dureza,
+            "materiais_frequentes": materiais_freq,
+            "origem": origem,
+        })
+
+    return registos
+
+
+def exportar_grupos_mmg_json(
+    excel_path: str = "catalogo_teste.xlsx",
+    sheets: tuple[str, ...] = ("MAPAL_MMG", "MAPAL_MMG_NEW"),
+    output_path: str = "dados/grupos_mmg.json",
+) -> list[dict]:
+    xls = pd.ExcelFile(excel_path)
+    registos = []
+    vistos = set()
+
+    for sheet_name in sheets:
+        for item in _extrair_registos_aba_mmg(xls, sheet_name, sheet_name):
+            chave = (_norm_key(item["codigo"]), _norm_key(item["origem"]))
+            if chave in vistos:
+                continue
+            vistos.add(chave)
+            registos.append(item)
+
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(registos, indent=2, ensure_ascii=False), encoding="utf-8")
+    return registos
+
+
 def exportar_familias_json(
     excel_path: str = "catalogo_teste.xlsx",
     sheet_name: str = "Familias",
@@ -350,11 +471,17 @@ def exportar_tudo_json(
         output_path=str(out_base / "furacao_parametros.json"),
         familias_map=familias_map,
     )
+    grupos_mmg = exportar_grupos_mmg_json(
+        excel_path=excel_path,
+        sheets=("MAPAL_MMG", "MAPAL_MMG_NEW"),
+        output_path=str(out_base / "grupos_mmg.json"),
+    )
 
     return {
         "familias": familias,
         "referencias": referencias,
         "parametros_corte": parametros,
+        "grupos_mmg": grupos_mmg,
     }
 
 
