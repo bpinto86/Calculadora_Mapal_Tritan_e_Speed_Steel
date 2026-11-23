@@ -132,7 +132,6 @@ html_content = '''
 </head>
 <body class="h-screen p-2 flex flex-col box-border">
     <div class="w-full h-full flex flex-col gap-2">
-        <!-- Header Compacto -->
         <header class="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 flex flex-wrap justify-between items-center gap-2 shrink-0">
             <div class="flex items-center gap-2.5">
                 <h1 class="text-base font-bold text-white flex items-center gap-2">
@@ -164,13 +163,10 @@ html_content = '''
             </div>
         </header>
 
-        <!-- Layout Principal em Grid de Altura Total -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 min-h-0">
-            <!-- Painel de Controlo (Esquerda) -->
             <div class="lg:col-span-4 bg-slate-800 p-3.5 rounded-lg border border-slate-700 flex flex-col gap-2.5 overflow-y-auto min-h-0">
                 <h2 class="text-xs font-semibold text-blue-400 uppercase tracking-wider shrink-0">Configuração da Operação</h2>
 
-                <!-- Pesquisa Rápida por Order no. / Specification / Família / Diâmetro / Encabadouro -->
                 <div class="space-y-1 shrink-0 bg-slate-900/90 p-2 rounded-md border border-cyan-800/60">
                     <div class="flex justify-between items-center">
                         <label class="text-[11px] font-medium text-cyan-300">PESQUISA RÁPIDA (ORDER NO. / REF. / ×D / HA-HB-HE)</label>
@@ -183,24 +179,20 @@ html_content = '''
                     <span id="ref-feedback" class="text-[10px] text-slate-400 block">Se souber a referência, pesquise acima; se não souber, filtre abaixo.</span>
                 </div>
 
-                <!-- Seleção Progressiva do Catálogo (Sincronizada com 2. Grupo de Materiais MMG) -->
                 <div class="bg-slate-900/70 p-2.5 rounded-md border border-slate-700/80 space-y-2 shrink-0">
                     <div class="flex justify-between items-center">
                         <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">Seleção Progressiva do Catálogo</span>
                         <span id="contador-referencias" class="text-[10px] text-slate-400 font-mono">0 ref.</span>
                     </div>
 
-                    <!-- 1. Grupo de Materiais (MMG) integrado e sincronizado na Seleção Progressiva -->
                     <div class="bg-slate-950/75 p-2 rounded-md border border-blue-900/50 space-y-1.5">
                         <div class="flex justify-between items-center gap-1">
                             <label class="text-[10px] font-semibold text-blue-300 uppercase tracking-wider">1. Grupo de Materiais (MMG)</label>
                             <span id="mmg-selecao-detalhe" class="text-[10px] font-mono text-slate-300 truncate max-w-[175px]">—</span>
                         </div>
 
-                        <!-- Botões Principais de Grupo -->
                         <div id="mmg-botoes-grupo" class="grid grid-cols-6 gap-1"></div>
 
-                        <!-- Botões de Subgrupo -->
                         <div id="mmg-painel-subgrupo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
                             <div class="flex justify-between items-center">
                                 <span id="mmg-label-subgrupo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Subgrupo</span>
@@ -209,7 +201,6 @@ html_content = '''
                             <div id="mmg-botoes-subgrupo" class="flex flex-wrap gap-1"></div>
                         </div>
 
-                        <!-- Botões de Código MMG / Grupo de Maquinação -->
                         <div id="mmg-painel-codigo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
                             <div class="flex justify-between items-center">
                                 <span id="mmg-label-codigo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Grupo MAPAL (MMG)</span>
@@ -218,7 +209,6 @@ html_content = '''
                             <div id="mmg-botoes-codigo" class="flex flex-wrap gap-1 max-h-24 overflow-y-auto"></div>
                         </div>
 
-                        <!-- Estado sincronizado de código/registo ativo -->
                         <select id="grupo" class="hidden" onchange="onSelectGrupoManual()"></select>
                     </div>
 
@@ -278,7 +268,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Checkbox regra de liga MAPAL -->
                 <div class="bg-slate-900 p-2 rounded-md border border-slate-700/80 space-y-0.5 shrink-0">
                     <label class="flex items-start gap-1.5 cursor-pointer text-[11px] text-slate-300">
                         <input type="checkbox" id="liga-check" class="mt-0.5 rounded bg-slate-800 border-slate-600 text-blue-600 focus:ring-0" onchange="atualizarCalculo()">
@@ -286,7 +275,6 @@ html_content = '''
                     </label>
                 </div>
 
-                <!-- 3. Método de Refrigeração -->
                 <div class="space-y-1 shrink-0">
                     <label class="text-[11px] font-medium text-slate-300">3. MÉTODO DE REFRIGERAÇÃO A USAR</label>
                     <div class="grid grid-cols-4 gap-1 bg-slate-900 p-1 rounded-md border border-slate-700 text-[11px] text-center font-medium">
@@ -298,7 +286,6 @@ html_content = '''
                     <p id="aviso-refrig" class="text-[9px] text-amber-400 hidden">Nota: Esta ferramenta não permite refrigeração interna.</p>
                 </div>
 
-                <!-- 4. Dimensões -->
                 <div class="grid grid-cols-2 gap-2 shrink-0">
                     <div id="bloco-diametro-manual" class="space-y-1">
                         <label class="text-[11px] font-medium text-slate-300">4. DIÂMETRO (Ø)</label>
@@ -324,13 +311,11 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Validação de Profundidade com l3 (Limite Máximo Real) -->
                 <div id="alerta-profundidade" class="bg-slate-900 px-2.5 py-1.5 rounded-md border border-slate-700 text-[10px] text-slate-200 flex justify-between items-center gap-2 shrink-0">
                     <span id="texto-limite-prof">Profundidade a validar com catálogo</span>
                     <span id="badge-limite-prof" class="font-bold text-amber-400 shrink-0">VALIDAR</span>
                 </div>
 
-                <!-- [PRO] Lote, Densidade, Pecking, Sucata e Custo Hora -->
                 <div class="pro-only hidden space-y-2.5 shrink-0">
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <div class="space-y-1">
@@ -343,7 +328,6 @@ html_content = '''
                         </div>
                     </div>
 
-                    <!-- Configuração de Ciclo com Pecking (Quebra de Cavaco) -->
                     <div class="bg-slate-900 p-2.5 rounded-md border border-slate-700/80 space-y-2">
                         <label class="flex items-center gap-2 cursor-pointer text-[11px] text-slate-300">
                             <input type="checkbox" id="pecking-check" class="rounded bg-slate-800 border-slate-600 text-blue-600 focus:ring-0" onchange="togglePeckingInputs()">
@@ -381,7 +365,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Capacidade do Spindle da Máquina (Opcional — Básico + Pro) -->
                 <div class="space-y-2 pt-2 border-t border-slate-700 shrink-0">
                     <div class="flex justify-between items-center">
                         <label class="text-[11px] font-medium text-amber-400 uppercase tracking-wider">Capacidade do Spindle (Opcional)</label>
@@ -405,7 +388,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Ajustes Percentuais (%) — Básico + Pro -->
                 <div class="space-y-2 pt-1 border-t border-slate-700 shrink-0">
                     <label class="text-[11px] font-medium text-blue-400 uppercase tracking-wider">Ajustes Percentuais (%)</label>
                     <div class="space-y-1">
@@ -435,9 +417,7 @@ html_content = '''
                 </div>
             </div>
 
-            <!-- Resultados e Indicadores (Direita) -->
             <div class="lg:col-span-8 flex flex-col gap-2.5 min-h-0 overflow-y-auto">
-                <!-- Cotas Dimensionais Separadas da Referência (d1, d2, l1, l2, l3, l4) -->
                 <div class="bg-slate-800/95 p-2.5 rounded-lg border border-slate-700 shrink-0">
                     <div class="flex flex-wrap justify-between items-center gap-1 mb-2">
                         <span class="text-[11px] font-semibold text-cyan-300 uppercase tracking-wider">Cotas da Ferramenta Selecionada</span>
@@ -471,7 +451,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Grid de Métricas CNC Principal -->
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-2.5 shrink-0">
                     <div id="card-f" class="bg-slate-800 p-2.5 rounded-lg border border-slate-700 transition-colors">
                         <div class="flex justify-between items-center">
@@ -522,7 +501,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Gráficos Visuais em Meia-Lua (Básico + Pro) -->
                 <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 shrink-0">
                     <div class="flex justify-between items-center mb-1">
                         <span class="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -582,7 +560,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- [PRO] Indicadores de Tempo e Volume -->
                 <div class="pro-only hidden grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
                     <div class="bg-gradient-to-r from-blue-900/40 to-slate-800 p-2.5 rounded-lg border border-blue-700/50 flex justify-between items-center">
                         <div>
@@ -606,7 +583,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- [PRO] Peso e Sucata -->
                 <div class="pro-only hidden grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
                     <div class="bg-gradient-to-r from-cyan-900/40 to-slate-800 p-2.5 rounded-lg border border-cyan-700/50 flex justify-between items-center">
                         <div>
@@ -630,7 +606,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Custos [PRO], Força e Binário [Básico + Pro] -->
                 <div id="grid-esforcos-custos" class="grid grid-cols-1 md:grid-cols-2 gap-2.5 shrink-0">
                     <div class="pro-only hidden bg-gradient-to-r from-indigo-900/40 to-slate-800 p-2.5 rounded-lg border border-indigo-700/50 flex justify-between items-center">
                         <div>
@@ -664,7 +639,6 @@ html_content = '''
                     </div>
                 </div>
 
-                <!-- Tabela e Gráfico -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 flex-1 min-h-[220px]">
                     <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 flex flex-col min-h-0">
                         <div class="flex justify-between items-center mb-1.5 shrink-0">
@@ -703,7 +677,6 @@ html_content = '''
             </div>
         </div>
 
-        <!-- Modal: Gerar PDF com parâmetros de corte -->
         <div id="modal-pdf-parametros" class="fixed inset-0 bg-black/75 flex items-center justify-center z-50 hidden p-3">
             <div class="bg-slate-800 border border-cyan-600/70 rounded-lg p-5 w-full max-w-md shadow-2xl flex flex-col gap-4">
                 <div class="flex justify-between items-center border-b border-slate-700 pb-2.5">
@@ -739,7 +712,6 @@ html_content = '''
             </div>
         </div>
 
-        <!-- Aviso Inicial de Parâmetros Teóricos -->
         <div id="modal-aviso-inicial" class="fixed inset-0 bg-black/85 flex items-center justify-center z-50 p-3">
             <div class="bg-slate-800 border border-amber-500/70 rounded-lg p-5 w-full max-w-md shadow-2xl flex flex-col gap-4">
                 <div class="flex items-center gap-2.5 border-b border-slate-700 pb-2.5">
@@ -757,7 +729,6 @@ html_content = '''
             </div>
         </div>
 
-        <!-- Modal de Password para Nível Pro -->
         <div id="modal-password-pro" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden p-3">
             <div class="bg-slate-800 border border-purple-500/70 rounded-lg p-5 w-full max-w-sm shadow-2xl flex flex-col gap-3.5">
                 <div class="flex justify-between items-center border-b border-slate-700 pb-2">
@@ -776,7 +747,6 @@ html_content = '''
             </div>
         </div>
 
-        <!-- PASSO 1: Modal de Configuração da Comparação -->
         <div id="modal-comparacao" class="fixed inset-0 bg-black/75 flex items-center justify-center z-50 hidden p-3">
             <div class="bg-slate-800 border border-slate-700 rounded-lg p-5 w-full max-w-3xl shadow-2xl flex flex-col gap-3.5 max-h-[92vh] overflow-y-auto">
                 <div class="flex justify-between items-center border-b border-slate-700 pb-2.5">
@@ -956,7 +926,6 @@ html_content = '''
             </div>
         </div>
 
-        <!-- PASSO 2: Janela Dedicada de Resultados Visuais -->
         <div id="modal-resultado-comparacao" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden p-3">
             <div class="bg-slate-800 border border-slate-700 rounded-lg p-5 w-full max-w-5xl shadow-2xl flex flex-col gap-4 max-h-[94vh] overflow-y-auto">
                 <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-700 pb-3">
@@ -1060,7 +1029,6 @@ html_content = '''
             </div>
         </div>
 
-        <!-- Modal de Seleção de Exportação PDF -->
         <div id="modal-export" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
             <div class="bg-slate-800 border border-slate-700 rounded-lg p-5 w-96 shadow-2xl flex flex-col gap-4">
                 <div class="flex justify-between items-center">
@@ -1091,7 +1059,6 @@ html_content = '''
             </div>
         </div>
 
-        <!-- Rodapé -->
         <footer class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/80 flex flex-col sm:flex-row justify-between items-center gap-2 text-[11px] text-slate-400 shrink-0">
             <div class="font-medium text-slate-300">
                 Created by <span class="text-white font-semibold">Bruno Pinto</span>
@@ -1141,6 +1108,10 @@ html_content = '''
         let mmgSubgrupoSelecionado = null;
         const mmgMetaPorCodigo = {};
         const mmgSubgruposPorIso = {};
+
+        function normMmg(cod) {
+            return String(cod || '').trim().toUpperCase().replace(/^([A-Z]+\d+)-(\d+)$/, '$1.$2');
+        }
 
         function fecharAvisoInicial() {
             const modal = document.getElementById('modal-aviso-inicial');
@@ -1277,7 +1248,6 @@ html_content = '''
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-            // Cabeçalho estilo tabela MAPAL / ÁLAMO
             doc.setFillColor(15, 23, 42);
             doc.rect(14, 12, 182, 14, 'F');
             doc.setTextColor(255, 255, 255);
@@ -1445,12 +1415,12 @@ html_content = '''
         const gruposMmgOrdem = [];
 
         function extrairIsoDeCodigo(cod) {
-            const m = String(cod || '').trim().toUpperCase().match(/^([A-Z])/);
+            const m = normMmg(cod).match(/^([A-Z])/);
             return m ? m[1] : '';
         }
 
         function extrairSubgrupoDeCodigo(cod) {
-            const m = String(cod || '').trim().toUpperCase().match(/^([A-Z]+\d+)/);
+            const m = normMmg(cod).match(/^([A-Z]+\d+)/);
             return m ? m[1] : '';
         }
 
@@ -1463,11 +1433,11 @@ html_content = '''
             if (!Array.isArray(GRUPOS_MMG_JSON)) return;
             GRUPOS_MMG_JSON.forEach(item => {
                 if (!item || typeof item !== 'object') return;
-                const cod = String(item.codigo || item.Grupo || item.grupo || '').trim();
+                const cod = normMmg(item.codigo || item.Grupo || item.grupo || '');
                 if (!cod) return;
                 const label = String(item.label || item.descricao || cod).trim();
                 const iso = String(item.iso || '').replace('*', '').trim().toUpperCase() || extrairIsoDeCodigo(cod);
-                let sub = String(item.subgrupo || '').trim().toUpperCase() || extrairSubgrupoDeCodigo(cod);
+                const sub = normMmg(item.subgrupo || '') || extrairSubgrupoDeCodigo(cod);
                 const freq = String(item.materiais_frequentes || '').trim();
                 const dureza = String(item.dureza || '').trim();
 
@@ -1488,7 +1458,8 @@ html_content = '''
         }
 
         function obterLabelGrupoMmg(cod) {
-            return gruposMmgMap[cod] || cod;
+            const k = normMmg(cod);
+            return gruposMmgMap[k] || gruposMmgMap[cod] || cod;
         }
 
         function ferramentaSuportaFiltroMmg(tool, isoSel, subSel, codSel) {
@@ -1497,18 +1468,22 @@ html_content = '''
             if (!grps || grps.length === 0) return true;
             if (!isoSel && !subSel && !codSel) return true;
 
+            const codNorm = normMmg(codSel);
+            const subNorm = normMmg(subSel);
+            const isoNorm = String(isoSel || '').trim().toUpperCase();
+
             return grps.some(g => {
-                const gTrim = String(g).trim();
-                if (codSel) {
-                    return gTrim.toUpperCase() === codSel.toUpperCase();
+                const gNorm = normMmg(g);
+                if (codNorm) {
+                    return gNorm === codNorm;
                 }
-                const gIso = (mmgMetaPorCodigo[gTrim]?.iso || extrairIsoDeCodigo(gTrim)).toUpperCase();
-                const gSub = (mmgMetaPorCodigo[gTrim]?.subgrupo || extrairSubgrupoDeCodigo(gTrim)).toUpperCase();
-                if (subSel) {
-                    return gSub === subSel.toUpperCase() || gTrim.toUpperCase().startsWith(subSel.toUpperCase());
+                const gIso = (mmgMetaPorCodigo[gNorm]?.iso || extrairIsoDeCodigo(gNorm)).toUpperCase();
+                const gSub = normMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
+                if (subNorm) {
+                    return gSub === subNorm || gNorm.startsWith(subNorm);
                 }
-                if (isoSel) {
-                    return gIso === isoSel.toUpperCase();
+                if (isoNorm) {
+                    return gIso === isoNorm;
                 }
                 return true;
             });
@@ -1536,20 +1511,27 @@ html_content = '''
                 lblCod.style.color = palSel.cor;
             }
 
-            const dispSet = new Set((gruposDisponiveisFerramenta || []).map(g => String(g).trim()));
-            const candidatos = (gruposMmgOrdem.length > 0 ? gruposMmgOrdem : Object.keys(gruposMmgMap)).filter(cod => {
+            const dispNormList = (gruposDisponiveisFerramenta || []).map(g => normMmg(g)).filter(Boolean);
+            const dispSet = new Set(dispNormList);
+
+            const baseCodigos = new Set([
+                ...(gruposMmgOrdem.length > 0 ? gruposMmgOrdem : Object.keys(gruposMmgMap)).map(normMmg),
+                ...dispNormList
+            ]);
+
+            const candidatos = Array.from(baseCodigos).filter(cod => {
                 const meta = mmgMetaPorCodigo[cod] || {};
                 const iso = (meta.iso || extrairIsoDeCodigo(cod)).toUpperCase();
-                const sub = (meta.subgrupo || extrairSubgrupoDeCodigo(cod)).toUpperCase();
+                const sub = normMmg(meta.subgrupo || extrairSubgrupoDeCodigo(cod));
                 if (iso !== mmgGrupoSelecionado) return false;
-                if (mmgSubgrupoSelecionado && sub !== mmgSubgrupoSelecionado && !cod.toUpperCase().startsWith(mmgSubgrupoSelecionado)) {
+                if (mmgSubgrupoSelecionado && sub !== mmgSubgrupoSelecionado && !cod.startsWith(mmgSubgrupoSelecionado)) {
                     return false;
                 }
                 return true;
-            });
+            }).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
             contCod.innerHTML = '';
-            const codigoAtivo = selG.value;
+            const codigoAtivo = normMmg(selG.value);
 
             candidatos.forEach(cod => {
                 const habilitado = !filtrarPorFerramenta || dispSet.has(cod);
@@ -1580,7 +1562,14 @@ html_content = '''
         function selecionarCodigoBotaoMmg(cod) {
             const selG = document.getElementById('grupo');
             if (!selG) return;
-            selG.value = cod;
+            const codNorm = normMmg(cod);
+            if (!Array.from(selG.options).some(o => normMmg(o.value) === codNorm)) {
+                const opt = document.createElement('option');
+                opt.value = codNorm;
+                opt.text = obterLabelGrupoMmg(codNorm);
+                selG.appendChild(opt);
+            }
+            selG.value = codNorm;
             onSelectGrupoManual();
         }
 
@@ -1593,13 +1582,14 @@ html_content = '''
             const detEl = document.getElementById('mmg-selecao-detalhe');
             if (!contGrupo || !painelSub || !contSub) return;
 
-            const dispSet = new Set((gruposDisponiveisFerramenta || []).map(g => String(g).trim()));
+            const dispNormList = (gruposDisponiveisFerramenta || []).map(g => normMmg(g)).filter(Boolean);
+            const dispSet = new Set(dispNormList);
             const isosDisponiveis = new Set();
             const subsDisponiveis = new Set();
 
             dispSet.forEach(g => {
                 const iso = (mmgMetaPorCodigo[g]?.iso || extrairIsoDeCodigo(g)).toUpperCase();
-                const sub = (mmgMetaPorCodigo[g]?.subgrupo || extrairSubgrupoDeCodigo(g)).toUpperCase();
+                const sub = normMmg(mmgMetaPorCodigo[g]?.subgrupo || extrairSubgrupoDeCodigo(g));
                 if (iso) isosDisponiveis.add(iso);
                 if (sub) subsDisponiveis.add(sub);
             });
@@ -1634,7 +1624,7 @@ html_content = '''
                 painelSub.classList.add('hidden');
                 contSub.innerHTML = '';
                 if (freqEl) freqEl.innerText = '';
-                renderBotoesCodigoMmg(gruposDisponiveisFerramenta, filtrarPorFerramenta);
+                renderBotoesCodigoMmg(dispNormList, filtrarPorFerramenta);
                 const selG = document.getElementById('grupo');
                 if (detEl) detEl.innerText = selG && selG.value ? obterLabelGrupoMmg(selG.value) : '—';
                 return;
@@ -1647,7 +1637,7 @@ html_content = '''
                 lblSub.style.color = palSel.cor;
             }
 
-            const baseSubs = mmgSubgruposPorIso[mmgGrupoSelecionado] || [];
+            const baseSubs = (mmgSubgruposPorIso[mmgGrupoSelecionado] || []).map(normMmg);
             const subsRender = filtrarPorFerramenta
                 ? baseSubs.filter(s => subsDisponiveis.has(s))
                 : baseSubs;
@@ -1681,7 +1671,7 @@ html_content = '''
             const freqs = [];
             Object.values(mmgMetaPorCodigo).forEach(m => {
                 const matchIso = m.iso === mmgGrupoSelecionado;
-                const matchSub = !mmgSubgrupoSelecionado || m.subgrupo === mmgSubgrupoSelecionado;
+                const matchSub = !mmgSubgrupoSelecionado || normMmg(m.subgrupo) === mmgSubgrupoSelecionado;
                 if (matchIso && matchSub && m.freq && m.freq !== '-') {
                     freqs.push(m.freq);
                 }
@@ -1691,7 +1681,7 @@ html_content = '''
                 freqEl.title = freqs.join(' | ');
             }
 
-            renderBotoesCodigoMmg(gruposDisponiveisFerramenta, filtrarPorFerramenta);
+            renderBotoesCodigoMmg(dispNormList, filtrarPorFerramenta);
 
             const selG = document.getElementById('grupo');
             if (detEl) {
@@ -1714,7 +1704,7 @@ html_content = '''
         }
 
         function selecionarSubgrupoBotao(subCode) {
-            mmgSubgrupoSelecionado = subCode;
+            mmgSubgrupoSelecionado = subCode ? normMmg(subCode) : null;
             aplicarFiltroMmgNaFerramenta();
             sincronizarSelecaoComCatalogo('mmg');
         }
@@ -1724,16 +1714,16 @@ html_content = '''
             const grupoSelect = document.getElementById('grupo');
             if (!grupoSelect) return;
 
-            const disp = (brocaKey && dados[brocaKey])
+            const disp = ((brocaKey && dados[brocaKey])
                 ? (dados[brocaKey].gruposList || [])
-                : (gruposMmgOrdem.length > 0 ? gruposMmgOrdem : Object.keys(gruposMmgMap));
+                : (gruposMmgOrdem.length > 0 ? gruposMmgOrdem : Object.keys(gruposMmgMap))).map(normMmg);
             if (disp.length === 0) return;
 
             if (mmgSubgrupoSelecionado) {
-                const subUpper = mmgSubgrupoSelecionado.toUpperCase();
+                const subUpper = normMmg(mmgSubgrupoSelecionado);
                 const matchExato = disp.find(g => {
-                    const metaSub = (mmgMetaPorCodigo[g]?.subgrupo || extrairSubgrupoDeCodigo(g)).toUpperCase();
-                    return metaSub === subUpper || g.toUpperCase().startsWith(subUpper);
+                    const metaSub = normMmg(mmgMetaPorCodigo[g]?.subgrupo || extrairSubgrupoDeCodigo(g));
+                    return metaSub === subUpper || g.startsWith(subUpper);
                 });
                 if (matchExato) {
                     grupoSelect.value = matchExato;
@@ -1760,10 +1750,11 @@ html_content = '''
 
         function onSelectGrupoManual() {
             const grupoSelect = document.getElementById('grupo');
-            const val = grupoSelect ? grupoSelect.value : '';
+            const val = grupoSelect ? normMmg(grupoSelect.value) : '';
             if (val) {
+                if (grupoSelect) grupoSelect.value = val;
                 const iso = (mmgMetaPorCodigo[val]?.iso || extrairIsoDeCodigo(val)).toUpperCase();
-                const sub = (mmgMetaPorCodigo[val]?.subgrupo || extrairSubgrupoDeCodigo(val)).toUpperCase();
+                const sub = normMmg(mmgMetaPorCodigo[val]?.subgrupo || extrairSubgrupoDeCodigo(val));
                 if (iso) mmgGrupoSelecionado = iso;
                 if (sub) mmgSubgrupoSelecionado = sub;
             }
@@ -1771,7 +1762,7 @@ html_content = '''
         }
 
         function sincronizarSelecaoComCatalogo(origem = 'mmg') {
-            const grupoKey = document.getElementById('grupo').value || '';
+            const grupoKey = normMmg(document.getElementById('grupo').value || '');
             if (grupoKey) {
                 const prefixo = grupoKey.charAt(0).toUpperCase();
                 if (propriedadesGrupo[prefixo]) {
@@ -2021,7 +2012,7 @@ html_content = '''
                         tool.diametros = [3.00, 4.50, 6.50, 9.50, 14.00, 20.00];
                     }
 
-                    const grp = String(row.grupo || row.Grupo || row.mmg || row.MMG || '').trim();
+                    const grp = normMmg(row.grupo || row.Grupo || row.mmg || row.MMG || '');
                     if (!grp) return;
 
                     const vcSrc = (row.vc && typeof row.vc === 'object') ? row.vc : {};
@@ -2348,7 +2339,7 @@ html_content = '''
             const selXd = document.getElementById('filtro-xd');
             const selOrder = document.getElementById('filtro-order-no');
             const selModelo = document.getElementById('broca');
-            const grupoCodSel = document.getElementById('grupo')?.value || '';
+            const grupoCodSel = normMmg(document.getElementById('grupo')?.value || '');
 
             let valCat = selCat ? selCat.value : '';
             let valGama = selGama.value;
@@ -2668,7 +2659,7 @@ html_content = '''
         };
 
         function getKc(grupoKey) {
-            const prefixo = grupoKey.charAt(0).toUpperCase();
+            const prefixo = normMmg(grupoKey).charAt(0).toUpperCase();
             return propriedadesGrupo[prefixo] ? propriedadesGrupo[prefixo].kc : 2200;
         }
 
@@ -2810,7 +2801,8 @@ html_content = '''
         function calcularMetricasFerramenta(toolKey, varianteKey, grupoEfetivoKey, contexto) {
             const toolData = dados[toolKey];
             if (!toolData) return null;
-            const grupoObj = toolData.grupos[grupoEfetivoKey];
+            const gKey = normMmg(grupoEfetivoKey);
+            const grupoObj = toolData.grupos[gKey] || toolData.grupos[grupoEfetivoKey];
             if (!grupoObj) return null;
 
             const {
@@ -2900,7 +2892,7 @@ html_content = '''
             const tempoTotalMin = (tempoFuroSeg * qtdFuros) / 60;
             const custoMaqLote = custoMaqFuro * qtdFuros;
 
-            const kc = getKc(grupoEfetivoKey);
+            const kc = getKc(gKey);
             const forcaFf = 0.5 * kc * diametro * Math.pow(fFinal, 0.7);
             const binarioMc = (kc * Math.pow(diametro, 2) * Math.pow(fFinal, 0.8)) / 8000;
             const potenciaReqKw = (binarioMc * n) / (9550 * 0.85);
@@ -3018,7 +3010,7 @@ html_content = '''
             const d1Num = obterD1Digitado();
             const valXd = document.getElementById('filtro-xd').value;
             const qPesquisa = (document.getElementById('ref-pesquisa').value || '').trim();
-            const grupoCodSel = document.getElementById('grupo')?.value || '';
+            const grupoCodSel = normMmg(document.getElementById('grupo')?.value || '');
 
             const temFiltroCatalogo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || qPesquisa || mmgGrupoSelecionado || mmgSubgrupoSelecionado || grupoCodSel);
             if (!temFiltroCatalogo) {
@@ -3146,8 +3138,8 @@ html_content = '''
                 btnInt.classList.remove('opacity-40', 'cursor-not-allowed');
                 avisoRefrig.classList.add('hidden');
 
-                const todosGrupos = gruposMmgOrdem.length > 0 ? gruposMmgOrdem : Object.keys(gruposMmgMap);
-                const atualGrp = grupoSelect.value;
+                const todosGrupos = (gruposMmgOrdem.length > 0 ? gruposMmgOrdem : Object.keys(gruposMmgMap)).map(normMmg);
+                const atualGrp = normMmg(grupoSelect.value);
                 grupoSelect.innerHTML = '';
                 const optEmpty = document.createElement('option');
                 optEmpty.value = '';
@@ -3188,10 +3180,10 @@ html_content = '''
                 avisoRefrig.classList.add('hidden');
             }
 
-            const atualGrupo = grupoSelect.value;
+            const atualGrupo = normMmg(grupoSelect.value);
             grupoSelect.innerHTML = '';
 
-            const gruposDisponiveis = toolData.gruposList.length > 0 ? toolData.gruposList : Object.keys(toolData.grupos);
+            const gruposDisponiveis = (toolData.gruposList.length > 0 ? toolData.gruposList : Object.keys(toolData.grupos)).map(normMmg);
             gruposDisponiveis.forEach(g => {
                 const opt = document.createElement('option');
                 opt.value = g;
@@ -3204,7 +3196,7 @@ html_content = '''
                 opt.value = "";
                 opt.text = "Sem parâmetros no JSON";
                 grupoSelect.appendChild(opt);
-            } else if (atualGrupo && toolData.grupos[atualGrupo]) {
+            } else if (atualGrupo && gruposDisponiveis.includes(atualGrupo)) {
                 grupoSelect.value = atualGrupo;
             } else {
                 grupoSelect.value = gruposDisponiveis[0];
@@ -3226,7 +3218,7 @@ html_content = '''
         }
 
         function mudarGrupoMaterial() {
-            const grupoKey = document.getElementById('grupo').value;
+            const grupoKey = normMmg(document.getElementById('grupo').value);
             if (grupoKey) {
                 const prefixo = grupoKey.charAt(0).toUpperCase();
                 if (propriedadesGrupo[prefixo]) {
@@ -3384,13 +3376,13 @@ html_content = '''
 
         function getGrupoEfetivo() {
             const brocaKey = document.getElementById('broca').value;
-            const grupoKey = document.getElementById('grupo').value;
+            const grupoKey = normMmg(document.getElementById('grupo').value);
             const ligaCheck = document.getElementById('liga-check').checked;
 
             if (!brocaKey || !dados[brocaKey] || !grupoKey) return grupoKey;
             if (!ligaCheck) return grupoKey;
 
-            const lista = dados[brocaKey].gruposList;
+            const lista = (dados[brocaKey].gruposList || []).map(normMmg);
             const idx = lista.indexOf(grupoKey);
             if (idx !== -1 && idx < lista.length - 1) {
                 return lista[idx + 1];
@@ -3667,10 +3659,15 @@ html_content = '''
             tbody.innerHTML = '';
             diametrosCat.forEach((dCat, i) => {
                 const fCat = fCatArr[i] !== undefined ? fCatArr[i] : 0.05;
-                const nCat = dCat > 0 ? Math.round((vcFinal * 1000) / (Math.PI * dCat)) : 0;
+                let nCat = dCat > 0 ? Math.round((vcFinal * 1000) / (Math.PI * dCat)) : 0;
+                if (rpmMaxUnlocked && rpmMaxVal > 0 && nCat > rpmMaxVal) {
+                    nCat = rpmMaxVal;
+                }
                 const vfCat = Math.round(fCat * nCat);
                 const tr = document.createElement('tr');
-                tr.className = i === calc.idxInf ? 'bg-blue-900/30 font-semibold text-white' : 'text-slate-300';
+                if (i === calc.idxInf || i === calc.idxInf + 1) {
+                    tr.className = "bg-blue-900/20 font-medium text-blue-200";
+                }
                 tr.innerHTML = `
                     <td class="py-1">${dCat.toFixed(2)}</td>
                     <td class="py-1">${fCat.toFixed(3)}</td>
@@ -3680,842 +3677,733 @@ html_content = '''
                 tbody.appendChild(tr);
             });
 
-            desenharGrafico(diametrosCat, fCatArr, diametro, fFinal);
+            renderGrafico(diametrosCat, fCatArr, diametro, fFinal, calc.idxInf);
 
-            if (!document.getElementById('modal-comparacao').classList.contains('hidden') || !document.getElementById('modal-resultado-comparacao').classList.contains('hidden')) {
+            if (!document.getElementById('modal-comparacao').classList.contains('hidden')) {
                 atualizarComparacao();
             }
         }
 
-        function desenharGrafico(diametrosCat, fCatArr, dCalc, fCalc) {
+        function renderGrafico(diametros, fArr, dCalc, fCalc, idxInf) {
             const svg = document.getElementById('svg-grafico');
             svg.innerHTML = '';
 
             const width = 400;
             const height = 180;
-            const padLeft = 42;
-            const padRight = 18;
+            const padLeft = 40;
+            const padRight = 20;
             const padTop = 18;
-            const padBottom = 28;
+            const padBottom = 30;
+
             const plotW = width - padLeft - padRight;
             const plotH = height - padTop - padBottom;
 
-            const allD = [...diametrosCat, dCalc];
-            const allF = [...fCatArr, fCalc];
+            const allX = [...diametros, dCalc];
+            const allY = [...fArr, fCalc];
 
-            let minD = Math.min(...allD);
-            let maxD = Math.max(...allD);
-            if (minD === maxD) { minD -= 1; maxD += 1; }
-            const dMargin = (maxD - minD) * 0.08;
-            minD -= dMargin;
-            maxD += dMargin;
+            let minX = Math.min(...allX);
+            let maxX = Math.max(...allX);
+            let minY = Math.min(...allY) * 0.85;
+            let maxY = Math.max(...allY) * 1.15;
 
-            let minF = Math.min(...allF);
-            let maxF = Math.max(...allF);
-            if (minF === maxF) { minF = 0; maxF += 0.1; }
-            const fMargin = (maxF - minF) * 0.12;
-            minF = Math.max(0, minF - fMargin);
-            maxF += fMargin;
+            if (minX === maxX) { minX -= 1; maxX += 1; }
+            if (minY === maxY) { minY -= 0.01; maxY += 0.01; }
 
-            const xScale = d => padLeft + ((d - minD) / (maxD - minD)) * plotW;
-            const yScale = f => padTop + plotH - ((f - minF) / (maxF - minF)) * plotH;
+            const scaleX = (x) => padLeft + ((x - minX) / (maxX - minX)) * plotW;
+            const scaleY = (y) => padTop + plotH - ((y - minY) / (maxY - minY)) * plotH;
 
             for (let i = 0; i <= 4; i++) {
-                const fTick = minF + (i / 4) * (maxF - minF);
-                const yPos = yScale(fTick);
+                const yVal = minY + (i / 4) * (maxY - minY);
+                const yPos = scaleY(yVal);
 
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', padLeft);
-                line.setAttribute('y1', yPos);
-                line.setAttribute('x2', width - padRight);
-                line.setAttribute('y2', yPos);
-                line.setAttribute('stroke', '#1e293b');
-                line.setAttribute('stroke-width', '1');
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", padLeft);
+                line.setAttribute("y1", yPos);
+                line.setAttribute("x2", width - padRight);
+                line.setAttribute("y2", yPos);
+                line.setAttribute("stroke", "#334155");
+                line.setAttribute("stroke-width", "0.5");
                 svg.appendChild(line);
 
-                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                label.setAttribute('x', padLeft - 6);
-                label.setAttribute('y', yPos + 3);
-                label.setAttribute('text-anchor', 'end');
-                label.setAttribute('fill', '#94a3b8');
-                label.setAttribute('font-size', '9');
-                label.textContent = fTick.toFixed(2);
-                svg.appendChild(label);
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", padLeft - 5);
+                text.setAttribute("y", yPos + 3);
+                text.setAttribute("fill", "#94a3b8");
+                text.setAttribute("font-size", "8");
+                text.setAttribute("text-anchor", "end");
+                text.textContent = yVal.toFixed(2);
+                svg.appendChild(text);
             }
 
-            const xAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            xAxis.setAttribute('x1', padLeft);
-            xAxis.setAttribute('y1', padTop + plotH);
-            xAxis.setAttribute('x2', width - padRight);
-            xAxis.setAttribute('y2', padTop + plotH);
-            xAxis.setAttribute('stroke', '#475569');
-            xAxis.setAttribute('stroke-width', '1');
-            svg.appendChild(xAxis);
-
-            const yAxis = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            yAxis.setAttribute('x1', padLeft);
-            yAxis.setAttribute('y1', padTop);
-            yAxis.setAttribute('x2', padLeft);
-            yAxis.setAttribute('y2', padTop + plotH);
-            yAxis.setAttribute('stroke', '#475569');
-            yAxis.setAttribute('stroke-width', '1');
-            svg.appendChild(yAxis);
-
-            for (let i = 0; i < diametrosCat.length; i++) {
-                const xPos = xScale(diametrosCat[i]);
-                const tick = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                tick.setAttribute('x', xPos);
-                tick.setAttribute('y', padTop + plotH + 13);
-                tick.setAttribute('text-anchor', 'middle');
-                tick.setAttribute('fill', '#94a3b8');
-                tick.setAttribute('font-size', '9');
-                tick.textContent = diametrosCat[i].toFixed(1);
-                svg.appendChild(tick);
-            }
-
-            const xTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            xTitle.setAttribute('x', padLeft + plotW / 2);
-            xTitle.setAttribute('y', height - 3);
-            xTitle.setAttribute('text-anchor', 'middle');
-            xTitle.setAttribute('fill', '#64748b');
-            xTitle.setAttribute('font-size', '9');
-            xTitle.textContent = 'Diâmetro Ø (mm)';
-            svg.appendChild(xTitle);
-
-            let pathD = '';
-            diametrosCat.forEach((dVal, i) => {
-                const px = xScale(dVal);
-                const py = yScale(fCatArr[i] !== undefined ? fCatArr[i] : 0.05);
-                pathD += (i === 0 ? `M ${px} ${py}` : ` L ${px} ${py}`);
+            diametros.forEach((dVal) => {
+                const xPos = scaleX(dVal);
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", xPos);
+                text.setAttribute("y", height - padBottom + 12);
+                text.setAttribute("fill", "#94a3b8");
+                text.setAttribute("font-size", "8");
+                text.setAttribute("text-anchor", "middle");
+                text.textContent = dVal.toFixed(1);
+                svg.appendChild(text);
             });
 
-            const curve = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            curve.setAttribute('d', pathD);
-            curve.setAttribute('fill', 'none');
-            curve.setAttribute('stroke', '#3b82f6');
-            curve.setAttribute('stroke-width', '2');
-            svg.appendChild(curve);
+            const xAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            xAxis.setAttribute("x1", padLeft);
+            xAxis.setAttribute("y1", padTop + plotH);
+            xAxis.setAttribute("x2", width - padRight);
+            xAxis.setAttribute("y2", padTop + plotH);
+            xAxis.setAttribute("stroke", "#64748b");
+            xAxis.setAttribute("stroke-width", "1");
+            svg.appendChild(xAxis);
 
-            diametrosCat.forEach((dVal, i) => {
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', xScale(dVal));
-                circle.setAttribute('cy', yScale(fCatArr[i] !== undefined ? fCatArr[i] : 0.05));
-                circle.setAttribute('r', '3.5');
-                circle.setAttribute('fill', '#3b82f6');
+            const yAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            yAxis.setAttribute("x1", padLeft);
+            yAxis.setAttribute("y1", padTop);
+            yAxis.setAttribute("x2", padLeft);
+            yAxis.setAttribute("y2", padTop + plotH);
+            yAxis.setAttribute("stroke", "#64748b");
+            yAxis.setAttribute("stroke-width", "1");
+            svg.appendChild(yAxis);
+
+            if (diametros.length > 1) {
+                let pointsStr = "";
+                diametros.forEach((dVal, i) => {
+                    const fVal = fArr[i] !== undefined ? fArr[i] : 0.05;
+                    pointsStr += `${scaleX(dVal)},${scaleY(fVal)} `;
+                });
+                const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+                polyline.setAttribute("fill", "none");
+                polyline.setAttribute("stroke", "#3b82f6");
+                polyline.setAttribute("stroke-width", "2");
+                polyline.setAttribute("points", pointsStr.trim());
+                svg.appendChild(polyline);
+
+                if (idxInf >= 0 && idxInf < diametros.length - 1) {
+                    const segX1 = scaleX(diametros[idxInf]);
+                    const segY1 = scaleY(fArr[idxInf]);
+                    const segX2 = scaleX(diametros[idxInf + 1]);
+                    const segY2 = scaleY(fArr[idxInf + 1]);
+                    const segLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    segLine.setAttribute("x1", segX1);
+                    segLine.setAttribute("y1", segY1);
+                    segLine.setAttribute("x2", segX2);
+                    segLine.setAttribute("y2", segY2);
+                    segLine.setAttribute("stroke", "#60a5fa");
+                    segLine.setAttribute("stroke-width", "3");
+                    svg.appendChild(segLine);
+                }
+            }
+
+            diametros.forEach((dVal, i) => {
+                const fVal = fArr[i] !== undefined ? fArr[i] : 0.05;
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", scaleX(dVal));
+                circle.setAttribute("cy", scaleY(fVal));
+                circle.setAttribute("r", "3.5");
+                circle.setAttribute("fill", "#3b82f6");
+                circle.setAttribute("stroke", "#0f172a");
+                circle.setAttribute("stroke-width", "1");
                 svg.appendChild(circle);
             });
 
-            const cx = xScale(dCalc);
-            const cy = yScale(fCalc);
+            const cx = scaleX(dCalc);
+            const cy = scaleY(fCalc);
 
-            const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            vLine.setAttribute('x1', cx);
-            vLine.setAttribute('y1', cy);
-            vLine.setAttribute('x2', cx);
-            vLine.setAttribute('y2', padTop + plotH);
-            vLine.setAttribute('stroke', '#f97316');
-            vLine.setAttribute('stroke-width', '1');
-            vLine.setAttribute('stroke-dasharray', '3,2');
-            svg.appendChild(vLine);
-
-            const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            hLine.setAttribute('x1', padLeft);
-            hLine.setAttribute('y1', cy);
-            hLine.setAttribute('x2', cx);
-            hLine.setAttribute('y2', cy);
-            hLine.setAttribute('stroke', '#f97316');
-            hLine.setAttribute('stroke-width', '1');
-            hLine.setAttribute('stroke-dasharray', '3,2');
+            const hLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            hLine.setAttribute("x1", padLeft);
+            hLine.setAttribute("y1", cy);
+            hLine.setAttribute("x2", cx);
+            hLine.setAttribute("y2", cy);
+            hLine.setAttribute("stroke", "#f97316");
+            hLine.setAttribute("stroke-width", "1");
+            hLine.setAttribute("stroke-dasharray", "3,2");
             svg.appendChild(hLine);
 
-            const calcDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            calcDot.setAttribute('cx', cx);
-            calcDot.setAttribute('cy', cy);
-            calcDot.setAttribute('r', '5');
-            calcDot.setAttribute('fill', '#f97316');
-            calcDot.setAttribute('stroke', '#ffffff');
-            calcDot.setAttribute('stroke-width', '1.5');
-            svg.appendChild(calcDot);
+            const vLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            vLine.setAttribute("x1", cx);
+            vLine.setAttribute("y1", cy);
+            vLine.setAttribute("x2", cx);
+            vLine.setAttribute("y2", padTop + plotH);
+            vLine.setAttribute("stroke", "#f97316");
+            vLine.setAttribute("stroke-width", "1");
+            vLine.setAttribute("stroke-dasharray", "3,2");
+            svg.appendChild(vLine);
+
+            const calcCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            calcCircle.setAttribute("cx", cx);
+            calcCircle.setAttribute("cy", cy);
+            calcCircle.setAttribute("r", "5");
+            calcCircle.setAttribute("fill", "#f97316");
+            calcCircle.setAttribute("stroke", "#ffffff");
+            calcCircle.setAttribute("stroke-width", "1.5");
+            svg.appendChild(calcCircle);
         }
 
         function obterContextoCalculoAtual() {
             let diametro = parseFloat(document.getElementById('diametro').value);
             let profundidade = parseFloat(document.getElementById('profundidade').value);
             let qtdFuros = parseInt(document.getElementById('qtd-furos').value, 10);
-            let densidade = parseFloat(document.getElementById('densidade').value);
-            let precoSucata = parseFloat(document.getElementById('preco-sucata').value);
             let custoHora = parseFloat(document.getElementById('custo-hora').value);
 
             if (isNaN(diametro) || diametro <= 0) diametro = 12.00;
             if (isNaN(profundidade) || profundidade <= 0) profundidade = 31.0;
             if (isNaN(qtdFuros) || qtdFuros < 1) qtdFuros = 50;
-            if (isNaN(densidade) || densidade <= 0) densidade = 7.85;
-            if (isNaN(precoSucata) || precoSucata < 0) precoSucata = 0.35;
             if (isNaN(custoHora) || custoHora < 0) custoHora = 50.00;
 
             const peckingCheck = document.getElementById('pecking-check').checked;
             const peckingUnid = document.getElementById('pecking-unidade').value;
             let peckingInputVal = parseFloat(document.getElementById('pecking-passo').value);
             let peckingRetensaoVal = parseFloat(document.getElementById('pecking-retensao').value);
+
             if (isNaN(peckingInputVal) || peckingInputVal <= 0) peckingInputVal = peckingUnid === 'xd' ? 3.0 : 36.0;
             if (isNaN(peckingRetensaoVal) || peckingRetensaoVal <= 0) peckingRetensaoVal = 5000;
 
             const rpmMaxVal = parseFloat(document.getElementById('input-rpm-max').value) || 8000;
 
-            const requerPiloto = Boolean(document.getElementById('comp-requer-piloto')?.checked);
-            let tempoPilotoSeg = parseFloat(document.getElementById('comp-tempo-piloto-seg')?.value);
-            let custoPilotoFuro = parseFloat(document.getElementById('comp-custo-piloto-furo')?.value);
-            if (isNaN(tempoPilotoSeg) || tempoPilotoSeg < 0) tempoPilotoSeg = 0;
-            if (isNaN(custoPilotoFuro) || custoPilotoFuro < 0) custoPilotoFuro = 0;
-
-            const usaBrocaCanhao = Boolean(document.getElementById('comp-usa-broca-canhao')?.checked);
-            let tempoParagemAfiMin = parseFloat(document.getElementById('comp-tempo-paragem-afi-min')?.value);
-            if (isNaN(tempoParagemAfiMin) || tempoParagemAfiMin < 0) tempoParagemAfiMin = 0;
-
             return {
-                diametro, profundidade, qtdFuros, densidade, precoSucata, custoHora,
+                diametro, profundidade, qtdFuros, custoHora,
                 refrigAtual, vcPct, fPct, rpmMaxUnlocked, rpmMaxVal,
-                peckingCheck, peckingUnid, peckingInputVal, peckingRetensaoVal,
-                requerPiloto, tempoPilotoSeg, custoPilotoFuro,
-                usaBrocaCanhao, tempoParagemAfiMin
+                peckingCheck, peckingUnid, peckingInputVal, peckingRetensaoVal
             };
         }
 
-        function obterCustoHoraComparacao() {
-            const inpComp = document.getElementById('comp-custo-hora');
-            const inpMain = document.getElementById('custo-hora');
-            let val = parseFloat(inpComp ? inpComp.value : inpMain.value);
-            if (isNaN(val) || val < 0) {
-                val = parseFloat(inpMain.value);
-                if (isNaN(val) || val < 0) val = 50.00;
-            }
-            return val;
-        }
-
-        function sincronizarCustoHoraComparacao() {
-            const inpComp = document.getElementById('comp-custo-hora');
-            const inpMain = document.getElementById('custo-hora');
-            let val = parseFloat(inpComp.value);
-            if (isNaN(val) || val < 0) return;
-            inpMain.value = val.toFixed(2);
-            atualizarCalculo();
-        }
-
         function abrirModalComparacao() {
-            if (!isProMode) return;
-            const atualBroca = document.getElementById('broca').value;
-            const selComp = document.getElementById('comp-ferramenta');
-            const inpCompHora = document.getElementById('comp-custo-hora');
-            const inpMainHora = document.getElementById('custo-hora');
-            if (inpCompHora && inpMainHora) {
-                const mainVal = parseFloat(inpMainHora.value);
-                if (!isNaN(mainVal) && mainVal >= 0) {
-                    inpCompHora.value = mainVal.toFixed(2);
-                }
+            if (!isProMode) {
+                gerirModoPro();
+                return;
             }
+            document.getElementById('modal-resultado-comparacao').classList.add('hidden');
+            const selectComp = document.getElementById('comp-ferramenta');
+            const brocaAtual = document.getElementById('broca').value;
+            const valorAnterior = selectComp.value;
 
-            selComp.innerHTML = '';
+            selectComp.innerHTML = '';
 
             const optCliente = document.createElement('option');
-            optCliente.value = '__CLIENTE_MANUAL__';
-            optCliente.text = 'Ferramenta do Cliente (Vc e f manuais)';
-            selComp.appendChild(optCliente);
+            optCliente.value = '__CLIENTE__';
+            optCliente.text = '🛠️ Ferramenta do Cliente (Vc / f / Piloto / Canhão)';
+            selectComp.appendChild(optCliente);
 
             for (const key in dados) {
                 const opt = document.createElement('option');
                 opt.value = key;
-                opt.text = `${dados[key].nome} (${fmtGamaLabel(dados[key].linha)})`;
-                selComp.appendChild(opt);
+                opt.text = dados[key].nome;
+                selectComp.appendChild(opt);
             }
 
-            if (atualBroca && dados[atualBroca]) {
-                selComp.value = atualBroca;
+            if (valorAnterior && (valorAnterior === '__CLIENTE__' || dados[valorAnterior])) {
+                selectComp.value = valorAnterior;
             } else {
-                selComp.value = '__CLIENTE_MANUAL__';
+                selectComp.value = '__CLIENTE__';
             }
 
+            document.getElementById('comp-custo-hora').value = parseFloat(document.getElementById('custo-hora').value) || 50.00;
+            atualizarEstadoBotaoInterrompido();
             onChangeFonteComparacao();
             document.getElementById('modal-comparacao').classList.remove('hidden');
         }
 
         function fecharModalComparacao() {
-            const modal = document.getElementById('modal-comparacao');
-            if (modal) modal.classList.add('hidden');
+            document.getElementById('modal-comparacao').classList.add('hidden');
         }
 
         function abrirJanelaResultadoComparacao() {
             if (!isProMode) return;
             atualizarComparacao();
-            const syncCb = document.getElementById('comp-incluir-pdf-res');
-            const mainCb = document.getElementById('comp-incluir-pdf');
-            if (syncCb && mainCb) {
-                syncCb.checked = mainCb.checked;
-            }
-            fecharModalComparacao();
+            document.getElementById('comp-incluir-pdf-res').checked = document.getElementById('comp-incluir-pdf').checked;
+            document.getElementById('modal-comparacao').classList.add('hidden');
             document.getElementById('modal-resultado-comparacao').classList.remove('hidden');
         }
 
         function fecharJanelaResultadoComparacao() {
-            const modal = document.getElementById('modal-resultado-comparacao');
-            if (modal) modal.classList.add('hidden');
+            document.getElementById('modal-resultado-comparacao').classList.add('hidden');
         }
 
         function voltarParaInputsComparacao() {
-            fecharJanelaResultadoComparacao();
+            document.getElementById('modal-resultado-comparacao').classList.add('hidden');
             document.getElementById('modal-comparacao').classList.remove('hidden');
         }
 
         function onChangeFonteComparacao() {
-            const compKey = document.getElementById('comp-ferramenta').value;
+            const val = document.getElementById('comp-ferramenta').value;
             const blocoCliente = document.getElementById('comp-bloco-cliente');
             const blocoVariante = document.getElementById('comp-bloco-variante');
-            const selVar = document.getElementById('comp-variante');
-            const btnUsar = document.getElementById('btn-usar-comparada');
 
-            if (compKey === '__CLIENTE_MANUAL__') {
+            if (val === '__CLIENTE__') {
                 blocoCliente.classList.remove('hidden');
                 blocoVariante.classList.add('hidden');
-                btnUsar.classList.add('hidden');
             } else {
                 blocoCliente.classList.add('hidden');
                 blocoVariante.classList.remove('hidden');
-                btnUsar.classList.remove('hidden');
-
-                const alvoData = dados[compKey];
-                selVar.innerHTML = '';
-                if (alvoData && alvoData.variantes) {
-                    const varKeys = Object.keys(alvoData.variantes);
-                    varKeys.forEach(vk => {
-                        const opt = document.createElement('option');
-                        opt.value = vk;
-                        opt.text = vk;
-                        selVar.appendChild(opt);
-                    });
-                    const varAtual = getVarianteAtiva();
-                    if (alvoData.variantes[varAtual]) {
-                        selVar.value = varAtual;
-                    }
-                }
+                preencherVariantesComparacao(val);
             }
             atualizarComparacao();
         }
 
-        function calcularCustoFerramentaLote(precoBroca, vidaPorAfiação, vidaUnidade, numReafiacoes, custoPorAfiação, qtdFuros, profundidadeMm) {
-            const nReaf = Math.max(0, Math.floor(numReafiacoes || 0));
-            const totalCiclosFerramenta = 1 + nReaf;
-            const vidaUnidEfetiva = vidaUnidade === 'metros'
-                ? Math.max(0.001, (vidaPorAfiação * 1000) / Math.max(0.1, profundidadeMm))
-                : Math.max(0.001, vidaPorAfiação);
-            const furosPorFerramentaCompleta = vidaUnidEfetiva * totalCiclosFerramenta;
-            const qtdFerramentasNecessarias = Math.ceil(qtdFuros / furosPorFerramentaCompleta);
-            const reafiacoesEfetuadas = Math.max(0, qtdFerramentasNecessarias * nReaf);
+        function preencherVariantesComparacao(toolKey) {
+            const selVar = document.getElementById('comp-variante');
+            selVar.innerHTML = '';
+            const tool = dados[toolKey];
+            if (!tool || !tool.variantes) return;
 
-            const custoFerramentaLote = (qtdFerramentasNecessarias * precoBroca) + (reafiacoesEfetuadas * custoPorAfiação);
-            const custoFerramentaPorFuro = custoFerramentaLote / Math.max(1, qtdFuros);
-
-            return {
-                qtdFerramentasNecessarias,
-                furosPorFerramentaCompleta,
-                vidaUnidEfetiva,
-                reafiacoesEfetuadas,
-                custoFerramentaLote,
-                custoFerramentaPorFuro
-            };
-        }
-
-        function desenharGraficoBarrasComparacao(svgId, labelA, valA, colorA, labelB, valB, colorB, unitSuffix, decimals = 2) {
-            const svg = document.getElementById(svgId);
-            if (!svg) return;
-            svg.innerHTML = '';
-
-            const width = 300;
-            const height = 175;
-            const padLeft = 44;
-            const padRight = 16;
-            const padTop = 24;
-            const padBottom = 30;
-            const plotW = width - padLeft - padRight;
-            const plotH = height - padTop - padBottom;
-
-            const maxVal = Math.max(valA, valB, 0.01) * 1.18;
-            const yScale = v => padTop + plotH - (Math.max(0, v) / maxVal) * plotH;
-
-            for (let i = 0; i <= 3; i++) {
-                const tickVal = (i / 3) * maxVal;
-                const yPos = yScale(tickVal);
-                const grid = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                grid.setAttribute('x1', padLeft);
-                grid.setAttribute('y1', yPos);
-                grid.setAttribute('x2', width - padRight);
-                grid.setAttribute('y2', yPos);
-                grid.setAttribute('stroke', '#1e293b');
-                grid.setAttribute('stroke-width', '1');
-                svg.appendChild(grid);
-
-                const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                txt.setAttribute('x', padLeft - 5);
-                txt.setAttribute('y', yPos + 3);
-                txt.setAttribute('text-anchor', 'end');
-                txt.setAttribute('fill', '#94a3b8');
-                txt.setAttribute('font-size', '8.5');
-                txt.textContent = tickVal >= 1000 ? `${(tickVal / 1000).toFixed(1)}k` : tickVal.toFixed(tickVal >= 10 ? 0 : 1);
-                svg.appendChild(txt);
-            }
-
-            const axisX = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            axisX.setAttribute('x1', padLeft);
-            axisX.setAttribute('y1', padTop + plotH);
-            axisX.setAttribute('x2', width - padRight);
-            axisX.setAttribute('y2', padTop + plotH);
-            axisX.setAttribute('stroke', '#475569');
-            axisX.setAttribute('stroke-width', '1');
-            svg.appendChild(axisX);
-
-            const slotW = plotW / 2;
-            const barW = Math.min(54, slotW * 0.52);
-
-            const barras = [
-                { label: labelA, val: valA, color: colorA, cx: padLeft + slotW * 0.5 },
-                { label: labelB, val: valB, color: colorB, cx: padLeft + slotW * 1.5 }
-            ];
-
-            barras.forEach(b => {
-                const topY = yScale(b.val);
-                const barH = Math.max(2, (padTop + plotH) - topY);
-                const xPos = b.cx - barW / 2;
-
-                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('x', xPos);
-                rect.setAttribute('y', topY);
-                rect.setAttribute('width', barW);
-                rect.setAttribute('height', barH);
-                rect.setAttribute('rx', '4');
-                rect.setAttribute('fill', b.color);
-                svg.appendChild(rect);
-
-                const valTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                valTxt.setAttribute('x', b.cx);
-                valTxt.setAttribute('y', Math.max(12, topY - 5));
-                valTxt.setAttribute('text-anchor', 'middle');
-                valTxt.setAttribute('fill', '#f8fafc');
-                valTxt.setAttribute('font-size', '9.5');
-                valTxt.setAttribute('font-weight', 'bold');
-                valTxt.textContent = `${b.val.toFixed(decimals)}${unitSuffix}`;
-                svg.appendChild(valTxt);
-
-                const lblTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                lblTxt.setAttribute('x', b.cx);
-                lblTxt.setAttribute('y', padTop + plotH + 14);
-                lblTxt.setAttribute('text-anchor', 'middle');
-                lblTxt.setAttribute('fill', '#cbd5e1');
-                lblTxt.setAttribute('font-size', '9');
-                lblTxt.textContent = b.label;
-                svg.appendChild(lblTxt);
+            const varAtualPrincipal = getVarianteAtiva();
+            Object.keys(tool.variantes).forEach(vKey => {
+                const opt = document.createElement('option');
+                opt.value = vKey;
+                opt.text = vKey;
+                if (vKey === varAtualPrincipal) opt.selected = true;
+                selVar.appendChild(opt);
             });
         }
 
-        function desenharGraficoBreakEven(svgId, qtdFuros, custoFixoA, custoVarFuroA, custoFixoB, custoVarFuroB) {
+        function sincronizarCustoHoraComparacao() {
+            const val = parseFloat(document.getElementById('comp-custo-hora').value);
+            if (!isNaN(val) && val > 0) {
+                document.getElementById('custo-hora').value = val.toFixed(2);
+                atualizarCalculo();
+            }
+        }
+
+        function calcularVidaTotalFuros(vidaBase, vidaUnid, afiQtd, profundidadeMm, fatorCorteInterrompido = 1.0) {
+            const vidaEfetiva = Math.max(1, vidaBase || 1) * fatorCorteInterrompido;
+            const usosTotais = 1 + Math.max(0, afiQtd || 0);
+            if (vidaUnid === 'metros') {
+                const profM = Math.max(0.001, (profundidadeMm || 31) / 1000);
+                const furosPorUso = vidaEfetiva / profM;
+                return Math.max(1, furosPorUso * usosTotais);
+            }
+            return Math.max(1, vidaEfetiva * usosTotais);
+        }
+
+        function calcularCustoFerramentaLote(precoFerramenta, vidaBase, vidaUnid, afiQtd, afiCusto, qtdFuros, profundidadeMm, fatorCorteInterrompido = 1.0) {
+            const vidaTotalFuros = calcularVidaTotalFuros(vidaBase, vidaUnid, afiQtd, profundidadeMm, fatorCorteInterrompido);
+            const custoCicloVida = (precoFerramenta || 0) + (Math.max(0, afiQtd || 0) * (afiCusto || 0));
+            const custoFerramentaFuro = custoCicloVida / vidaTotalFuros;
+            const custoFerramentaLote = custoFerramentaFuro * qtdFuros;
+            return {
+                vidaTotalFuros,
+                vidaPorAfiaçãoFuros: vidaTotalFuros / (1 + Math.max(0, afiQtd || 0)),
+                custoCicloVida,
+                custoFerramentaFuro,
+                custoFerramentaLote
+            };
+        }
+
+        function renderGraficoBarrasComparacao(svgId, labelA, valA, corA, labelB, valB, corB, unidade) {
             const svg = document.getElementById(svgId);
             if (!svg) return;
             svg.innerHTML = '';
 
-            const width = 300;
-            const height = 175;
-            const padLeft = 44;
-            const padRight = 14;
-            const padTop = 16;
-            const padBottom = 28;
-            const plotW = width - padLeft - padRight;
-            const plotH = height - padTop - padBottom;
+            const W = 300, H = 175;
+            const padL = 46, padR = 16, padT = 22, padB = 28;
+            const plotW = W - padL - padR;
+            const plotH = H - padT - padB;
 
-            const nPontos = 20;
-            const passos = Math.max(1, qtdFuros);
-            const ptsA = [];
-            const ptsB = [];
-
-            for (let i = 0; i <= nPontos; i++) {
-                const furos = Math.round((i / nPontos) * passos);
-                const totA = custoFixoA + furos * custoVarFuroA;
-                const totB = custoFixoB + furos * custoVarFuroB;
-                ptsA.push({ x: furos, y: totA });
-                ptsB.push({ x: furos, y: totB });
-            }
-
-            const maxCost = Math.max(
-                ...ptsA.map(p => p.y),
-                ...ptsB.map(p => p.y),
-                1
-            ) * 1.12;
-
-            const xScale = f => padLeft + (f / passos) * plotW;
-            const yScale = c => padTop + plotH - (c / maxCost) * plotH;
+            const maxVal = Math.max(valA || 0, valB || 0, 0.01) * 1.18;
+            const scaleY = (v) => padT + plotH - (Math.max(0, v) / maxVal) * plotH;
 
             for (let i = 0; i <= 3; i++) {
-                const cTick = (i / 3) * maxCost;
-                const yPos = yScale(cTick);
-                const grid = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                grid.setAttribute('x1', padLeft);
-                grid.setAttribute('y1', yPos);
-                grid.setAttribute('x2', width - padRight);
-                grid.setAttribute('y2', yPos);
-                grid.setAttribute('stroke', '#1e293b');
-                grid.setAttribute('stroke-width', '1');
-                svg.appendChild(grid);
+                const tickVal = (maxVal * i) / 3;
+                const y = scaleY(tickVal);
+                const gl = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                gl.setAttribute("x1", padL); gl.setAttribute("y1", y);
+                gl.setAttribute("x2", W - padR); gl.setAttribute("y2", y);
+                gl.setAttribute("stroke", "#1e293b"); gl.setAttribute("stroke-width", "1");
+                svg.appendChild(gl);
 
-                const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                lbl.setAttribute('x', padLeft - 5);
-                lbl.setAttribute('y', yPos + 3);
-                lbl.setAttribute('text-anchor', 'end');
-                lbl.setAttribute('fill', '#94a3b8');
-                lbl.setAttribute('font-size', '8.5');
-                lbl.textContent = cTick >= 1000 ? `${(cTick / 1000).toFixed(1)}k` : `${cTick.toFixed(0)}€`;
-                svg.appendChild(lbl);
+                const tl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                tl.setAttribute("x", padL - 5); tl.setAttribute("y", y + 3);
+                tl.setAttribute("fill", "#94a3b8"); tl.setAttribute("font-size", "8.5");
+                tl.setAttribute("text-anchor", "end");
+                tl.textContent = tickVal >= 100 ? Math.round(tickVal) : tickVal.toFixed(1);
+                svg.appendChild(tl);
             }
 
-            const axisX = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            axisX.setAttribute('x1', padLeft);
-            axisX.setAttribute('y1', padTop + plotH);
-            axisX.setAttribute('x2', width - padRight);
-            axisX.setAttribute('y2', padTop + plotH);
-            axisX.setAttribute('stroke', '#475569');
-            axisX.setAttribute('stroke-width', '1');
+            const axis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            axis.setAttribute("x1", padL); axis.setAttribute("y1", padT + plotH);
+            axis.setAttribute("x2", W - padR); axis.setAttribute("y2", padT + plotH);
+            axis.setAttribute("stroke", "#475569"); axis.setAttribute("stroke-width", "1");
+            svg.appendChild(axis);
+
+            const barW = Math.min(54, plotW / 4.2);
+            const xA = padL + plotW * 0.27 - barW / 2;
+            const xB = padL + plotW * 0.73 - barW / 2;
+
+            const items = [
+                { x: xA, val: valA, cor: corA, leg: labelA },
+                { x: xB, val: valB, cor: corB, leg: labelB }
+            ];
+
+            items.forEach(it => {
+                const yTop = scaleY(it.val);
+                const hBar = Math.max(2, (padT + plotH) - yTop);
+
+                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                rect.setAttribute("x", it.x); rect.setAttribute("y", yTop);
+                rect.setAttribute("width", barW); rect.setAttribute("height", hBar);
+                rect.setAttribute("rx", "4");
+                rect.setAttribute("fill", it.cor);
+                svg.appendChild(rect);
+
+                const vTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                vTxt.setAttribute("x", it.x + barW / 2); vTxt.setAttribute("y", Math.max(12, yTop - 5));
+                vTxt.setAttribute("fill", "#f8fafc"); vTxt.setAttribute("font-size", "9.5");
+                vTxt.setAttribute("font-weight", "bold"); vTxt.setAttribute("text-anchor", "middle");
+                vTxt.textContent = `${it.val >= 100 ? it.val.toFixed(0) : it.val.toFixed(1)}${unidade}`;
+                svg.appendChild(vTxt);
+
+                const lTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                lTxt.setAttribute("x", it.x + barW / 2); lTxt.setAttribute("y", H - 9);
+                lTxt.setAttribute("fill", "#cbd5e1"); lTxt.setAttribute("font-size", "9");
+                lTxt.setAttribute("text-anchor", "middle");
+                lTxt.textContent = it.leg;
+                svg.appendChild(lTxt);
+            });
+        }
+
+        function renderGraficoBreakEven(svgId, custoTotalA, custoTotalB, qtdFuros) {
+            const svg = document.getElementById(svgId);
+            if (!svg) return;
+            svg.innerHTML = '';
+
+            const W = 300, H = 175;
+            const padL = 46, padR = 16, padT = 22, padB = 28;
+            const plotW = W - padL - padR;
+            const plotH = H - padT - padB;
+
+            const passos = 10;
+            const maxCusto = Math.max(custoTotalA || 0, custoTotalB || 0, 1) * 1.12;
+
+            const scaleX = (idx) => padL + (idx / passos) * plotW;
+            const scaleY = (v) => padT + plotH - (Math.max(0, v) / maxCusto) * plotH;
+
+            for (let i = 0; i <= 3; i++) {
+                const tickVal = (maxCusto * i) / 3;
+                const y = scaleY(tickVal);
+                const gl = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                gl.setAttribute("x1", padL); gl.setAttribute("y1", y);
+                gl.setAttribute("x2", W - padR); gl.setAttribute("y2", y);
+                gl.setAttribute("stroke", "#1e293b"); gl.setAttribute("stroke-width", "1");
+                svg.appendChild(gl);
+
+                const tl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                tl.setAttribute("x", padL - 5); tl.setAttribute("y", y + 3);
+                tl.setAttribute("fill", "#94a3b8"); tl.setAttribute("font-size", "8.5");
+                tl.setAttribute("text-anchor", "end");
+                tl.textContent = `${Math.round(tickVal)}€`;
+                svg.appendChild(tl);
+            }
+
+            const axisX = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            axisX.setAttribute("x1", padL); axisX.setAttribute("y1", padT + plotH);
+            axisX.setAttribute("x2", W - padR); axisX.setAttribute("y2", padT + plotH);
+            axisX.setAttribute("stroke", "#475569"); axisX.setAttribute("stroke-width", "1");
             svg.appendChild(axisX);
 
-            const buildPath = (pts) => pts.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${xScale(p.x).toFixed(1)} ${yScale(p.y).toFixed(1)}`).join(' ');
+            const axisY = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            axisY.setAttribute("x1", padL); axisY.setAttribute("y1", padT);
+            axisY.setAttribute("x2", padL); axisY.setAttribute("y2", padT + plotH);
+            axisY.setAttribute("stroke", "#475569"); axisY.setAttribute("stroke-width", "1");
+            svg.appendChild(axisY);
 
-            const pathA = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            pathA.setAttribute('d', buildPath(ptsA));
-            pathA.setAttribute('fill', 'none');
-            pathA.setAttribute('stroke', '#38bdf8');
-            pathA.setAttribute('stroke-width', '2.2');
-            svg.appendChild(pathA);
-
-            const pathB = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            pathB.setAttribute('d', buildPath(ptsB));
-            pathB.setAttribute('fill', 'none');
-            pathB.setAttribute('stroke', '#fbbf24');
-            pathB.setAttribute('stroke-width', '2.2');
-            svg.appendChild(pathB);
-
-            const denom = custoVarFuroB - custoVarFuroA;
-            if (Math.abs(denom) > 1e-9) {
-                const fBe = (custoFixoA - custoFixoB) / denom;
-                if (fBe > 0 && fBe <= passos) {
-                    const yBe = custoFixoA + fBe * custoVarFuroA;
-                    const cx = xScale(fBe);
-                    const cy = yScale(yBe);
-
-                    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    dot.setAttribute('cx', cx);
-                    dot.setAttribute('cy', cy);
-                    dot.setAttribute('r', '4');
-                    dot.setAttribute('fill', '#34d399');
-                    dot.setAttribute('stroke', '#0f172a');
-                    dot.setAttribute('stroke-width', '1.2');
-                    svg.appendChild(dot);
-
-                    const beTxt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                    beTxt.setAttribute('x', Math.min(width - padRight - 28, Math.max(padLeft + 28, cx)));
-                    beTxt.setAttribute('y', Math.max(14, cy - 7));
-                    beTxt.setAttribute('text-anchor', 'middle');
-                    beTxt.setAttribute('fill', '#6ee7b7');
-                    beTxt.setAttribute('font-size', '8.5');
-                    beTxt.setAttribute('font-weight', 'bold');
-                    beTxt.textContent = `${Math.round(fBe)} furos`;
-                    svg.appendChild(beTxt);
-                }
+            let ptsA = "", ptsB = "";
+            for (let i = 0; i <= passos; i++) {
+                const frac = i / passos;
+                const px = scaleX(i);
+                const pyA = scaleY(custoTotalA * frac);
+                const pyB = scaleY(custoTotalB * frac);
+                ptsA += `${px},${pyA} `;
+                ptsB += `${px},${pyB} `;
             }
 
-            const t0 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            t0.setAttribute('x', padLeft);
-            t0.setAttribute('y', padTop + plotH + 14);
-            t0.setAttribute('text-anchor', 'start');
-            t0.setAttribute('fill', '#94a3b8');
-            t0.setAttribute('font-size', '8.5');
-            t0.textContent = '0';
-            svg.appendChild(t0);
+            const polyA = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            polyA.setAttribute("fill", "none"); polyA.setAttribute("stroke", "#38bdf8");
+            polyA.setAttribute("stroke-width", "2.2"); polyA.setAttribute("points", ptsA.trim());
+            svg.appendChild(polyA);
 
-            const tMid = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            tMid.setAttribute('x', padLeft + plotW / 2);
-            tMid.setAttribute('y', padTop + plotH + 14);
-            tMid.setAttribute('text-anchor', 'middle');
-            tMid.setAttribute('fill', '#94a3b8');
-            tMid.setAttribute('font-size', '8.5');
-            tMid.textContent = `${Math.round(passos / 2)}`;
-            svg.appendChild(tMid);
+            const polyB = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+            polyB.setAttribute("fill", "none"); polyB.setAttribute("stroke", "#fbbf24");
+            polyB.setAttribute("stroke-width", "2.2"); polyB.setAttribute("stroke-dasharray", "4,2");
+            polyB.setAttribute("points", ptsB.trim());
+            svg.appendChild(polyB);
 
-            const tEnd = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            tEnd.setAttribute('x', width - padRight);
-            tEnd.setAttribute('y', padTop + plotH + 14);
-            tEnd.setAttribute('text-anchor', 'end');
-            tEnd.setAttribute('fill', '#94a3b8');
-            tEnd.setAttribute('font-size', '8.5');
-            tEnd.textContent = `${passos} furos`;
-            svg.appendChild(tEnd);
+            const lblIni = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            lblIni.setAttribute("x", padL); lblIni.setAttribute("y", H - 9);
+            lblIni.setAttribute("fill", "#94a3b8"); lblIni.setAttribute("font-size", "8.5");
+            lblIni.textContent = "0 furos";
+            svg.appendChild(lblIni);
+
+            const lblFim = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            lblFim.setAttribute("x", W - padR); lblFim.setAttribute("y", H - 9);
+            lblFim.setAttribute("fill", "#94a3b8"); lblFim.setAttribute("font-size", "8.5");
+            lblFim.setAttribute("text-anchor", "end");
+            lblFim.textContent = `${qtdFuros} furos`;
+            svg.appendChild(lblFim);
         }
 
         function atualizarComparacao() {
-            const atualBrocaKey = document.getElementById('broca').value;
+            const brocaAtualKey = document.getElementById('broca').value;
             const grupoEfetivoKey = getGrupoEfetivo();
-            const compKey = document.getElementById('comp-ferramenta').value;
-            const compVarKey = document.getElementById('comp-variante').value;
+            const fonteComp = document.getElementById('comp-ferramenta').value;
+            const varCompKey = document.getElementById('comp-variante').value;
             const avisoEl = document.getElementById('comp-aviso-grupo');
-            const corpoEl = document.getElementById('comp-tabela-corpo');
             const capEl = document.getElementById('comp-capacidade-texto');
             const beEl = document.getElementById('comp-breakeven-texto');
-            const destaqueLoteEl = document.getElementById('comp-resumo-lote-destaque');
-            const subtituloEl = document.getElementById('res-comp-subtitulo');
+            const destEl = document.getElementById('comp-resumo-lote-destaque');
+            const subEl = document.getElementById('res-comp-subtitulo');
+            const corpo = document.getElementById('comp-tabela-corpo');
+            const btnUsar = document.getElementById('btn-usar-comparada');
 
-            const ctxBase = obterContextoCalculoAtual();
-            const custoHoraComp = obterCustoHoraComparacao();
-            const ctx = { ...ctxBase, custoHora: custoHoraComp };
-            const varAtual = getVarianteAtiva();
+            const ctx = obterContextoCalculoAtual();
+            const varAtualPrincipal = getVarianteAtiva();
+            const calcAtual = (brocaAtualKey && dados[brocaAtualKey])
+                ? calcularMetricasFerramenta(brocaAtualKey, varAtualPrincipal, grupoEfetivoKey, ctx)
+                : null;
 
-            let precoAtual = parseFloat(document.getElementById('comp-preco-atual').value);
-            let vidaAtual = parseFloat(document.getElementById('comp-vida-atual').value);
+            const precoAtual = parseFloat(document.getElementById('comp-preco-atual').value) || 0;
+            const vidaAtual = parseFloat(document.getElementById('comp-vida-atual').value) || 1;
             const vidaUnidAtual = document.getElementById('comp-vida-unid-atual').value;
-            let afiQtdAtual = parseInt(document.getElementById('comp-afi-qtd-atual').value, 10);
-            let afiCustoAtual = parseFloat(document.getElementById('comp-afi-custo-atual').value);
+            const afiQtdAtual = parseInt(document.getElementById('comp-afi-qtd-atual').value, 10) || 0;
+            const afiCustoAtual = parseFloat(document.getElementById('comp-afi-custo-atual').value) || 0;
 
-            let precoAlvo = parseFloat(document.getElementById('comp-preco-alvo').value);
-            let vidaAlvo = parseFloat(document.getElementById('comp-vida-alvo').value);
+            const precoAlvo = parseFloat(document.getElementById('comp-preco-alvo').value) || 0;
+            const vidaAlvo = parseFloat(document.getElementById('comp-vida-alvo').value) || 1;
             const vidaUnidAlvo = document.getElementById('comp-vida-unid-alvo').value;
-            let afiQtdAlvo = parseInt(document.getElementById('comp-afi-qtd-alvo').value, 10);
-            let afiCustoAlvo = parseFloat(document.getElementById('comp-afi-custo-alvo').value);
+            const afiQtdAlvo = parseInt(document.getElementById('comp-afi-qtd-alvo').value, 10) || 0;
+            const afiCustoAlvo = parseFloat(document.getElementById('comp-afi-custo-alvo').value) || 0;
 
-            if (isNaN(precoAtual) || precoAtual < 0) precoAtual = 0;
-            if (isNaN(vidaAtual) || vidaAtual <= 0) vidaAtual = 1;
-            if (isNaN(afiQtdAtual) || afiQtdAtual < 0) afiQtdAtual = 0;
-            if (isNaN(afiCustoAtual) || afiCustoAtual < 0) afiCustoAtual = 0;
+            const fatorCorteInterrompido = corteInterrompidoAtivo ? 0.70 : 1.0;
 
-            if (isNaN(precoAlvo) || precoAlvo < 0) precoAlvo = 0;
-            if (isNaN(vidaAlvo) || vidaAlvo <= 0) vidaAlvo = 1;
-            if (isNaN(afiQtdAlvo) || afiQtdAlvo < 0) afiQtdAlvo = 0;
-            if (isNaN(afiCustoAlvo) || afiCustoAlvo < 0) afiCustoAlvo = 0;
+            const inpMetrosCont = document.getElementById('comp-metros-continuo');
+            const spanEquivCont = document.getElementById('comp-equiv-continuo');
+            let metrosContinuoRef = parseFloat(inpMetrosCont?.value) || 90;
+            if (metrosContinuoRef <= 0) metrosContinuoRef = 90;
+            const furosEquivContinuo = Math.max(1, Math.round((metrosContinuoRef * 1000) / Math.max(1, ctx.profundidade)));
+            if (spanEquivCont) {
+                spanEquivCont.innerText = `(~${furosEquivContinuo} furos)`;
+            }
 
-            const mAtual = calcularMetricasFerramenta(atualBrocaKey, varAtual, grupoEfetivoKey, ctx);
-            if (!mAtual) {
-                avisoEl.innerText = "Selecione um modelo de ferramenta válido para comparar.";
+            const requerPiloto = document.getElementById('comp-requer-piloto')?.checked || false;
+            const tempoPilotoSeg = parseFloat(document.getElementById('comp-tempo-piloto-seg')?.value) || 0;
+            const custoPilotoFuro = parseFloat(document.getElementById('comp-custo-piloto-furo')?.value) || 0;
+            const usaBrocaCanhao = document.getElementById('comp-usa-broca-canhao')?.checked || false;
+            const tempoParagemAfiMin = parseFloat(document.getElementById('comp-tempo-paragem-afi-min')?.value) || 0;
+
+            let calcAlvo = null;
+            let nomeAlvoExib = 'Ferramenta Comparada';
+
+            if (fonteComp === '__CLIENTE__') {
+                nomeAlvoExib = (document.getElementById('comp-cliente-nome').value || '').trim() || 'Ferramenta do Cliente';
+                const vcCli = parseFloat(document.getElementById('comp-cliente-vc').value) || 70;
+                const fCli = parseFloat(document.getElementById('comp-cliente-f').value) || 0.02;
+
+                const vidaEstimadaFurosAlvo = calcularVidaTotalFuros(vidaAlvo, vidaUnidAlvo, afiQtdAlvo, ctx.profundidade, fatorCorteInterrompido);
+                const furosPorAfiaçãoCanhao = Math.max(1, Math.round(vidaEstimadaFurosAlvo / (1 + Math.max(0, afiQtdAlvo))));
+
+                calcAlvo = calcularMetricasManualCliente(nomeAlvoExib, vcCli, fCli, grupoEfetivoKey, {
+                    ...ctx,
+                    requerPiloto,
+                    tempoPilotoSeg,
+                    custoPilotoFuro,
+                    usaBrocaCanhao,
+                    tempoParagemAfiMin,
+                    furosPorAfiação: furosPorAfiaçãoCanhao
+                });
+
+                const resumoCanhaoEl = document.getElementById('comp-canhao-resumo');
+                if (resumoCanhaoEl) {
+                    resumoCanhaoEl.innerText = `${calcAlvo.numParagensLote} paragem(ns) · +${calcAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min`;
+                }
+                btnUsar.classList.add('hidden');
+            } else {
+                calcAlvo = (fonteComp && dados[fonteComp])
+                    ? calcularMetricasFerramenta(fonteComp, varCompKey, grupoEfetivoKey, ctx)
+                    : null;
+                nomeAlvoExib = calcAlvo ? `${calcAlvo.nome} (${varCompKey})` : 'Ferramenta Comparada';
+                btnUsar.classList.remove('hidden');
+            }
+
+            const nomeAtualExib = calcAtual ? `${calcAtual.nome} (${varAtualPrincipal})` : 'Ferramenta Atual';
+            document.getElementById('comp-th-atual').innerText = nomeAtualExib;
+            document.getElementById('comp-th-alvo').innerText = nomeAlvoExib;
+            if (subEl) {
+                subEl.innerText = `${nomeAtualExib}  vs.  ${nomeAlvoExib}  ·  Lote: ${ctx.qtdFuros} furos (Ø ${ctx.diametro.toFixed(2)} mm × ${ctx.profundidade.toFixed(0)} mm)`;
+            }
+
+            if (!calcAtual || !calcAlvo) {
+                avisoEl.innerText = "Selecione um modelo de ferramenta válido e grupo de material para comparar.";
                 avisoEl.classList.remove('hidden');
+                corpo.innerHTML = '';
                 return;
             }
 
-            let mAlvo = null;
-            let labelAlvo = "Ferramenta Comparada";
-
-            if (compKey === '__CLIENTE_MANUAL__') {
-                const nomeCli = document.getElementById('comp-cliente-nome').value.trim() || "Ferramenta do Cliente";
-                let vcCli = parseFloat(document.getElementById('comp-cliente-vc').value);
-                let fCli = parseFloat(document.getElementById('comp-cliente-f').value);
-                if (isNaN(vcCli) || vcCli <= 0) vcCli = 70;
-                if (isNaN(fCli) || fCli <= 0) fCli = 0.02;
-
-                const furosPorCicloCliente = vidaUnidAlvo === 'metros'
-                    ? Math.max(1, Math.round((vidaAlvo * 1000) / Math.max(0.1, ctx.profundidade)))
-                    : Math.max(1, Math.round(vidaAlvo));
-
-                const ctxCliente = { ...ctx, furosPorAfiação: furosPorCicloCliente };
-                mAlvo = calcularMetricasManualCliente(nomeCli, vcCli, fCli, grupoEfetivoKey, ctxCliente);
-                labelAlvo = nomeCli;
-                avisoEl.classList.add('hidden');
-            } else {
-                mAlvo = calcularMetricasFerramenta(compKey, compVarKey, grupoEfetivoKey, ctx);
-                if (!mAlvo) {
-                    avisoEl.innerText = `A ferramenta "${dados[compKey]?.nome || compKey}" não possui parâmetros para o grupo ${grupoEfetivoKey}.`;
-                    avisoEl.classList.remove('hidden');
-                    return;
+            const avisos = [];
+            if (ctx.profundidade > calcAtual.limiteNominalMm) {
+                avisos.push(`Ferramenta atual excede o limite nominal (${calcAtual.limiteNominalMm.toFixed(1)} mm) para ${ctx.profundidade.toFixed(0)} mm.`);
+            }
+            if (fonteComp !== '__CLIENTE__' && ctx.profundidade > calcAlvo.limiteNominalMm) {
+                avisos.push(`Ferramenta comparada excede o limite nominal (${calcAlvo.limiteNominalMm.toFixed(1)} mm) para ${ctx.profundidade.toFixed(0)} mm.`);
+            }
+            if (corteInterrompidoAtivo) {
+                avisos.push(`Corte interrompido ativo (-30% de vida útil por impacto). Referência contínuo: ${metrosContinuoRef.toFixed(0)} m (~${furosEquivContinuo} furos).`);
+            }
+            if (fonteComp === '__CLIENTE__' && requerPiloto) {
+                avisos.push(`Furo-piloto ativo: +${tempoPilotoSeg.toFixed(0)} s/furo e +${custoPilotoFuro.toFixed(3)} €/furo.`);
+                if (usaBrocaCanhao) {
+                    avisos.push(`Broca canhão sem gémea: ${calcAlvo.numParagensLote} paragem(ns) de ${tempoParagemAfiMin.toFixed(0)} min (+${calcAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min no lote).`);
                 }
+            }
+
+            if (avisos.length > 0) {
+                avisoEl.innerText = avisos.join(" | ");
+                avisoEl.classList.remove('hidden');
+            } else {
                 avisoEl.classList.add('hidden');
-                labelAlvo = `${mAlvo.nome} (${compVarKey})`;
             }
 
-            const labelAtual = `${mAtual.nome} (${varAtual})`;
-            document.getElementById('comp-th-atual').innerText = labelAtual;
-            document.getElementById('comp-th-alvo').innerText = labelAlvo;
-            if (subtituloEl) {
-                subtituloEl.innerText = `${labelAtual}  vs.  ${labelAlvo}  ·  Lote: ${ctx.qtdFuros} furos (Ø${ctx.diametro.toFixed(1)} mm × ${ctx.profundidade.toFixed(1)} mm)`;
-            }
+            const custoFerrAtual = calcularCustoFerramentaLote(precoAtual, vidaAtual, vidaUnidAtual, afiQtdAtual, afiCustoAtual, ctx.qtdFuros, ctx.profundidade, fatorCorteInterrompido);
+            const custoFerrAlvo = calcularCustoFerramentaLote(precoAlvo, vidaAlvo, vidaUnidAlvo, afiQtdAlvo, afiCustoAlvo, ctx.qtdFuros, ctx.profundidade, fatorCorteInterrompido);
 
-            const refContinuoInput = parseFloat(document.getElementById('comp-metros-continuo')?.value);
-            const refContinuoMetros = (!isNaN(refContinuoInput) && refContinuoInput > 0) ? refContinuoInput : 90;
-            const furosEquivContinuo = Math.max(1, Math.round((refContinuoMetros * 1000) / Math.max(0.1, ctx.profundidade)));
-            const eqContEl = document.getElementById('comp-equiv-continuo');
-            if (eqContEl) {
-                eqContEl.innerText = `(~${furosEquivContinuo} furos)`;
-            }
+            const custoPilotoLoteAlvo = calcAlvo.custoPilotoLote || 0;
+            const custoTotalAtual = calcAtual.custoMaqLote + custoFerrAtual.custoFerramentaLote;
+            const custoTotalAlvo = calcAlvo.custoMaqLote + custoFerrAlvo.custoFerramentaLote + custoPilotoLoteAlvo;
+            const custoTotalFuroAtual = custoTotalAtual / ctx.qtdFuros;
+            const custoTotalFuroAlvo = custoTotalAlvo / ctx.qtdFuros;
 
-            const fatorInterrompido = corteInterrompidoAtivo ? 0.55 : 1.0;
-            const vidaAtualEfetiva = vidaAtual * fatorInterrompido;
-            const vidaAlvoEfetiva = vidaAlvo * fatorInterrompido;
-
-            const ferrAtual = calcularCustoFerramentaLote(precoAtual, vidaAtualEfetiva, vidaUnidAtual, afiQtdAtual, afiCustoAtual, ctx.qtdFuros, ctx.profundidade);
-            const ferrAlvo = calcularCustoFerramentaLote(precoAlvo, vidaAlvoEfetiva, vidaUnidAlvo, afiQtdAlvo, afiCustoAlvo, ctx.qtdFuros, ctx.profundidade);
-
-            const custoPilotoFuroAlvo = mAlvo.custoPilotoEfetivo || 0;
-            const custoPilotoLoteAlvo = mAlvo.custoPilotoLote || 0;
-
-            const custoTotalAtual = mAtual.custoMaqLote + ferrAtual.custoFerramentaLote;
-            const custoTotalAlvo = mAlvo.custoMaqLote + ferrAlvo.custoFerramentaLote + custoPilotoLoteAlvo;
-
-            const custoFuroAtual = custoTotalAtual / Math.max(1, ctx.qtdFuros);
-            const custoFuroAlvo = custoTotalAlvo / Math.max(1, ctx.qtdFuros);
-
-            const diffTempoMin = mAtual.tempoTotalMin - mAlvo.tempoTotalMin;
+            const diffTempoMin = calcAtual.tempoTotalMin - calcAlvo.tempoTotalMin;
             const diffCustoTotal = custoTotalAtual - custoTotalAlvo;
 
-            const canhaoResumoEl = document.getElementById('comp-canhao-resumo');
-            if (canhaoResumoEl) {
-                if (mAlvo.canhaoAtivo) {
-                    canhaoResumoEl.innerText = `${mAlvo.numParagensLote} paragem(ns) · +${mAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min (${mAlvo.tempoParagemMinVal} min/paragem)`;
+            if (Math.abs(diffTempoMin) < 0.05) {
+                capEl.innerText = `Tempos equivalentes no lote (${calcAtual.tempoTotalMin.toFixed(1)} min).`;
+            } else if (diffTempoMin > 0) {
+                capEl.innerText = `MAPAL poupa ${diffTempoMin.toFixed(1)} min no lote (${calcAtual.tempoTotalMin.toFixed(1)} min vs ${calcAlvo.tempoTotalMin.toFixed(1)} min).`;
+            } else {
+                capEl.innerText = `Ferramenta comparada é ${Math.abs(diffTempoMin).toFixed(1)} min mais rápida no lote (${calcAlvo.tempoTotalMin.toFixed(1)} min vs ${calcAtual.tempoTotalMin.toFixed(1)} min).`;
+            }
+
+            const custoFixoPorFuroAtual = (calcAtual.custoMaqFuro) + (custoFerrAtual.custoFerramentaFuro);
+            const custoFixoPorFuroAlvo = (calcAlvo.custoMaqFuro) + (custoFerrAlvo.custoFerramentaFuro) + (calcAlvo.custoPilotoEfetivo || 0);
+            const diferencaCustoPorFuro = custoFixoPorFuroAlvo - custoFixoPorFuroAtual;
+            const diferencaInvestimentoInicial = precoAtual - precoAlvo;
+
+            if (diferencaInvestimentoInicial > 0 && diferencaCustoPorFuro > 0) {
+                const furosBreakEven = diferencaInvestimentoInicial / diferencaCustoPorFuro;
+                beEl.innerText = `MAPAL paga a diferença inicial aos ~${Math.ceil(furosBreakEven)} furos (custo/furo ${diferencaCustoPorFuro.toFixed(3)} € menor).`;
+            } else if (diferencaInvestimentoInicial < 0 && diferencaCustoPorFuro < 0) {
+                const furosBreakEven = Math.abs(diferencaInvestimentoInicial) / Math.abs(diferencaCustoPorFuro);
+                beEl.innerText = `Ferramenta comparada paga a diferença inicial aos ~${Math.ceil(furosBreakEven)} furos.`;
+            } else if (diffCustoTotal > 0.01) {
+                beEl.innerText = `MAPAL já é mais económica no lote em ${diffCustoTotal.toFixed(2)} € (sem ponto de reversão desfavorável).`;
+            } else if (diffCustoTotal < -0.01) {
+                beEl.innerText = `Ferramenta comparada mantém menor custo no lote (${Math.abs(diffCustoTotal).toFixed(2)} € de vantagem).`;
+            } else {
+                beEl.innerText = `Custos empatados no lote de ${ctx.qtdFuros} furos.`;
+            }
+
+            if (destEl) {
+                if (diffCustoTotal > 0.01) {
+                    destEl.innerText = `Poupança de ${diffCustoTotal.toFixed(2)} € com MAPAL no lote (${custoTotalAtual.toFixed(2)} € vs ${custoTotalAlvo.toFixed(2)} €).`;
+                } else if (diffCustoTotal < -0.01) {
+                    destEl.innerText = `Ferramenta comparada fica ${Math.abs(diffCustoTotal).toFixed(2)} € mais barata no lote (${custoTotalAlvo.toFixed(2)} € vs ${custoTotalAtual.toFixed(2)} €).`;
                 } else {
-                    canhaoResumoEl.innerText = `0 paragens · +0.0 min`;
+                    destEl.innerText = `Custo total idêntico no lote (${custoTotalAtual.toFixed(2)} €).`;
                 }
             }
 
-            if (diffTempoMin > 0) {
-                capEl.innerHTML = `Ferramenta MAPAL reduz o tempo em <span class="text-emerald-400 font-bold">${diffTempoMin.toFixed(1)} min</span> (${((diffTempoMin / Math.max(0.1, mAlvo.tempoTotalMin)) * 100).toFixed(1)}% mais rápido no lote).`;
-            } else if (diffTempoMin < 0) {
-                capEl.innerHTML = `Ferramenta comparada é <span class="text-amber-400 font-bold">${Math.abs(diffTempoMin).toFixed(1)} min mais rápida</span> no lote.`;
-            } else {
-                capEl.innerText = "Tempos de ciclo equivalentes no lote.";
-            }
+            renderGraficoBarrasComparacao('svg-comp-custo', 'MAPAL', custoTotalAtual, '#3b82f6', 'Comparada', custoTotalAlvo, '#f43f5e', '€');
+            renderGraficoBarrasComparacao('svg-comp-tempo', 'MAPAL', calcAtual.tempoTotalMin, '#10b981', 'Comparada', calcAlvo.tempoTotalMin, '#f59e0b', 'm');
+            renderGraficoBreakEven('svg-comp-breakeven', custoTotalAtual, custoTotalAlvo, ctx.qtdFuros);
 
-            if (diffCustoTotal > 0) {
-                destaqueLoteEl.innerHTML = `Ferramenta MAPAL poupa <span class="text-emerald-400 font-bold">${diffCustoTotal.toFixed(2)} €</span> no lote (${custoTotalAtual.toFixed(2)} € vs. ${custoTotalAlvo.toFixed(2)} €).`;
-            } else if (diffCustoTotal < 0) {
-                destaqueLoteEl.innerHTML = `Ferramenta comparada fica <span class="text-amber-400 font-bold">${Math.abs(diffCustoTotal).toFixed(2)} € mais barata</span> no lote (${custoTotalAlvo.toFixed(2)} € vs. ${custoTotalAtual.toFixed(2)} €).`;
-            } else {
-                destaqueLoteEl.innerText = `Custo total idêntico no lote (${custoTotalAtual.toFixed(2)} €).`;
-            }
-
-            const custoHoraSeg = custoHoraComp / 3600;
-            const custoVarMaqFuroA = mAtual.tempoFuroSeg * custoHoraSeg;
-            const custoVarMaqFuroB = mAlvo.tempoFuroSeg * custoHoraSeg;
-            const custoVarTotalFuroA = custoVarMaqFuroA + ferrAtual.custoFerramentaPorFuro;
-            const custoVarTotalFuroB = custoVarMaqFuroB + ferrAlvo.custoFerramentaPorFuro + custoPilotoFuroAlvo;
-            const custoFixoA = 0;
-            const custoFixoB = 0;
-
-            const denomBE = custoVarTotalFuroB - custoVarTotalFuroA;
-            if (Math.abs(denomBE) < 1e-9) {
-                beEl.innerText = "Sem ponto de equilíbrio distinto (custos unitários paralelos).";
-            } else {
-                const furosBE = (custoFixoA - custoFixoB) / denomBE;
-                if (furosBE > 0) {
-                    const metrosBE = (furosBE * ctx.profundidade) / 1000;
-                    const vencedorAposBE = custoVarTotalFuroA < custoVarTotalFuroB ? labelAtual : labelAlvo;
-                    beEl.innerHTML = `Equilíbrio em <span class="text-amber-300 font-bold">${Math.round(furosBE)} furos</span> (${metrosBE.toFixed(1)} m) — a partir daí, <span class="text-emerald-300 font-semibold">${vencedorAposBE}</span> é mais económica.`;
-                } else {
-                    const maisEconomicaSempre = custoVarTotalFuroA < custoVarTotalFuroB ? labelAtual : labelAlvo;
-                    beEl.innerHTML = `<span class="text-emerald-300 font-bold">${maisEconomicaSempre}</span> é mais económica desde o 1.º furo (não há inversão).`;
-                }
-            }
-
-            desenharGraficoBarrasComparacao(
-                'svg-comp-custo',
-                'MAPAL', custoTotalAtual, '#3b82f6',
-                'Comparada', custoTotalAlvo, '#f43f5e',
-                '€', 2
-            );
-
-            desenharGraficoBarrasComparacao(
-                'svg-comp-tempo',
-                'MAPAL', mAtual.tempoTotalMin, '#10b981',
-                'Comparada', mAlvo.tempoTotalMin, '#f59e0b',
-                'm', 1
-            );
-
-            desenharGraficoBreakEven(
-                'svg-comp-breakeven',
-                ctx.qtdFuros,
-                custoFixoA, custoVarTotalFuroA,
-                custoFixoB, custoVarTotalFuroB
-            );
-
-            const fmtDiff = (valA, valB, suffix = '', dec = 2, inverterCor = false) => {
-                const diff = valB - valA;
-                if (Math.abs(diff) < Math.pow(10, -dec) / 2) return `<span class="text-slate-400">0${suffix}</span>`;
-                const sinal = diff > 0 ? '+' : '';
-                const bom = inverterCor ? (diff > 0) : (diff < 0);
-                const cor = bom ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold';
-                return `<span class="${cor}">${sinal}${diff.toFixed(dec)}${suffix}</span>`;
+            window._ultimoComparativo = {
+                nomeAtual: nomeAtualExib,
+                nomeAlvo: nomeAlvoExib,
+                isCliente: fonteComp === '__CLIENTE__',
+                corteInterrompido: corteInterrompidoAtivo,
+                metrosContinuoRef,
+                furosEquivContinuo,
+                requerPiloto: fonteComp === '__CLIENTE__' ? requerPiloto : false,
+                tempoPilotoSeg: fonteComp === '__CLIENTE__' ? tempoPilotoSeg : 0,
+                custoPilotoFuro: fonteComp === '__CLIENTE__' ? custoPilotoFuro : 0,
+                usaBrocaCanhao: fonteComp === '__CLIENTE__' ? usaBrocaCanhao : false,
+                tempoParagemAfiMin: fonteComp === '__CLIENTE__' ? tempoParagemAfiMin : 0,
+                numParagensCanhao: calcAlvo.numParagensLote || 0,
+                tempoParagemCanhaoLoteMin: calcAlvo.tempoParagemCanhaoLoteMin || 0,
+                custoPilotoLote: custoPilotoLoteAlvo,
+                qtdFuros: ctx.qtdFuros,
+                vcAtual: calcAtual.vcFinal, vcAlvo: calcAlvo.vcFinal,
+                fAtual: calcAtual.fFinal, fAlvo: calcAlvo.fFinal,
+                nAtual: calcAtual.n, nAlvo: calcAlvo.n,
+                vfAtual: calcAtual.vf, vfAlvo: calcAlvo.vf,
+                tempoFuroAtual: calcAtual.tempoFuroSeg, tempoFuroAlvo: calcAlvo.tempoFuroSeg,
+                tempoTotalAtual: calcAtual.tempoTotalMin, tempoTotalAlvo: calcAlvo.tempoTotalMin,
+                vidaFurosAtual: custoFerrAtual.vidaTotalFuros, vidaFurosAlvo: custoFerrAlvo.vidaTotalFuros,
+                afiQtdAtual, afiQtdAlvo,
+                custoFerrLoteAtual: custoFerrAtual.custoFerramentaLote, custoFerrLoteAlvo: custoFerrAlvo.custoFerramentaLote,
+                custoMaqLoteAtual: calcAtual.custoMaqLote, custoMaqLoteAlvo: calcAlvo.custoMaqLote,
+                custoTotalAtual, custoTotalAlvo,
+                custoTotalFuroAtual, custoTotalFuroAlvo,
+                diffTempoMin, diffCustoTotal
             };
 
-            const vidaAtualTxt = `${vidaAtualEfetiva.toFixed(vidaUnidAtual === 'metros' ? 1 : 0)} ${vidaUnidAtual} × (1+${afiQtdAtual} reaf.) = ${ferrAtual.furosPorFerramentaCompleta.toFixed(0)} furos`;
-            const vidaAlvoTxt = `${vidaAlvoEfetiva.toFixed(vidaUnidAlvo === 'metros' ? 1 : 0)} ${vidaUnidAlvo} × (1+${afiQtdAlvo} reaf.) = ${ferrAlvo.furosPorFerramentaCompleta.toFixed(0)} furos`;
+            const fmtDiff = (vAtual, vAlvo, dec = 1, unit = '', inverterSinal = false) => {
+                const d = inverterSinal ? (vAlvo - vAtual) : (vAtual - vAlvo);
+                const sinal = d > 0 ? '+' : '';
+                return `${sinal}${d.toFixed(dec)}${unit}`;
+            };
 
-            const linhas = [
-                ["Vc (m/min)", `${Math.round(mAtual.vcFinal)}`, `${Math.round(mAlvo.vcFinal)}`, fmtDiff(mAtual.vcFinal, mAlvo.vcFinal, ' m/min', 0, true)],
-                ["Avanço f (mm/rot)", `${mAtual.fFinal.toFixed(4)}`, `${mAlvo.fFinal.toFixed(4)}`, fmtDiff(mAtual.fFinal, mAlvo.fFinal, '', 4, true)],
-                ["Rotações n (rpm)", `${mAtual.n}`, `${mAlvo.n}`, fmtDiff(mAtual.n, mAlvo.n, '', 0, true)],
-                ["Avanço Trabalho vf (mm/min)", `${mAtual.vf}`, `${mAlvo.vf}`, fmtDiff(mAtual.vf, mAlvo.vf, '', 0, true)],
-                ["Tempo / Furo (seg)", `${mAtual.tempoFuroSeg.toFixed(1)} s`, `${mAlvo.tempoFuroSeg.toFixed(1)} s`, fmtDiff(mAtual.tempoFuroSeg, mAlvo.tempoFuroSeg, ' s', 1, false)],
-                ["Tempo Total Lote (min)", `${mAtual.tempoTotalMin.toFixed(1)} min`, `${mAlvo.tempoTotalMin.toFixed(1)} min`, fmtDiff(mAtual.tempoTotalMin, mAlvo.tempoTotalMin, ' min', 1, false)],
-                ["Autonomia / Ferramenta", vidaAtualTxt, vidaAlvoTxt, `<span class="text-slate-400">${ferrAtual.qtdFerramentasNecessarias} vs ${ferrAlvo.qtdFerramentasNecessarias} ferr.</span>`],
-                ["Custo Ferramentas + Afiações", `${ferrAtual.custoFerramentaLote.toFixed(2)} €`, `${ferrAlvo.custoFerramentaLote.toFixed(2)} €`, fmtDiff(ferrAtual.custoFerramentaLote, ferrAlvo.custoFerramentaLote, ' €', 2, false)],
-                ["Custo Máquina Lote (€/h)", `${mAtual.custoMaqLote.toFixed(2)} €`, `${mAlvo.custoMaqLote.toFixed(2)} €`, fmtDiff(mAtual.custoMaqLote, mAlvo.custoMaqLote, ' €', 2, false)],
-                ["Custo Total Lote (€)", `<strong class="text-white">${custoTotalAtual.toFixed(2)} €</strong>`, `<strong class="text-white">${custoTotalAlvo.toFixed(2)} €</strong>`, fmtDiff(custoTotalAtual, custoTotalAlvo, ' €', 2, false)],
-                ["Custo Total / Furo (€)", `${custoFuroAtual.toFixed(3)} €`, `${custoFuroAlvo.toFixed(3)} €`, fmtDiff(custoFuroAtual, custoFuroAlvo, ' €', 3, false)]
+            const rows = [
+                ['Vc (m/min)', `${calcAtual.vcFinal.toFixed(0)} m/min`, `${calcAlvo.vcFinal.toFixed(0)} m/min`, fmtDiff(calcAtual.vcFinal, calcAlvo.vcFinal, 0, ' m/min')],
+                ['Avanço f (mm/rot)', `${calcAtual.fFinal.toFixed(4)}`, `${calcAlvo.fFinal.toFixed(4)}`, fmtDiff(calcAtual.fFinal, calcAlvo.fFinal, 4, '')],
+                ['Rotações (rpm)', `${calcAtual.n}`, `${calcAlvo.n}`, fmtDiff(calcAtual.n, calcAlvo.n, 0, ' rpm')],
+                ['Avanço Trabalho vf (mm/min)', `${calcAtual.vf}`, `${calcAlvo.vf}`, fmtDiff(calcAtual.vf, calcAlvo.vf, 0, ' mm/min')],
+                ['Vida Útil Estimada (c/ reaf.)', `${custoFerrAtual.vidaTotalFuros.toFixed(0)} furos (${afiQtdAtual} reaf.)`, `${custoFerrAlvo.vidaTotalFuros.toFixed(0)} furos (${afiQtdAlvo} reaf.)`, fmtDiff(custoFerrAtual.vidaTotalFuros, custoFerrAlvo.vidaTotalFuros, 0, ' furos')],
+                ['Tempo / Furo (seg)', `${calcAtual.tempoFuroSeg.toFixed(1)} s`, `${calcAlvo.tempoFuroSeg.toFixed(1)} s`, fmtDiff(calcAtual.tempoFuroSeg, calcAlvo.tempoFuroSeg, 1, ' s')],
+                ['Tempo Total Lote (min)', `${calcAtual.tempoTotalMin.toFixed(1)} min`, `${calcAlvo.tempoTotalMin.toFixed(1)} min`, fmtDiff(calcAtual.tempoTotalMin, calcAlvo.tempoTotalMin, 1, ' min')],
+                ['Custo Ferramenta Lote (€)', `${custoFerrAtual.custoFerramentaLote.toFixed(2)} €`, `${custoFerrAlvo.custoFerramentaLote.toFixed(2)} €`, fmtDiff(custoFerrAtual.custoFerramentaLote, custoFerrAlvo.custoFerramentaLote, 2, ' €')],
+                ['Custo Máquina Lote (€)', `${calcAtual.custoMaqLote.toFixed(2)} €`, `${calcAlvo.custoMaqLote.toFixed(2)} €`, fmtDiff(calcAtual.custoMaqLote, calcAlvo.custoMaqLote, 2, ' €')]
             ];
 
-            if (mAlvo.requerPiloto || mAlvo.pilotoSegEfetivo > 0 || mAlvo.custoPilotoEfetivo > 0) {
-                linhas.splice(5, 0, [
-                    "Tempo Furo-Piloto / Furo",
-                    `0.0 s`,
-                    `${mAlvo.pilotoSegEfetivo.toFixed(1)} s`,
-                    `<span class="text-amber-300">+${mAlvo.tempoPilotoLoteMin.toFixed(1)} min no lote</span>`
-                ]);
-                linhas.splice(10, 0, [
-                    "Custo Furo-Piloto Lote",
-                    `0.00 €`,
-                    `${custoPilotoLoteAlvo.toFixed(2)} €`,
-                    `<span class="text-amber-300">+${custoPilotoLoteAlvo.toFixed(2)} €</span>`
-                ]);
+            if (fonteComp === '__CLIENTE__' && requerPiloto) {
+                rows.push(['Custo Piloto Lote (€)', `0.00 €`, `${custoPilotoLoteAlvo.toFixed(2)} €`, `${(-custoPilotoLoteAlvo).toFixed(2)} €`]);
+                if (usaBrocaCanhao) {
+                    rows.push(['Paragens Afiação Canhão', `0 paragens`, `${calcAlvo.numParagensLote} paragens (+${calcAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min)`, `-${calcAlvo.numParagensLote} paragens`]);
+                }
             }
 
-            if (mAlvo.canhaoAtivo) {
-                linhas.splice(6, 0, [
-                    "Paragens Broca Canhão (Afiação)",
-                    `0 paragens (0.0 min)`,
-                    `${mAlvo.numParagensLote} paragens (+${mAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min)`,
-                    `<span class="text-rose-400 font-semibold">+${mAlvo.tempoParagemCanhaoLoteMin.toFixed(1)} min parada</span>`
-                ]);
-            }
+            rows.push(['Custo Total Lote (€)', `<strong>${custoTotalAtual.toFixed(2)} €</strong>`, `<strong>${custoTotalAlvo.toFixed(2)} €</strong>`, `<strong>${fmtDiff(custoTotalAtual, custoTotalAlvo, 2, ' €')}</strong>`]);
+            rows.push(['Custo Total / Furo (€)', `${custoTotalFuroAtual.toFixed(3)} €`, `${custoTotalFuroAlvo.toFixed(3)} €`, fmtDiff(custoTotalFuroAtual, custoTotalFuroAlvo, 3, ' €')]);
 
-            corpoEl.innerHTML = '';
-            linhas.forEach(([ind, valA, valB, diffHtml]) => {
+            corpo.innerHTML = '';
+            rows.forEach(r => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="py-1.5 px-3 font-medium text-slate-300">${ind}</td>
-                    <td class="py-1.5 px-3 text-blue-300">${valA}</td>
-                    <td class="py-1.5 px-3 text-emerald-300">${valB}</td>
-                    <td class="py-1.5 px-3">${diffHtml}</td>
+                    <td class="py-1.5 px-3 text-slate-300 font-medium">${r[0]}</td>
+                    <td class="py-1.5 px-3 text-blue-300">${r[1]}</td>
+                    <td class="py-1.5 px-3 text-emerald-300">${r[2]}</td>
+                    <td class="py-1.5 px-3 text-amber-300">${r[3]}</td>
                 `;
-                corpoEl.appendChild(tr);
+                corpo.appendChild(tr);
             });
         }
 
         function aplicarFerramentaComparada() {
-            const compKey = document.getElementById('comp-ferramenta').value;
-            const compVarKey = document.getElementById('comp-variante').value;
-            if (!compKey || compKey === '__CLIENTE_MANUAL__' || !dados[compKey]) return;
+            const fonteComp = document.getElementById('comp-ferramenta').value;
+            const varCompKey = document.getElementById('comp-variante').value;
+            if (!fonteComp || fonteComp === '__CLIENTE__' || !dados[fonteComp]) return;
 
-            const alvoData = dados[compKey];
-            linhaAtivaInterna = alvoData.linha;
-            if (alvoData.categoria) {
-                document.getElementById('categoria').value = alvoData.categoria;
+            const toolComp = dados[fonteComp];
+            linhaAtivaInterna = toolComp.linha;
+            if (toolComp.categoria) {
+                document.getElementById('categoria').value = toolComp.categoria;
             }
             atualizarFiltroBrocas(true);
-            document.getElementById('broca').value = compKey;
-            mudarBroca(compVarKey);
+            document.getElementById('broca').value = fonteComp;
+            mudarBroca(varCompKey);
             fecharJanelaResultadoComparacao();
             fecharModalComparacao();
         }
 
         function abrirModalExportacao() {
-            if (!isProMode) {
-                document.getElementById('radio-pdf-resumido').checked = true;
-            }
             document.getElementById('modal-export').classList.remove('hidden');
         }
 
@@ -4535,144 +4423,282 @@ html_content = '''
             const tipoRelatorio = isProMode
                 ? (document.querySelector('input[name="tipo-relatorio"]:checked')?.value || 'resumido')
                 : 'resumido';
-            const incluirComparativo = isProMode && Boolean(document.getElementById('comp-incluir-pdf')?.checked);
+            const incluirComparativo = isProMode && document.getElementById('comp-incluir-pdf').checked && window._ultimoComparativo;
 
             const brocaKey = document.getElementById('broca').value;
+            const grupoSelKey = normMmg(document.getElementById('grupo').value);
             const grupoEfetivoKey = getGrupoEfetivo();
-            const toolData = brocaKey && dados[brocaKey] ? dados[brocaKey] : null;
-            const varianteAtiva = getVarianteAtiva();
-            const grupoLabel = grupoEfetivoKey ? obterLabelGrupoMmg(grupoEfetivoKey) : '—';
+
+            const toolNome = (brocaKey && dados[brocaKey]) ? dados[brocaKey].nome : 'Sem modelo selecionado';
+            const linhaNome = linhaAtivaInterna ? fmtGamaLabel(linhaAtivaInterna) : 'Todas';
+            const varianteNome = getVarianteAtiva();
+            const grupoNome = grupoEfetivoKey ? obterLabelGrupoMmg(grupoEfetivoKey) : '—';
+            const ligaAtiva = document.getElementById('liga-check').checked ? 'Sim (>8% liga -> avança grupo)' : 'Não';
+            const corteIntTexto = corteInterrompidoAtivo ? 'Sim (Corte Interrompido -30% vida)' : 'Não (Corte Contínuo)';
+            const refMap = { 'int': 'Refrigeração Interna', 'ext': 'Refrigeração Externa', 'mql': 'MQL', 'ar': 'Ar' };
+            const refrigTexto = refMap[refrigAtual] || refrigAtual;
 
             const diametro = parseFloat(document.getElementById('diametro').value) || 12.00;
             const profundidade = parseFloat(document.getElementById('profundidade').value) || 31.0;
-            const vcVal = document.getElementById('input-vc').value || '0';
-            const fVal = document.getElementById('input-f').value || '0';
-            const rpmVal = document.getElementById('res-n').innerText || '0';
-            const vfVal = document.getElementById('res-vf').innerText || '0';
-            const forcaVal = document.getElementById('res-forca').innerText || '0 N';
-            const binVal = document.getElementById('res-binario-card').innerText || '0.0 N·m';
+            const qtdFuros = parseInt(document.getElementById('qtd-furos').value, 10) || 50;
+            const densidade = parseFloat(document.getElementById('densidade').value) || 7.85;
+            const precoSucata = parseFloat(document.getElementById('preco-sucata').value) || 0.35;
+            const custoHora = parseFloat(document.getElementById('custo-hora').value) || 50.00;
 
-            const pageW = 210;
-            const marginX = 14;
-            let y = 14;
+            const vcVal = document.getElementById('input-vc').value;
+            const fVal = document.getElementById('input-f').value;
+            const nVal = document.getElementById('res-n').innerText;
+            const vfVal = document.getElementById('res-vf').innerText;
+            const forcaVal = document.getElementById('res-forca').innerText;
+            const forcaKgfVal = document.getElementById('res-forca-kgf').innerText;
+            const binarioVal = document.getElementById('res-binario-card').innerText;
+            const potVal = document.getElementById('val-gauge-pot').innerText;
+            const badgePotVal = document.getElementById('badge-gauge-pot').innerText;
+            const badgeBinVal = document.getElementById('badge-gauge-bin').innerText;
+
+            const peckingAtivo = document.getElementById('pecking-check').checked;
+            const peckingUnid = document.getElementById('pecking-unidade').value;
+            const peckingPasso = parseFloat(document.getElementById('pecking-passo').value) || 3.0;
+            const peckingRetensao = parseFloat(document.getElementById('pecking-retensao').value) || 5000;
+            const passoMm = peckingUnid === 'xd' ? (peckingPasso * diametro) : peckingPasso;
+            const numPassos = Math.max(1, Math.ceil(profundidade / passoMm));
+
+            const dataAtual = new Date().toLocaleDateString('pt-PT');
+            const horaAtual = new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
 
             doc.setFillColor(15, 23, 42);
-            doc.rect(marginX, y, pageW - 2 * marginX, 16, 'F');
+            doc.rect(0, 0, 210, 32, 'F');
+
             doc.setTextColor(255, 255, 255);
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(13);
-            doc.text("MAPAL — Parâmetros de Corte", marginX + 4, y + 7);
+            doc.setFontSize(15);
+            doc.text("PARÂMETROS DE CORTE MAPAL", 14, 14);
+
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(8.5);
+            doc.setFontSize(9);
             doc.setTextColor(148, 163, 184);
-            doc.text(tipoRelatorio === 'completo' ? 'Proposta Técnico-Comercial Completa (Pro)' : 'Ficha Técnica / Parâmetros de Corte', marginX + 4, y + 12.5);
-            doc.text(new Date().toLocaleDateString('pt-PT'), pageW - marginX - 4, y + 10, { align: 'right' });
+            const subtituloDoc = tipoRelatorio === 'completo'
+                ? "Proposta Técnico-Comercial Completa & Análise de Custos (Nível Pro)"
+                : "Ficha Técnica de Parâmetros de Corte (Nível Básico)";
+            doc.text(subtituloDoc, 14, 21);
 
-            y += 22;
+            doc.setFontSize(8.5);
+            doc.setTextColor(203, 213, 225);
+            doc.text(`Data: ${dataAtual} ${horaAtual}`, 196, 14, { align: 'right' });
+            doc.text(`Gama: ${linhaNome} | Refrig.: ${refrigTexto}`, 196, 21, { align: 'right' });
 
-            const resumoLinhas = [
-                ['Ferramenta / Família', toolData ? `${toolData.nome} (${varianteAtiva})` : 'Sem modelo selecionado'],
-                ['Referência / Order no.', referenciaAtivaObj?.order_no ? `${referenciaAtivaObj.order_no} (${referenciaAtivaObj.specification || ''})` : '—'],
-                ['Grupo de Material (MMG)', `${grupoEfetivoKey || '—'} — ${grupoLabel}`],
-                ['Refrigeração / Ajustes', `${refrigAtual.toUpperCase()} | Ajuste Vc: ${vcPct}% | Ajuste f: ${fPct}%`],
-                ['Geometria (Ø / Profundidade)', `Ø ${diametro.toFixed(2)} mm | Profundidade: ${profundidade.toFixed(1)} mm`],
-                ['Velocidade de Corte (Vc)', `${vcVal} m/min`],
-                ['Avanço por Rotação (f)', `${fVal} mm/rot`],
-                ['Rotações (n) / Avanço (vf)', `${rpmVal} rpm  |  ${vfVal} mm/min`],
-                ['Força Axial (Ff) / Binário (Mc)', `${forcaVal}  |  ${binVal}`]
+            let y = 40;
+
+            doc.setTextColor(15, 23, 42);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.text("1. Configuração da Ferramenta e Material", 14, y);
+            y += 6;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            const configLines = [
+                `Modelo / Família: ${toolNome} (${varianteNome})`,
+                `Grupo de Material (MMG): ${grupoNome}${ligaAtiva === 'Sim (>8% liga -> avança grupo)' ? ` [Base: ${grupoSelKey}]` : ''}`,
+                `Regra Liga > 8%: ${ligaAtiva}   |   Condição Corte: ${corteIntTexto}`,
+                `Diâmetro (Ø): ${diametro.toFixed(2)} mm   |   Profundidade / Furo (L): ${profundidade.toFixed(1)} mm`
             ];
-
+            if (referenciaAtivaObj) {
+                configLines.push(`Referência Ativa: Order no. ${referenciaAtivaObj.order_no || '—'} | Spec: ${referenciaAtivaObj.specification || '—'} | l3 máx.: ${referenciaAtivaObj.l3 ?? '—'} mm`);
+            }
             if (tipoRelatorio === 'completo') {
-                resumoLinhas.push(
-                    ['Tempo de Ciclo (Lote / Unitário)', `${document.getElementById('res-tempo-total').innerText}`],
-                    ['Volume / Taxa Remoção', `${document.getElementById('res-volume-total').innerText} (${document.getElementById('res-taxa').innerText})`],
-                    ['Peso Limalha / Sucata', `${document.getElementById('res-peso').innerText} | Sucata: ${document.getElementById('res-sucata-val').innerText}`],
-                    ['Custo Maquinação', `${document.getElementById('res-custo-total').innerText}`]
-                );
-            }
-
-            if (typeof doc.autoTable === 'function') {
-                doc.autoTable({
-                    startY: y,
-                    head: [['Parâmetro', 'Valor']],
-                    body: resumoLinhas,
-                    theme: 'grid',
-                    styles: { font: 'helvetica', fontSize: 8.5, cellPadding: 2, textColor: [15, 23, 42] },
-                    headStyles: { fillColor: [30, 41, 59], textColor: [255, 255, 255], fontStyle: 'bold' },
-                    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 62 }, 1: { cellWidth: 120 } },
-                    margin: { left: marginX, right: marginX }
-                });
-                y = doc.lastAutoTable.finalY + 8;
-            } else {
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9);
-                doc.setTextColor(15, 23, 42);
-                resumoLinhas.forEach(([k, v]) => {
-                    if (y > 270) { doc.addPage(); y = 18; }
-                    doc.text(`${k}: ${v}`, marginX, y);
-                    y += 6;
-                });
-                y += 4;
-            }
-
-            if (incluirComparativo) {
-                const compRows = [];
-                document.querySelectorAll('#comp-tabela-corpo tr').forEach(tr => {
-                    const cells = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
-                    if (cells.length >= 4) compRows.push(cells);
-                });
-                if (compRows.length > 0 && typeof doc.autoTable === 'function') {
-                    if (y > 220) { doc.addPage(); y = 18; }
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(10);
-                    doc.text("Comparativo Técnico-Comercial", marginX, y);
-                    y += 3;
-                    doc.autoTable({
-                        startY: y,
-                        head: [['Indicador', 'MAPAL Atual', 'Comparada', 'Diferença']],
-                        body: compRows,
-                        theme: 'grid',
-                        styles: { font: 'helvetica', fontSize: 7.8, cellPadding: 1.8, textColor: [15, 23, 42] },
-                        headStyles: { fillColor: [6, 95, 70], textColor: [255, 255, 255], fontStyle: 'bold' },
-                        margin: { left: marginX, right: marginX }
-                    });
+                configLines.push(`Quantidade (Lote): ${qtdFuros} furos   |   Densidade: ${densidade.toFixed(2)} g/cm³   |   Sucata: ${precoSucata.toFixed(2)} €/kg   |   Custo Hora: ${custoHora.toFixed(2)} €/h`);
+                if (peckingAtivo) {
+                    configLines.push(`Ciclo Pecking: Ativo — Passo Q = ${peckingPasso} ${peckingUnid.toUpperCase()} (${passoMm.toFixed(1)} mm, ${numPassos} passos) | Retração = ${peckingRetensao} mm/min`);
+                } else {
+                    configLines.push(`Ciclo Pecking: Desativado (furação contínua)`);
                 }
             }
 
-            const totalPages = doc.internal.getNumberOfPages();
-            for (let p = 1; p <= totalPages; p++) {
-                doc.setPage(p);
+            configLines.forEach(line => {
+                doc.text(line, 14, y);
+                y += 5;
+            });
+
+            y += 3;
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.text("2. Parâmetros de Corte Calculados", 14, y);
+            y += 6;
+
+            doc.setFillColor(241, 245, 249);
+            doc.rect(14, y - 4, 182, 16, 'F');
+            doc.setDrawColor(203, 213, 225);
+            doc.rect(14, y - 4, 182, 16, 'S');
+
+            doc.setFontSize(9);
+            doc.setTextColor(71, 85, 105);
+            doc.text("Vc (m/min)", 20, y + 1);
+            doc.text("Avanço f (mm/rot)", 62, y + 1);
+            doc.text("Rotações (rpm)", 110, y + 1);
+            doc.text("Avanço vf (mm/min)", 152, y + 1);
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(15, 23, 42);
+            doc.text(`${vcVal} m/min`, 20, y + 8);
+            doc.text(`${Number(fVal).toFixed(4)} mm/rot`, 62, y + 8);
+            doc.text(`${nVal} rpm`, 110, y + 8);
+            doc.text(`${vfVal} mm/min`, 152, y + 8);
+
+            y += 22;
+
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.text("3. Esforços de Corte e Monitor do Spindle", 14, y);
+            y += 6;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.text(`Força Axial (Ff): ${forcaVal} (${forcaKgfVal})   |   Binário de Corte (Mc): ${binarioVal} [${badgeBinVal}]`, 14, y);
+            y += 5;
+            doc.text(`Potência de Corte Requerida: ${potVal} [${badgePotVal}]   |   Ajustes: Vc ${vcPct >= 0 ? '+' : ''}${vcPct}%, f ${fPct >= 0 ? '+' : ''}${fPct}%`, 14, y);
+            y += 8;
+
+            if (tipoRelatorio === 'completo') {
+                const tempoTotalTxt = document.getElementById('res-tempo-total').innerText;
+                const metragemTxt = document.getElementById('res-metragem').innerText;
+                const volumeTxt = document.getElementById('res-volume-total').innerText;
+                const taxaTxt = document.getElementById('res-taxa').innerText;
+                const pesoTxt = document.getElementById('res-peso').innerText;
+                const pesoGTxt = document.getElementById('res-peso-g').innerText;
+                const sucataValTxt = document.getElementById('res-sucata-val').innerText;
+                const sucataFuroTxt = document.getElementById('res-sucata-furo').innerText;
+                const custoTotalTxt = document.getElementById('res-custo-total').innerText;
+
                 doc.setFont('helvetica', 'bold');
-                doc.setFontSize(8.5);
-                doc.setTextColor(15, 23, 42);
-                doc.text("ÁLAMO — Bruno Pinto", marginX, 284);
+                doc.setFontSize(11);
+                doc.text("4. Indicadores de Produção, Material e Custos (Lote)", 14, y);
+                y += 6;
+
                 doc.setFont('helvetica', 'normal');
-                doc.text("bruno.pinto@alamo-ferramentas.com  |  +351 936 959 415", marginX, 289);
-                doc.text(`${p} de ${totalPages}`, pageW - marginX, 289, { align: 'right' });
+                doc.setFontSize(9.5);
+                const prodLines = [
+                    `Tempo de Ciclo: ${tempoTotalTxt}   |   Metragem Linear: ${metragemTxt}`,
+                    `Volume Removido: ${volumeTxt}   |   Taxa de Remoção: ${taxaTxt}`,
+                    `Peso Total de Limalha: ${pesoTxt} (${pesoGTxt})`,
+                    `Valor Total de Sucata: ${sucataValTxt} (${sucataFuroTxt})`,
+                    `Custo de Maquinação: ${custoTotalTxt}`
+                ];
+                prodLines.forEach(line => {
+                    doc.text(line, 14, y);
+                    y += 5;
+                });
+                y += 3;
             }
 
-            const nomeArquivo = tipoRelatorio === 'completo'
-                ? `Proposta_MAPAL_${diametro.toFixed(1)}mm.pdf`
-                : `Parametros_MAPAL_${diametro.toFixed(1)}mm.pdf`;
-            doc.save(nomeArquivo);
+            if (incluirComparativo && window._ultimoComparativo) {
+                const c = window._ultimoComparativo;
+                if (y > 225) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(11);
+                doc.setTextColor(15, 23, 42);
+                doc.text("5. Comparação Técnico-Comercial", 14, y);
+                y += 6;
+
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                doc.text(`Atual: ${c.nomeAtual}   vs.   Comparada: ${c.nomeAlvo}`, 14, y);
+                y += 5;
+                if (c.corteInterrompido) {
+                    doc.text(`Condição: Corte Interrompido (-30% vida) | Ref. contínuo: ${c.metrosContinuoRef.toFixed(0)} m (~${c.furosEquivContinuo} furos)`, 14, y);
+                    y += 5;
+                }
+                if (c.isCliente && c.requerPiloto) {
+                    doc.text(`Furo-Piloto: +${c.tempoPilotoSeg.toFixed(0)} s/furo, +${c.custoPilotoFuro.toFixed(3)} €/furo (${c.custoPilotoLote.toFixed(2)} € no lote)`, 14, y);
+                    y += 5;
+                    if (c.usaBrocaCanhao) {
+                        doc.text(`Broca Canhão (s/ gémea): ${c.numParagensCanhao} paragem(ns) de ${c.tempoParagemAfiMin.toFixed(0)} min (+${c.tempoParagemCanhaoLoteMin.toFixed(1)} min no lote)`, 14, y);
+                        y += 5;
+                    }
+                }
+                doc.text(`Tempo Total Lote: Atual ${c.tempoTotalAtual.toFixed(1)} min vs. Comparada ${c.tempoTotalAlvo.toFixed(1)} min (Dif.: ${c.diffTempoMin >= 0 ? '+' : ''}${c.diffTempoMin.toFixed(1)} min)`, 14, y);
+                y += 5;
+                doc.text(`Custo Total Lote: Atual ${c.custoTotalAtual.toFixed(2)} € vs. Comparada ${c.custoTotalAlvo.toFixed(2)} € (Dif.: ${c.diffCustoTotal >= 0 ? '+' : ''}${c.diffCustoTotal.toFixed(2)} €)`, 14, y);
+                y += 5;
+                doc.text(`Custo Total / Furo: Atual ${c.custoTotalFuroAtual.toFixed(3)} € vs. Comparada ${c.custoTotalFuroAlvo.toFixed(3)} €`, 14, y);
+                y += 7;
+            }
+
+            if (y > 245) {
+                doc.addPage();
+                y = 20;
+            }
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.setTextColor(15, 23, 42);
+            doc.text("Tabela de Referência do Catálogo (Diâmetros)", 14, y);
+            y += 5;
+
+            const rows = Array.from(document.querySelectorAll('#tabela-ref tr'));
+            if (rows.length > 0) {
+                doc.setFillColor(30, 41, 59);
+                doc.rect(14, y - 3.5, 182, 6, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(8.5);
+                doc.text("Ø (mm)", 18, y + 0.5);
+                doc.text("f Cat. (mm/rot)", 58, y + 0.5);
+                doc.text("RPM (n)", 108, y + 0.5);
+                doc.text("Avanço vf (mm/min)", 150, y + 0.5);
+                y += 6;
+
+                doc.setTextColor(15, 23, 42);
+                doc.setFont('helvetica', 'normal');
+                rows.forEach((tr, idx) => {
+                    if (y > 275) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                    const cols = tr.querySelectorAll('td');
+                    if (cols.length >= 4) {
+                        if (idx % 2 === 1) {
+                            doc.setFillColor(248, 250, 252);
+                            doc.rect(14, y - 3.5, 182, 5.5, 'F');
+                        }
+                        doc.text(cols[0].innerText, 18, y + 0.5);
+                        doc.text(cols[1].innerText, 58, y + 0.5);
+                        doc.text(cols[2].innerText, 108, y + 0.5);
+                        doc.text(cols[3].innerText, 150, y + 0.5);
+                        y += 5.5;
+                    }
+                });
+            }
+
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(100, 116, 139);
+                doc.text(`Created by Bruno Pinto | bruno.pinto@alamo-ferramentas.com | +351 936 959 415`, 14, 290);
+                doc.text(`Página ${i} de ${pageCount}`, 196, 290, { align: 'right' });
+            }
+
+            const sufixoNome = tipoRelatorio === 'completo' ? 'Proposta_Completa' : 'Ficha_Tecnica';
+            doc.save(`MAPAL_${sufixoNome}_${diametro.toFixed(1)}mm.pdf`);
             fecharModalExportacao();
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            carregarCatalogoEParametrosJson();
-            aplicarModoUI();
-            atualizarEstadoBotaoInterrompido();
-            filtrarCatalogoCascata('init');
-            atualizarFiltroBrocas(false);
-            atualizarPainelCotas();
-            atualizarCalculo();
-        });
+        carregarCatalogoEParametrosJson();
+        aplicarModoUI();
+        filtrarCatalogoCascata('init');
+        atualizarFiltroBrocas(false);
+        atualizarPainelCotas();
+        atualizarCalculo();
     </script>
 </body>
 </html>
 '''
 
-html_content = (
+html_final = (
     html_content
     .replace("__PRO_PASSWORD_PLACEHOLDER__", pro_password_js)
     .replace("__FAMILIAS_JSON_PLACEHOLDER__", familias_js)
@@ -4681,4 +4707,4 @@ html_content = (
     .replace("__GRUPOS_MMG_JSON_PLACEHOLDER__", grupos_mmg_js)
 )
 
-components.html(html_content, height=960, scrolling=True)
+components.html(html_final, height=920, scrolling=False)
