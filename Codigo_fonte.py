@@ -1106,6 +1106,8 @@ html_content = '''
 
         let mmgGrupoSelecionado = null;
         let mmgSubgrupoSelecionado = null;
+        let mmgSelecionadoManualmente = false;
+        let sincronizacaoInterna = false;
         const mmgMetaPorCodigo = {};
         const mmgSubgruposPorIso = {};
 
@@ -1480,7 +1482,7 @@ html_content = '''
                 const gIso = (mmgMetaPorCodigo[gNorm]?.iso || extrairIsoDeCodigo(gNorm)).toUpperCase();
                 const gSub = normMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
                 if (subNorm) {
-                    return gSub === subNorm || gNorm.startsWith(subNorm);
+                    return gSub === subNorm || gNorm.startsWith(subNorm + '.');
                 }
                 if (isoNorm) {
                     return gIso === isoNorm;
@@ -1693,17 +1695,20 @@ html_content = '''
             if (mmgGrupoSelecionado === isoCode) {
                 mmgGrupoSelecionado = null;
                 mmgSubgrupoSelecionado = null;
+                mmgSelecionadoManualmente = false;
                 const selG = document.getElementById('grupo');
                 if (selG) selG.value = '';
             } else {
                 mmgGrupoSelecionado = isoCode;
                 mmgSubgrupoSelecionado = null;
+                mmgSelecionadoManualmente = true;
                 aplicarFiltroMmgNaFerramenta();
             }
             sincronizarSelecaoComCatalogo('mmg');
         }
 
         function selecionarSubgrupoBotao(subCode) {
+            mmgSelecionadoManualmente = Boolean(subCode);
             mmgSubgrupoSelecionado = subCode ? normMmg(subCode) : null;
             aplicarFiltroMmgNaFerramenta();
             sincronizarSelecaoComCatalogo('mmg');
@@ -1723,10 +1728,14 @@ html_content = '''
                 const subUpper = normMmg(mmgSubgrupoSelecionado);
                 const matchExato = disp.find(g => {
                     const metaSub = normMmg(mmgMetaPorCodigo[g]?.subgrupo || extrairSubgrupoDeCodigo(g));
-                    return metaSub === subUpper || g.startsWith(subUpper);
+                    return metaSub === subUpper || g.startsWith(subUpper + '.');
                 });
                 if (matchExato) {
-                    grupoSelect.value = matchExato;
+                    if (!mmgSelecionadoManualmente && !grupoSelect.value) {
+                        sincronizacaoInterna = true;
+                        grupoSelect.value = matchExato;
+                        sincronizacaoInterna = false;
+                    }
                     return;
                 }
             }
@@ -1738,25 +1747,35 @@ html_content = '''
                     return metaIso === isoUpper;
                 });
                 if (matchIso) {
-                    grupoSelect.value = matchIso;
+                    if (!mmgSelecionadoManualmente && !grupoSelect.value) {
+                        sincronizacaoInterna = true;
+                        grupoSelect.value = matchIso;
+                        sincronizacaoInterna = false;
+                    }
                     return;
                 }
             }
 
             if (!mmgGrupoSelecionado && !mmgSubgrupoSelecionado) {
+                sincronizacaoInterna = true;
                 grupoSelect.value = '';
+                sincronizacaoInterna = false;
             }
         }
 
         function onSelectGrupoManual() {
+            if (sincronizacaoInterna) return;
             const grupoSelect = document.getElementById('grupo');
             const val = grupoSelect ? normMmg(grupoSelect.value) : '';
             if (val) {
+                mmgSelecionadoManualmente = true;
                 if (grupoSelect) grupoSelect.value = val;
                 const iso = (mmgMetaPorCodigo[val]?.iso || extrairIsoDeCodigo(val)).toUpperCase();
                 const sub = normMmg(mmgMetaPorCodigo[val]?.subgrupo || extrairSubgrupoDeCodigo(val));
                 if (iso) mmgGrupoSelecionado = iso;
                 if (sub) mmgSubgrupoSelecionado = sub;
+            } else {
+                mmgSelecionadoManualmente = false;
             }
             sincronizarSelecaoComCatalogo('mmg');
         }
@@ -1775,8 +1794,7 @@ html_content = '''
             if (brocaAtual && dados[brocaAtual]) {
                 const compAtual = ferramentaSuportaFiltroMmg(dados[brocaAtual], mmgGrupoSelecionado, mmgSubgrupoSelecionado, grupoKey);
                 if (!compAtual) {
-                    brocaEl.value = '';
-                    referenciaAtivaObj = null;
+                    console.warn('Ferramenta incompatível com MMG selecionado');
                 }
             }
 
@@ -2564,7 +2582,9 @@ html_content = '''
 
                 const varNorm = String(item.variante || '').trim();
                 const matchVar = Object.keys(toolData.variantes || {}).find(k => k.toLowerCase() === varNorm.toLowerCase());
+                const bloqueioMmg = mmgSelecionadoManualmente;
                 mudarBroca(matchVar || null);
+                mmgSelecionadoManualmente = bloqueioMmg;
             } else {
                 if (gamaItem) linhaAtivaInterna = gamaItem;
                 if (catItem) document.getElementById('categoria').value = catItem;
