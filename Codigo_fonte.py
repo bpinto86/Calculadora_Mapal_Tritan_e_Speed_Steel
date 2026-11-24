@@ -1159,9 +1159,7 @@ html_content = '''
             return String(cod || '').trim().toUpperCase();
         }
 
-        function normMmg(cod) {
-            return normMmg(cod);
-        }
+
 
         function fecharAvisoInicial() {
             const modal = document.getElementById('modal-aviso-inicial');
