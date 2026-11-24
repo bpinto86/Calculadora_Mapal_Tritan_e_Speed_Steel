@@ -280,5 +280,23 @@
     "nome_produto": "QTD Alu Indexable Insert",
     "gama": "Performance Line",
     "categoria": "QTD Insert Drilling (Pastilhas Amovíveis)"
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)"
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)"
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)"
   }
 ]

@@ -7130,6 +7130,926 @@
     }
   },
   {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "P1.1",
+    "mmg_normalizado": "P1.1",
+    "vc": {
+      "interna": 100.0,
+      "externa": null,
+      "mql": 90.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.16,
+      "5.5": 0.19,
+      "7.5": 0.24,
+      "10.5": 0.3,
+      "14.5": 0.4,
+      "20": 0.48
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "P1.2",
+    "mmg_normalizado": "P1.2",
+    "vc": {
+      "interna": 90.0,
+      "externa": null,
+      "mql": 75.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.2,
+      "5.5": 0.24,
+      "7.5": 0.31,
+      "10.5": 0.38,
+      "14.5": 0.48,
+      "20": 0.6
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "P2.1",
+    "mmg_normalizado": "P2.1",
+    "vc": {
+      "interna": 100.0,
+      "externa": null,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.19,
+      "5.5": 0.23,
+      "7.5": 0.29,
+      "10.5": 0.36,
+      "14.5": 0.46,
+      "20": 0.57
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "P2.2",
+    "mmg_normalizado": "P2.2",
+    "vc": {
+      "interna": 70.0,
+      "externa": null,
+      "mql": 60.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.16,
+      "5.5": 0.19,
+      "7.5": 0.24,
+      "10.5": 0.29,
+      "14.5": 0.39,
+      "20": 0.45
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "P3.1",
+    "mmg_normalizado": "P3.1",
+    "vc": {
+      "interna": 75.0,
+      "externa": null,
+      "mql": 65.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.17,
+      "5.5": 0.2,
+      "7.5": 0.26,
+      "10.5": 0.32,
+      "14.5": 0.42,
+      "20": 0.51
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "P3.2",
+    "mmg_normalizado": "P3.2",
+    "vc": {
+      "interna": 60.0,
+      "externa": null,
+      "mql": 55.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.14,
+      "5.5": 0.17,
+      "7.5": 0.22,
+      "10.5": 0.27,
+      "14.5": 0.35,
+      "20": 0.42
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "P3.3",
+    "mmg_normalizado": "P3.3",
+    "vc": {
+      "interna": 60.0,
+      "externa": null,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.12,
+      "5.5": 0.14,
+      "7.5": 0.18,
+      "10.5": 0.21,
+      "14.5": 0.28,
+      "20": 0.32
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "P5.1",
+    "mmg_normalizado": "P5.1",
+    "vc": {
+      "interna": 100.0,
+      "externa": null,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.19,
+      "5.5": 0.23,
+      "7.5": 0.29,
+      "10.5": 0.36,
+      "14.5": 0.46,
+      "20": 0.57
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "K1.1",
+    "mmg_normalizado": "K1.1",
+    "vc": {
+      "interna": 120.0,
+      "externa": null,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.21,
+      "5.5": 0.28,
+      "7.5": 0.37,
+      "10.5": 0.48,
+      "14.5": 0.62,
+      "20": 0.8
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "K2.1",
+    "mmg_normalizado": "K2.1",
+    "vc": {
+      "interna": 160.0,
+      "externa": null,
+      "mql": 120.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.22,
+      "5.5": 0.27,
+      "7.5": 0.35,
+      "10.5": 0.45,
+      "14.5": 0.58,
+      "20": 0.74
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "K2.2",
+    "mmg_normalizado": "K2.2",
+    "vc": {
+      "interna": 100.0,
+      "externa": null,
+      "mql": 75.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.2,
+      "5.5": 0.24,
+      "7.5": 0.31,
+      "10.5": 0.39,
+      "14.5": 0.52,
+      "20": 0.63
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "K2.3",
+    "mmg_normalizado": "K2.3",
+    "vc": {
+      "interna": 60.0,
+      "externa": null,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.14,
+      "5.5": 0.17,
+      "7.5": 0.22,
+      "10.5": 0.27,
+      "14.5": 0.35,
+      "20": 0.42
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "K3.1",
+    "mmg_normalizado": "K3.1",
+    "vc": {
+      "interna": 90.0,
+      "externa": null,
+      "mql": 80.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.21,
+      "5.5": 0.26,
+      "7.5": 0.34,
+      "10.5": 0.42,
+      "14.5": 0.55,
+      "20": 0.68
+    }
+  },
+  {
+    "familia": "SCD701",
+    "nome_produto": "MEGA-Deep-Drill-Steel",
+    "gama": "Expert Line",
+    "categoria": "Deep Drilling (Furação Profunda)",
+    "mmg": "K3.2",
+    "mmg_normalizado": "K3.2",
+    "vc": {
+      "interna": 80.0,
+      "externa": null,
+      "mql": 70.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.18,
+      "5.5": 0.22,
+      "7.5": 0.28,
+      "10.5": 0.34,
+      "14.5": 0.45,
+      "20": 0.54
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P1.1",
+    "mmg_normalizado": "P1.1",
+    "vc": {
+      "interna": 80.0,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.11,
+      "5.5": 0.13,
+      "7.5": 0.14,
+      "10.5": 0.15,
+      "14.5": 0.17,
+      "20": 0.19
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P1.2",
+    "mmg_normalizado": "P1.2",
+    "vc": {
+      "interna": 70.0,
+      "externa": 60.0,
+      "mql": 60.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.14,
+      "5.5": 0.16,
+      "7.5": 0.17,
+      "10.5": 0.19,
+      "14.5": 0.21,
+      "20": 0.23
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P2.1",
+    "mmg_normalizado": "P2.1",
+    "vc": {
+      "interna": 80.0,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.13,
+      "5.5": 0.15,
+      "7.5": 0.16,
+      "10.5": 0.18,
+      "14.5": 0.2,
+      "20": 0.22
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P2.2",
+    "mmg_normalizado": "P2.2",
+    "vc": {
+      "interna": 55.0,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20": 0.18
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P3.1",
+    "mmg_normalizado": "P3.1",
+    "vc": {
+      "interna": 60.0,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.12,
+      "5.5": 0.13,
+      "7.5": 0.15,
+      "10.5": 0.16,
+      "14.5": 0.18,
+      "20": 0.2
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P3.2",
+    "mmg_normalizado": "P3.2",
+    "vc": {
+      "interna": 50.0,
+      "externa": 45.0,
+      "mql": 45.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.1,
+      "5.5": 0.11,
+      "7.5": 0.12,
+      "10.5": 0.14,
+      "14.5": 0.15,
+      "20": 0.16
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P5.1",
+    "mmg_normalizado": "P5.1",
+    "vc": {
+      "interna": 80.0,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.13,
+      "5.5": 0.15,
+      "7.5": 0.16,
+      "10.5": 0.18,
+      "14.5": 0.2,
+      "20": 0.22
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K1.1",
+    "mmg_normalizado": "K1.1",
+    "vc": {
+      "interna": 95.0,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": 70.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.17,
+      "5.5": 0.19,
+      "7.5": 0.22,
+      "10.5": 0.25,
+      "14.5": 0.27,
+      "20": 0.3
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K2.1",
+    "mmg_normalizado": "K2.1",
+    "vc": {
+      "interna": 130.0,
+      "externa": 80.0,
+      "mql": 95.0,
+      "ar": 95.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.16,
+      "5.5": 0.19,
+      "7.5": 0.2,
+      "10.5": 0.23,
+      "14.5": 0.26,
+      "20": 0.28
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K2.2",
+    "mmg_normalizado": "K2.2",
+    "vc": {
+      "interna": 80.0,
+      "externa": 60.0,
+      "mql": 60.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.14,
+      "5.5": 0.16,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20": 0.24
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K3.1",
+    "mmg_normalizado": "K3.1",
+    "vc": {
+      "interna": 70.0,
+      "externa": 65.0,
+      "mql": 65.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.16,
+      "5.5": 0.17,
+      "7.5": 0.19,
+      "10.5": 0.22,
+      "14.5": 0.24,
+      "20": 0.26
+    }
+  },
+  {
+    "familia": "SDR201",
+    "nome_produto": "MEGA-Drill-Reamer-Pyramid",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K3.2",
+    "mmg_normalizado": "K3.2",
+    "vc": {
+      "interna": 65.0,
+      "externa": 55.0,
+      "mql": 55.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.13,
+      "5.5": 0.14,
+      "7.5": 0.16,
+      "10.5": 0.17,
+      "14.5": 0.19,
+      "20": 0.21
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P1.1",
+    "mmg_normalizado": "P1.1",
+    "vc": {
+      "interna": 70.0,
+      "externa": 65.0,
+      "mql": 65.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.17,
+      "5.5": 0.22,
+      "7.5": 0.27,
+      "10.5": 0.34,
+      "14.5": 0.41,
+      "20": 0.47
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P1.2",
+    "mmg_normalizado": "P1.2",
+    "vc": {
+      "interna": 65.0,
+      "externa": 55.0,
+      "mql": 55.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.22,
+      "5.5": 0.27,
+      "7.5": 0.34,
+      "10.5": 0.42,
+      "14.5": 0.51,
+      "20": 0.59
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P2.1",
+    "mmg_normalizado": "P2.1",
+    "vc": {
+      "interna": 70.0,
+      "externa": 60.0,
+      "mql": 60.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.2,
+      "5.5": 0.26,
+      "7.5": 0.32,
+      "10.5": 0.4,
+      "14.5": 0.48,
+      "20": 0.56
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P2.2",
+    "mmg_normalizado": "P2.2",
+    "vc": {
+      "interna": 50.0,
+      "externa": 40.0,
+      "mql": 40.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.17,
+      "5.5": 0.21,
+      "7.5": 0.26,
+      "10.5": 0.32,
+      "14.5": 0.38,
+      "20": 0.44
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P3.1",
+    "mmg_normalizado": "P3.1",
+    "vc": {
+      "interna": 55.0,
+      "externa": 45.0,
+      "mql": 45.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.18,
+      "5.5": 0.23,
+      "7.5": 0.29,
+      "10.5": 0.36,
+      "14.5": 0.43,
+      "20": 0.5
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P3.2",
+    "mmg_normalizado": "P3.2",
+    "vc": {
+      "interna": 40.0,
+      "externa": 40.0,
+      "mql": 40.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.15,
+      "5.5": 0.19,
+      "7.5": 0.24,
+      "10.5": 0.3,
+      "14.5": 0.36,
+      "20": 0.41
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P3.3",
+    "mmg_normalizado": "P3.3",
+    "vc": {
+      "interna": 40.0,
+      "externa": 30.0,
+      "mql": 35.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.13,
+      "5.5": 0.16,
+      "7.5": 0.19,
+      "10.5": 0.23,
+      "14.5": 0.28,
+      "20": 0.32
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "P5.1",
+    "mmg_normalizado": "P5.1",
+    "vc": {
+      "interna": 70.0,
+      "externa": 60.0,
+      "mql": 60.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.2,
+      "5.5": 0.26,
+      "7.5": 0.32,
+      "10.5": 0.4,
+      "14.5": 0.48,
+      "20": 0.56
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K1.1",
+    "mmg_normalizado": "K1.1",
+    "vc": {
+      "interna": 100.0,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": 70.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.25,
+      "5.5": 0.33,
+      "7.5": 0.42,
+      "10.5": 0.55,
+      "14.5": 0.67,
+      "20": 0.79
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K2.1",
+    "mmg_normalizado": "K2.1",
+    "vc": {
+      "interna": 135.0,
+      "externa": 85.0,
+      "mql": 100.0,
+      "ar": 100.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.24,
+      "5.5": 0.32,
+      "7.5": 0.4,
+      "10.5": 0.51,
+      "14.5": 0.62,
+      "20": 0.72
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K2.2",
+    "mmg_normalizado": "K2.2",
+    "vc": {
+      "interna": 85.0,
+      "externa": 65.0,
+      "mql": 65.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.22,
+      "5.5": 0.28,
+      "7.5": 0.35,
+      "10.5": 0.44,
+      "14.5": 0.54,
+      "20": 0.62
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K2.3",
+    "mmg_normalizado": "K2.3",
+    "vc": {
+      "interna": 50.0,
+      "externa": 35.0,
+      "mql": 45.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.11,
+      "5.5": 0.13,
+      "7.5": 0.16,
+      "10.5": 0.2,
+      "14.5": 0.24,
+      "20": 0.28
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K3.1",
+    "mmg_normalizado": "K3.1",
+    "vc": {
+      "interna": 75.0,
+      "externa": 70.0,
+      "mql": 70.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.23,
+      "5.5": 0.3,
+      "7.5": 0.38,
+      "10.5": 0.47,
+      "14.5": 0.58,
+      "20": 0.67
+    }
+  },
+  {
+    "familia": "SDR301",
+    "nome_produto": "Tritan-Drill-Reamer",
+    "gama": "Expert Line",
+    "categoria": "Drill Reaming (Alargamento)",
+    "mmg": "K3.2",
+    "mmg_normalizado": "K3.2",
+    "vc": {
+      "interna": 70.0,
+      "externa": 60.0,
+      "mql": 60.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4": 0.2,
+      "5.5": 0.25,
+      "7.5": 0.31,
+      "10.5": 0.38,
+      "14.5": 0.46,
+      "20": 0.53
+    }
+  },
+  {
     "familia": "SCD360",
     "nome_produto": "ECU-Drill-Steel",
     "gama": "Basic Line",
