@@ -6820,6 +6820,1942 @@
     }
   },
   {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1-1",
+    "vc": {
+      "interna": 175.0,
+      "externa": 160.0,
+      "mql": 160.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.11,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1-2",
+    "vc": {
+      "interna": 160.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.14,
+      "10.5": 0.16,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1-3",
+    "vc": {
+      "interna": 170.0,
+      "externa": 145.0,
+      "mql": 145.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1-4",
+    "vc": {
+      "interna": 120.0,
+      "externa": 100.0,
+      "mql": 100.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.11,
+      "10.5": 0.12,
+      "14.5": 0.13,
+      "20.0": 0.14
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P1-5",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.11,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.15,
+      "20.0": 0.16
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2-1",
+    "vc": {
+      "interna": 90.0,
+      "externa": 85.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.1,
+      "10.5": 0.11,
+      "14.5": 0.12,
+      "20.0": 0.13
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2-2",
+    "vc": {
+      "interna": 90.0,
+      "externa": 70.0,
+      "mql": 75.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.08,
+      "14.5": 0.09,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2-3",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P2-4",
+    "vc": {
+      "interna": 70.0,
+      "externa": 45.0,
+      "mql": 45.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.09,
+      "14.5": 0.1,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3-1",
+    "vc": {
+      "interna": 75.0,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.09,
+      "14.5": 0.1,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3-2",
+    "vc": {
+      "interna": 245.0,
+      "externa": 175.0,
+      "mql": 175.0,
+      "ar": 175.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.17,
+      "5.5": 0.19,
+      "7.5": 0.22,
+      "10.5": 0.25,
+      "14.5": 0.27,
+      "20.0": 0.3
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P3-3",
+    "vc": {
+      "interna": 225.0,
+      "externa": 140.0,
+      "mql": 170.0,
+      "ar": 170.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.16,
+      "5.5": 0.18,
+      "7.5": 0.2,
+      "10.5": 0.23,
+      "14.5": 0.25,
+      "20.0": 0.27
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P4-1",
+    "vc": {
+      "interna": 170.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P5-1",
+    "vc": {
+      "interna": 100.0,
+      "externa": 70.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P5-2",
+    "vc": {
+      "interna": 155.0,
+      "externa": 135.0,
+      "mql": 135.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.15,
+      "5.5": 0.17,
+      "7.5": 0.19,
+      "10.5": 0.21,
+      "14.5": 0.23,
+      "20.0": 0.25
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "P5-3",
+    "vc": {
+      "interna": 135.0,
+      "externa": 120.0,
+      "mql": 120.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.12,
+      "5.5": 0.13,
+      "7.5": 0.15,
+      "10.5": 0.17,
+      "14.5": 0.19,
+      "20.0": 0.2
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "M1-1",
+    "vc": {
+      "interna": 300.0,
+      "externa": 200.0,
+      "mql": 250.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "M1-2",
+    "vc": {
+      "interna": 250.0,
+      "externa": 180.0,
+      "mql": 200.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "M2-1",
+    "vc": {
+      "interna": 220.0,
+      "externa": 150.0,
+      "mql": 180.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "M2-2",
+    "vc": {
+      "interna": 180.0,
+      "externa": 120.0,
+      "mql": 150.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "M3-1",
+    "vc": {
+      "interna": 175.0,
+      "externa": 160.0,
+      "mql": 160.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.11,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K1-1",
+    "vc": {
+      "interna": 160.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.14,
+      "10.5": 0.16,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K1-2",
+    "vc": {
+      "interna": 170.0,
+      "externa": 145.0,
+      "mql": 145.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K1-3",
+    "vc": {
+      "interna": 120.0,
+      "externa": 100.0,
+      "mql": 100.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.11,
+      "10.5": 0.12,
+      "14.5": 0.13,
+      "20.0": 0.14
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2-1",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.11,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.15,
+      "20.0": 0.16
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2-2",
+    "vc": {
+      "interna": 90.0,
+      "externa": 85.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.1,
+      "10.5": 0.11,
+      "14.5": 0.12,
+      "20.0": 0.13
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2-3",
+    "vc": {
+      "interna": 90.0,
+      "externa": 70.0,
+      "mql": 75.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.08,
+      "14.5": 0.09,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K2-4",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K3-1",
+    "vc": {
+      "interna": 70.0,
+      "externa": 45.0,
+      "mql": 45.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.09,
+      "14.5": 0.1,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K3-2",
+    "vc": {
+      "interna": 75.0,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.09,
+      "14.5": 0.1,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K4-1",
+    "vc": {
+      "interna": 245.0,
+      "externa": 175.0,
+      "mql": 175.0,
+      "ar": 175.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.17,
+      "5.5": 0.19,
+      "7.5": 0.22,
+      "10.5": 0.25,
+      "14.5": 0.27,
+      "20.0": 0.3
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K4-2",
+    "vc": {
+      "interna": 225.0,
+      "externa": 140.0,
+      "mql": 170.0,
+      "ar": 170.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.16,
+      "5.5": 0.18,
+      "7.5": 0.2,
+      "10.5": 0.23,
+      "14.5": 0.25,
+      "20.0": 0.27
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K5-1",
+    "vc": {
+      "interna": 170.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "K5-2",
+    "vc": {
+      "interna": 100.0,
+      "externa": 70.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1-1",
+    "vc": {
+      "interna": 155.0,
+      "externa": 135.0,
+      "mql": 135.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.15,
+      "5.5": 0.17,
+      "7.5": 0.19,
+      "10.5": 0.21,
+      "14.5": 0.23,
+      "20.0": 0.25
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1-2",
+    "vc": {
+      "interna": 135.0,
+      "externa": 120.0,
+      "mql": 120.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.12,
+      "5.5": 0.13,
+      "7.5": 0.15,
+      "10.5": 0.17,
+      "14.5": 0.19,
+      "20.0": 0.2
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1-3",
+    "vc": {
+      "interna": 300.0,
+      "externa": 200.0,
+      "mql": 250.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1-4",
+    "vc": {
+      "interna": 250.0,
+      "externa": 180.0,
+      "mql": 200.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1-5",
+    "vc": {
+      "interna": 220.0,
+      "externa": 150.0,
+      "mql": 180.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1-6",
+    "vc": {
+      "interna": 180.0,
+      "externa": 120.0,
+      "mql": 150.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N1-7",
+    "vc": {
+      "interna": 175.0,
+      "externa": 160.0,
+      "mql": 160.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.11,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N2-1",
+    "vc": {
+      "interna": 160.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.14,
+      "10.5": 0.16,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N2-2",
+    "vc": {
+      "interna": 170.0,
+      "externa": 145.0,
+      "mql": 145.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N2-3",
+    "vc": {
+      "interna": 120.0,
+      "externa": 100.0,
+      "mql": 100.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.11,
+      "10.5": 0.12,
+      "14.5": 0.13,
+      "20.0": 0.14
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N2-4",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.11,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.15,
+      "20.0": 0.16
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N3-1",
+    "vc": {
+      "interna": 90.0,
+      "externa": 85.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.1,
+      "10.5": 0.11,
+      "14.5": 0.12,
+      "20.0": 0.13
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N3-2",
+    "vc": {
+      "interna": 90.0,
+      "externa": 70.0,
+      "mql": 75.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.08,
+      "14.5": 0.09,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N4-1",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N4-2",
+    "vc": {
+      "interna": 70.0,
+      "externa": 45.0,
+      "mql": 45.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.09,
+      "14.5": 0.1,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N4-3",
+    "vc": {
+      "interna": 75.0,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.09,
+      "14.5": 0.1,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N4-4",
+    "vc": {
+      "interna": 245.0,
+      "externa": 175.0,
+      "mql": 175.0,
+      "ar": 175.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.17,
+      "5.5": 0.19,
+      "7.5": 0.22,
+      "10.5": 0.25,
+      "14.5": 0.27,
+      "20.0": 0.3
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N4-5",
+    "vc": {
+      "interna": 225.0,
+      "externa": 140.0,
+      "mql": 170.0,
+      "ar": 170.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.16,
+      "5.5": 0.18,
+      "7.5": 0.2,
+      "10.5": 0.23,
+      "14.5": 0.25,
+      "20.0": 0.27
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "N5-1",
+    "vc": {
+      "interna": 170.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "S1-1",
+    "vc": {
+      "interna": 100.0,
+      "externa": 70.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "S2-1",
+    "vc": {
+      "interna": 155.0,
+      "externa": 135.0,
+      "mql": 135.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.15,
+      "5.5": 0.17,
+      "7.5": 0.19,
+      "10.5": 0.21,
+      "14.5": 0.23,
+      "20.0": 0.25
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "S2-2",
+    "vc": {
+      "interna": 135.0,
+      "externa": 120.0,
+      "mql": 120.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.12,
+      "5.5": 0.13,
+      "7.5": 0.15,
+      "10.5": 0.17,
+      "14.5": 0.19,
+      "20.0": 0.2
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "S3-1",
+    "vc": {
+      "interna": 300.0,
+      "externa": 200.0,
+      "mql": 250.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "S3-2",
+    "vc": {
+      "interna": 250.0,
+      "externa": 180.0,
+      "mql": 200.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "S4-1",
+    "vc": {
+      "interna": 220.0,
+      "externa": 150.0,
+      "mql": 180.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "S4-2",
+    "vc": {
+      "interna": 180.0,
+      "externa": 120.0,
+      "mql": 150.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H1-1",
+    "vc": {
+      "interna": 175.0,
+      "externa": 160.0,
+      "mql": 160.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.11,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H1-2",
+    "vc": {
+      "interna": 160.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.14,
+      "10.5": 0.16,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H1-3",
+    "vc": {
+      "interna": 170.0,
+      "externa": 145.0,
+      "mql": 145.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H2-1",
+    "vc": {
+      "interna": 120.0,
+      "externa": 100.0,
+      "mql": 100.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.11,
+      "10.5": 0.12,
+      "14.5": 0.13,
+      "20.0": 0.14
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H2-2",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.11,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.15,
+      "20.0": 0.16
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H2-3",
+    "vc": {
+      "interna": 90.0,
+      "externa": 85.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.1,
+      "10.5": 0.11,
+      "14.5": 0.12,
+      "20.0": 0.13
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H3-1",
+    "vc": {
+      "interna": 90.0,
+      "externa": 70.0,
+      "mql": 75.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.08,
+      "14.5": 0.09,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "H3-2",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C1-1",
+    "vc": {
+      "interna": 70.0,
+      "externa": 45.0,
+      "mql": 45.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.09,
+      "14.5": 0.1,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C1-2",
+    "vc": {
+      "interna": 75.0,
+      "externa": 50.0,
+      "mql": 50.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.09,
+      "14.5": 0.1,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C1-3",
+    "vc": {
+      "interna": 245.0,
+      "externa": 175.0,
+      "mql": 175.0,
+      "ar": 175.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.17,
+      "5.5": 0.19,
+      "7.5": 0.22,
+      "10.5": 0.25,
+      "14.5": 0.27,
+      "20.0": 0.3
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C2-1",
+    "vc": {
+      "interna": 225.0,
+      "externa": 140.0,
+      "mql": 170.0,
+      "ar": 170.0
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.16,
+      "5.5": 0.18,
+      "7.5": 0.2,
+      "10.5": 0.23,
+      "14.5": 0.25,
+      "20.0": 0.27
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C3-1",
+    "vc": {
+      "interna": 170.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C4-1",
+    "vc": {
+      "interna": 100.0,
+      "externa": 70.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C4-2",
+    "vc": {
+      "interna": 155.0,
+      "externa": 135.0,
+      "mql": 135.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.15,
+      "5.5": 0.17,
+      "7.5": 0.19,
+      "10.5": 0.21,
+      "14.5": 0.23,
+      "20.0": 0.25
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C5-1",
+    "vc": {
+      "interna": 135.0,
+      "externa": 120.0,
+      "mql": 120.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.12,
+      "5.5": 0.13,
+      "7.5": 0.15,
+      "10.5": 0.17,
+      "14.5": 0.19,
+      "20.0": 0.2
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C5-2",
+    "vc": {
+      "interna": 300.0,
+      "externa": 200.0,
+      "mql": 250.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C5-3",
+    "vc": {
+      "interna": 250.0,
+      "externa": 180.0,
+      "mql": 200.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C5-4",
+    "vc": {
+      "interna": 220.0,
+      "externa": 150.0,
+      "mql": 180.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C5-5",
+    "vc": {
+      "interna": 180.0,
+      "externa": 120.0,
+      "mql": 150.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.14,
+      "5.5": 0.15,
+      "7.5": 0.18,
+      "10.5": 0.2,
+      "14.5": 0.22,
+      "20.0": 0.23
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "C5-6",
+    "vc": {
+      "interna": 175.0,
+      "externa": 160.0,
+      "mql": 160.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.1,
+      "7.5": 0.11,
+      "10.5": 0.13,
+      "14.5": 0.14,
+      "20.0": 0.15
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "X1-1",
+    "vc": {
+      "interna": 160.0,
+      "externa": 130.0,
+      "mql": 130.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.11,
+      "5.5": 0.12,
+      "7.5": 0.14,
+      "10.5": 0.16,
+      "14.5": 0.17,
+      "20.0": 0.18
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "X1-2",
+    "vc": {
+      "interna": 170.0,
+      "externa": 145.0,
+      "mql": 145.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "X2-1",
+    "vc": {
+      "interna": 120.0,
+      "externa": 100.0,
+      "mql": 100.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.11,
+      "10.5": 0.12,
+      "14.5": 0.13,
+      "20.0": 0.14
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "X2-2",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.09,
+      "5.5": 0.11,
+      "7.5": 0.12,
+      "10.5": 0.13,
+      "14.5": 0.15,
+      "20.0": 0.16
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "X2-3",
+    "vc": {
+      "interna": 90.0,
+      "externa": 85.0,
+      "mql": 85.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.08,
+      "5.5": 0.09,
+      "7.5": 0.1,
+      "10.5": 0.11,
+      "14.5": 0.12,
+      "20.0": 0.13
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "Y1-1",
+    "vc": {
+      "interna": 90.0,
+      "externa": 70.0,
+      "mql": 75.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.06,
+      "5.5": 0.07,
+      "7.5": 0.08,
+      "10.5": 0.08,
+      "14.5": 0.09,
+      "20.0": 0.1
+    }
+  },
+  {
+    "familia": "SCD999",
+    "nome_produto": "PASTILHA_QUEBRA_APARA",
+    "gama": "Basic Line",
+    "categoria": "Solid Carbide / Sandard Drilling",
+    "mmg": "Y1-2",
+    "vc": {
+      "interna": 110.0,
+      "externa": 95.0,
+      "mql": 95.0,
+      "ar": null
+    },
+    "suportado": true,
+    "avancos_f": {
+      "4.0": 0.1,
+      "5.5": 0.12,
+      "7.5": 0.13,
+      "10.5": 0.15,
+      "14.5": 0.16,
+      "20.0": 0.17
+    }
+  },
+  {
     "familia": "SCD360",
     "nome_produto": "ECU-Drill-Steel",
     "gama": "Basic Line",
