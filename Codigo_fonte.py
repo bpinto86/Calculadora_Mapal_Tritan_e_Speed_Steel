@@ -1112,7 +1112,11 @@ html_content = '''
         const mmgSubgruposPorIso = {};
 
         function normMmg(cod) {
-            return String(cod || '').trim().toUpperCase().replace(/^([A-Z]+\d+)-(\d+)$/, '$1.$2');
+            return String(cod || '').trim().toUpperCase();
+        }
+
+        function chaveMmg(cod) {
+            return normMmg(cod).replace(/^([A-Z]+\d+)[.-](\d+)$/, '$1.$2');
         }
 
         function fecharAvisoInicial() {
@@ -1470,19 +1474,20 @@ html_content = '''
             if (!grps || grps.length === 0) return true;
             if (!isoSel && !subSel && !codSel) return true;
 
-            const codNorm = normMmg(codSel);
-            const subNorm = normMmg(subSel);
+            const codKey = chaveMmg(codSel);
+            const subKey = chaveMmg(subSel);
             const isoNorm = String(isoSel || '').trim().toUpperCase();
 
             return grps.some(g => {
                 const gNorm = normMmg(g);
-                if (codNorm) {
-                    return gNorm === codNorm;
+                const gKey = chaveMmg(g);
+                if (codKey) {
+                    return gKey === codKey;
                 }
-                const gIso = (mmgMetaPorCodigo[gNorm]?.iso || extrairIsoDeCodigo(gNorm)).toUpperCase();
-                const gSub = normMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
-                if (subNorm) {
-                    return gSub === subNorm || gNorm.startsWith(subNorm + '.');
+                const gIso = (mmgMetaPorCodigo[gNorm]?.iso || mmgMetaPorCodigo[gKey]?.iso || extrairIsoDeCodigo(gNorm)).toUpperCase();
+                const gSub = chaveMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || mmgMetaPorCodigo[gKey]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
+                if (subKey) {
+                    return gSub === subKey || gKey.startsWith(subKey + '.');
                 }
                 if (isoNorm) {
                     return gIso === isoNorm;
@@ -1514,7 +1519,7 @@ html_content = '''
             }
 
             const dispNormList = (gruposDisponiveisFerramenta || []).map(g => normMmg(g)).filter(Boolean);
-            const dispSet = new Set(dispNormList);
+            const dispSet = new Set(dispNormList.map(g => chaveMmg(g)));
 
             const baseCodigos = new Set([
                 ...(gruposMmgOrdem.length > 0 ? gruposMmgOrdem : Object.keys(gruposMmgMap)).map(normMmg),
@@ -1536,7 +1541,7 @@ html_content = '''
             const codigoAtivo = normMmg(selG.value);
 
             candidatos.forEach(cod => {
-                const habilitado = !filtrarPorFerramenta || dispSet.has(cod);
+                const habilitado = !filtrarPorFerramenta || dispSet.has(chaveMmg(cod));
                 const ativo = codigoAtivo === cod;
                 const meta = mmgMetaPorCodigo[cod] || {};
                 const btn = document.createElement('button');
@@ -1725,10 +1730,10 @@ html_content = '''
             if (disp.length === 0) return;
 
             if (mmgSubgrupoSelecionado) {
-                const subUpper = normMmg(mmgSubgrupoSelecionado);
+                const subKey = chaveMmg(mmgSubgrupoSelecionado);
                 const matchExato = disp.find(g => {
-                    const metaSub = normMmg(mmgMetaPorCodigo[g]?.subgrupo || extrairSubgrupoDeCodigo(g));
-                    return metaSub === subUpper || g.startsWith(subUpper + '.');
+                    const metaSub = chaveMmg(mmgMetaPorCodigo[g]?.subgrupo || mmgMetaPorCodigo[chaveMmg(g)]?.subgrupo || extrairSubgrupoDeCodigo(g));
+                    return metaSub === subKey || chaveMmg(g).startsWith(subKey + '.');
                 });
                 if (matchExato) {
                     if (!mmgSelecionadoManualmente && !grupoSelect.value) {
