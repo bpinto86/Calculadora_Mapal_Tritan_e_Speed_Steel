@@ -10,7 +10,7 @@ def _parse_num(val):
         return None
     if isinstance(val, (int, float)):
         return float(val)
-    s = str(val).strip().replace(",", ".")
+    s = re.sub(r"\*+$", "", str(val).strip()).replace(",", ".").strip()
     try:
         return float(s)
     except ValueError:
@@ -20,12 +20,12 @@ def _parse_num(val):
 def _parse_diametro(col_name):
     if col_name is None or (isinstance(col_name, float) and math.isnan(col_name)):
         return None
-    s = str(col_name).strip().replace(",", ".")
+    s = re.sub(r"\*+$", "", str(col_name).strip()).replace(",", ".").strip()
     m = re.search(r"(?:[dDØø]\s*)?(\d+(?:\.\d+)?)", s)
     if not m:
         return None
     val = float(m.group(1))
-    return f"{val:.1f}"
+    return f"{val:.2f}".rstrip("0").rstrip(".") if "." in f"{val:.2f}" else f"{val:.1f}"
 
 
 def _limpar_str(val):
@@ -39,9 +39,8 @@ def _norm_key(val):
 
 
 def _norm_codigo_mmg(val):
-    """Normaliza separadores de subcódigo (ex.: 'P1-1' -> 'P1.1') para comparação e cruzamento."""
-    s = _limpar_str(val).upper()
-    return re.sub(r"\s*-\s*", ".", s)
+    """Mantém a identidade exata do código MMG (ex.: 'P1.1' != 'P1-1')."""
+    return _limpar_str(val).upper()
 
 
 def _extrair_iso_do_codigo(codigo: str) -> str:
@@ -85,7 +84,7 @@ def _extrair_registos_aba_mmg(xls: pd.ExcelFile, sheet_name: str, origem: str) -
         "codigo",
     )
     c_iso = pick_col("grupo_iso", "grupo_iso_513", "grupo_isso", "iso")
-    c_subgrupo = pick_col("subgrupo")
+    c_subgrupo = pick_col("subgrupo", "subgrupo_mmg")
     c_material = pick_col(
         "material_da_peca_workpiece_material",
         "material_da_peca",
@@ -175,7 +174,7 @@ def exportar_grupos_mmg_json(
 
     for sheet_name in sheets:
         for item in _extrair_registos_aba_mmg(xls, sheet_name, sheet_name):
-            chave = (_norm_key(item["codigo"]), _norm_key(item["origem"]))
+            chave = (_norm_codigo_mmg(item["codigo"]), _norm_key(item["origem"]))
             if chave in vistos:
                 continue
             vistos.add(chave)
@@ -283,6 +282,8 @@ def exportar_json(
                     continue
                 nome = str(val).strip()
                 up = nome.upper()
+                if up.startswith("UNNAMED:"):
+                    continue
                 if up in {"FAMILIA", "FAMÍLIA", "FAMILY"}:
                     col_map["familia"] = idx
                 elif up in {"MMG", "GRUPO", "MAT_GRUPO", "GRUPO_MAT"}:
@@ -304,7 +305,7 @@ def exportar_json(
         if (
             primeira
             and primeira.upper() not in {"FAMILIA", "FAMÍLIA", "MMG", "GRUPO"}
-            and not re.match(r"^[PMKNHSC]\d+([.-]\d+)?$", primeira.upper())
+            and not re.match(r"^[PMKNHSCXY]\d+([.-]\d+)?$", primeira.upper())
             and len(celulas) <= 3
             and all(_parse_num(c) is None for c in celulas[1:])
         ):

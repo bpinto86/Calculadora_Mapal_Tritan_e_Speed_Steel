@@ -813,7 +813,7 @@
   },
   {
     "codigo": "P1-1",
-    "codigo_normalizado": "P1.1",
+    "codigo_normalizado": "P1-1",
     "label": "P1-1 (125 HB)",
     "iso": "P",
     "subgrupo": "P1",
@@ -827,7 +827,7 @@
   },
   {
     "codigo": "P1-2",
-    "codigo_normalizado": "P1.2",
+    "codigo_normalizado": "P1-2",
     "label": "P1-2 (190 HB)",
     "iso": "P",
     "subgrupo": "P1",
@@ -841,7 +841,7 @@
   },
   {
     "codigo": "P1-3",
-    "codigo_normalizado": "P1.3",
+    "codigo_normalizado": "P1-3",
     "label": "P1-3 (250 HB)",
     "iso": "P",
     "subgrupo": "P1",
@@ -855,7 +855,7 @@
   },
   {
     "codigo": "P1-4",
-    "codigo_normalizado": "P1.4",
+    "codigo_normalizado": "P1-4",
     "label": "P1-4 (270 HB)",
     "iso": "P",
     "subgrupo": "P1",
@@ -869,7 +869,7 @@
   },
   {
     "codigo": "P1-5",
-    "codigo_normalizado": "P1.5",
+    "codigo_normalizado": "P1-5",
     "label": "P1-5 (300 HB)",
     "iso": "P",
     "subgrupo": "P1",
@@ -883,7 +883,7 @@
   },
   {
     "codigo": "P2-1",
-    "codigo_normalizado": "P2.1",
+    "codigo_normalizado": "P2-1",
     "label": "P2-1 (180 HB)",
     "iso": "P",
     "subgrupo": "P2",
@@ -897,7 +897,7 @@
   },
   {
     "codigo": "P2-2",
-    "codigo_normalizado": "P2.2",
+    "codigo_normalizado": "P2-2",
     "label": "P2-2 (275 HB)",
     "iso": "P",
     "subgrupo": "P2",
@@ -911,7 +911,7 @@
   },
   {
     "codigo": "P2-3",
-    "codigo_normalizado": "P2.3",
+    "codigo_normalizado": "P2-3",
     "label": "P2-3 (300 HB)",
     "iso": "P",
     "subgrupo": "P2",
@@ -925,7 +925,7 @@
   },
   {
     "codigo": "P2-4",
-    "codigo_normalizado": "P2.4",
+    "codigo_normalizado": "P2-4",
     "label": "P2-4 (350 HB)",
     "iso": "P",
     "subgrupo": "P2",
@@ -939,7 +939,7 @@
   },
   {
     "codigo": "P3-1",
-    "codigo_normalizado": "P3.1",
+    "codigo_normalizado": "P3-1",
     "label": "P3-1 (200 HB)",
     "iso": "P",
     "subgrupo": "P3",
@@ -953,7 +953,7 @@
   },
   {
     "codigo": "P3-2",
-    "codigo_normalizado": "P3.2",
+    "codigo_normalizado": "P3-2",
     "label": "P3-2 (325 HB)",
     "iso": "P",
     "subgrupo": "P3",
@@ -967,7 +967,7 @@
   },
   {
     "codigo": "P3-3",
-    "codigo_normalizado": "P3.3",
+    "codigo_normalizado": "P3-3",
     "label": "P3-3 (370 HB)",
     "iso": "P",
     "subgrupo": "P3",
@@ -981,7 +981,7 @@
   },
   {
     "codigo": "P4-1",
-    "codigo_normalizado": "P4.1",
+    "codigo_normalizado": "P4-1",
     "label": "P4-1 (480 HB)",
     "iso": "P",
     "subgrupo": "P4",
@@ -995,7 +995,7 @@
   },
   {
     "codigo": "P5-1",
-    "codigo_normalizado": "P5.1",
+    "codigo_normalizado": "P5-1",
     "label": "P5-1 (200 HB)",
     "iso": "P",
     "subgrupo": "P5",
@@ -1009,7 +1009,7 @@
   },
   {
     "codigo": "P5-2",
-    "codigo_normalizado": "P5.2",
+    "codigo_normalizado": "P5-2",
     "label": "P5-2 (240 HB)",
     "iso": "P",
     "subgrupo": "P5",
@@ -1023,7 +1023,7 @@
   },
   {
     "codigo": "P5-3",
-    "codigo_normalizado": "P5.3",
+    "codigo_normalizado": "P5-3",
     "label": "P5-3 (350 HB)",
     "iso": "P",
     "subgrupo": "P5",
@@ -1037,7 +1037,7 @@
   },
   {
     "codigo": "M1-1",
-    "codigo_normalizado": "M1.1",
+    "codigo_normalizado": "M1-1",
     "label": "M1-1 (200 HB)",
     "iso": "M",
     "subgrupo": "M1",
@@ -1051,7 +1051,7 @@
   },
   {
     "codigo": "M1-2",
-    "codigo_normalizado": "M1.2",
+    "codigo_normalizado": "M1-2",
     "label": "M1-2 (300 HB)",
     "iso": "M",
     "subgrupo": "M1",
@@ -1065,7 +1065,7 @@
   },
   {
     "codigo": "M2-1",
-    "codigo_normalizado": "M2.1",
+    "codigo_normalizado": "M2-1",
     "label": "M2-1 (230 HB)",
     "iso": "M",
     "subgrupo": "M2",
@@ -1079,7 +1079,7 @@
   },
   {
     "codigo": "M2-2",
-    "codigo_normalizado": "M2.2",
+    "codigo_normalizado": "M2-2",
     "label": "M2-2 (230 HB)",
     "iso": "M",
     "subgrupo": "M2",
@@ -1093,7 +1093,7 @@
   },
   {
     "codigo": "M3-1",
-    "codigo_normalizado": "M3.1",
+    "codigo_normalizado": "M3-1",
     "label": "M3-1 (220 HB)",
     "iso": "M",
     "subgrupo": "M3",
@@ -1107,7 +1107,7 @@
   },
   {
     "codigo": "K1-1",
-    "codigo_normalizado": "K1.1",
+    "codigo_normalizado": "K1-1",
     "label": "K1-1 (180 HB)",
     "iso": "K",
     "subgrupo": "K1",
@@ -1121,7 +1121,7 @@
   },
   {
     "codigo": "K1-2",
-    "codigo_normalizado": "K1.2",
+    "codigo_normalizado": "K1-2",
     "label": "K1-2 (220 HB)",
     "iso": "K",
     "subgrupo": "K1",
@@ -1135,7 +1135,7 @@
   },
   {
     "codigo": "K1-3",
-    "codigo_normalizado": "K1.3",
+    "codigo_normalizado": "K1-3",
     "label": "K1-3 (260 HB)",
     "iso": "K",
     "subgrupo": "K1",
@@ -1149,7 +1149,7 @@
   },
   {
     "codigo": "K2-1",
-    "codigo_normalizado": "K2.1",
+    "codigo_normalizado": "K2-1",
     "label": "K2-1 (160 HB)",
     "iso": "K",
     "subgrupo": "K2",
@@ -1163,7 +1163,7 @@
   },
   {
     "codigo": "K2-2",
-    "codigo_normalizado": "K2.2",
+    "codigo_normalizado": "K2-2",
     "label": "K2-2 (220 HB)",
     "iso": "K",
     "subgrupo": "K2",
@@ -1177,7 +1177,7 @@
   },
   {
     "codigo": "K2-3",
-    "codigo_normalizado": "K2.3",
+    "codigo_normalizado": "K2-3",
     "label": "K2-3 (250 HB)",
     "iso": "K",
     "subgrupo": "K2",
@@ -1191,7 +1191,7 @@
   },
   {
     "codigo": "K2-4",
-    "codigo_normalizado": "K2.4",
+    "codigo_normalizado": "K2-4",
     "label": "K2-4 (480 HB)",
     "iso": "K",
     "subgrupo": "K2",
@@ -1205,7 +1205,7 @@
   },
   {
     "codigo": "K3-1",
-    "codigo_normalizado": "K3.1",
+    "codigo_normalizado": "K3-1",
     "label": "K3-1 (240 HB)",
     "iso": "K",
     "subgrupo": "K3",
@@ -1219,7 +1219,7 @@
   },
   {
     "codigo": "K3-2",
-    "codigo_normalizado": "K3.2",
+    "codigo_normalizado": "K3-2",
     "label": "K3-2 (280 HB)",
     "iso": "K",
     "subgrupo": "K3",
@@ -1233,7 +1233,7 @@
   },
   {
     "codigo": "K4-1",
-    "codigo_normalizado": "K4.1",
+    "codigo_normalizado": "K4-1",
     "label": "K4-1 (130 HB)",
     "iso": "K",
     "subgrupo": "K4",
@@ -1247,7 +1247,7 @@
   },
   {
     "codigo": "K4-2",
-    "codigo_normalizado": "K4.2",
+    "codigo_normalizado": "K4-2",
     "label": "K4-2 (230 HB)",
     "iso": "K",
     "subgrupo": "K4",
@@ -1261,7 +1261,7 @@
   },
   {
     "codigo": "K5-1",
-    "codigo_normalizado": "K5.1",
+    "codigo_normalizado": "K5-1",
     "label": "K5-1 (190 HB)",
     "iso": "K",
     "subgrupo": "K5",
@@ -1275,7 +1275,7 @@
   },
   {
     "codigo": "K5-2",
-    "codigo_normalizado": "K5.2",
+    "codigo_normalizado": "K5-2",
     "label": "K5-2 (180 HB)",
     "iso": "K",
     "subgrupo": "K5",
@@ -1289,7 +1289,7 @@
   },
   {
     "codigo": "N1-1",
-    "codigo_normalizado": "N1.1",
+    "codigo_normalizado": "N1-1",
     "label": "N1-1 (60 HB)",
     "iso": "N",
     "subgrupo": "N1",
@@ -1303,7 +1303,7 @@
   },
   {
     "codigo": "N1-2",
-    "codigo_normalizado": "N1.2",
+    "codigo_normalizado": "N1-2",
     "label": "N1-2 (100 HB)",
     "iso": "N",
     "subgrupo": "N1",
@@ -1317,7 +1317,7 @@
   },
   {
     "codigo": "N1-3",
-    "codigo_normalizado": "N1.3",
+    "codigo_normalizado": "N1-3",
     "label": "N1-3",
     "iso": "N",
     "subgrupo": "N1",
@@ -1331,7 +1331,7 @@
   },
   {
     "codigo": "N1-4",
-    "codigo_normalizado": "N1.4",
+    "codigo_normalizado": "N1-4",
     "label": "N1-4",
     "iso": "N",
     "subgrupo": "N1",
@@ -1345,7 +1345,7 @@
   },
   {
     "codigo": "N1-5",
-    "codigo_normalizado": "N1.5",
+    "codigo_normalizado": "N1-5",
     "label": "N1-5 (75 HB)",
     "iso": "N",
     "subgrupo": "N1",
@@ -1359,7 +1359,7 @@
   },
   {
     "codigo": "N1-6",
-    "codigo_normalizado": "N1.6",
+    "codigo_normalizado": "N1-6",
     "label": "N1-6 (90 HB)",
     "iso": "N",
     "subgrupo": "N1",
@@ -1373,7 +1373,7 @@
   },
   {
     "codigo": "N1-7",
-    "codigo_normalizado": "N1.7",
+    "codigo_normalizado": "N1-7",
     "label": "N1-7 (130 HB)",
     "iso": "N",
     "subgrupo": "N1",
@@ -1387,7 +1387,7 @@
   },
   {
     "codigo": "N2-1",
-    "codigo_normalizado": "N2.1",
+    "codigo_normalizado": "N2-1",
     "label": "N2-1 (110 HB)",
     "iso": "N",
     "subgrupo": "N2",
@@ -1401,7 +1401,7 @@
   },
   {
     "codigo": "N2-2",
-    "codigo_normalizado": "N2.2",
+    "codigo_normalizado": "N2-2",
     "label": "N2-2 (100 HB)",
     "iso": "N",
     "subgrupo": "N2",
@@ -1415,7 +1415,7 @@
   },
   {
     "codigo": "N2-3",
-    "codigo_normalizado": "N2.3",
+    "codigo_normalizado": "N2-3",
     "label": "N2-3 (90 HB)",
     "iso": "N",
     "subgrupo": "N2",
@@ -1429,7 +1429,7 @@
   },
   {
     "codigo": "N2-4",
-    "codigo_normalizado": "N2.4",
+    "codigo_normalizado": "N2-4",
     "label": "N2-4",
     "iso": "N",
     "subgrupo": "N2",
@@ -1443,7 +1443,7 @@
   },
   {
     "codigo": "N3-1",
-    "codigo_normalizado": "N3.1",
+    "codigo_normalizado": "N3-1",
     "label": "N3-1",
     "iso": "N",
     "subgrupo": "N3",
@@ -1457,7 +1457,7 @@
   },
   {
     "codigo": "N3-2",
-    "codigo_normalizado": "N3.2",
+    "codigo_normalizado": "N3-2",
     "label": "N3-2",
     "iso": "N",
     "subgrupo": "N3",
@@ -1471,7 +1471,7 @@
   },
   {
     "codigo": "N4-1",
-    "codigo_normalizado": "N4.1",
+    "codigo_normalizado": "N4-1",
     "label": "N4-1",
     "iso": "N",
     "subgrupo": "N4",
@@ -1485,7 +1485,7 @@
   },
   {
     "codigo": "N4-2",
-    "codigo_normalizado": "N4.2",
+    "codigo_normalizado": "N4-2",
     "label": "N4-2",
     "iso": "N",
     "subgrupo": "N4",
@@ -1499,7 +1499,7 @@
   },
   {
     "codigo": "N4-3",
-    "codigo_normalizado": "N4.3",
+    "codigo_normalizado": "N4-3",
     "label": "N4-3",
     "iso": "N",
     "subgrupo": "N4",
@@ -1513,7 +1513,7 @@
   },
   {
     "codigo": "N4-4",
-    "codigo_normalizado": "N4.4",
+    "codigo_normalizado": "N4-4",
     "label": "N4-4",
     "iso": "N",
     "subgrupo": "N4",
@@ -1527,7 +1527,7 @@
   },
   {
     "codigo": "N4-5",
-    "codigo_normalizado": "N4.5",
+    "codigo_normalizado": "N4-5",
     "label": "N4-5",
     "iso": "N",
     "subgrupo": "N4",
@@ -1541,7 +1541,7 @@
   },
   {
     "codigo": "N5-1",
-    "codigo_normalizado": "N5.1",
+    "codigo_normalizado": "N5-1",
     "label": "N5-1 (70 HB)",
     "iso": "N",
     "subgrupo": "N5",
@@ -1555,7 +1555,7 @@
   },
   {
     "codigo": "S1-1",
-    "codigo_normalizado": "S1.1",
+    "codigo_normalizado": "S1-1",
     "label": "S1-1 (200 HB)",
     "iso": "S",
     "subgrupo": "S1",
@@ -1569,7 +1569,7 @@
   },
   {
     "codigo": "S2-1",
-    "codigo_normalizado": "S2.1",
+    "codigo_normalizado": "S2-1",
     "label": "S2-1 (375 HB)",
     "iso": "S",
     "subgrupo": "S2",
@@ -1583,7 +1583,7 @@
   },
   {
     "codigo": "S2-2",
-    "codigo_normalizado": "S2.2",
+    "codigo_normalizado": "S2-2",
     "label": "S2-2 (410 HB)",
     "iso": "S",
     "subgrupo": "S2",
@@ -1597,7 +1597,7 @@
   },
   {
     "codigo": "S3-1",
-    "codigo_normalizado": "S3.1",
+    "codigo_normalizado": "S3-1",
     "label": "S3-1 (130 HB)",
     "iso": "S",
     "subgrupo": "S3",
@@ -1611,7 +1611,7 @@
   },
   {
     "codigo": "S3-2",
-    "codigo_normalizado": "S3.2",
+    "codigo_normalizado": "S3-2",
     "label": "S3-2 (230 HB)",
     "iso": "S",
     "subgrupo": "S3",
@@ -1625,7 +1625,7 @@
   },
   {
     "codigo": "S4-1",
-    "codigo_normalizado": "S4.1",
+    "codigo_normalizado": "S4-1",
     "label": "S4-1 (250 HB)",
     "iso": "S",
     "subgrupo": "S4",
@@ -1639,7 +1639,7 @@
   },
   {
     "codigo": "S4-2",
-    "codigo_normalizado": "S4.2",
+    "codigo_normalizado": "S4-2",
     "label": "S4-2 (350 HB)",
     "iso": "S",
     "subgrupo": "S4",
@@ -1653,7 +1653,7 @@
   },
   {
     "codigo": "H1-1",
-    "codigo_normalizado": "H1.1",
+    "codigo_normalizado": "H1-1",
     "label": "H1-1 (< 45 HRC)",
     "iso": "H",
     "subgrupo": "H1",
@@ -1667,7 +1667,7 @@
   },
   {
     "codigo": "H1-2",
-    "codigo_normalizado": "H1.2",
+    "codigo_normalizado": "H1-2",
     "label": "H1-2 (< 50 HRC)",
     "iso": "H",
     "subgrupo": "H1",
@@ -1681,7 +1681,7 @@
   },
   {
     "codigo": "H1-3",
-    "codigo_normalizado": "H1.3",
+    "codigo_normalizado": "H1-3",
     "label": "H1-3 (< 54 HRC)",
     "iso": "H",
     "subgrupo": "H1",
@@ -1695,7 +1695,7 @@
   },
   {
     "codigo": "H2-1",
-    "codigo_normalizado": "H2.1",
+    "codigo_normalizado": "H2-1",
     "label": "H2-1 (< 60 HRC)",
     "iso": "H",
     "subgrupo": "H2",
@@ -1709,7 +1709,7 @@
   },
   {
     "codigo": "H2-2",
-    "codigo_normalizado": "H2.2",
+    "codigo_normalizado": "H2-2",
     "label": "H2-2 (< 64 HRC)",
     "iso": "H",
     "subgrupo": "H2",
@@ -1723,7 +1723,7 @@
   },
   {
     "codigo": "H2-3",
-    "codigo_normalizado": "H2.3",
+    "codigo_normalizado": "H2-3",
     "label": "H2-3 (< 68 HRC)",
     "iso": "H",
     "subgrupo": "H2",
@@ -1737,7 +1737,7 @@
   },
   {
     "codigo": "H3-1",
-    "codigo_normalizado": "H3.1",
+    "codigo_normalizado": "H3-1",
     "label": "H3-1 (< 55 HRC)",
     "iso": "H",
     "subgrupo": "H3",
@@ -1751,7 +1751,7 @@
   },
   {
     "codigo": "H3-2",
-    "codigo_normalizado": "H3.2",
+    "codigo_normalizado": "H3-2",
     "label": "H3-2 (≥ 55 HRC)",
     "iso": "H",
     "subgrupo": "H3",
@@ -1765,7 +1765,7 @@
   },
   {
     "codigo": "C1-1",
-    "codigo_normalizado": "C1.1",
+    "codigo_normalizado": "C1-1",
     "label": "C1-1",
     "iso": "C",
     "subgrupo": "C1",
@@ -1779,7 +1779,7 @@
   },
   {
     "codigo": "C1-2",
-    "codigo_normalizado": "C1.2",
+    "codigo_normalizado": "C1-2",
     "label": "C1-2",
     "iso": "C",
     "subgrupo": "C1",
@@ -1793,7 +1793,7 @@
   },
   {
     "codigo": "C1-3",
-    "codigo_normalizado": "C1.3",
+    "codigo_normalizado": "C1-3",
     "label": "C1-3",
     "iso": "C",
     "subgrupo": "C1",
@@ -1807,7 +1807,7 @@
   },
   {
     "codigo": "C2-1",
-    "codigo_normalizado": "C2.1",
+    "codigo_normalizado": "C2-1",
     "label": "C2-1",
     "iso": "C",
     "subgrupo": "C2",
@@ -1821,7 +1821,7 @@
   },
   {
     "codigo": "C3-1",
-    "codigo_normalizado": "C3.1",
+    "codigo_normalizado": "C3-1",
     "label": "C3-1",
     "iso": "C",
     "subgrupo": "C3",
@@ -1835,7 +1835,7 @@
   },
   {
     "codigo": "C4-1",
-    "codigo_normalizado": "C4.1",
+    "codigo_normalizado": "C4-1",
     "label": "C4-1",
     "iso": "C",
     "subgrupo": "C4",
@@ -1849,7 +1849,7 @@
   },
   {
     "codigo": "C4-2",
-    "codigo_normalizado": "C4.2",
+    "codigo_normalizado": "C4-2",
     "label": "C4-2",
     "iso": "C",
     "subgrupo": "C4",
@@ -1863,7 +1863,7 @@
   },
   {
     "codigo": "C5-1",
-    "codigo_normalizado": "C5.1",
+    "codigo_normalizado": "C5-1",
     "label": "C5-1",
     "iso": "C",
     "subgrupo": "C5",
@@ -1877,7 +1877,7 @@
   },
   {
     "codigo": "C5-2",
-    "codigo_normalizado": "C5.2",
+    "codigo_normalizado": "C5-2",
     "label": "C5-2",
     "iso": "C",
     "subgrupo": "C5",
@@ -1891,7 +1891,7 @@
   },
   {
     "codigo": "C5-3",
-    "codigo_normalizado": "C5.3",
+    "codigo_normalizado": "C5-3",
     "label": "C5-3",
     "iso": "C",
     "subgrupo": "C5",
@@ -1905,7 +1905,7 @@
   },
   {
     "codigo": "C5-4",
-    "codigo_normalizado": "C5.4",
+    "codigo_normalizado": "C5-4",
     "label": "C5-4",
     "iso": "C",
     "subgrupo": "C5",
@@ -1919,7 +1919,7 @@
   },
   {
     "codigo": "C5-5",
-    "codigo_normalizado": "C5.5",
+    "codigo_normalizado": "C5-5",
     "label": "C5-5",
     "iso": "C",
     "subgrupo": "C5",
@@ -1933,7 +1933,7 @@
   },
   {
     "codigo": "C5-6",
-    "codigo_normalizado": "C5.6",
+    "codigo_normalizado": "C5-6",
     "label": "C5-6",
     "iso": "C",
     "subgrupo": "C5",
@@ -1947,7 +1947,7 @@
   },
   {
     "codigo": "X1-1",
-    "codigo_normalizado": "X1.1",
+    "codigo_normalizado": "X1-1",
     "label": "X1-1",
     "iso": "X*",
     "subgrupo": "X1",
@@ -1961,7 +1961,7 @@
   },
   {
     "codigo": "X1-2",
-    "codigo_normalizado": "X1.2",
+    "codigo_normalizado": "X1-2",
     "label": "X1-2",
     "iso": "X*",
     "subgrupo": "X1",
@@ -1975,7 +1975,7 @@
   },
   {
     "codigo": "X2-1",
-    "codigo_normalizado": "X2.1",
+    "codigo_normalizado": "X2-1",
     "label": "X2-1",
     "iso": "X*",
     "subgrupo": "X2",
@@ -1989,7 +1989,7 @@
   },
   {
     "codigo": "X2-2",
-    "codigo_normalizado": "X2.2",
+    "codigo_normalizado": "X2-2",
     "label": "X2-2",
     "iso": "X*",
     "subgrupo": "X2",
@@ -2003,7 +2003,7 @@
   },
   {
     "codigo": "X2-3",
-    "codigo_normalizado": "X2.3",
+    "codigo_normalizado": "X2-3",
     "label": "X2-3",
     "iso": "X*",
     "subgrupo": "X2",
@@ -2017,7 +2017,7 @@
   },
   {
     "codigo": "Y1-1",
-    "codigo_normalizado": "Y1.1",
+    "codigo_normalizado": "Y1-1",
     "label": "Y1-1",
     "iso": "Y*",
     "subgrupo": "Y1",
@@ -2031,7 +2031,7 @@
   },
   {
     "codigo": "Y1-2",
-    "codigo_normalizado": "Y1.2",
+    "codigo_normalizado": "Y1-2",
     "label": "Y1-2",
     "iso": "Y*",
     "subgrupo": "Y1",
