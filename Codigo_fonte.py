@@ -1111,6 +1111,20 @@ html_content = '''
         const mmgMetaPorCodigo = {};
         const mmgSubgruposPorIso = {};
 
+        function resolverGrupoTool(toolData, grpKey) {
+            if (!toolData || !toolData.grupos || !grpKey) return null;
+            const gNorm = normMmg(grpKey);
+            if (toolData.grupos[gNorm]) return toolData.grupos[gNorm];
+            if (toolData.grupos[grpKey]) return toolData.grupos[grpKey];
+            const targetKey = chaveMmg(grpKey);
+            for (const k of Object.keys(toolData.grupos)) {
+                if (chaveMmg(k) === targetKey) {
+                    return toolData.grupos[k];
+                }
+            }
+            return null;
+        }
+
         function normMmg(cod) {
             return String(cod || '').trim().toUpperCase();
         }
@@ -1169,7 +1183,7 @@ html_content = '''
 
                 const gruposAlvo = escopo === 'todos'
                     ? (toolData.gruposList && toolData.gruposList.length > 0 ? toolData.gruposList : Object.keys(toolData.grupos))
-                    : (grupoEfetivoKey && toolData.grupos[grupoEfetivoKey] ? [grupoEfetivoKey] : []);
+                    : (grupoEfetivoKey && resolverGrupoTool(toolData, grupoEfetivoKey) ? [grupoEfetivoKey] : []);
 
                 if (gruposAlvo.length === 0) {
                     if (avisoEl) {
@@ -1182,7 +1196,7 @@ html_content = '''
                 const ctxBase = obterContextoCalculoAtual();
 
                 gruposAlvo.forEach((grpKey, idx) => {
-                    if (!toolData.grupos[grpKey]) return;
+                    if (!resolverGrupoTool(toolData, grpKey)) return;
                     const calc = calcularMetricasFerramenta(brocaKey, getVarianteAtiva(), grpKey, ctxBase);
                     if (!calc) return;
 
@@ -1519,7 +1533,11 @@ html_content = '''
             }
 
             const dispNormList = (gruposDisponiveisFerramenta || []).map(g => normMmg(g)).filter(Boolean);
-            const dispSet = new Set(dispNormList.map(g => chaveMmg(g)));
+            const mapaDispPorChave = {};
+            dispNormList.forEach(g => {
+                mapaDispPorChave[chaveMmg(g)] = g;
+            });
+            const dispSet = new Set(Object.keys(mapaDispPorChave));
 
             const baseCodigos = new Set([
                 ...(gruposMmgOrdem.length > 0 ? gruposMmgOrdem : Object.keys(gruposMmgMap)).map(normMmg),
@@ -1541,22 +1559,24 @@ html_content = '''
             const codigoAtivo = normMmg(selG.value);
 
             candidatos.forEach(cod => {
-                const habilitado = !filtrarPorFerramenta || dispSet.has(chaveMmg(cod));
-                const ativo = codigoAtivo === cod;
-                const meta = mmgMetaPorCodigo[cod] || {};
+                const kChave = chaveMmg(cod);
+                const habilitado = !filtrarPorFerramenta || dispSet.has(kChave);
+                const codReal = (filtrarPorFerramenta && mapaDispPorChave[kChave]) ? mapaDispPorChave[kChave] : cod;
+                const ativo = chaveMmg(codigoAtivo) === kChave && Boolean(codigoAtivo);
+                const meta = mmgMetaPorCodigo[cod] || mmgMetaPorCodigo[codReal] || {};
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'mmg-code-btn';
                 btn.disabled = !habilitado;
-                btn.title = meta.label || cod;
-                btn.innerText = cod;
+                btn.title = meta.label || codReal;
+                btn.innerText = codReal;
                 btn.style.color = ativo ? palSel.fgAtivo : palSel.cor;
                 btn.style.backgroundColor = ativo ? palSel.bgAtivo : '#0f172a';
                 btn.style.borderColor = palSel.cor;
                 if (ativo) {
                     btn.style.boxShadow = `0 0 0 1px ${palSel.cor}`;
                 }
-                btn.onclick = () => selecionarCodigoBotaoMmg(cod);
+                btn.onclick = () => selecionarCodigoBotaoMmg(codReal);
                 contCod.appendChild(btn);
             });
 
@@ -2827,7 +2847,7 @@ html_content = '''
             const toolData = dados[toolKey];
             if (!toolData) return null;
             const gKey = normMmg(grupoEfetivoKey);
-            const grupoObj = toolData.grupos[gKey] || toolData.grupos[grupoEfetivoKey];
+            const grupoObj = resolverGrupoTool(toolData, grupoEfetivoKey);
             if (!grupoObj) return null;
 
             const {
@@ -3513,7 +3533,7 @@ html_content = '''
             document.getElementById('vc-pct-val').innerText = `${vcPct > 0 ? '+' : ''}${vcPct}%`;
             document.getElementById('f-pct-val').innerText = `${fPct > 0 ? '+' : ''}${fPct}%`;
 
-            if (!brocaKey || !dados[brocaKey] || !grupoEfetivoKey || !dados[brocaKey].grupos[grupoEfetivoKey]) {
+            if (!brocaKey || !dados[brocaKey] || !grupoEfetivoKey || !resolverGrupoTool(dados[brocaKey], grupoEfetivoKey)) {
                 atualizarPainelCotas();
                 atualizarAlertaProfundidade(diametro, profundidade, null, '5xD');
                 document.getElementById('val-estado').innerText = !brocaKey ? 'Sem modelo selecionado' : 'Sem dados JSON';
@@ -3524,7 +3544,7 @@ html_content = '''
             }
 
             const toolData = dados[brocaKey];
-            const grupoObj = toolData.grupos[grupoEfetivoKey];
+            const grupoObj = resolverGrupoTool(toolData, grupoEfetivoKey);
             const diametrosCat = toolData.diametros || [3.0, 4.5, 6.5, 9.5, 14.0, 20.0];
             const fCatArr = Array.isArray(grupoObj.f) && grupoObj.f.length > 0 ? grupoObj.f : diametrosCat.map(() => 0.05);
             const varianteAtiva = getVarianteAtiva();
