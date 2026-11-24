@@ -38,6 +38,23 @@ def _norm_key(val):
     return _limpar_str(val).upper()
 
 
+def _norm_codigo_mmg(val):
+    """Normaliza separadores de subcódigo (ex.: 'P1-1' -> 'P1.1') para comparação e cruzamento."""
+    s = _limpar_str(val).upper()
+    return re.sub(r"\s*-\s*", ".", s)
+
+
+def _extrair_iso_do_codigo(codigo: str) -> str:
+    m = re.match(r"^([A-Z])", _limpar_str(codigo).upper())
+    return m.group(1) if m else ""
+
+
+def _extrair_subgrupo_do_codigo(codigo: str) -> str:
+    """Extrai o subgrupo (ex.: 'P1' de 'P1-1' ou 'P1.1') quando a coluna Subgrupo não existe."""
+    m = re.match(r"^([A-Z]+\d+)", _limpar_str(codigo).upper())
+    return m.group(1) if m else ""
+
+
 def _norm_col(col_name):
     return re.sub(r"[^a-z0-9]+", "_", str(col_name).strip().lower()).strip("_")
 
@@ -67,7 +84,7 @@ def _extrair_registos_aba_mmg(xls: pd.ExcelFile, sheet_name: str, origem: str) -
         "grupo",
         "codigo",
     )
-    c_iso = pick_col("grupo_iso", "grupo_iso_513", "iso")
+    c_iso = pick_col("grupo_iso", "grupo_iso_513", "grupo_isso", "iso")
     c_subgrupo = pick_col("subgrupo")
     c_material = pick_col(
         "material_da_peca_workpiece_material",
@@ -102,8 +119,14 @@ def _extrair_registos_aba_mmg(xls: pd.ExcelFile, sheet_name: str, origem: str) -
             continue
 
         material = _limpar_str(row[c_material]) if c_material else ""
-        iso = _limpar_str(row[c_iso]) if c_iso else (codigo[0].upper() if codigo else "")
-        subgrupo = _limpar_str(row[c_subgrupo]) if c_subgrupo else ""
+        iso = _limpar_str(row[c_iso]).upper() if c_iso else ""
+        if not iso:
+            iso = _extrair_iso_do_codigo(codigo)
+
+        subgrupo = _limpar_str(row[c_subgrupo]).upper() if c_subgrupo else ""
+        if not subgrupo:
+            subgrupo = _extrair_subgrupo_do_codigo(codigo)
+
         estrutura = _limpar_str(row[c_estrutura]) if c_estrutura else ""
         condicao = _limpar_str(row[c_condicao]) if c_condicao else ""
         resistencia = _limpar_str(row[c_resistencia]) if c_resistencia else ""
@@ -125,6 +148,7 @@ def _extrair_registos_aba_mmg(xls: pd.ExcelFile, sheet_name: str, origem: str) -
 
         registos.append({
             "codigo": codigo,
+            "codigo_normalizado": _norm_codigo_mmg(codigo),
             "label": label,
             "iso": iso,
             "subgrupo": subgrupo,
@@ -280,7 +304,7 @@ def exportar_json(
         if (
             primeira
             and primeira.upper() not in {"FAMILIA", "FAMÍLIA", "MMG", "GRUPO"}
-            and not re.match(r"^[PMKNHSC]\d+(\.\d+)?$", primeira.upper())
+            and not re.match(r"^[PMKNHSC]\d+([.-]\d+)?$", primeira.upper())
             and len(celulas) <= 3
             and all(_parse_num(c) is None for c in celulas[1:])
         ):
@@ -322,6 +346,7 @@ def exportar_json(
                 "gama": info_fam.get("gama", ""),
                 "categoria": info_fam.get("categoria", ""),
                 "mmg": mmg_val,
+                "mmg_normalizado": _norm_codigo_mmg(mmg_val),
                 "vc": vc_entry,
                 "suportado": tem_dados,
                 "avancos_f": avancos_f,
@@ -349,6 +374,7 @@ def exportar_json(
                     "gama": info_irma.get("gama", r.get("gama", "")),
                     "categoria": info_irma.get("categoria", r.get("categoria", "")),
                     "mmg": r["mmg"],
+                    "mmg_normalizado": r.get("mmg_normalizado", _norm_codigo_mmg(r["mmg"])),
                     "vc": vc_irma,
                     "suportado": tem_dados_irma,
                     "avancos_f": avancos_irma,
