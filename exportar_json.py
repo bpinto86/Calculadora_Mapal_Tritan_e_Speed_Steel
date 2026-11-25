@@ -1,317 +1,508 @@
 import json
 import math
+import re
 from pathlib import Path
 import pandas as pd
 
 
-EXCEL_PATH = Path("catalogo_teste.xlsx")
-OUTPUT_DIR = Path("dados")
-
-SHEET_FAMILIAS = "Familias"
-SHEET_CATALOGO = "Catalogo"
-SHEET_PARAMETROS = "Parametros"
-SHEET_MMG = "MAPAL_MMG"
-SHEET_MMG_NEW = "MAPAL_MMG_NEW"
-
-
-def is_na(val) -> bool:
-    if val is None:
-        return True
-    if isinstance(val, float) and math.isnan(val):
-        return True
-    if pd.isna(val):
-        return True
-    return str(val).strip() == ""
+def _parse_num(val):
+    if val is None or (isinstance(val, float) and math.isnan(val)):
+        return None
+    if isinstance(val, (int, float)):
+        return float(val)
+    s = re.sub(r"\*+$", "", str(val).strip()).replace(",", ".").strip()
+    try:
+        return float(s)
+    except ValueError:
+        return None
 
 
-def to_str(val, default: str = "") -> str:
-    if is_na(val):
-        return default
-    if isinstance(val, float) and val.is_integer():
-        return str(int(val))
+def _parse_diametro(col_name):
+    if col_name is None or (isinstance(col_name, float) and math.isnan(col_name)):
+        return None
+    s = re.sub(r"\*+$", "", str(col_name).strip()).replace(",", ".").strip()
+    m = re.search(r"(?:[dDØø]\s*)?(\d+(?:\.\d+)?)", s)
+    if not m:
+        return None
+    val = float(m.group(1))
+    return f"{val:.2f}".rstrip("0").rstrip(".") if "." in f"{val:.2f}" else f"{val:.1f}"
+
+
+def _limpar_str(val):
+    if val is None or (isinstance(val, float) and math.isnan(val)):
+        return ""
     return str(val).strip()
 
 
-def to_float(val, default=None):
-    if is_na(val):
-        return default
-    if isinstance(val, (int, float)):
-        f = float(val)
-        return default if math.isnan(f) else f
-    s = str(val).strip().replace(",", ".")
-    try:
-        f = float(s)
-        return default if math.isnan(f) else f
-    except ValueError:
-        return default
+def _norm_key(val):
+    return _limpar_str(val).upper()
 
 
-def normalizar_refrigeracao(raw) -> str:
-    s = to_str(raw).lower()
-    if not s:
-        return ""
-    if "int" in s or s in ("ik", "ic"):
-        return "int"
-    if "mql" in s or "mms" in s:
-        return "mql"
-    if s == "ar" or "air" in s or s.startswith("ar "):
-        return "ar"
-    if "ext" in s or "sem" in s:
-        return "ext"
-    return s
+def _norm_codigo_mmg(val):
+    return _limpar_str(val).upper()
 
 
-def normalizar_gama(raw) -> str:
-    s = to_str(raw).lower()
-    if not s:
-        return ""
-    if "expert" in s:
-        return "expert"
-    if "performance" in s:
-        return "performance"
-    if "basic" in s:
-        return "basic"
-    return s
-
-
-def extrair_encabadouro(texto: str) -> str:
-    import re
-    t = to_str(texto).upper()
-    if not t:
-        return ""
-    m = re.search(r"(?:^|[^A-Z0-9])(HA|HB|HE)(?:[^A-Z0-9]|$|\d)", t)
-    if m:
-        return m.group(1)
-    m2 = re.search(r"(?:-|_|/|\s|\d)(HA|HB|HE)(?=\d|\b|$)", t)
-    return m2.group(1) if m2 else ""
-
-
-def extrair_iso(codigo: str) -> str:
-    c = to_str(codigo).upper()
-    return c[0] if c and c[0].isalpha() else ""
-
-
-def extrair_subgrupo(codigo: str) -> str:
-    import re
-    c = to_str(codigo).upper()
-    m = re.match(r"^([A-Z]+\d+)", c)
+def _extrair_iso_do_codigo(codigo: str) -> str:
+    m = re.match(r"^([A-Z])", _limpar_str(codigo).upper())
     return m.group(1) if m else ""
 
 
-def ler_mapa_familias(xls: pd.ExcelFile) -> dict[str, dict]:
-    mapa: dict[str, dict] = {}
-    if SHEET_FAMILIAS not in xls.sheet_names:
-        return mapa
-
-    df = pd.read_excel(xls, sheet_name=SHEET_FAMILIAS)
-    df.columns = [str(c).strip() for c in df.columns]
-
-    for _, row in df.iterrows():
-        fam = to_str(row.get("Familia"))
-        if not fam:
-            continue
-        nome_prod = to_str(row.get("Nome do produto"))
-        gama_raw = to_str(row.get("Gama"))
-        categoria = to_str(row.get("Categoria"))
-
-        mapa[fam.lower()] = {
-            "familia": fam,
-            "nome_produto": nome_prod,
-            "gama": normalizar_gama(gama_raw),
-            "gama_label": gama_raw,
-            "categoria": categoria,
-        }
-    return mapa
+def _extrair_subgrupo_do_codigo(codigo: str) -> str:
+    m = re.match(r"^([A-Z]+\d+)", _limpar_str(codigo).upper())
+    return m.group(1) if m else ""
 
 
-def exportar_familias(mapa_familias: dict[str, dict]) -> list[dict]:
-    return list(mapa_familias.values())
+def _norm_col(col_name):
+    return re.sub(r"[^a-z0-9]+", "_", str(col_name).strip().lower()).strip("_")
 
 
-def exportar_catalogo(xls: pd.ExcelFile, mapa_familias: dict[str, dict]) -> list[dict]:
-    if SHEET_CATALOGO not in xls.sheet_names:
+def _extrair_registos_aba_mmg(xls: pd.ExcelFile, sheet_name: str, origem: str) -> list[dict]:
+    if sheet_name not in xls.sheet_names:
         return []
 
-    df = pd.read_excel(xls, sheet_name=SHEET_CATALOGO)
-    df.columns = [str(c).strip() for c in df.columns]
-
-    referencias = []
-    for _, row in df.iterrows():
-        order_no = to_str(row.get("Order no."))
-        spec = to_str(row.get("Specification"))
-        fam = to_str(row.get("Familia"))
-        if not order_no and not spec and not fam:
-            continue
-
-        fam_info = mapa_familias.get(fam.lower(), {})
-        refrig_raw = to_str(row.get("Refrigeração"))
-        encabadouro = extrair_encabadouro(f"{spec} {order_no}")
-
-        item = {
-            "order_no": order_no,
-            "specification": spec,
-            "familia": fam_info.get("familia", fam),
-            "nome_produto": fam_info.get("nome_produto", ""),
-            "gama": fam_info.get("gama", ""),
-            "gama_label": fam_info.get("gama_label", ""),
-            "categoria": fam_info.get("categoria", ""),
-            "variante": to_str(row.get("Variante")),
-            "refrigeracao": normalizar_refrigeracao(refrig_raw),
-            "refrigeracao_label": refrig_raw,
-            "encabadouro": encabadouro,
-            "d1": to_float(row.get("d1")),
-            "d2": to_float(row.get("d2")),
-            "l1": to_float(row.get("l1")),
-            "l2": to_float(row.get("l2")),
-            "l3": to_float(row.get("l3")),
-            "l4": to_float(row.get("l4")),
-        }
-        referencias.append(item)
-
-    return referencias
-
-
-def exportar_parametros(xls: pd.ExcelFile, mapa_familias: dict[str, dict]) -> list[dict]:
-    if SHEET_PARAMETROS not in xls.sheet_names:
+    df = pd.read_excel(xls, sheet_name=sheet_name)
+    if df.empty:
         return []
 
-    df = pd.read_excel(xls, sheet_name=SHEET_PARAMETROS)
-    df.columns = [str(c).strip() for c in df.columns]
+    cols_norm = {_norm_col(c): c for c in df.columns}
 
-    colunas_diametro = []
-    for col in df.columns:
-        if col.startswith("f_d_"):
-            d_str = col.replace("f_d_", "").strip().replace(",", ".")
-            d_val = to_float(d_str)
-            if d_val is not None:
-                colunas_diametro.append((col, d_val))
+    def pick_col(*aliases):
+        for a in aliases:
+            k = _norm_col(a)
+            if k in cols_norm:
+                return cols_norm[k]
+        return None
 
-    colunas_diametro.sort(key=lambda x: x[1])
+    c_codigo = pick_col(
+        "grupo_de_maquinacao",
+        "grupo_mapal_mmg",
+        "grupo_mapal",
+        "mmg",
+        "grupo",
+        "codigo",
+    )
+    c_iso = pick_col("grupo_iso", "grupo_iso_513", "grupo_isso", "iso")
+    c_subgrupo = pick_col("subgrupo", "subgrupo_mmg")
+    c_material = pick_col(
+        "material_da_peca_workpiece_material",
+        "material_da_peca",
+        "workpiece_material",
+        "material",
+    )
+    c_estrutura = pick_col(
+        "estrutura_composicao_structure_composition",
+        "estrutura_composicao",
+        "estrutura",
+    )
+    c_condicao = pick_col("condicao_condition", "condicao")
+    c_resistencia = pick_col(
+        "resistencia_dureza_strength_hardness_n_mm_hrc",
+        "resistencia_a_tracao_r_n_mm_tensile_strength_r_n_mm",
+        "resistencia_dureza",
+        "resistencia",
+    )
+    c_dureza = pick_col("dureza_hardness_hb_hrc", "dureza")
+    c_freq = pick_col(
+        "materiais_frequentes_frequently_machined_workpiece_materials",
+        "materiais_frequentes",
+        "descricao_1_describition_1",
+        "descricao_1",
+    )
 
     registos = []
     for _, row in df.iterrows():
-        fam = to_str(row.get("Familia"))
-        grupo = to_str(row.get("Grupo")).upper()
-        if not fam or not grupo:
+        codigo = _limpar_str(row[c_codigo]) if c_codigo else ""
+        if not codigo:
             continue
 
-        vc_int = to_float(row.get("Vc_Int"), 0.0)
-        vc_ext = to_float(row.get("Vc_Ext"), 0.0)
-        vc_mql = to_float(row.get("Vc_MQL"), 0.0)
-        vc_ar = to_float(row.get("Vc_Ar"), 0.0)
+        material = _limpar_str(row[c_material]) if c_material else ""
+        iso = _limpar_str(row[c_iso]).upper() if c_iso else ""
+        if not iso:
+            iso = _extrair_iso_do_codigo(codigo)
 
-        avancos_f = {}
-        diametros = []
-        f_lista = []
+        subgrupo = _limpar_str(row[c_subgrupo]).upper() if c_subgrupo else ""
+        if not subgrupo:
+            subgrupo = _extrair_subgrupo_do_codigo(codigo)
 
-        for col_name, d_val in colunas_diametro:
-            f_val = to_float(row.get(col_name))
-            if f_val is not None and f_val > 0:
-                key_d = f"{d_val:g}"
-                avancos_f[key_d] = round(f_val, 5)
-                diametros.append(d_val)
-                f_lista.append(round(f_val, 5))
+        estrutura = _limpar_str(row[c_estrutura]) if c_estrutura else ""
+        condicao = _limpar_str(row[c_condicao]) if c_condicao else ""
+        resistencia = _limpar_str(row[c_resistencia]) if c_resistencia else ""
+        dureza = _limpar_str(row[c_dureza]) if c_dureza else ""
+        materiais_freq = _limpar_str(row[c_freq]) if c_freq else ""
 
-        suportado = any(v > 0 for v in (vc_int, vc_ext, vc_mql, vc_ar)) and len(f_lista) > 0
-        fam_info = mapa_familias.get(fam.lower(), {})
+        detalhes = [x for x in [estrutura, condicao, resistencia, dureza] if x and x != "-"]
+        if material and detalhes:
+            label = f"{codigo} — {material} ({' | '.join(detalhes[:2])})"
+        elif material:
+            label = f"{codigo} — {material}"
+        elif detalhes:
+            label = f"{codigo} ({' | '.join(detalhes[:2])})"
+        else:
+            label = codigo
 
         registos.append({
-            "familia": fam_info.get("familia", fam),
-            "nome_produto": fam_info.get("nome_produto", ""),
-            "gama": fam_info.get("gama", ""),
-            "categoria": fam_info.get("categoria", ""),
-            "grupo": grupo,
-            "suportado": suportado,
-            "vc": {
-                "int": vc_int,
-                "ext": vc_ext,
-                "mql": vc_mql,
-                "ar": vc_ar,
-            },
-            "diametros": diametros,
-            "f": f_lista,
-            "avancos_f": avancos_f,
+            "codigo": codigo,
+            "codigo_normalizado": _norm_codigo_mmg(codigo),
+            "label": label,
+            "iso": iso,
+            "subgrupo": subgrupo,
+            "material": material,
+            "estrutura": estrutura,
+            "condicao": condicao,
+            "resistencia": resistencia,
+            "dureza": dureza,
+            "materiais_frequentes": materiais_freq,
+            "origem": origem,
         })
 
     return registos
 
 
-def processar_aba_mmg(xls: pd.ExcelFile, sheet_name: str) -> list[dict]:
+def exportar_grupos_mmg_json(
+    excel_path: str = "catalogo_teste.xlsx",
+    sheets: tuple[str, ...] = ("MAPAL_MMG", "MAPAL_MMG_NEW"),
+    output_path: str = "dados/grupos_mmg.json",
+) -> list[dict]:
+    xls = pd.ExcelFile(excel_path)
+    registos = []
+    vistos = set()
+
+    for sheet_name in sheets:
+        for item in _extrair_registos_aba_mmg(xls, sheet_name, sheet_name):
+            chave = (_norm_codigo_mmg(item["codigo"]), _norm_key(item["origem"]))
+            if chave in vistos:
+                continue
+            vistos.add(chave)
+            registos.append(item)
+
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(registos, indent=2, ensure_ascii=False), encoding="utf-8")
+    return registos
+
+
+def exportar_familias_json(
+    excel_path: str = "catalogo_teste.xlsx",
+    sheet_name: str = "Familias",
+    output_path: str = "dados/familias.json",
+) -> list[dict]:
+    xls = pd.ExcelFile(excel_path)
     if sheet_name not in xls.sheet_names:
+        out = Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text("[]", encoding="utf-8")
         return []
 
     df = pd.read_excel(xls, sheet_name=sheet_name)
-    df.columns = [str(c).strip() for c in df.columns]
+    if df.empty:
+        out = Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text("[]", encoding="utf-8")
+        return []
 
-    grupos = []
+    cols_norm = {_norm_col(c): c for c in df.columns}
+
+    def pick_col(*aliases):
+        for a in aliases:
+            k = _norm_col(a)
+            if k in cols_norm:
+                return cols_norm[k]
+        return None
+
+    c_fam = pick_col("familia", "family", "codigo", "código")
+    c_prod = pick_col("nome_do_produto", "nome produto", "produto", "product_name", "designacao", "designação")
+    c_gama = pick_col("gama", "linha", "line")
+    c_cat = pick_col("categoria", "category", "tipo_de_operacao", "tipo_operacao", "operacao", "operação")
+
+    registos = []
     for _, row in df.iterrows():
-        cod = to_str(row.get("Grupo")).upper()
-        if not cod:
+        fam_val = _limpar_str(row[c_fam]) if c_fam else ""
+        prod_val = _limpar_str(row[c_prod]) if c_prod else ""
+        gama_val = _limpar_str(row[c_gama]) if c_gama else ""
+        cat_val = _limpar_str(row[c_cat]) if c_cat else ""
+
+        if not fam_val and not prod_val and not gama_val and not cat_val:
             continue
 
-        iso_raw = to_str(row.get("ISO")).upper()
-        iso_clean = iso_raw.replace("*", "").strip() or extrair_iso(cod)
-        subgrupo = to_str(row.get("Subgrupo")).upper() or extrair_subgrupo(cod)
-        desc = to_str(row.get("Descrição"))
-        mat_freq = to_str(row.get("Materiais Frequentes"))
-        dureza = to_str(row.get("Dureza"))
-        resist = to_str(row.get("Resistência"))
-
-        label = f"{cod} — {desc}" if desc else cod
-
-        grupos.append({
-            "codigo": cod,
-            "label": label,
-            "descricao": desc,
-            "iso": iso_clean,
-            "iso_raw": iso_raw,
-            "subgrupo": subgrupo,
-            "materiais_frequentes": mat_freq,
-            "dureza": dureza,
-            "resistencia": resist,
-            "origem": sheet_name,
+        registos.append({
+            "familia": fam_val,
+            "nome_produto": prod_val,
+            "gama": gama_val,
+            "categoria": cat_val,
         })
 
-    return grupos
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(registos, indent=2, ensure_ascii=False), encoding="utf-8")
+    return registos
 
 
-def exportar_grupos_mmg(xls: pd.ExcelFile) -> list[dict]:
-    grupos_antigos = processar_aba_mmg(xls, SHEET_MMG)
-    grupos_novos = processar_aba_mmg(xls, SHEET_MMG_NEW)
-    return grupos_antigos + grupos_novos
+def exportar_json(
+    excel_path: str = "catalogo_teste.xlsx",
+    sheet_name: str = "Parametros_Corte",
+    output_path: str = "dados/furacao_parametros.json",
+    familias_map: dict[str, dict] | None = None,
+) -> list[dict]:
+    xls = pd.ExcelFile(excel_path)
+    df = pd.read_excel(xls, sheet_name=sheet_name, header=None)
+    registos = []
+    familia_atual = None
+    col_map = None
+
+    if familias_map is None:
+        fams_lista = exportar_familias_json(excel_path=excel_path)
+        familias_map = {_norm_key(f["familia"]): f for f in fams_lista if f.get("familia")}
+
+    vc_map = {
+        "interna": ["VC_INT", "VC INT", "INTERNA", "INT"],
+        "externa": ["VC_EXT", "VC EXT", "EXTERNA", "EXT"],
+        "mql": ["VC_MQL", "VC MQL", "MQL"],
+        "ar": ["VC_AR", "VC AR", "AR"],
+    }
+
+    for _, row in df.iterrows():
+        celulas = [
+            str(x).strip()
+            for x in row.tolist()
+            if x is not None and not (isinstance(x, float) and math.isnan(x))
+        ]
+        if not celulas:
+            continue
+
+        row_upper = [str(x).strip().upper() if pd.notna(x) else "" for x in row.tolist()]
+        if "MMG" in row_upper or "GRUPO" in row_upper:
+            col_map = {"familia": None, "mmg": None, "vc": {}, "f_by_d": {}}
+            for idx, val in enumerate(row.tolist()):
+                if pd.isna(val):
+                    continue
+                nome = str(val).strip()
+                up = nome.upper()
+                if up in {"FAMILIA", "FAMÍLIA", "FAMILY"}:
+                    col_map["familia"] = idx
+                elif up in {"MMG", "GRUPO", "MAT_GRUPO", "GRUPO_MAT"}:
+                    col_map["mmg"] = idx
+                else:
+                    matched_vc = None
+                    for k_vc, aliases in vc_map.items():
+                        if up in aliases:
+                            col_map["vc"][k_vc] = idx
+                            matched_vc = k_vc
+                            break
+                    if not matched_vc:
+                        d_key = _parse_diametro(nome)
+                        if d_key is not None:
+                            col_map["f_by_d"][idx] = d_key
+            continue
+
+        primeira = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
+        if (
+            primeira
+            and primeira.upper() not in {"FAMILIA", "FAMÍLIA", "MMG", "GRUPO"}
+            and not re.match(r"^[PMKNHSCXY]\d+([.-]\d+)?$", primeira.upper())
+            and len(celulas) <= 3
+            and all(_parse_num(c) is None for c in celulas[1:])
+        ):
+            familia_atual = primeira
+            col_map = None
+            continue
+
+        if col_map and col_map["mmg"] is not None:
+            mmg_raw = row.iloc[col_map["mmg"]]
+            if pd.isna(mmg_raw) or str(mmg_raw).strip() == "":
+                continue
+            mmg_val = str(mmg_raw).strip()
+
+            fam_linha = familia_atual or ""
+            if col_map.get("familia") is not None:
+                fam_cell = _limpar_str(row.iloc[col_map["familia"]])
+                if fam_cell:
+                    fam_linha = fam_cell
+                    familia_atual = fam_cell
+
+            info_fam = familias_map.get(_norm_key(fam_linha), {})
+
+            vc_entry = {}
+            for k_vc in ["interna", "externa", "mql", "ar"]:
+                c_idx = col_map["vc"].get(k_vc)
+                vc_entry[k_vc] = _parse_num(row.iloc[c_idx]) if c_idx is not None else None
+
+            avancos_f = {}
+            for c_idx, d_key in col_map["f_by_d"].items():
+                avancos_f[d_key] = _parse_num(row.iloc[c_idx])
+
+            tem_dados = any(v is not None for v in vc_entry.values()) or any(
+                v is not None for v in avancos_f.values()
+            )
+
+            registos.append({
+                "familia": fam_linha,
+                "nome_produto": info_fam.get("nome_produto", ""),
+                "gama": info_fam.get("gama", ""),
+                "categoria": info_fam.get("categoria", ""),
+                "mmg": mmg_val,
+                "mmg_normalizado": _norm_codigo_mmg(mmg_val),
+                "vc": vc_entry,
+                "suportado": tem_dados,
+                "avancos_f": avancos_f,
+            })
+
+    familias_com_params = {_norm_key(r["familia"]) for r in registos if r.get("familia")}
+    registos_herdados = []
+
+    for r in registos:
+        fam_norm = _norm_key(r.get("familia", ""))
+        if re.match(r"^SCD\d+1$", fam_norm):
+            fam_irma_norm = fam_norm[:-1] + "0"
+            if fam_irma_norm in familias_map and fam_irma_norm not in familias_com_params:
+                info_irma = familias_map[fam_irma_norm]
+                vc_irma = dict(r["vc"])
+                vc_irma["interna"] = None
+                avancos_irma = dict(r["avancos_f"])
+                tem_dados_irma = any(v is not None for v in vc_irma.values()) or any(
+                    v is not None for v in avancos_irma.values()
+                )
+                registos_herdados.append({
+                    "familia": info_irma.get("familia") or fam_irma_norm,
+                    "nome_produto": info_irma.get("nome_produto", r.get("nome_produto", "")),
+                    "gama": info_irma.get("gama", r.get("gama", "")),
+                    "categoria": info_irma.get("categoria", r.get("categoria", "")),
+                    "mmg": r["mmg"],
+                    "mmg_normalizado": r.get("mmg_normalizado", _norm_codigo_mmg(r["mmg"])),
+                    "vc": vc_irma,
+                    "suportado": tem_dados_irma,
+                    "avancos_f": avancos_irma,
+                })
+
+    registos.extend(registos_herdados)
+
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(registos, indent=2, ensure_ascii=False), encoding="utf-8")
+    return registos
 
 
-def main():
-    if not EXCEL_PATH.exists():
-        raise FileNotFoundError(f"Ficheiro Excel não encontrado: {EXCEL_PATH.resolve()}")
+def exportar_referencias_json(
+    excel_path: str = "catalogo_teste.xlsx",
+    sheet_name: str = "Dimensoes",
+    output_path: str = "dados/referencias.json",
+    familias_map: dict[str, dict] | None = None,
+) -> list[dict]:
+    xls = pd.ExcelFile(excel_path)
+    df = pd.read_excel(xls, sheet_name=sheet_name)
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    xls = pd.ExcelFile(EXCEL_PATH)
+    if familias_map is None:
+        fams_lista = exportar_familias_json(excel_path=excel_path)
+        familias_map = {_norm_key(f["familia"]): f for f in fams_lista if f.get("familia")}
 
-    mapa_familias = ler_mapa_familias(xls)
-    familias = exportar_familias(mapa_familias)
-    referencias = exportar_catalogo(xls, mapa_familias)
-    parametros = exportar_parametros(xls, mapa_familias)
-    grupos_mmg = exportar_grupos_mmg(xls)
+    if df.empty:
+        out = Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text("[]", encoding="utf-8")
+        return []
 
-    out_familias = OUTPUT_DIR / "familias.json"
-    out_referencias = OUTPUT_DIR / "referencias.json"
-    out_parametros = OUTPUT_DIR / "furacao_parametros.json"
-    out_grupos_mmg = OUTPUT_DIR / "grupos_mmg.json"
+    cols_norm = {_norm_col(c): c for c in df.columns}
 
-    out_familias.write_text(json.dumps(familias, ensure_ascii=False, indent=2), encoding="utf-8")
-    out_referencias.write_text(json.dumps(referencias, ensure_ascii=False, indent=2), encoding="utf-8")
-    out_parametros.write_text(json.dumps(parametros, ensure_ascii=False, indent=2), encoding="utf-8")
-    out_grupos_mmg.write_text(json.dumps(grupos_mmg, ensure_ascii=False, indent=2), encoding="utf-8")
+    def pick_col(*aliases):
+        for a in aliases:
+            key = _norm_col(a)
+            if key in cols_norm:
+                return cols_norm[key]
+        return None
 
-    suportados = sum(1 for p in parametros if p["suportado"])
-    qtd_antigos = sum(1 for g in grupos_mmg if g.get("origem") == SHEET_MMG)
-    qtd_novos = sum(1 for g in grupos_mmg if g.get("origem") == SHEET_MMG_NEW)
-    print(f"[OK] {out_familias}: {len(familias)} famílias exportadas.")
-    print(f"[OK] {out_referencias}: {len(referencias)} referências exportadas.")
-    print(f"[OK] {out_parametros}: {len(parametros)} registos ({suportados} com parâmetros ativos).")
-    print(f"[OK] {out_grupos_mmg}: {len(grupos_mmg)} grupos MMG exportados ({qtd_antigos} MAPAL_MMG + {qtd_novos} MAPAL_MMG_NEW).")
+    c_order = pick_col("order_no", "order no", "orderno", "order", "referencia", "ref")
+    c_spec = pick_col("specification", "especificacao", "designacao", "descricao")
+    c_fam = pick_col("familia", "family", "modelo")
+    c_var = pick_col("variante", "variant", "xd", "x_d")
+    c_refrig = pick_col("refrigeracao", "refrig", "coolant", "lubrificacao")
+    c_enc = pick_col("encabadouro", "din_6535", "din6535", "shank")
+    c_gama = pick_col("gama", "linha", "line")
+    c_cat = pick_col("categoria", "category", "operacao", "tipo_operacao")
+    c_d1 = pick_col("d1", "diametro", "diametro_d1", "dc")
+    c_d2 = pick_col("d2", "diametro_d2", "dcon")
+    c_l1 = pick_col("l1", "comp_total", "comprimento_total")
+    c_l2 = pick_col("l2", "comp_navalha", "comprimento_navalha", "lcn")
+    c_l3 = pick_col("l3", "util_corte", "comprimento_util", "lu")
+    c_l4 = pick_col("l4", "comp_encab", "comprimento_encabadouro")
+
+    registos = []
+    for _, row in df.iterrows():
+        order_val = _limpar_str(row[c_order]) if c_order else ""
+        spec_val = _limpar_str(row[c_spec]) if c_spec else ""
+        fam_val = _limpar_str(row[c_fam]) if c_fam else ""
+
+        if not order_val and not spec_val and not fam_val:
+            continue
+
+        info_fam = familias_map.get(_norm_key(fam_val), {})
+        gama_val = info_fam.get("gama") or (_limpar_str(row[c_gama]) if c_gama else "")
+        cat_val = info_fam.get("categoria") or (_limpar_str(row[c_cat]) if c_cat else "")
+        prod_val = info_fam.get("nome_produto", "")
+
+        item = {
+            "order_no": order_val,
+            "specification": spec_val,
+            "familia": fam_val,
+            "nome_produto": prod_val,
+            "variante": _limpar_str(row[c_var]) if c_var else "",
+            "refrigeracao": _limpar_str(row[c_refrig]) if c_refrig else "",
+            "encabadouro": _limpar_str(row[c_enc]) if c_enc else "",
+            "gama": gama_val,
+            "categoria": cat_val,
+            "d1": _parse_num(row[c_d1]) if c_d1 else None,
+            "d2": _parse_num(row[c_d2]) if c_d2 else None,
+            "l1": _parse_num(row[c_l1]) if c_l1 else None,
+            "l2": _parse_num(row[c_l2]) if c_l2 else None,
+            "l3": _parse_num(row[c_l3]) if c_l3 else None,
+            "l4": _parse_num(row[c_l4]) if c_l4 else None,
+        }
+        registos.append(item)
+
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(registos, indent=2, ensure_ascii=False), encoding="utf-8")
+    return registos
+
+
+def exportar_tudo_json(
+    excel_path: str = "catalogo_teste.xlsx",
+    output_dir: str = "dados",
+) -> dict[str, list[dict]]:
+    out_base = Path(output_dir)
+    out_base.mkdir(parents=True, exist_ok=True)
+
+    familias = exportar_familias_json(
+        excel_path=excel_path,
+        sheet_name="Familias",
+        output_path=str(out_base / "familias.json"),
+    )
+    familias_map = {_norm_key(f["familia"]): f for f in familias if f.get("familia")}
+
+    referencias = exportar_referencias_json(
+        excel_path=excel_path,
+        sheet_name="Dimensoes",
+        output_path=str(out_base / "referencias.json"),
+        familias_map=familias_map,
+    )
+    parametros = exportar_json(
+        excel_path=excel_path,
+        sheet_name="Parametros_Corte",
+        output_path=str(out_base / "furacao_parametros.json"),
+        familias_map=familias_map,
+    )
+    grupos_mmg = exportar_grupos_mmg_json(
+        excel_path=excel_path,
+        sheets=("MAPAL_MMG", "MAPAL_MMG_NEW"),
+        output_path=str(out_base / "grupos_mmg.json"),
+    )
+
+    print(f"Exportados: {len(familias)} famílias, {len(referencias)} referências, {len(parametros)} parâmetros, {len(grupos_mmg)} grupos MMG.")
+    return {
+        "familias": familias,
+        "referencias": referencias,
+        "parametros_corte": parametros,
+        "grupos_mmg": grupos_mmg,
+    }
 
 
 if __name__ == "__main__":
-    main()
+    exportar_tudo_json()
