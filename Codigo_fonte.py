@@ -2,18 +2,6 @@ import json
 from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
-import base64
-
-def load_image_base64(filename: str) -> str:
-    p = Path(filename)
-    if not p.exists():
-        return ""
-    ext = p.suffix.lower().lstrip(".") or "png"
-    b64 = base64.b64encode(p.read_bytes()).decode("ascii")
-    return f"data:image/{ext};base64,{b64}"
-
-logo_alamo_b64 = load_image_base64("Logotipo Alamo.png")
-logo_mapal_b64 = load_image_base64("Logotipo Mapal.png")
 
 st.set_page_config(page_title="Parâmetros de Corte MAPAL", page_icon="⚙️", layout="wide")
 
@@ -73,7 +61,6 @@ html_content = '''
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; height: 100vh; overflow: hidden; }
@@ -223,31 +210,6 @@ html_content = '''
                         </div>
 
                         <select id="grupo" class="hidden" onchange="onSelectGrupoManual()"></select>
-                    </div>
-
-                    <div id="mmg2-box" class="bg-slate-950/75 p-2 rounded-md border border-teal-900/50 space-y-1.5">
-                        <div class="flex justify-between items-center gap-1">
-                            <label class="text-[10px] font-semibold text-teal-300 uppercase tracking-wider">2. Novo Grupo de Materiais (MMG) ISO DIN ISO 513</label>
-                            <span id="mmg2-selecao-detalhe" class="text-[10px] font-mono text-slate-300 truncate max-w-[175px]">—</span>
-                        </div>
-
-                        <div id="mmg2-botoes-grupo" class="grid grid-cols-6 gap-1"></div>
-
-                        <div id="mmg2-painel-subgrupo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
-                            <div class="flex justify-between items-center">
-                                <span id="mmg2-label-subgrupo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Subgrupo</span>
-                                <span id="mmg2-materiais-freq" class="text-[9px] text-slate-400 truncate max-w-[190px]"></span>
-                            </div>
-                            <div id="mmg2-botoes-subgrupo" class="flex flex-wrap gap-1"></div>
-                        </div>
-
-                        <div id="mmg2-painel-codigo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
-                            <div class="flex justify-between items-center">
-                                <span id="mmg2-label-codigo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Grupo MAPAL (MMG)</span>
-                                <span id="mmg2-detalhe-codigo" class="text-[9px] text-teal-300 truncate max-w-[185px]"></span>
-                            </div>
-                            <div id="mmg2-botoes-codigo" class="flex flex-wrap gap-1 max-h-24 overflow-y-auto"></div>
-                        </div>
                     </div>
 
                     <div class="grid grid-cols-3 gap-1.5">
@@ -1118,17 +1080,6 @@ html_content = '''
         const REFERENCIAS_JSON = __REFERENCIAS_JSON_PLACEHOLDER__;
         const PARAMETROS_JSON = __PARAMETROS_JSON_PLACEHOLDER__;
         const GRUPOS_MMG_JSON = __GRUPOS_MMG_JSON_PLACEHOLDER__;
-        const LOGO_ALAMO_B64 = __LOGO_ALAMO_PLACEHOLDER__;
-        const LOGO_MAPAL_B64 = __LOGO_MAPAL_PLACEHOLDER__;
-        const LINKEDIN_URL = "https://www.linkedin.com/in/bruno-pinto-2a5410143?utm_source=share_via&utm_content=profile&utm_medium=member_android";
-
-        function gerarQrDataUrl(texto) {
-            if (typeof qrcode !== 'function') return '';
-            const qr = qrcode(0, 'M');
-            qr.addData(texto);
-            qr.make();
-            return qr.createDataURL(4, 0);
-        }
         let isProMode = false;
         let referenciaAtivaObj = null;
         let linhaAtivaInterna = '';
@@ -1156,23 +1107,18 @@ html_content = '''
         let mmgGrupoSelecionado = null;
         let mmgSubgrupoSelecionado = null;
         let mmgSelecionadoManualmente = false;
-        let mmg2GrupoSelecionado = null;
-        let mmg2SubgrupoSelecionado = null;
-        let mmg2CodigoSelecionado = '';
         let sincronizacaoInterna = false;
         const mmgMetaPorCodigo = {};
         const mmgSubgruposPorIso = {};
-        const mmg2MetaPorCodigo = {};
-        const mmg2SubgruposPorIso = {};
 
         function resolverGrupoTool(toolData, grpKey) {
             if (!toolData || !toolData.grupos || !grpKey) return null;
             const gNorm = normMmg(grpKey);
             if (toolData.grupos[gNorm]) return toolData.grupos[gNorm];
             if (toolData.grupos[grpKey]) return toolData.grupos[grpKey];
-            const targetKey = normMmg(grpKey);
+            const targetKey = chaveMmg(grpKey);
             for (const k of Object.keys(toolData.grupos)) {
-                if (normMmg(k) === targetKey) {
+                if (chaveMmg(k) === targetKey) {
                     return toolData.grupos[k];
                 }
             }
@@ -1183,7 +1129,9 @@ html_content = '''
             return String(cod || '').trim().toUpperCase();
         }
 
-
+        function chaveMmg(cod) {
+            return normMmg(cod).replace(/^([A-Z]+\d+)[.-](\d+)$/, '$1.$2');
+        }
 
         function fecharAvisoInicial() {
             const modal = document.getElementById('modal-aviso-inicial');
@@ -1317,63 +1265,43 @@ html_content = '''
                 return;
             }
 
-const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-            const pageW = doc.internal.pageSize.getWidth();   // 297 mm
-            const pageH = doc.internal.pageSize.getHeight();  // 210 mm
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-            // --- CABEÇALHO COM LOGÓTIPOS ---
             doc.setFillColor(15, 23, 42);
-            doc.rect(14, 10, pageW - 28, 18, 'F');
-
-            if (LOGO_MAPAL_B64) {
-                doc.addImage(LOGO_MAPAL_B64, 'PNG', 18, 12.5, 28, 13);
-            } else {
-                doc.setTextColor(255, 255, 255);
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(14);
-                doc.text("MAPAL", 18, 21.5);
-            }
-
+            doc.rect(14, 12, 182, 14, 'F');
             doc.setTextColor(255, 255, 255);
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(12);
-            doc.text("PARÂMETROS DE CORTE", pageW / 2, 21, { align: 'center' });
+            doc.setFontSize(13);
+            doc.text("MAPAL", 18, 21);
 
-            if (LOGO_ALAMO_B64) {
-                doc.addImage(LOGO_ALAMO_B64, 'PNG', pageW - 46, 12.5, 28, 13);
-            } else {
-                doc.setFontSize(11);
-                doc.text("ÁLAMO", pageW - 18, 21.5, { align: 'right' });
-            }
-
-            // --- INFORMAÇÃO DA FERRAMENTA ---
             doc.setTextColor(15, 23, 42);
+            doc.setFontSize(11);
+            doc.text(`Parâmetros de corte ${designacaoFerramenta}`, 14, 34);
+
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
-            doc.text(`Designação da Ferramenta: ${designacaoFerramenta}`, 14, 35);
-
-            doc.setFont('helvetica', 'normal');
             doc.setFontSize(9);
-            doc.text(
-                `Refrigeração: ${refrigAtual.toUpperCase()}   |   Ajuste VC: ${vcPct >= 0 ? '+' : ''}${vcPct}%   |   Ajuste F: ${fPct >= 0 ? '+' : ''}${fPct}%`,
-                14,
-                40.5
-            );
+            doc.text("Designação da Ferramenta", 14, 41);
+            doc.setFont('helvetica', 'normal');
+            doc.text(designacaoFerramenta, 66, 41);
 
-            // --- TABELA COM DESTAQUE VERDE-LIMA NAS COLUNAS DE CÁLCULO ---
-            const headRow = [['Material', 'Ø (mm)', 'VC (m/min)', 'f (mm/rot)', 'RPM (n)', 'Avanço Vf (mm/min)']];
+            doc.setFont('helvetica', 'bold');
+            doc.text("Refrigeração / Ajustes", 14, 46);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`${refrigAtual.toUpperCase()}  |  Ajuste VC: ${vcPct >= 0 ? '+' : ''}${vcPct}%  |  Ajuste F: ${fPct >= 0 ? '+' : ''}${fPct}%`, 66, 46);
+
+            const headRow = [['Material', 'Ø', 'VC', 'F', 'RPM (n)', 'Avanço']];
 
             if (typeof doc.autoTable === 'function') {
                 doc.autoTable({
-                    startY: 45,
+                    startY: 51,
                     head: headRow,
                     body: linhasTabela,
                     theme: 'grid',
                     styles: {
                         font: 'helvetica',
                         fontSize: 8.5,
-                        cellPadding: 2.3,
+                        cellPadding: 2.2,
                         textColor: [15, 23, 42],
                         lineColor: [203, 213, 225],
                         lineWidth: 0.2
@@ -1381,46 +1309,45 @@ const { jsPDF } = window.jspdf;
                     headStyles: {
                         fillColor: [30, 41, 59],
                         textColor: [255, 255, 255],
-                        fontStyle: 'bold',
-                        halign: 'center'
+                        fontStyle: 'bold'
                     },
                     columnStyles: {
-                        0: { cellWidth: 139, halign: 'left' },
-                        1: { halign: 'right', cellWidth: 22 },
-                        2: { halign: 'right', cellWidth: 24, fillColor: [217, 249, 157], fontStyle: 'bold' }, // Verde-lima suave
-                        3: { halign: 'right', cellWidth: 26, fillColor: [217, 249, 157], fontStyle: 'bold' }, // Verde-lima suave
-                        4: { halign: 'right', cellWidth: 24, fillColor: [190, 242, 100], fontStyle: 'bold' }, // Verde-lima destaque
-                        5: { halign: 'right', cellWidth: 34, fillColor: [190, 242, 100], fontStyle: 'bold' }  // Verde-lima destaque
+                        0: { cellWidth: 82 },
+                        1: { halign: 'right', cellWidth: 18 },
+                        2: { halign: 'right', cellWidth: 16 },
+                        3: { halign: 'right', cellWidth: 18 },
+                        4: { halign: 'right', cellWidth: 22 },
+                        5: { halign: 'right', cellWidth: 26 }
                     },
-                    margin: { left: 14, right: 14, bottom: 26 }
+                    margin: { left: 14, right: 14 }
+                });
+            } else {
+                let yPos = 54;
+                const colX = [14, 96, 114, 130, 148, 170];
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8.5);
+                headRow[0].forEach((h, i) => doc.text(h, colX[i], yPos));
+                yPos += 6;
+                doc.setFont('helvetica', 'normal');
+                linhasTabela.forEach(row => {
+                    if (yPos > 272) { doc.addPage(); yPos = 20; }
+                    row.forEach((cell, i) => doc.text(String(cell), colX[i], yPos));
+                    yPos += 5.5;
                 });
             }
 
-            // --- RODAPÉ COM CONTACTOS + QR CODE LINKEDIN ---
-            const qrDataUrl = gerarQrDataUrl(LINKEDIN_URL);
             const totalPages = doc.internal.getNumberOfPages();
-
             for (let p = 1; p <= totalPages; p++) {
                 doc.setPage(p);
-                doc.setDrawColor(203, 213, 225);
-                doc.line(14, pageH - 22, pageW - 14, pageH - 22);
-
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(9);
                 doc.setTextColor(15, 23, 42);
-                doc.text("ÁLAMO FERRAMENTAS", 14, pageH - 16.5);
-
+                doc.text("ÁLAMO", 14, 281);
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(8.5);
-                doc.text("Bruno Pinto  |  bruno.pinto@alamo-ferramentas.com  |  Tlf.: +351 936 959 415", 14, pageH - 11.5);
-                doc.text(`Página ${p} de ${totalPages}`, 14, pageH - 6.5);
-
-                if (qrDataUrl) {
-                    doc.addImage(qrDataUrl, 'PNG', pageW - 31, pageH - 20.5, 17, 17);
-                    doc.setFontSize(7);
-                    doc.setTextColor(71, 85, 105);
-                    doc.text("LinkedIn", pageW - 33, pageH - 11, { align: 'right' });
-                }
+                doc.text("Bruno Pinto", 14, 286);
+                doc.text("Tlf.: 936959415", 14, 290.5);
+                doc.text(`${p} de ${totalPages}`, 196, 290.5, { align: 'right' });
             }
 
             const sufixoEscopo = escopo === 'todos' ? 'Todos' : 'Selecionados';
@@ -1521,8 +1448,6 @@ const { jsPDF } = window.jspdf;
             Object.keys(gruposMmgMap).forEach(k => delete gruposMmgMap[k]);
             Object.keys(mmgMetaPorCodigo).forEach(k => delete mmgMetaPorCodigo[k]);
             Object.keys(mmgSubgruposPorIso).forEach(k => delete mmgSubgruposPorIso[k]);
-            Object.keys(mmg2MetaPorCodigo).forEach(k => delete mmg2MetaPorCodigo[k]);
-            Object.keys(mmg2SubgruposPorIso).forEach(k => delete mmg2SubgruposPorIso[k]);
             gruposMmgOrdem.length = 0;
 
             if (!Array.isArray(GRUPOS_MMG_JSON)) return;
@@ -1530,225 +1455,26 @@ const { jsPDF } = window.jspdf;
                 if (!item || typeof item !== 'object') return;
                 const cod = normMmg(item.codigo || item.Grupo || item.grupo || '');
                 if (!cod) return;
-                const origem = String(item.origem || '').trim().toUpperCase();
                 const label = String(item.label || item.descricao || cod).trim();
                 const iso = String(item.iso || '').replace('*', '').trim().toUpperCase() || extrairIsoDeCodigo(cod);
                 const sub = normMmg(item.subgrupo || '') || extrairSubgrupoDeCodigo(cod);
                 const freq = String(item.materiais_frequentes || '').trim();
                 const dureza = String(item.dureza || '').trim();
 
-                if (origem === 'MAPAL_MMG_NEW') {
-                    if (!mmg2MetaPorCodigo[cod]) {
-                        mmg2MetaPorCodigo[cod] = { codigo: cod, label, iso, subgrupo: sub, freq, dureza, origem };
-                    }
-                    if (iso && sub) {
-                        if (!mmg2SubgruposPorIso[iso]) mmg2SubgruposPorIso[iso] = [];
-                        if (!mmg2SubgruposPorIso[iso].includes(sub)) {
-                            mmg2SubgruposPorIso[iso].push(sub);
-                        }
-                    }
-                } else {
-                    if (!gruposMmgMap[cod]) {
-                        gruposMmgMap[cod] = label;
-                        gruposMmgOrdem.push(cod);
-                    }
-                    if (!mmgMetaPorCodigo[cod]) {
-                        mmgMetaPorCodigo[cod] = { codigo: cod, label, iso, subgrupo: sub, freq, dureza, origem: origem || 'MAPAL_MMG' };
-                    }
-                    if (iso && sub) {
-                        if (!mmgSubgruposPorIso[iso]) mmgSubgruposPorIso[iso] = [];
-                        if (!mmgSubgruposPorIso[iso].includes(sub)) {
-                            mmgSubgruposPorIso[iso].push(sub);
-                        }
+                if (!gruposMmgMap[cod]) {
+                    gruposMmgMap[cod] = label;
+                    gruposMmgOrdem.push(cod);
+                }
+                if (!mmgMetaPorCodigo[cod]) {
+                    mmgMetaPorCodigo[cod] = { codigo: cod, label, iso, subgrupo: sub, freq, dureza };
+                }
+                if (iso && sub) {
+                    if (!mmgSubgruposPorIso[iso]) mmgSubgruposPorIso[iso] = [];
+                    if (!mmgSubgruposPorIso[iso].includes(sub)) {
+                        mmgSubgruposPorIso[iso].push(sub);
                     }
                 }
             });
-        }
-
-        function selecionarGrupo2Botao(isoCode) {
-            if (mmg2GrupoSelecionado === isoCode) {
-                mmg2GrupoSelecionado = null;
-                mmg2SubgrupoSelecionado = null;
-                mmg2CodigoSelecionado = '';
-            } else {
-                mmg2GrupoSelecionado = isoCode;
-                mmg2SubgrupoSelecionado = null;
-                mmg2CodigoSelecionado = '';
-            }
-            renderBotoesMmg2();
-        }
-
-        function selecionarSubgrupo2Botao(subCode) {
-            mmg2SubgrupoSelecionado = subCode ? normMmg(subCode) : null;
-            mmg2CodigoSelecionado = '';
-            renderBotoesMmg2();
-        }
-
-        function selecionarCodigo2Botao(cod) {
-            const codNorm = normMmg(cod);
-            mmg2CodigoSelecionado = (mmg2CodigoSelecionado === codNorm) ? '' : codNorm;
-            renderBotoesMmg2();
-        }
-
-        function renderBotoesCodigoMmg2() {
-            const painelCod = document.getElementById('mmg2-painel-codigo');
-            const contCod = document.getElementById('mmg2-botoes-codigo');
-            const lblCod = document.getElementById('mmg2-label-codigo');
-            const detCod = document.getElementById('mmg2-detalhe-codigo');
-            if (!painelCod || !contCod) return;
-
-            if (!mmg2GrupoSelecionado) {
-                painelCod.classList.add('hidden');
-                contCod.innerHTML = '';
-                if (detCod) detCod.innerText = '';
-                return;
-            }
-
-            painelCod.classList.remove('hidden');
-            const palSel = ISO_PALETTE[mmg2GrupoSelecionado] || { nome: mmg2GrupoSelecionado, cor: '#2dd4bf', bgAtivo: '#0d9488', fgAtivo: '#0f172a' };
-            if (lblCod) {
-                lblCod.innerText = mmg2SubgrupoSelecionado ? `ISO 513 (${mmg2SubgrupoSelecionado})` : `ISO 513 (${palSel.nome})`;
-                lblCod.style.color = palSel.cor;
-            }
-
-            const candidatos = Object.keys(mmg2MetaPorCodigo).filter(cod => {
-                const meta = mmg2MetaPorCodigo[cod] || {};
-                const iso = (meta.iso || extrairIsoDeCodigo(cod)).toUpperCase();
-                const sub = normMmg(meta.subgrupo || extrairSubgrupoDeCodigo(cod));
-                if (iso !== mmg2GrupoSelecionado) return false;
-                if (mmg2SubgrupoSelecionado && sub !== mmg2SubgrupoSelecionado && !cod.startsWith(mmg2SubgrupoSelecionado)) {
-                    return false;
-                }
-                return true;
-            }).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-
-            contCod.innerHTML = '';
-            candidatos.forEach(cod => {
-                const ativo = mmg2CodigoSelecionado === cod;
-                const meta = mmg2MetaPorCodigo[cod] || {};
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'mmg-code-btn';
-                btn.title = meta.label || cod;
-                btn.innerText = cod;
-                btn.style.color = ativo ? palSel.fgAtivo : palSel.cor;
-                btn.style.backgroundColor = ativo ? palSel.bgAtivo : '#0f172a';
-                btn.style.borderColor = palSel.cor;
-                if (ativo) {
-                    btn.style.boxShadow = `0 0 0 1px ${palSel.cor}`;
-                }
-                btn.onclick = () => selecionarCodigo2Botao(cod);
-                contCod.appendChild(btn);
-            });
-
-            if (detCod) {
-                const metaAtiva = mmg2CodigoSelecionado ? mmg2MetaPorCodigo[mmg2CodigoSelecionado] : null;
-                detCod.innerText = metaAtiva ? (metaAtiva.label || mmg2CodigoSelecionado) : (mmg2CodigoSelecionado || '');
-            }
-        }
-
-        function renderBotoesMmg2() {
-            const contGrupo = document.getElementById('mmg2-botoes-grupo');
-            const painelSub = document.getElementById('mmg2-painel-subgrupo');
-            const contSub = document.getElementById('mmg2-botoes-subgrupo');
-            const lblSub = document.getElementById('mmg2-label-subgrupo');
-            const freqEl = document.getElementById('mmg2-materiais-freq');
-            const detEl = document.getElementById('mmg2-selecao-detalhe');
-            if (!contGrupo || !painelSub || !contSub) return;
-
-            const isosDisponiveis = new Set();
-            Object.values(mmg2MetaPorCodigo).forEach(m => {
-                const iso = (m.iso || extrairIsoDeCodigo(m.codigo)).toUpperCase();
-                if (iso) isosDisponiveis.add(iso);
-            });
-
-            const ordemBotoes = ['P', 'M', 'K', 'N', 'S', 'H', 'C', 'X', 'Y'];
-            contGrupo.innerHTML = '';
-
-            ordemBotoes.forEach(isoCode => {
-                const pal = ISO_PALETTE[isoCode] || { nome: isoCode, cor: '#2dd4bf', bgAtivo: '#0d9488', fgAtivo: '#0f172a' };
-                const ativo = mmg2GrupoSelecionado === isoCode;
-                const habilitado = isosDisponiveis.has(isoCode);
-
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'iso-btn';
-                btn.disabled = !habilitado;
-                btn.title = pal.nome;
-                btn.innerText = isoCode;
-                btn.style.color = ativo ? pal.fgAtivo : pal.cor;
-                btn.style.backgroundColor = ativo ? pal.bgAtivo : '#0f172a';
-                btn.style.borderColor = pal.cor;
-                if (ativo) {
-                    btn.style.boxShadow = `0 0 0 1.5px ${pal.cor}`;
-                }
-                btn.onclick = () => selecionarGrupo2Botao(isoCode);
-                contGrupo.appendChild(btn);
-            });
-
-            if (!mmg2GrupoSelecionado) {
-                painelSub.classList.add('hidden');
-                contSub.innerHTML = '';
-                if (freqEl) freqEl.innerText = '';
-                renderBotoesCodigoMmg2();
-                if (detEl) detEl.innerText = mmg2CodigoSelecionado ? (mmg2MetaPorCodigo[mmg2CodigoSelecionado]?.label || mmg2CodigoSelecionado) : '—';
-                return;
-            }
-
-            painelSub.classList.remove('hidden');
-            const palSel = ISO_PALETTE[mmg2GrupoSelecionado] || { nome: mmg2GrupoSelecionado, cor: '#2dd4bf', bgAtivo: '#0d9488', fgAtivo: '#0f172a' };
-            if (lblSub) {
-                lblSub.innerText = `Subgrupo ISO 513 (${palSel.nome})`;
-                lblSub.style.color = palSel.cor;
-            }
-
-            const subsRender = (mmg2SubgruposPorIso[mmg2GrupoSelecionado] || []).map(normMmg);
-            contSub.innerHTML = '';
-
-            const btnTodos = document.createElement('button');
-            btnTodos.type = 'button';
-            btnTodos.className = 'sub-btn';
-            const todosAtivo = !mmg2SubgrupoSelecionado;
-            btnTodos.innerText = `${mmg2GrupoSelecionado} (Todos)`;
-            btnTodos.style.color = todosAtivo ? palSel.fgAtivo : palSel.cor;
-            btnTodos.style.backgroundColor = todosAtivo ? palSel.bgAtivo : '#0f172a';
-            btnTodos.style.borderColor = palSel.cor;
-            btnTodos.onclick = () => selecionarSubgrupo2Botao(null);
-            contSub.appendChild(btnTodos);
-
-            subsRender.forEach(subCode => {
-                const subAtivo = mmg2SubgrupoSelecionado === subCode;
-                const bSub = document.createElement('button');
-                bSub.type = 'button';
-                bSub.className = 'sub-btn';
-                bSub.innerText = subCode;
-                bSub.style.color = subAtivo ? palSel.fgAtivo : palSel.cor;
-                bSub.style.backgroundColor = subAtivo ? palSel.bgAtivo : '#0f172a';
-                bSub.style.borderColor = palSel.cor;
-                bSub.onclick = () => selecionarSubgrupo2Botao(subCode);
-                contSub.appendChild(bSub);
-            });
-
-            const freqs = [];
-            Object.values(mmg2MetaPorCodigo).forEach(m => {
-                const matchIso = m.iso === mmg2GrupoSelecionado;
-                const matchSub = !mmg2SubgrupoSelecionado || normMmg(m.subgrupo) === mmg2SubgrupoSelecionado;
-                if (matchIso && matchSub && m.freq && m.freq !== '-') {
-                    freqs.push(m.freq);
-                }
-            });
-            if (freqEl) {
-                freqEl.innerText = freqs.length > 0 ? freqs.slice(0, 2).join(' · ') : '';
-                freqEl.title = freqs.join(' | ');
-            }
-
-            renderBotoesCodigoMmg2();
-
-            if (detEl) {
-                detEl.innerText = mmg2CodigoSelecionado
-                    ? (mmg2MetaPorCodigo[mmg2CodigoSelecionado]?.label || mmg2CodigoSelecionado)
-                    : (mmg2SubgrupoSelecionado || mmg2GrupoSelecionado);
-            }
         }
 
         function obterLabelGrupoMmg(cod) {
@@ -1762,18 +1488,18 @@ const { jsPDF } = window.jspdf;
             if (!grps || grps.length === 0) return true;
             if (!isoSel && !subSel && !codSel) return true;
 
-            const codKey = normMmg(codSel);
-            const subKey = normMmg(subSel);
+            const codKey = chaveMmg(codSel);
+            const subKey = chaveMmg(subSel);
             const isoNorm = String(isoSel || '').trim().toUpperCase();
 
             return grps.some(g => {
                 const gNorm = normMmg(g);
-                const gKey = normMmg(g);
+                const gKey = chaveMmg(g);
                 if (codKey) {
                     return gKey === codKey;
                 }
                 const gIso = (mmgMetaPorCodigo[gNorm]?.iso || mmgMetaPorCodigo[gKey]?.iso || extrairIsoDeCodigo(gNorm)).toUpperCase();
-                const gSub = normMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || mmgMetaPorCodigo[gKey]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
+                const gSub = chaveMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || mmgMetaPorCodigo[gKey]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
                 if (subKey) {
                     return gSub === subKey || gKey.startsWith(subKey + '.');
                 }
@@ -1809,7 +1535,7 @@ const { jsPDF } = window.jspdf;
             const dispNormList = (gruposDisponiveisFerramenta || []).map(g => normMmg(g)).filter(Boolean);
             const mapaDispPorChave = {};
             dispNormList.forEach(g => {
-                mapaDispPorChave[normMmg(g)] = g;
+                mapaDispPorChave[chaveMmg(g)] = g;
             });
             const dispSet = new Set(Object.keys(mapaDispPorChave));
 
@@ -1833,10 +1559,10 @@ const { jsPDF } = window.jspdf;
             const codigoAtivo = normMmg(selG.value);
 
             candidatos.forEach(cod => {
-                const kChave = normMmg(cod);
+                const kChave = chaveMmg(cod);
                 const habilitado = !filtrarPorFerramenta || dispSet.has(kChave);
                 const codReal = (filtrarPorFerramenta && mapaDispPorChave[kChave]) ? mapaDispPorChave[kChave] : cod;
-                const ativo = normMmg(codigoAtivo) === kChave && Boolean(codigoAtivo);
+                const ativo = chaveMmg(codigoAtivo) === kChave && Boolean(codigoAtivo);
                 const meta = mmgMetaPorCodigo[cod] || mmgMetaPorCodigo[codReal] || {};
                 const btn = document.createElement('button');
                 btn.type = 'button';
@@ -2024,10 +1750,10 @@ const { jsPDF } = window.jspdf;
             if (disp.length === 0) return;
 
             if (mmgSubgrupoSelecionado) {
-                const subKey = normMmg(mmgSubgrupoSelecionado);
+                const subKey = chaveMmg(mmgSubgrupoSelecionado);
                 const matchExato = disp.find(g => {
-                    const metaSub = normMmg(mmgMetaPorCodigo[g]?.subgrupo || mmgMetaPorCodigo[normMmg(g)]?.subgrupo || extrairSubgrupoDeCodigo(g));
-                    return metaSub === subKey || normMmg(g).startsWith(subKey + '.');
+                    const metaSub = chaveMmg(mmgMetaPorCodigo[g]?.subgrupo || mmgMetaPorCodigo[chaveMmg(g)]?.subgrupo || extrairSubgrupoDeCodigo(g));
+                    return metaSub === subKey || chaveMmg(g).startsWith(subKey + '.');
                 });
                 if (matchExato) {
                     if (!mmgSelecionadoManualmente && !grupoSelect.value) {
@@ -2103,7 +1829,6 @@ const { jsPDF } = window.jspdf;
             const brocaFinal = document.getElementById('broca').value;
             const gruposDisp = (brocaFinal && dados[brocaFinal]) ? dados[brocaFinal].gruposList : [];
             renderBotoesMmg(gruposDisp);
-            renderBotoesMmg2();
 
             const detEl = document.getElementById('mmg-selecao-detalhe');
             if (detEl) {
@@ -2378,7 +2103,6 @@ const { jsPDF } = window.jspdf;
 
             preencherSelectCategoriasFamilias();
             renderBotoesMmg([]);
-            renderBotoesMmg2();
         }
 
         function extrairEncabadouroDIN6535(item) {
@@ -2547,9 +2271,6 @@ const { jsPDF } = window.jspdf;
             document.getElementById('grupo').value = '';
             mmgGrupoSelecionado = null;
             mmgSubgrupoSelecionado = null;
-            mmg2GrupoSelecionado = null;
-            mmg2SubgrupoSelecionado = null;
-            mmg2CodigoSelecionado = '';
             linhaAtivaInterna = '';
             document.getElementById('ref-feedback').innerText = "Se souber a referência, pesquise acima; se não souber, filtre abaixo.";
             document.getElementById('ref-feedback').className = "text-[10px] text-slate-400 block";
@@ -2557,7 +2278,6 @@ const { jsPDF } = window.jspdf;
             filtrarCatalogoCascata('reset');
             atualizarFiltroBrocas(false);
             renderBotoesMmg([]);
-            renderBotoesMmg2();
             atualizarPainelCotas();
             atualizarCalculo();
         }
@@ -3485,7 +3205,6 @@ const { jsPDF } = window.jspdf;
                 }
 
                 renderBotoesMmg([]);
-            renderBotoesMmg2();
                 atualizarPainelCotas();
                 atualizarCalculo();
                 return;
@@ -3532,7 +3251,6 @@ const { jsPDF } = window.jspdf;
                 aplicarFiltroMmgNaFerramenta();
             }
             renderBotoesMmg(gruposDisponiveis);
-            renderBotoesMmg2();
 
             if (variantePreferida && toolData.variantes && toolData.variantes[variantePreferida]) {
                 const selXd = document.getElementById('filtro-xd');
@@ -5032,8 +4750,6 @@ html_final = (
     .replace("__REFERENCIAS_JSON_PLACEHOLDER__", referencias_js)
     .replace("__PARAMETROS_JSON_PLACEHOLDER__", parametros_json_js)
     .replace("__GRUPOS_MMG_JSON_PLACEHOLDER__", grupos_mmg_js)
-    .replace("__LOGO_ALAMO_PLACEHOLDER__", json.dumps(logo_alamo_b64))
-    .replace("__LOGO_MAPAL_PLACEHOLDER__", json.dumps(logo_mapal_b64))
 )
 
 components.html(html_final, height=920, scrolling=False)

@@ -39,6 +39,7 @@ def _norm_key(val):
 
 
 def _norm_codigo_mmg(val):
+    """Mantém a identidade exata do código MMG (ex.: 'P1.1' != 'P1-1')."""
     return _limpar_str(val).upper()
 
 
@@ -48,6 +49,7 @@ def _extrair_iso_do_codigo(codigo: str) -> str:
 
 
 def _extrair_subgrupo_do_codigo(codigo: str) -> str:
+    """Extrai o subgrupo (ex.: 'P1' de 'P1-1' ou 'P1.1') quando a coluna Subgrupo não existe."""
     m = re.match(r"^([A-Z]+\d+)", _limpar_str(codigo).upper())
     return m.group(1) if m else ""
 
@@ -130,7 +132,10 @@ def _extrair_registos_aba_mmg(xls: pd.ExcelFile, sheet_name: str, origem: str) -
         dureza = _limpar_str(row[c_dureza]) if c_dureza else ""
         materiais_freq = _limpar_str(row[c_freq]) if c_freq else ""
 
-        detalhes = [x for x in [estrutura, condicao, resistencia, dureza] if x and x != "-"]
+        detalhes = [
+            x for x in [estrutura, condicao, resistencia, dureza]
+            if x and x != "-"
+        ]
         if material and detalhes:
             label = f"{codigo} — {material} ({' | '.join(detalhes[:2])})"
         elif material:
@@ -238,7 +243,7 @@ def exportar_familias_json(
 
 
 def exportar_json(
-    excel_path: str = "catalogo_teste.xlsx",
+    excel_path: str = "dados/parametros_corte.xlsx",
     sheet_name: str = "Parametros_Corte",
     output_path: str = "dados/furacao_parametros.json",
     familias_map: dict[str, dict] | None = None,
@@ -277,6 +282,8 @@ def exportar_json(
                     continue
                 nome = str(val).strip()
                 up = nome.upper()
+                if up.startswith("UNNAMED:"):
+                    continue
                 if up in {"FAMILIA", "FAMÍLIA", "FAMILY"}:
                     col_map["familia"] = idx
                 elif up in {"MMG", "GRUPO", "MAT_GRUPO", "GRUPO_MAT"}:
@@ -346,6 +353,7 @@ def exportar_json(
                 "avancos_f": avancos_f,
             })
 
+    # --- REGRA DE HERANÇA AUTOMÁTICA: SCD**1 -> SCD**0 ---
     familias_com_params = {_norm_key(r["familia"]) for r in registos if r.get("familia")}
     registos_herdados = []
 
@@ -374,6 +382,7 @@ def exportar_json(
                 })
 
     registos.extend(registos_herdados)
+    # -----------------------------------------------------
 
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -495,7 +504,6 @@ def exportar_tudo_json(
         output_path=str(out_base / "grupos_mmg.json"),
     )
 
-    print(f"Exportados: {len(familias)} famílias, {len(referencias)} referências, {len(parametros)} parâmetros, {len(grupos_mmg)} grupos MMG.")
     return {
         "familias": familias,
         "referencias": referencias,
