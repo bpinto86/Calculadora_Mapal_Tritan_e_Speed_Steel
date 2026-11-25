@@ -167,6 +167,24 @@ html_content = '''
             <div class="lg:col-span-4 bg-slate-800 p-3.5 rounded-lg border border-slate-700 flex flex-col gap-2.5 overflow-y-auto min-h-0">
                 <h2 class="text-xs font-semibold text-blue-400 uppercase tracking-wider shrink-0">Configuração da Operação</h2>
 
+                <div class="bg-slate-900/90 p-2 rounded-md border border-indigo-800/60 space-y-1 shrink-0">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-semibold text-indigo-300 uppercase tracking-wider">Tipo de Operação</span>
+                        <span id="badge-operacao-estado" class="text-[9px] font-mono text-emerald-400">Código Ativo</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 bg-slate-950 p-1 rounded border border-slate-800 text-xs font-semibold">
+                        <button type="button" id="btn-op-furacao" onclick="setOperacao('furacao')" class="py-1.5 px-2 rounded bg-blue-600 text-white transition flex items-center justify-center gap-1.5">
+                            <span>🔩</span> Furação
+                        </button>
+                        <button type="button" id="btn-op-fresagem" onclick="setOperacao('fresagem')" class="py-1.5 px-2 rounded text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5">
+                            <span>⚙️</span> Fresagem
+                        </button>
+                    </div>
+                    <div id="aviso-operacao-fresagem" class="hidden bg-amber-950/60 border border-amber-500/60 text-amber-200 rounded p-2 text-[10.5px] leading-snug">
+                        <strong>Fresagem — sem código escrito:</strong> a lógica de fresagem ainda não foi implementada neste programa. Mude para <strong>Furação</strong> para utilizar o cálculo e os dados ativos.
+                    </div>
+                </div>
+
                 <div class="space-y-1 shrink-0 bg-slate-900/90 p-2 rounded-md border border-cyan-800/60">
                     <div class="flex justify-between items-center">
                         <label class="text-[11px] font-medium text-cyan-300">PESQUISA RÁPIDA (ORDER NO. / REF. / ×D / HA-HB-HE)</label>
@@ -1116,6 +1134,7 @@ html_content = '''
         let vcUnlocked = false;
         let rpmMaxUnlocked = false;
         let corteInterrompidoAtivo = false;
+        let operacaoAtual = 'furacao';
 
         const ISO_PALETTE = {
             'P': { nome: 'Aços (P)',        cor: '#3b82f6', bgAtivo: '#2563eb', fgAtivo: '#ffffff' },
@@ -3749,7 +3768,59 @@ html_content = '''
             }
         }
 
+        function aplicarModoOperacao() {
+            const btnFur = document.getElementById('btn-op-furacao');
+            const btnFre = document.getElementById('btn-op-fresagem');
+            const avisoFre = document.getElementById('aviso-operacao-fresagem');
+            const badgeOp = document.getElementById('badge-operacao-estado');
+            const isFresagem = operacaoAtual === 'fresagem';
+
+            if (btnFur && btnFre) {
+                if (!isFresagem) {
+                    btnFur.className = "py-1.5 px-2 rounded bg-blue-600 text-white transition flex items-center justify-center gap-1.5";
+                    btnFre.className = "py-1.5 px-2 rounded text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5";
+                } else {
+                    btnFre.className = "py-1.5 px-2 rounded bg-amber-600 text-white transition flex items-center justify-center gap-1.5";
+                    btnFur.className = "py-1.5 px-2 rounded text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5";
+                }
+            }
+
+            if (avisoFre) {
+                if (isFresagem) avisoFre.classList.remove('hidden');
+                else avisoFre.classList.add('hidden');
+            }
+
+            if (badgeOp) {
+                if (isFresagem) {
+                    badgeOp.innerText = "Sem código";
+                    badgeOp.className = "text-[9px] font-mono text-amber-400";
+                } else {
+                    badgeOp.innerText = "Código Ativo";
+                    badgeOp.className = "text-[9px] font-mono text-emerald-400";
+                }
+            }
+        }
+
+        function setOperacao(novaOp) {
+            operacaoAtual = (novaOp === 'fresagem') ? 'fresagem' : 'furacao';
+            aplicarModoOperacao();
+            atualizarCalculo();
+        }
+
         function atualizarCalculo() {
+            aplicarModoOperacao();
+            if (operacaoAtual === 'fresagem') {
+                document.getElementById('val-estado').innerText = 'Fresagem sem código escrito';
+                document.getElementById('val-estado').className = 'text-[9px] font-bold text-amber-400';
+                document.getElementById('res-n').innerText = '—';
+                document.getElementById('res-vf').innerText = '—';
+                document.getElementById('res-forca').innerHTML = '—';
+                document.getElementById('res-forca-kgf').innerText = '—';
+                document.getElementById('res-binario-card').innerHTML = '—';
+                document.getElementById('tabela-ref').innerHTML = '<tr><td colspan="4" class="py-3 text-center text-amber-300 text-xs">Fresagem ainda não tem código escrito. Selecione Furação.</td></tr>';
+                document.getElementById('svg-grafico').innerHTML = '';
+                return;
+            }
             const brocaKey = document.getElementById('broca').value;
             const grupoEfetivoKey = getGrupoEfetivo();
 
