@@ -84,7 +84,7 @@ def _extrair_registos_aba_mmg(xls: pd.ExcelFile, sheet_name: str, origem: str) -
         "codigo",
     )
     c_iso = pick_col("grupo_iso", "grupo_iso_513", "grupo_isso", "iso")
-    c_subgrupo = pick_col("subgrupo", "subgrupo_mmg")
+    c_subgrupo = pick_col("subgrupo")
     c_material = pick_col(
         "material_da_peca_workpiece_material",
         "material_da_peca",
@@ -282,8 +282,6 @@ def exportar_json(
                     continue
                 nome = str(val).strip()
                 up = nome.upper()
-                if up.startswith("UNNAMED:"):
-                    continue
                 if up in {"FAMILIA", "FAMÍLIA", "FAMILY"}:
                     col_map["familia"] = idx
                 elif up in {"MMG", "GRUPO", "MAT_GRUPO", "GRUPO_MAT"}:

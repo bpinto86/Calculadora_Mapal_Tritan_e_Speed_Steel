@@ -212,6 +212,31 @@ html_content = '''
                         <select id="grupo" class="hidden" onchange="onSelectGrupoManual()"></select>
                     </div>
 
+                    <div id="mmg2-box" class="bg-slate-950/75 p-2 rounded-md border border-teal-900/50 space-y-1.5">
+                        <div class="flex justify-between items-center gap-1">
+                            <label class="text-[10px] font-semibold text-teal-300 uppercase tracking-wider">2. Novo Grupo de Materiais (MMG) ISO DIN ISO 513</label>
+                            <span id="mmg2-selecao-detalhe" class="text-[10px] font-mono text-slate-300 truncate max-w-[175px]">—</span>
+                        </div>
+
+                        <div id="mmg2-botoes-grupo" class="grid grid-cols-6 gap-1"></div>
+
+                        <div id="mmg2-painel-subgrupo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
+                            <div class="flex justify-between items-center">
+                                <span id="mmg2-label-subgrupo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Subgrupo</span>
+                                <span id="mmg2-materiais-freq" class="text-[9px] text-slate-400 truncate max-w-[190px]"></span>
+                            </div>
+                            <div id="mmg2-botoes-subgrupo" class="flex flex-wrap gap-1"></div>
+                        </div>
+
+                        <div id="mmg2-painel-codigo" class="hidden space-y-1 pt-1 border-t border-slate-800/90">
+                            <div class="flex justify-between items-center">
+                                <span id="mmg2-label-codigo" class="text-[9.5px] font-semibold text-slate-400 uppercase">Grupo MAPAL (MMG)</span>
+                                <span id="mmg2-detalhe-codigo" class="text-[9px] text-teal-300 truncate max-w-[185px]"></span>
+                            </div>
+                            <div id="mmg2-botoes-codigo" class="flex flex-wrap gap-1 max-h-24 overflow-y-auto"></div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-3 gap-1.5">
                         <div class="space-y-0.5">
                             <label class="text-[10px] font-medium text-slate-300 block">1. Tipo Operação</label>
@@ -1107,18 +1132,23 @@ html_content = '''
         let mmgGrupoSelecionado = null;
         let mmgSubgrupoSelecionado = null;
         let mmgSelecionadoManualmente = false;
+        let mmg2GrupoSelecionado = null;
+        let mmg2SubgrupoSelecionado = null;
+        let mmg2CodigoSelecionado = '';
         let sincronizacaoInterna = false;
         const mmgMetaPorCodigo = {};
         const mmgSubgruposPorIso = {};
+        const mmg2MetaPorCodigo = {};
+        const mmg2SubgruposPorIso = {};
 
         function resolverGrupoTool(toolData, grpKey) {
             if (!toolData || !toolData.grupos || !grpKey) return null;
             const gNorm = normMmg(grpKey);
             if (toolData.grupos[gNorm]) return toolData.grupos[gNorm];
             if (toolData.grupos[grpKey]) return toolData.grupos[grpKey];
-            const targetKey = chaveMmg(grpKey);
+            const targetKey = normMmg(grpKey);
             for (const k of Object.keys(toolData.grupos)) {
-                if (chaveMmg(k) === targetKey) {
+                if (normMmg(k) === targetKey) {
                     return toolData.grupos[k];
                 }
             }
@@ -1129,9 +1159,7 @@ html_content = '''
             return String(cod || '').trim().toUpperCase();
         }
 
-        function chaveMmg(cod) {
-            return normMmg(cod).replace(/^([A-Z]+\d+)[.-](\d+)$/, '$1.$2');
-        }
+
 
         function fecharAvisoInicial() {
             const modal = document.getElementById('modal-aviso-inicial');
@@ -1448,6 +1476,8 @@ html_content = '''
             Object.keys(gruposMmgMap).forEach(k => delete gruposMmgMap[k]);
             Object.keys(mmgMetaPorCodigo).forEach(k => delete mmgMetaPorCodigo[k]);
             Object.keys(mmgSubgruposPorIso).forEach(k => delete mmgSubgruposPorIso[k]);
+            Object.keys(mmg2MetaPorCodigo).forEach(k => delete mmg2MetaPorCodigo[k]);
+            Object.keys(mmg2SubgruposPorIso).forEach(k => delete mmg2SubgruposPorIso[k]);
             gruposMmgOrdem.length = 0;
 
             if (!Array.isArray(GRUPOS_MMG_JSON)) return;
@@ -1455,26 +1485,225 @@ html_content = '''
                 if (!item || typeof item !== 'object') return;
                 const cod = normMmg(item.codigo || item.Grupo || item.grupo || '');
                 if (!cod) return;
+                const origem = String(item.origem || '').trim().toUpperCase();
                 const label = String(item.label || item.descricao || cod).trim();
                 const iso = String(item.iso || '').replace('*', '').trim().toUpperCase() || extrairIsoDeCodigo(cod);
                 const sub = normMmg(item.subgrupo || '') || extrairSubgrupoDeCodigo(cod);
                 const freq = String(item.materiais_frequentes || '').trim();
                 const dureza = String(item.dureza || '').trim();
 
-                if (!gruposMmgMap[cod]) {
-                    gruposMmgMap[cod] = label;
-                    gruposMmgOrdem.push(cod);
-                }
-                if (!mmgMetaPorCodigo[cod]) {
-                    mmgMetaPorCodigo[cod] = { codigo: cod, label, iso, subgrupo: sub, freq, dureza };
-                }
-                if (iso && sub) {
-                    if (!mmgSubgruposPorIso[iso]) mmgSubgruposPorIso[iso] = [];
-                    if (!mmgSubgruposPorIso[iso].includes(sub)) {
-                        mmgSubgruposPorIso[iso].push(sub);
+                if (origem === 'MAPAL_MMG_NEW') {
+                    if (!mmg2MetaPorCodigo[cod]) {
+                        mmg2MetaPorCodigo[cod] = { codigo: cod, label, iso, subgrupo: sub, freq, dureza, origem };
+                    }
+                    if (iso && sub) {
+                        if (!mmg2SubgruposPorIso[iso]) mmg2SubgruposPorIso[iso] = [];
+                        if (!mmg2SubgruposPorIso[iso].includes(sub)) {
+                            mmg2SubgruposPorIso[iso].push(sub);
+                        }
+                    }
+                } else {
+                    if (!gruposMmgMap[cod]) {
+                        gruposMmgMap[cod] = label;
+                        gruposMmgOrdem.push(cod);
+                    }
+                    if (!mmgMetaPorCodigo[cod]) {
+                        mmgMetaPorCodigo[cod] = { codigo: cod, label, iso, subgrupo: sub, freq, dureza, origem: origem || 'MAPAL_MMG' };
+                    }
+                    if (iso && sub) {
+                        if (!mmgSubgruposPorIso[iso]) mmgSubgruposPorIso[iso] = [];
+                        if (!mmgSubgruposPorIso[iso].includes(sub)) {
+                            mmgSubgruposPorIso[iso].push(sub);
+                        }
                     }
                 }
             });
+        }
+
+        function selecionarGrupo2Botao(isoCode) {
+            if (mmg2GrupoSelecionado === isoCode) {
+                mmg2GrupoSelecionado = null;
+                mmg2SubgrupoSelecionado = null;
+                mmg2CodigoSelecionado = '';
+            } else {
+                mmg2GrupoSelecionado = isoCode;
+                mmg2SubgrupoSelecionado = null;
+                mmg2CodigoSelecionado = '';
+            }
+            renderBotoesMmg2();
+        }
+
+        function selecionarSubgrupo2Botao(subCode) {
+            mmg2SubgrupoSelecionado = subCode ? normMmg(subCode) : null;
+            mmg2CodigoSelecionado = '';
+            renderBotoesMmg2();
+        }
+
+        function selecionarCodigo2Botao(cod) {
+            const codNorm = normMmg(cod);
+            mmg2CodigoSelecionado = (mmg2CodigoSelecionado === codNorm) ? '' : codNorm;
+            renderBotoesMmg2();
+        }
+
+        function renderBotoesCodigoMmg2() {
+            const painelCod = document.getElementById('mmg2-painel-codigo');
+            const contCod = document.getElementById('mmg2-botoes-codigo');
+            const lblCod = document.getElementById('mmg2-label-codigo');
+            const detCod = document.getElementById('mmg2-detalhe-codigo');
+            if (!painelCod || !contCod) return;
+
+            if (!mmg2GrupoSelecionado) {
+                painelCod.classList.add('hidden');
+                contCod.innerHTML = '';
+                if (detCod) detCod.innerText = '';
+                return;
+            }
+
+            painelCod.classList.remove('hidden');
+            const palSel = ISO_PALETTE[mmg2GrupoSelecionado] || { nome: mmg2GrupoSelecionado, cor: '#2dd4bf', bgAtivo: '#0d9488', fgAtivo: '#0f172a' };
+            if (lblCod) {
+                lblCod.innerText = mmg2SubgrupoSelecionado ? `ISO 513 (${mmg2SubgrupoSelecionado})` : `ISO 513 (${palSel.nome})`;
+                lblCod.style.color = palSel.cor;
+            }
+
+            const candidatos = Object.keys(mmg2MetaPorCodigo).filter(cod => {
+                const meta = mmg2MetaPorCodigo[cod] || {};
+                const iso = (meta.iso || extrairIsoDeCodigo(cod)).toUpperCase();
+                const sub = normMmg(meta.subgrupo || extrairSubgrupoDeCodigo(cod));
+                if (iso !== mmg2GrupoSelecionado) return false;
+                if (mmg2SubgrupoSelecionado && sub !== mmg2SubgrupoSelecionado && !cod.startsWith(mmg2SubgrupoSelecionado)) {
+                    return false;
+                }
+                return true;
+            }).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+            contCod.innerHTML = '';
+            candidatos.forEach(cod => {
+                const ativo = mmg2CodigoSelecionado === cod;
+                const meta = mmg2MetaPorCodigo[cod] || {};
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'mmg-code-btn';
+                btn.title = meta.label || cod;
+                btn.innerText = cod;
+                btn.style.color = ativo ? palSel.fgAtivo : palSel.cor;
+                btn.style.backgroundColor = ativo ? palSel.bgAtivo : '#0f172a';
+                btn.style.borderColor = palSel.cor;
+                if (ativo) {
+                    btn.style.boxShadow = `0 0 0 1px ${palSel.cor}`;
+                }
+                btn.onclick = () => selecionarCodigo2Botao(cod);
+                contCod.appendChild(btn);
+            });
+
+            if (detCod) {
+                const metaAtiva = mmg2CodigoSelecionado ? mmg2MetaPorCodigo[mmg2CodigoSelecionado] : null;
+                detCod.innerText = metaAtiva ? (metaAtiva.label || mmg2CodigoSelecionado) : (mmg2CodigoSelecionado || '');
+            }
+        }
+
+        function renderBotoesMmg2() {
+            const contGrupo = document.getElementById('mmg2-botoes-grupo');
+            const painelSub = document.getElementById('mmg2-painel-subgrupo');
+            const contSub = document.getElementById('mmg2-botoes-subgrupo');
+            const lblSub = document.getElementById('mmg2-label-subgrupo');
+            const freqEl = document.getElementById('mmg2-materiais-freq');
+            const detEl = document.getElementById('mmg2-selecao-detalhe');
+            if (!contGrupo || !painelSub || !contSub) return;
+
+            const isosDisponiveis = new Set();
+            Object.values(mmg2MetaPorCodigo).forEach(m => {
+                const iso = (m.iso || extrairIsoDeCodigo(m.codigo)).toUpperCase();
+                if (iso) isosDisponiveis.add(iso);
+            });
+
+            const ordemBotoes = ['P', 'M', 'K', 'N', 'S', 'H', 'C', 'X', 'Y'];
+            contGrupo.innerHTML = '';
+
+            ordemBotoes.forEach(isoCode => {
+                const pal = ISO_PALETTE[isoCode] || { nome: isoCode, cor: '#2dd4bf', bgAtivo: '#0d9488', fgAtivo: '#0f172a' };
+                const ativo = mmg2GrupoSelecionado === isoCode;
+                const habilitado = isosDisponiveis.has(isoCode);
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'iso-btn';
+                btn.disabled = !habilitado;
+                btn.title = pal.nome;
+                btn.innerText = isoCode;
+                btn.style.color = ativo ? pal.fgAtivo : pal.cor;
+                btn.style.backgroundColor = ativo ? pal.bgAtivo : '#0f172a';
+                btn.style.borderColor = pal.cor;
+                if (ativo) {
+                    btn.style.boxShadow = `0 0 0 1.5px ${pal.cor}`;
+                }
+                btn.onclick = () => selecionarGrupo2Botao(isoCode);
+                contGrupo.appendChild(btn);
+            });
+
+            if (!mmg2GrupoSelecionado) {
+                painelSub.classList.add('hidden');
+                contSub.innerHTML = '';
+                if (freqEl) freqEl.innerText = '';
+                renderBotoesCodigoMmg2();
+                if (detEl) detEl.innerText = mmg2CodigoSelecionado ? (mmg2MetaPorCodigo[mmg2CodigoSelecionado]?.label || mmg2CodigoSelecionado) : '—';
+                return;
+            }
+
+            painelSub.classList.remove('hidden');
+            const palSel = ISO_PALETTE[mmg2GrupoSelecionado] || { nome: mmg2GrupoSelecionado, cor: '#2dd4bf', bgAtivo: '#0d9488', fgAtivo: '#0f172a' };
+            if (lblSub) {
+                lblSub.innerText = `Subgrupo ISO 513 (${palSel.nome})`;
+                lblSub.style.color = palSel.cor;
+            }
+
+            const subsRender = (mmg2SubgruposPorIso[mmg2GrupoSelecionado] || []).map(normMmg);
+            contSub.innerHTML = '';
+
+            const btnTodos = document.createElement('button');
+            btnTodos.type = 'button';
+            btnTodos.className = 'sub-btn';
+            const todosAtivo = !mmg2SubgrupoSelecionado;
+            btnTodos.innerText = `${mmg2GrupoSelecionado} (Todos)`;
+            btnTodos.style.color = todosAtivo ? palSel.fgAtivo : palSel.cor;
+            btnTodos.style.backgroundColor = todosAtivo ? palSel.bgAtivo : '#0f172a';
+            btnTodos.style.borderColor = palSel.cor;
+            btnTodos.onclick = () => selecionarSubgrupo2Botao(null);
+            contSub.appendChild(btnTodos);
+
+            subsRender.forEach(subCode => {
+                const subAtivo = mmg2SubgrupoSelecionado === subCode;
+                const bSub = document.createElement('button');
+                bSub.type = 'button';
+                bSub.className = 'sub-btn';
+                bSub.innerText = subCode;
+                bSub.style.color = subAtivo ? palSel.fgAtivo : palSel.cor;
+                bSub.style.backgroundColor = subAtivo ? palSel.bgAtivo : '#0f172a';
+                bSub.style.borderColor = palSel.cor;
+                bSub.onclick = () => selecionarSubgrupo2Botao(subCode);
+                contSub.appendChild(bSub);
+            });
+
+            const freqs = [];
+            Object.values(mmg2MetaPorCodigo).forEach(m => {
+                const matchIso = m.iso === mmg2GrupoSelecionado;
+                const matchSub = !mmg2SubgrupoSelecionado || normMmg(m.subgrupo) === mmg2SubgrupoSelecionado;
+                if (matchIso && matchSub && m.freq && m.freq !== '-') {
+                    freqs.push(m.freq);
+                }
+            });
+            if (freqEl) {
+                freqEl.innerText = freqs.length > 0 ? freqs.slice(0, 2).join(' · ') : '';
+                freqEl.title = freqs.join(' | ');
+            }
+
+            renderBotoesCodigoMmg2();
+
+            if (detEl) {
+                detEl.innerText = mmg2CodigoSelecionado
+                    ? (mmg2MetaPorCodigo[mmg2CodigoSelecionado]?.label || mmg2CodigoSelecionado)
+                    : (mmg2SubgrupoSelecionado || mmg2GrupoSelecionado);
+            }
         }
 
         function obterLabelGrupoMmg(cod) {
@@ -1488,18 +1717,18 @@ html_content = '''
             if (!grps || grps.length === 0) return true;
             if (!isoSel && !subSel && !codSel) return true;
 
-            const codKey = chaveMmg(codSel);
-            const subKey = chaveMmg(subSel);
+            const codKey = normMmg(codSel);
+            const subKey = normMmg(subSel);
             const isoNorm = String(isoSel || '').trim().toUpperCase();
 
             return grps.some(g => {
                 const gNorm = normMmg(g);
-                const gKey = chaveMmg(g);
+                const gKey = normMmg(g);
                 if (codKey) {
                     return gKey === codKey;
                 }
                 const gIso = (mmgMetaPorCodigo[gNorm]?.iso || mmgMetaPorCodigo[gKey]?.iso || extrairIsoDeCodigo(gNorm)).toUpperCase();
-                const gSub = chaveMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || mmgMetaPorCodigo[gKey]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
+                const gSub = normMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || mmgMetaPorCodigo[gKey]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
                 if (subKey) {
                     return gSub === subKey || gKey.startsWith(subKey + '.');
                 }
@@ -1535,7 +1764,7 @@ html_content = '''
             const dispNormList = (gruposDisponiveisFerramenta || []).map(g => normMmg(g)).filter(Boolean);
             const mapaDispPorChave = {};
             dispNormList.forEach(g => {
-                mapaDispPorChave[chaveMmg(g)] = g;
+                mapaDispPorChave[normMmg(g)] = g;
             });
             const dispSet = new Set(Object.keys(mapaDispPorChave));
 
@@ -1559,10 +1788,10 @@ html_content = '''
             const codigoAtivo = normMmg(selG.value);
 
             candidatos.forEach(cod => {
-                const kChave = chaveMmg(cod);
+                const kChave = normMmg(cod);
                 const habilitado = !filtrarPorFerramenta || dispSet.has(kChave);
                 const codReal = (filtrarPorFerramenta && mapaDispPorChave[kChave]) ? mapaDispPorChave[kChave] : cod;
-                const ativo = chaveMmg(codigoAtivo) === kChave && Boolean(codigoAtivo);
+                const ativo = normMmg(codigoAtivo) === kChave && Boolean(codigoAtivo);
                 const meta = mmgMetaPorCodigo[cod] || mmgMetaPorCodigo[codReal] || {};
                 const btn = document.createElement('button');
                 btn.type = 'button';
@@ -1750,10 +1979,10 @@ html_content = '''
             if (disp.length === 0) return;
 
             if (mmgSubgrupoSelecionado) {
-                const subKey = chaveMmg(mmgSubgrupoSelecionado);
+                const subKey = normMmg(mmgSubgrupoSelecionado);
                 const matchExato = disp.find(g => {
-                    const metaSub = chaveMmg(mmgMetaPorCodigo[g]?.subgrupo || mmgMetaPorCodigo[chaveMmg(g)]?.subgrupo || extrairSubgrupoDeCodigo(g));
-                    return metaSub === subKey || chaveMmg(g).startsWith(subKey + '.');
+                    const metaSub = normMmg(mmgMetaPorCodigo[g]?.subgrupo || mmgMetaPorCodigo[normMmg(g)]?.subgrupo || extrairSubgrupoDeCodigo(g));
+                    return metaSub === subKey || normMmg(g).startsWith(subKey + '.');
                 });
                 if (matchExato) {
                     if (!mmgSelecionadoManualmente && !grupoSelect.value) {
@@ -1829,6 +2058,7 @@ html_content = '''
             const brocaFinal = document.getElementById('broca').value;
             const gruposDisp = (brocaFinal && dados[brocaFinal]) ? dados[brocaFinal].gruposList : [];
             renderBotoesMmg(gruposDisp);
+            renderBotoesMmg2();
 
             const detEl = document.getElementById('mmg-selecao-detalhe');
             if (detEl) {
@@ -2103,6 +2333,7 @@ html_content = '''
 
             preencherSelectCategoriasFamilias();
             renderBotoesMmg([]);
+            renderBotoesMmg2();
         }
 
         function extrairEncabadouroDIN6535(item) {
@@ -2271,6 +2502,9 @@ html_content = '''
             document.getElementById('grupo').value = '';
             mmgGrupoSelecionado = null;
             mmgSubgrupoSelecionado = null;
+            mmg2GrupoSelecionado = null;
+            mmg2SubgrupoSelecionado = null;
+            mmg2CodigoSelecionado = '';
             linhaAtivaInterna = '';
             document.getElementById('ref-feedback').innerText = "Se souber a referência, pesquise acima; se não souber, filtre abaixo.";
             document.getElementById('ref-feedback').className = "text-[10px] text-slate-400 block";
@@ -2278,6 +2512,7 @@ html_content = '''
             filtrarCatalogoCascata('reset');
             atualizarFiltroBrocas(false);
             renderBotoesMmg([]);
+            renderBotoesMmg2();
             atualizarPainelCotas();
             atualizarCalculo();
         }
@@ -3205,6 +3440,7 @@ html_content = '''
                 }
 
                 renderBotoesMmg([]);
+            renderBotoesMmg2();
                 atualizarPainelCotas();
                 atualizarCalculo();
                 return;
@@ -3251,6 +3487,7 @@ html_content = '''
                 aplicarFiltroMmgNaFerramenta();
             }
             renderBotoesMmg(gruposDisponiveis);
+            renderBotoesMmg2();
 
             if (variantePreferida && toolData.variantes && toolData.variantes[variantePreferida]) {
                 const selXd = document.getElementById('filtro-xd');
