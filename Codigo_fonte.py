@@ -363,7 +363,7 @@ html_content = '''
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <div class="space-y-1">
                             <label class="text-[11px] font-medium text-slate-300">6. QTD. FUROS (LOTE)</label>
-                            <input type="number" id="qtd-furos" value="50" step="1" min="1" max="100000" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="qtd-furos" value="00" step="1" min="1" max="100000" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                         <div class="space-y-1">
                             <label class="text-[11px] font-medium text-slate-300">7. DENSIDADE (g/cm³)</label>
@@ -399,11 +399,11 @@ html_content = '''
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <div class="space-y-1">
                             <label class="text-[11px] font-medium text-slate-300">8. VALOR SUCATA (€/kg)</label>
-                            <input type="number" id="preco-sucata" value="0.35" step="0.05" min="0" max="50" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="preco-sucata" value="0.00" step="0.05" min="0" max="50" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                         <div class="space-y-1">
                             <label class="text-[11px] font-medium text-slate-300">9. CUSTO HORA MÁQUINA (€/h)</label>
-                            <input type="number" id="custo-hora" value="50.00" step="5" min="1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="custo-hora" value="00.00" step="5" min="1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                     </div>
                 </div>
