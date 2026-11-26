@@ -341,7 +341,7 @@ html_content = '''
                     <div id="bloco-diametro-catalogo" class="space-y-1 hidden">
                         <label class="text-[11px] font-medium text-emerald-400">4. DIÂMETRO (Ø) — d1</label>
                         <div class="bg-slate-900/90 border border-emerald-700/60 rounded-md p-1.5 text-center flex items-center justify-between px-2">
-                            <div id="diametro-catalogo-valor" class="text-sm font-bold text-emerald-300">Ø 12.00 mm</div>
+                            <div id="diametro-catalogo-valor" class="text-sm font-bold text-emerald-300">Ø 00.00 mm</div>
                             <button type="button" onclick="limparDiametroD1()" title="Limpar d1 e voltar ao Ø livre" class="text-[10px] text-slate-400 hover:text-white underline">Livre</button>
                         </div>
                     </div>
