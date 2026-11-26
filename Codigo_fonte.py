@@ -5039,7 +5039,7 @@ html_content = '''
                 doc.text(`Atual: ${c.nomeAtual}   vs.   Comparada: ${c.nomeAlvo}`, 14, y);
                 y += 5;
                 if (c.corteInterrompido) {
-                    doc.text(`Condição: Corte Interrompido (-30% vida) | Ref. contínuo: ${c.metrosContinuoRef.toFixed(0)} m (~${c.furosEquivContinuo} furos)`, 14, y);
+                    doc.text(`Condição: Corte Interrompido (${pctImpacto > 0 ? '+' : ''}${pctImpacto}% vida) | Ref. contínuo: ${c.metrosContinuoRef.toFixed(0)} m (~${c.furosEquivContinuo} furos)`, 14, y);
                     y += 5;
                 }
                 if (c.isCliente && c.requerPiloto) {
