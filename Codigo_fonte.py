@@ -4671,10 +4671,14 @@ html_content = '''
             if (fonteComp !== '__CLIENTE__' && ctx.profundidade > calcAlvo.limiteNominalMm) {
                 avisos.push(`Ferramenta comparada excede o limite nominal (${calcAlvo.limiteNominalMm.toFixed(1)} mm) para ${ctx.profundidade.toFixed(0)} mm.`);
             }
+            const furosAtualRef = vidaUnidAtual === 'metros' ? ((vidaAtual * 1000) / Math.max(1, ctx.profundidade)) : vidaAtual;
+            const pctImpactoCorteInterrompido = corteInterrompidoAtivo
+                ? (furosEquivContinuo > 0 ? Math.round(((furosAtualRef - furosEquivContinuo) / furosEquivContinuo) * 100) : -30)
+                : 0;
+            const penalizacaoCorteInterrompidoPct = corteInterrompidoAtivo ? Math.abs(pctImpactoCorteInterrompido) : 0;
+
             if (corteInterrompidoAtivo) {
-                const furosAtualRef = vidaUnidAtual === 'metros' ? ((vidaAtual * 1000) / Math.max(1, ctx.profundidade)) : vidaAtual;
-                const pctImpacto = furosEquivContinuo > 0 ? Math.round(((furosAtualRef - furosEquivContinuo) / furosEquivContinuo) * 100) : -30;
-                avisos.push(`Corte interrompido ativo (${pctImpacto > 0 ? '+' : ''}${pctImpacto}% de vida útil por impacto). Referência contínuo: ${metrosContinuoRef.toFixed(0)} m (~${furosEquivContinuo} furos).`);
+                avisos.push(`Corte interrompido ativo (${pctImpactoCorteInterrompido > 0 ? '+' : ''}${pctImpactoCorteInterrompido}% de vida útil por impacto). Referência contínuo: ${metrosContinuoRef.toFixed(0)} m (~${furosEquivContinuo} furos).`);
             }
             if (fonteComp === '__CLIENTE__' && requerPiloto) {
                 avisos.push(`Furo-piloto ativo: +${tempoPilotoSeg.toFixed(0)} s/furo e +${custoPilotoFuro.toFixed(3)} €/furo.`);
@@ -4748,6 +4752,8 @@ html_content = '''
                 nomeAlvo: nomeAlvoExib,
                 isCliente: fonteComp === '__CLIENTE__',
                 corteInterrompido: corteInterrompidoAtivo,
+                pctImpactoCorteInterrompido,
+                penalizacaoCorteInterrompidoPct,
                 metrosContinuoRef,
                 furosEquivContinuo,
                 requerPiloto: fonteComp === '__CLIENTE__' ? requerPiloto : false,
@@ -5039,7 +5045,11 @@ html_content = '''
                 doc.text(`Atual: ${c.nomeAtual}   vs.   Comparada: ${c.nomeAlvo}`, 14, y);
                 y += 5;
                 if (c.corteInterrompido) {
-                    doc.text(`Condição: Corte Interrompido (${pctImpacto > 0 ? '+' : ''}${pctImpacto} | Ref. contínuo: ${c.metrosContinuoRef.toFixed(0)} m (~${c.furosEquivContinuo} furos)`, 14, y);
+                    const pctFormula = (typeof c.pctImpactoCorteInterrompido === 'number' && !isNaN(c.pctImpactoCorteInterrompido))
+                        ? c.pctImpactoCorteInterrompido
+                        : -30;
+                    const sinalPct = pctFormula > 0 ? '+' : '';
+                    doc.text(`Condição: Corte Interrompido (${sinalPct}${pctFormula}% vida) | Ref. contínuo: ${c.metrosContinuoRef.toFixed(0)} m (~${c.furosEquivContinuo} furos)`, 14, y);
                     y += 5;
                 }
                 if (c.isCliente && c.requerPiloto) {
