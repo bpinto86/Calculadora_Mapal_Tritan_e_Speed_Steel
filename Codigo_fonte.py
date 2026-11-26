@@ -334,21 +334,21 @@ html_content = '''
                         <label class="text-[11px] font-medium text-slate-300">4. DIÂMETRO (Ø)</label>
                         <div class="flex items-center gap-1">
                             <button onclick="ajustarDiametro(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">-</button>
-                            <input type="number" id="diametro" value="00.00" step="0.1" min="0.5" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="onDiametroPrincipalChange()">
+                            <input type="number" id="diametro" value="12.00" step="0.1" min="0.5" max="30" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="onDiametroPrincipalChange()">
                             <button onclick="ajustarDiametro(0.5)" class="bg-slate-700 hover:bg-slate-600 px-2 py-1.5 rounded-md text-white font-bold text-xs">+</button>
                         </div>
                     </div>
                     <div id="bloco-diametro-catalogo" class="space-y-1 hidden">
                         <label class="text-[11px] font-medium text-emerald-400">4. DIÂMETRO (Ø) — d1</label>
                         <div class="bg-slate-900/90 border border-emerald-700/60 rounded-md p-1.5 text-center flex items-center justify-between px-2">
-                            <div id="diametro-catalogo-valor" class="text-sm font-bold text-emerald-300">Ø 00.00 mm</div>
+                            <div id="diametro-catalogo-valor" class="text-sm font-bold text-emerald-300">Ø 12.00 mm</div>
                             <button type="button" onclick="limparDiametroD1()" title="Limpar d1 e voltar ao Ø livre" class="text-[10px] text-slate-400 hover:text-white underline">Livre</button>
                         </div>
                     </div>
                     <div class="space-y-1">
                         <label class="text-[11px] font-medium text-slate-300">5. PROFUNDIDADE/FURO (L)</label>
                         <div class="flex items-center gap-1">
-                            <input type="number" id="profundidade" value="00.0" step="1" min="0.1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="profundidade" value="31.0" step="1" min="0.1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                             <span class="text-[10px] text-slate-400 font-medium">mm</span>
                         </div>
                     </div>
@@ -363,7 +363,7 @@ html_content = '''
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <div class="space-y-1">
                             <label class="text-[11px] font-medium text-slate-300">6. QTD. FUROS (LOTE)</label>
-                            <input type="number" id="qtd-furos" value="00" step="1" min="1" max="100000" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="qtd-furos" value="50" step="1" min="1" max="100000" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                         <div class="space-y-1">
                             <label class="text-[11px] font-medium text-slate-300">7. DENSIDADE (g/cm³)</label>
@@ -385,7 +385,7 @@ html_content = '''
                                         <option value="mm">mm</option>
                                     </select>
                                 </div>
-                                <input type="number" id="pecking-passo" value="0.0" step="0.5" min="0.1" max="500" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                                <input type="number" id="pecking-passo" value="3.0" step="0.5" min="0.1" max="500" class="w-full bg-slate-800 border border-slate-700 rounded p-1 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                                 <span id="pecking-equiv" class="text-[9px] text-cyan-400 block text-center">Equiv: 36.0 mm (4 passos)</span>
                             </div>
                             <div class="space-y-1">
@@ -399,11 +399,11 @@ html_content = '''
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <div class="space-y-1">
                             <label class="text-[11px] font-medium text-slate-300">8. VALOR SUCATA (€/kg)</label>
-                            <input type="number" id="preco-sucata" value="0.00" step="0.05" min="0" max="50" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="preco-sucata" value="0.35" step="0.05" min="0" max="50" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                         <div class="space-y-1">
                             <label class="text-[11px] font-medium text-slate-300">9. CUSTO HORA MÁQUINA (€/h)</label>
-                            <input type="number" id="custo-hora" value="00.00" step="5" min="1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
+                            <input type="number" id="custo-hora" value="50.00" step="5" min="1" max="500" class="w-full bg-slate-900 border border-slate-700 rounded-md p-1.5 text-center text-xs font-bold text-white focus:outline-none focus:border-blue-500" oninput="atualizarCalculo()">
                         </div>
                     </div>
                 </div>
@@ -524,7 +524,7 @@ html_content = '''
                             <span class="text-[11px] text-slate-400">RPM Máx. Máquina</span>
                             <button type="button" onclick="toggleLock('rpm-max')" id="btn-lock-rpm-max" title="Desbloquear para definir limite de RPM" class="text-xs px-1 py-0.5 rounded bg-slate-900/80 border border-slate-700 hover:border-slate-500 transition">🔒</button>
                         </div>
-                        <input type="number" id="input-rpm-max" value="0000" step="100" min="100" max="60000" readonly oninput="onManualInput('rpm-max')" class="w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1">
+                        <input type="number" id="input-rpm-max" value="8000" step="100" min="100" max="60000" readonly oninput="onManualInput('rpm-max')" class="w-full bg-transparent text-xl font-bold text-white mt-0.5 focus:outline-none rounded px-1 -ml-1">
                         <div class="flex justify-between items-center mt-0.5">
                             <span class="text-[9px] text-slate-400">rpm</span>
                             <span id="status-rpm-max" class="text-[9px] text-slate-500">Inativo</span>
@@ -826,11 +826,11 @@ html_content = '''
                         </div>
                         <div class="space-y-1">
                             <label class="text-[10px] font-semibold text-amber-300 uppercase block">Vc Cliente (m/min)</label>
-                            <input type="number" id="comp-cliente-vc" value="00" step="1" min="1" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                            <input type="number" id="comp-cliente-vc" value="70" step="1" min="1" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
                         </div>
                         <div class="space-y-1">
                             <label class="text-[10px] font-semibold text-amber-300 uppercase block">Avanço f Cliente (mm/rot)</label>
-                            <input type="number" id="comp-cliente-f" value="0.0000" step="0.005" min="0.001" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                            <input type="number" id="comp-cliente-f" value="0.0200" step="0.005" min="0.001" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1.5 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
                         </div>
                     </div>
 
@@ -843,12 +843,12 @@ html_content = '''
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-semibold text-slate-300 uppercase block">Tempo furo-piloto + troca (seg/furo)</label>
-                                    <input type="number" id="comp-tempo-piloto-seg" value="00" step="1" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                                    <input type="number" id="comp-tempo-piloto-seg" value="20" step="1" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
                                     <span class="text-[9px] text-slate-400 block text-center">Inclui troca de ferramenta, entrada guia e recuo.</span>
                                 </div>
                                 <div class="space-y-1">
                                     <label class="text-[10px] font-semibold text-slate-300 uppercase block">Custo adicional broca piloto / furo (€)</label>
-                                    <input type="number" id="comp-custo-piloto-furo" value="0.00" step="0.01" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                                    <input type="number" id="comp-custo-piloto-furo" value="0.05" step="0.01" min="0" class="w-full bg-slate-800 border border-slate-700 rounded-md px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
                                     <span class="text-[9px] text-slate-400 block text-center">Desgaste diluído da broca curta de guia.</span>
                                 </div>
                             </div>
@@ -861,7 +861,7 @@ html_content = '''
                                 <div id="comp-canhao-opcoes" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-slate-700/70 hidden">
                                     <div class="space-y-1">
                                         <label class="text-[10px] font-semibold text-amber-300 uppercase block">Tempo paragem máquina / afiação (min)</label>
-                                        <input type="number" id="comp-tempo-paragem-afi-min" value="00" step="5" min="0" max="300" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
+                                        <input type="number" id="comp-tempo-paragem-afi-min" value="25" step="5" min="0" max="300" class="w-full bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-amber-500" oninput="atualizarComparacao()">
                                         <span class="text-[9px] text-slate-400 block text-center">Parar, afiar ponta, montar, zerar e retomar.</span>
                                     </div>
                                     <div class="flex flex-col justify-center bg-slate-900/90 rounded-md px-2.5 py-1.5 border border-slate-700/80">
@@ -880,7 +880,7 @@ html_content = '''
                         <div class="grid grid-cols-2 gap-2">
                             <div class="space-y-1">
                                 <label class="text-[10px] text-slate-400 block">Preço Broca (€)</label>
-                                <input type="number" id="comp-preco-atual" value="000.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
+                                <input type="number" id="comp-preco-atual" value="680.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
                             </div>
                             <div class="space-y-1">
                                 <div class="flex justify-between items-center">
@@ -890,7 +890,7 @@ html_content = '''
                                         <option value="metros">metros</option>
                                     </select>
                                 </div>
-                                <input type="number" id="comp-vida-atual" value="00" step="10" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
+                                <input type="number" id="comp-vida-atual" value="90" step="10" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2 pt-1">
@@ -900,7 +900,7 @@ html_content = '''
                             </div>
                             <div class="space-y-1">
                                 <label class="text-[10px] text-slate-400 block">Custo / Afiação (€)</label>
-                                <input type="number" id="comp-afi-custo-atual" value="00.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
+                                <input type="number" id="comp-afi-custo-atual" value="25.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-blue-500" oninput="atualizarComparacao()">
                             </div>
                         </div>
                     </div>
@@ -920,7 +920,7 @@ html_content = '''
                                         <option value="metros">metros</option>
                                     </select>
                                 </div>
-                                <input type="number" id="comp-vida-alvo" value="000" step="10" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
+                                <input type="number" id="comp-vida-alvo" value="250" step="10" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2 pt-1">
@@ -930,7 +930,7 @@ html_content = '''
                             </div>
                             <div class="space-y-1">
                                 <label class="text-[10px] text-slate-400 block">Custo / Afiação (€)</label>
-                                <input type="number" id="comp-afi-custo-alvo" value="00.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
+                                <input type="number" id="comp-afi-custo-alvo" value="15.00" step="5" min="0" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-emerald-500" oninput="atualizarComparacao()">
                             </div>
                         </div>
                     </div>
@@ -939,7 +939,7 @@ html_content = '''
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-900/60 px-3 py-2.5 rounded-lg border border-slate-700/70 items-center">
                     <div class="space-y-1">
                         <label class="text-[10px] font-semibold text-indigo-300 uppercase block">Preço / Custo Hora Máquina (€/h)</label>
-                        <input type="number" id="comp-custo-hora" value="00.00" step="5" min="1" max="500" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-indigo-500" oninput="sincronizarCustoHoraComparacao()">
+                        <input type="number" id="comp-custo-hora" value="50.00" step="5" min="1" max="500" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs font-bold text-white text-center focus:outline-none focus:border-indigo-500" oninput="sincronizarCustoHoraComparacao()">
                     </div>
                     <div id="comp-nota-interrompido" class="text-[11px] text-amber-200 bg-amber-950/50 border border-amber-600/60 rounded-md px-2.5 py-2 space-y-1 hidden">
                         <div class="text-[10px] font-semibold text-amber-300">Corte Interrompido (Interceções / Cascatas)</div>
@@ -4672,7 +4672,9 @@ html_content = '''
                 avisos.push(`Ferramenta comparada excede o limite nominal (${calcAlvo.limiteNominalMm.toFixed(1)} mm) para ${ctx.profundidade.toFixed(0)} mm.`);
             }
             if (corteInterrompidoAtivo) {
-                avisos.push(`Corte interrompido ativo (-30% de vida útil por impacto). Referência contínuo: ${metrosContinuoRef.toFixed(0)} m (~${furosEquivContinuo} furos).`);
+                const furosAtualRef = vidaUnidAtual === 'metros' ? ((vidaAtual * 1000) / Math.max(1, ctx.profundidade)) : vidaAtual;
+                const pctImpacto = furosEquivContinuo > 0 ? Math.round(((furosAtualRef - furosEquivContinuo) / furosEquivContinuo) * 100) : -30;
+                avisos.push(`Corte interrompido ativo (${pctImpacto > 0 ? '+' : ''}${pctImpacto}% de vida útil por impacto). Referência contínuo: ${metrosContinuoRef.toFixed(0)} m (~${furosEquivContinuo} furos).`);
             }
             if (fonteComp === '__CLIENTE__' && requerPiloto) {
                 avisos.push(`Furo-piloto ativo: +${tempoPilotoSeg.toFixed(0)} s/furo e +${custoPilotoFuro.toFixed(3)} €/furo.`);
