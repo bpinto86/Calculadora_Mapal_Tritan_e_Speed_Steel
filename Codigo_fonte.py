@@ -1265,7 +1265,7 @@ html_content = '''
                         vfFinal = Math.round(fFinal * nFinal);
                     }
 
-                    const metaGrp = mmgMetaPorCodigo[grpKey] || {};
+                    const metaGrp = mmgMetaPorCodigo[grpKey] || mmg2MetaPorCodigo[grpKey] || {};
                     const descMaterial = metaGrp.label
                         ? `${grpKey} — ${metaGrp.label}`
                         : (toolData.gruposNames?.[grpKey] || grpKey);
@@ -1545,23 +1545,40 @@ html_content = '''
                 mmg2SubgrupoSelecionado = null;
                 mmg2CodigoSelecionado = '';
             } else {
+                mmgGrupoSelecionado = null;
+                mmgSubgrupoSelecionado = null;
+                mmgSelecionadoManualmente = false;
+                const selG = document.getElementById('grupo');
+                if (selG) selG.value = '';
                 mmg2GrupoSelecionado = isoCode;
                 mmg2SubgrupoSelecionado = null;
                 mmg2CodigoSelecionado = '';
             }
-            renderBotoesMmg2();
+            sincronizarSelecaoComCatalogo('mmg2');
         }
 
         function selecionarSubgrupo2Botao(subCode) {
             mmg2SubgrupoSelecionado = subCode ? normMmg(subCode) : null;
             mmg2CodigoSelecionado = '';
-            renderBotoesMmg2();
+            sincronizarSelecaoComCatalogo('mmg2');
         }
 
         function selecionarCodigo2Botao(cod) {
             const codNorm = normMmg(cod);
             mmg2CodigoSelecionado = (mmg2CodigoSelecionado === codNorm) ? '' : codNorm;
-            renderBotoesMmg2();
+            if (mmg2CodigoSelecionado) {
+                const selG = document.getElementById('grupo');
+                if (selG) {
+                    if (!Array.from(selG.options).some(o => normMmg(o.value) === mmg2CodigoSelecionado)) {
+                        const opt = document.createElement('option');
+                        opt.value = mmg2CodigoSelecionado;
+                        opt.text = mmg2MetaPorCodigo[mmg2CodigoSelecionado]?.label || mmg2CodigoSelecionado;
+                        selG.appendChild(opt);
+                    }
+                    selG.value = mmg2CodigoSelecionado;
+                }
+            }
+            sincronizarSelecaoComCatalogo('mmg2');
         }
 
         function renderBotoesCodigoMmg2() {
@@ -1585,12 +1602,20 @@ html_content = '''
                 lblCod.style.color = palSel.cor;
             }
 
+            const brocaAtiva = document.getElementById('broca')?.value;
+            const grpsToolSet = (brocaAtiva && dados[brocaAtiva])
+                ? new Set((dados[brocaAtiva].gruposList || Object.keys(dados[brocaAtiva].grupos || {})).map(normMmg))
+                : null;
+
             const candidatos = Object.keys(mmg2MetaPorCodigo).filter(cod => {
                 const meta = mmg2MetaPorCodigo[cod] || {};
                 const iso = (meta.iso || extrairIsoDeCodigo(cod)).toUpperCase();
                 const sub = normMmg(meta.subgrupo || extrairSubgrupoDeCodigo(cod));
                 if (iso !== mmg2GrupoSelecionado) return false;
                 if (mmg2SubgrupoSelecionado && sub !== mmg2SubgrupoSelecionado && !cod.startsWith(mmg2SubgrupoSelecionado)) {
+                    return false;
+                }
+                if (grpsToolSet && grpsToolSet.size > 0 && !grpsToolSet.has(normMmg(cod))) {
                     return false;
                 }
                 return true;
@@ -1631,7 +1656,13 @@ html_content = '''
             if (!contGrupo || !painelSub || !contSub) return;
 
             const isosDisponiveis = new Set();
+            const brocaAtiva = document.getElementById('broca')?.value;
+            const grpsTool = (brocaAtiva && dados[brocaAtiva])
+                ? (dados[brocaAtiva].gruposList || Object.keys(dados[brocaAtiva].grupos || {})).map(normMmg)
+                : [];
             Object.values(mmg2MetaPorCodigo).forEach(m => {
+                const codNorm = normMmg(m.codigo);
+                if (grpsTool.length > 0 && !grpsTool.includes(codNorm)) return;
                 const iso = (m.iso || extrairIsoDeCodigo(m.codigo)).toUpperCase();
                 if (iso) isosDisponiveis.add(iso);
             });
@@ -1727,35 +1758,49 @@ html_content = '''
 
         function obterLabelGrupoMmg(cod) {
             const k = normMmg(cod);
-            return gruposMmgMap[k] || gruposMmgMap[cod] || cod;
+            return gruposMmgMap[k] || gruposMmgMap[cod] || mmg2MetaPorCodigo[k]?.label || cod;
         }
 
         function ferramentaSuportaFiltroMmg(tool, isoSel, subSel, codSel) {
             if (!tool || !tool.grupos) return true;
             const grps = tool.gruposList && tool.gruposList.length > 0 ? tool.gruposList : Object.keys(tool.grupos);
             if (!grps || grps.length === 0) return true;
-            if (!isoSel && !subSel && !codSel) return true;
 
             const codKey = normMmg(codSel);
             const subKey = normMmg(subSel);
             const isoNorm = String(isoSel || '').trim().toUpperCase();
 
-            return grps.some(g => {
+            const cod2Key = normMmg(mmg2CodigoSelecionado);
+            const sub2Key = normMmg(mmg2SubgrupoSelecionado);
+            const iso2Norm = String(mmg2GrupoSelecionado || '').trim().toUpperCase();
+
+            const temMmg1 = Boolean(isoNorm || subKey || codKey);
+            const temMmg2 = Boolean(iso2Norm || sub2Key || cod2Key);
+            if (!temMmg1 && !temMmg2) return true;
+
+            const matchMmg1 = !temMmg1 || grps.some(g => {
                 const gNorm = normMmg(g);
-                const gKey = normMmg(g);
-                if (codKey) {
-                    return gKey === codKey;
-                }
-                const gIso = (mmgMetaPorCodigo[gNorm]?.iso || mmgMetaPorCodigo[gKey]?.iso || extrairIsoDeCodigo(gNorm)).toUpperCase();
-                const gSub = normMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || mmgMetaPorCodigo[gKey]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
-                if (subKey) {
-                    return gSub === subKey || gKey.startsWith(subKey + '.');
-                }
-                if (isoNorm) {
-                    return gIso === isoNorm;
-                }
+                if (codKey) return gNorm === codKey;
+                const gIso = (mmgMetaPorCodigo[gNorm]?.iso || extrairIsoDeCodigo(gNorm)).toUpperCase();
+                const gSub = normMmg(mmgMetaPorCodigo[gNorm]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
+                if (subKey) return gSub === subKey || gNorm.startsWith(subKey + '.');
+                if (isoNorm) return gIso === isoNorm;
                 return true;
             });
+
+            const matchMmg2 = !temMmg2 || grps.some(g => {
+                const gNorm = normMmg(g);
+                const isNew = Boolean(mmg2MetaPorCodigo[gNorm]) || !mmgMetaPorCodigo[gNorm];
+                if (!isNew) return false;
+                if (cod2Key) return gNorm === cod2Key;
+                const gIso = (mmg2MetaPorCodigo[gNorm]?.iso || extrairIsoDeCodigo(gNorm)).toUpperCase();
+                const gSub = normMmg(mmg2MetaPorCodigo[gNorm]?.subgrupo || extrairSubgrupoDeCodigo(gNorm));
+                if (sub2Key) return gSub === sub2Key || gNorm.startsWith(sub2Key + '.');
+                if (iso2Norm) return gIso === iso2Norm;
+                return true;
+            });
+
+            return matchMmg1 && matchMmg2;
         }
 
         function renderBotoesCodigoMmg(gruposDisponiveisFerramenta = [], filtrarPorFerramenta = false) {
@@ -1972,6 +2017,9 @@ html_content = '''
                 const selG = document.getElementById('grupo');
                 if (selG) selG.value = '';
             } else {
+                mmg2GrupoSelecionado = null;
+                mmg2SubgrupoSelecionado = null;
+                mmg2CodigoSelecionado = '';
                 mmgGrupoSelecionado = isoCode;
                 mmgSubgrupoSelecionado = null;
                 mmgSelecionadoManualmente = true;
@@ -2043,10 +2091,18 @@ html_content = '''
             if (val) {
                 mmgSelecionadoManualmente = true;
                 if (grupoSelect) grupoSelect.value = val;
-                const iso = (mmgMetaPorCodigo[val]?.iso || extrairIsoDeCodigo(val)).toUpperCase();
-                const sub = normMmg(mmgMetaPorCodigo[val]?.subgrupo || extrairSubgrupoDeCodigo(val));
-                if (iso) mmgGrupoSelecionado = iso;
-                if (sub) mmgSubgrupoSelecionado = sub;
+                if (mmg2MetaPorCodigo[val] && !mmgMetaPorCodigo[val]) {
+                    const iso2 = (mmg2MetaPorCodigo[val]?.iso || extrairIsoDeCodigo(val)).toUpperCase();
+                    const sub2 = normMmg(mmg2MetaPorCodigo[val]?.subgrupo || extrairSubgrupoDeCodigo(val));
+                    if (iso2) mmg2GrupoSelecionado = iso2;
+                    if (sub2) mmg2SubgrupoSelecionado = sub2;
+                    mmg2CodigoSelecionado = val;
+                } else {
+                    const iso = (mmgMetaPorCodigo[val]?.iso || extrairIsoDeCodigo(val)).toUpperCase();
+                    const sub = normMmg(mmgMetaPorCodigo[val]?.subgrupo || extrairSubgrupoDeCodigo(val));
+                    if (iso) mmgGrupoSelecionado = iso;
+                    if (sub) mmgSubgrupoSelecionado = sub;
+                }
             } else {
                 mmgSelecionadoManualmente = false;
             }
@@ -2807,7 +2863,7 @@ html_content = '''
                 atualizarFiltroBrocas(true);
             }
 
-            const temFiltroAtivo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || (document.getElementById('ref-pesquisa').value || '').trim() || mmgGrupoSelecionado || mmgSubgrupoSelecionado || grupoCodSel);
+            const temFiltroAtivo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || (document.getElementById('ref-pesquisa').value || '').trim() || mmgGrupoSelecionado || mmgSubgrupoSelecionado || grupoCodSel || mmg2GrupoSelecionado || mmg2SubgrupoSelecionado || mmg2CodigoSelecionado);
 
             if (finais.length === 1 && temFiltroAtivo && origem !== 'order') {
                 selOrder.value = '0';
@@ -3311,7 +3367,7 @@ html_content = '''
             const qPesquisa = (document.getElementById('ref-pesquisa').value || '').trim();
             const grupoCodSel = normMmg(document.getElementById('grupo')?.value || '');
 
-            const temFiltroCatalogo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || qPesquisa || mmgGrupoSelecionado || mmgSubgrupoSelecionado || grupoCodSel);
+            const temFiltroCatalogo = Boolean(valCat || valGama || valRefrig || valEnc || (d1Num !== null) || valXd || qPesquisa || mmgGrupoSelecionado || mmgSubgrupoSelecionado || grupoCodSel || mmg2GrupoSelecionado || mmg2SubgrupoSelecionado || mmg2CodigoSelecionado);
             if (!temFiltroCatalogo) {
                 return null;
             }
@@ -3504,6 +3560,24 @@ html_content = '''
 
             if (mmgGrupoSelecionado || mmgSubgrupoSelecionado) {
                 aplicarFiltroMmgNaFerramenta();
+            } else if (mmg2CodigoSelecionado && gruposDisponiveis.includes(mmg2CodigoSelecionado)) {
+                sincronizacaoInterna = true;
+                grupoSelect.value = mmg2CodigoSelecionado;
+                sincronizacaoInterna = false;
+            } else if (mmg2GrupoSelecionado || mmg2SubgrupoSelecionado) {
+                const match2 = gruposDisponiveis.find(g => {
+                    const meta = mmg2MetaPorCodigo[g];
+                    if (!meta && mmgMetaPorCodigo[g]) return false;
+                    const gIso = (meta?.iso || extrairIsoDeCodigo(g)).toUpperCase();
+                    const gSub = normMmg(meta?.subgrupo || extrairSubgrupoDeCodigo(g));
+                    if (mmg2SubgrupoSelecionado) return gSub === mmg2SubgrupoSelecionado || g.startsWith(mmg2SubgrupoSelecionado + '.');
+                    return gIso === mmg2GrupoSelecionado;
+                });
+                if (match2) {
+                    sincronizacaoInterna = true;
+                    grupoSelect.value = match2;
+                    sincronizacaoInterna = false;
+                }
             }
             renderBotoesMmg(gruposDisponiveis);
             renderBotoesMmg2();
