@@ -5039,9 +5039,10 @@ html_content = '''
                 doc.text(`Atual: ${c.nomeAtual}   vs.   Comparada: ${c.nomeAlvo}`, 14, y);
                 y += 5;
                 if (c.corteInterrompido) {
-                    doc.text(`Condição: Corte Interrompido (-30% vida) | Ref. contínuo: ${c.metrosContinuoRef.toFixed(0)} m (~${c.furosEquivContinuo} furos)`, 14, y);
-                    y += 5;
-                }
+  const penalizacaoPct = c.penalizacaoCorteInterrompidoPct ?? 30; // ajusta ao nome real da propriedade/variável
+  doc.text(`Condição: Corte Interrompido (-${penalizacaoPct}% vida) | Ref. contínuo: ${c.metrosContinuoRef.toFixed(0)} m (~${c.furosEquivContinuo} furos)`, 14, y);
+  y += 5;
+}
                 if (c.isCliente && c.requerPiloto) {
                     doc.text(`Furo-Piloto: +${c.tempoPilotoSeg.toFixed(0)} s/furo, +${c.custoPilotoFuro.toFixed(3)} €/furo (${c.custoPilotoLote.toFixed(2)} € no lote)`, 14, y);
                     y += 5;
